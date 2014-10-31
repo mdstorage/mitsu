@@ -1,0 +1,4 @@
+services:
+#    mitsubishi_catalog.example:
+#        class: Mitsubishi\CatalogBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]

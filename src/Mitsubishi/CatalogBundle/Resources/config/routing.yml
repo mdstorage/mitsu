@@ -1,0 +1,3 @@
+mitsubishi_catalog_homepage:
+    path:     /
+    defaults: { _controller: MitsubishiCatalogBundle:Default:index }
