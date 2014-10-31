@@ -1,3 +1,7 @@
 mitsubishi_catalog_homepage:
     path:     /
     defaults: { _controller: MitsubishiCatalogBundle:Default:index }
+
+mitsubishi_catalog_vncs_list:
+    path:     /vncs/{catalog}
+    defaults: {_controller: MitsubishiCatalogBundle:Default:vncsList}

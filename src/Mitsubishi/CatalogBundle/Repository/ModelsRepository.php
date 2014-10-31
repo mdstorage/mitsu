@@ -24,4 +24,17 @@ class ModelsRepository extends EntityRepository
 
         return $result;
     }
+
+    public function getVncsListByCatalog($catalog)
+    {
+        $em = $this->getEntityManager();
+
+        $query = $em->createQuery('
+            SELECT m.vnc FROM MitsubishiCatalogBundle:Models m WHERE m.catalog = :catalog GROUP BY m.vnc
+        ')->setParameter('catalog', $catalog);
+
+        $result = $query->getResult();
+
+        return $result;
+    }
 } 

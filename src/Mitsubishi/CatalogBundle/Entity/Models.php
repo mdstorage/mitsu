@@ -22,6 +22,9 @@ class Models {
      * @ORM\Column(name="catalog", type="string")
      */
     private $catalog;
+    /**
+     * @ORM\Column(name="VNC", type="string")
+     */
     private $vnc;
     private $model;
     private $repModel;
@@ -38,5 +41,10 @@ class Models {
     public function getCatalog()
     {
         return $this->catalog;
+    }
+
+    public function getVnc()
+    {
+        return $this->vnc;
     }
 } 
