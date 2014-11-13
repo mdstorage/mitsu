@@ -1,0 +1,11 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <h3>Выбрать схему:</h3>
+    {% for data in bgroups %}
+        <a href="{{ path('catalog_mitsubishi_pncs_list', {'catalog': catalog, 'illustration': data.illustration}) }}">
+        <div>Схема: {{ loop.index }} из {{ bgroups|length }}</div>
+        <img src="{{ asset('bundles/catalogmitsubishi/images/'~catalog~'/'~data.illustration~'.png') }}" width="300" />
+        </a>
+    {% endfor %}
+{% endblock body %}

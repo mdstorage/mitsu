@@ -1,0 +1,9 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+<h3>Выбрать комплектацию:</h3>
+{% for data in classificationsList %}
+    {% if data.classification %}
+    <a href="{{ path('catalog_mitsubishi_maingroups_list', {'catalog': catalog, 'catalogNum': catalogNum, 'model': model, 'classification': data.classification}) }}">{{ data.classification }} ({{ data.descEn }})</a><br/>
+    {% endif %}
+{% endfor %}
+{% endblock body %}

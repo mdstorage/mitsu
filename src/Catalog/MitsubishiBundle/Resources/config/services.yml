@@ -1,0 +1,42 @@
+services:
+#    catalog_mitsubishi.example:
+#        class: Catalog\MitsubishiBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  catalog_mitsubishi.repository.description:
+        class: Catalog\MitsubishiBundle\Repository\DescriptionRepository
+        factory_service: doctrine.orm.entity_manager
+        factory_method: getRepository
+        arguments: [Catalog\MitsubishiBundle\Entity\Descriptions]
+
+  catalog_mitsubishi.repository.models:
+        class: Catalog\MitsubishiBundle\Repository\ModelsRepository
+        factory_service: doctrine.orm.entity_manager
+        factory_method: getRepository
+        arguments: [Catalog\MitsubishiBundle\Entity\Models]
+        calls:
+          - [setDescriptionRepository, [@catalog_mitsubishi.repository.description]]
+
+  catalog_mitsubishi.repository.mgroup:
+        class: Catalog\MitsubishiBundle\Repository\MgroupRepository
+        factory_service: doctrine.orm.entity_manager
+        factory_method: getRepository
+        arguments: [Catalog\MitsubishiBundle\Entity\Mgroup]
+
+  catalog_mitsubishi.repository.sgroup:
+        class: Catalog\MitsubishiBundle\Repository\SgroupRepository
+        factory_service: doctrine.orm.entity_manager
+        factory_method: getRepository
+        arguments: [Catalog\MitsubishiBundle\Entity\Sgroup]
+
+  catalog_mitsubishi.repository.bgroup:
+        class: Catalog\MitsubishiBundle\Repository\BgroupRepository
+        factory_service: doctrine.orm.entity_manager
+        factory_method: getRepository
+        arguments: [Catalog\MitsubishiBundle\Entity\Bgroup]
+
+  catalog_mitsubishi.repository.pictures:
+        class: Catalog\MitsubishiBundle\Repository\PicturesRepository
+        factory_service: doctrine.orm.entity_manager
+        factory_method: getRepository
+        arguments: [Catalog\MitsubishiBundle\Entity\Pictures]

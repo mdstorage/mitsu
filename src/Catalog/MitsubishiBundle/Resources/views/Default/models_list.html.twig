@@ -1,0 +1,5 @@
+<div class="model">
+    {% for model in modelsList %}
+        <a href="{{ path('catalog_mitsubishi_classifications_list', { 'catalog': catalog , 'catalogNum': catalogNum, 'model': model.model }) }}"> {{ model.model }} ({{ model.descEn }}) </a><br/>
+    {% endfor %}
+</div>

@@ -1,0 +1,46 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+<h3>Выбрать группу запчастей:</h3>
+    <div class="row">
+        <div class="col-xs-10">
+            <img src="{{ asset('bundles/catalogmitsubishi/images/'~catalog~'/'~illustration~'.png') }}" usemap="#{{ illustration }}" />
+            <map name="{{ illustration }}">
+                {% for data in mgroup %}
+                    {% if data.mgCode in mgroups|keys %}
+                    <area id="area{{ data.mgCode }}" data-name="{{ data.mgCode }}" shape="rect" coords="{{ data.startX }},{{ data.startY }},{{ data.startX+data.endX }},{{ data.startY+data.endY }}" href="{{ path('catalog_mitsubishi_subgroups_list', {'catalog': catalog, 'model': model, 'catalogNum': catalogNum, 'classification': classification, 'mainGroup': data.mgCode}) }}" title="{{ mgroups[data.mgCode] }}"/>
+                    <script>
+                        $("area#area{{ data.mgCode }}").on("mouseover", function(){
+                            $("#mg_{{ data.mgCode }}").addClass("btn-info");
+                        });
+                        $("area#area{{ data.mgCode }}").on("mouseout", function(){
+                            $("#mg_{{ data.mgCode }}").removeClass("btn-info");
+                        });
+                    </script>
+                    {% endif %}
+                {% endfor %}
+            </map>
+        </div>
+        <div class="col-xs-2 small">
+            {% for key, data in mgroups %}
+                <a id="mg_{{ key }}" href="{{ path('catalog_mitsubishi_subgroups_list', {'catalog': catalog, 'model': model, 'catalogNum': catalogNum, 'classification': classification, 'mainGroup': key}) }}"> ({{ key }}) {{ data }}</a><br/>
+                <script>
+                    $("#mg_{{ key }}").on("mouseover", function(){
+                        $('img').mapster('set', true, '{{ key }}');
+                    });
+                    $("#mg_{{ key }}").on("mouseout", function(){
+                        $('img').mapster('set', false, '{{ key }}');
+                    });
+                </script>
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+        $('img').mapster({
+            fillColor: '70daf1',
+            fillOpacity: 0.3,
+            mapKey: 'data-name',
+            clickNavigate: true
+        });
+    </script>
+{% endblock body %}

@@ -1,0 +1,17 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+<h3>Выбрать подгруппу запчастей:</h3>
+    {% for data in sgroups %}
+        <div class="row">
+            <a href="{{ path('catalog_mitsubishi_bgroups_list', {'catalog': catalog,  'model': model, 'catalogNum': catalogNum, 'classification': classification, 'mainGroup': mainGroup, 'subGroup': data.subGroup}) }}">
+                <div class="col-xs-3">
+                    {{ data.descEn }} ({{ data.subGroup }})
+                </div>
+                <div class="col-xs-5">
+                    <img src="{{ asset('bundles/catalogmitsubishi/images/'~catalog~'/'~data.illustration~'.png') }}" />
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+{% endblock body %}

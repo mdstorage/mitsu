@@ -1,0 +1,45 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+    <h3>Выбрать регион:</h3>
+    <ul class="nav nav-pills" role="tablist">
+        {% set radio_count = 0 %}
+        {% for catalog in catalogsList %}
+            {% if radio_count == 0 %}
+                <li role="region" class="active" id="{{ catalog.catalog }}"><a href="#">{{ catalog.catalog }}</a></li>
+            {% else %}
+                <li role="region" id="{{ catalog.catalog }}"><a href="#">{{ catalog.catalog }}</a></li>
+            {% endif %}
+            {% set radio_count = radio_count + 1 %}
+        {% endfor %}
+    </ul>
+    <script>
+        $(document).ready(function(){
+
+            $.ajax({
+                type:   'POST',
+                async:  false,
+                url:    "{{ path('catalog_mitsubishi_vncs_list') }}",
+                data:   { catalog: $("li.active[role=region]").attr('id') },
+                success: function(data) {
+                    $("#result").html(data);
+                }
+            });
+        })
+        $("li[role=region]").on('click', function(){
+            $("li.active").toggleClass('active');
+            $(this).toggleClass('active');
+            $("#result").html('<img src={{ asset("bundles/catalogmitsubishi/images/loading.gif") }} height="150px" />');
+            $.ajax({
+                type:   'POST',
+                async:  false,
+                url:    "{{ path('catalog_mitsubishi_vncs_list') }}",
+                data:   { catalog: $(this).attr('id') },
+                success: function(data) {
+                        $("#result").html(data);
+                }
+            });
+        });
+    </script>
+    <h3>Модельный ряд:</h3>
+    <div id="result"><img src="{{ asset('bundles/catalogmitsubishi/images/loading.gif') }}" height="150px" /></div>
+{% endblock body %}
