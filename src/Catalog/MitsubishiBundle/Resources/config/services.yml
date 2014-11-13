@@ -40,3 +40,9 @@ services:
         factory_service: doctrine.orm.entity_manager
         factory_method: getRepository
         arguments: [Catalog\MitsubishiBundle\Entity\Pictures]
+
+  catalog_mitsubishi.repository.partgroup:
+        class: Catalog\MitsubishiBundle\Repository\PartCatalogRepository
+        factory_service: doctrine.orm.entity_manager
+        factory_method: getRepository
+        arguments: [Catalog\MitsubishiBundle\Entity\PartCatalog]

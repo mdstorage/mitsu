@@ -89,15 +89,18 @@ class DefaultController extends Controller
             'catalogNum'=>$catalogNum,
             'model'=>$model,
             'mainGroup'=>$mainGroup,
+            'subGroup'=>$subGroup,
             'classification'=>$classification
         ));
     }
 
-    public function pncsListAction($catalog, $illustration)
+    public function pncsListAction($catalog, $model, $mainGroup, $subGroup, $classification, $illustration)
     {
-        $pncs = $this->get('catalog_mitsubishi.repository.pictures')->getGroupsByPicture($catalog, $illustration);
+        $pncCoords = $this->get('catalog_mitsubishi.repository.pictures')->getGroupsByPicture($catalog, $illustration);
+        $pncs = $this->get('catalog_mitsubishi.repository.partgroup')->getPncsByModel($catalog, $model, $mainGroup, $subGroup, $classification);
 
         return $this->render('CatalogMitsubishiBundle:Default:pncs_list.html.twig', array(
+            'pncCoords'=>$pncCoords,
             'pncs'=>$pncs,
             'catalog'=>$catalog,
             'illustration'=>$illustration

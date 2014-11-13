@@ -29,6 +29,6 @@ catalog_mitsubishi_bgroups_list:
    defaults: {_controller: CatalogMitsubishiBundle:Default:bGroupsList}
 
 catalog_mitsubishi_pncs_list:
-   path:     /mitsubishi/{catalog}/{illustration}
+   path:     /mitsubishi/pncsList/{illustration}/{catalog}/{model}/{mainGroup}/{subGroup}/{classification}
    defaults: {_controller: CatalogMitsubishiBundle:Default:pncsList}
 

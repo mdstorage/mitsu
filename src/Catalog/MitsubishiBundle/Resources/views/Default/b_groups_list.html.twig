@@ -2,10 +2,19 @@
 
 {% block body %}
     <h3>Выбрать схему:</h3>
+    <div class="row">
     {% for data in bgroups %}
-        <a href="{{ path('catalog_mitsubishi_pncs_list', {'catalog': catalog, 'illustration': data.illustration}) }}">
+        <div class="col-xs-4">
+        <a href="{{ path('catalog_mitsubishi_pncs_list', {'catalog': catalog, 'model': model,
+            'mainGroup': mainGroup,
+            'subGroup': subGroup,
+            'classification': classification,
+            'illustration': data.illustration
+        }) }}">
         <div>Схема: {{ loop.index }} из {{ bgroups|length }}</div>
         <img src="{{ asset('bundles/catalogmitsubishi/images/'~catalog~'/'~data.illustration~'.png') }}" width="300" />
         </a>
+        </div>
     {% endfor %}
+    </div>
 {% endblock body %}

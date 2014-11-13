@@ -2,7 +2,49 @@
 
 {% block body %}
 <h3>Выбрать группу запчастей:</h3>
-    {% for data in pncs %}
-
+    {% set newArray = [] %}
+<div class="row">
+    <div class="col-xs-2">
+    {% for key, data in pncs %}
+            <div id="pnc_{{ key}}"><a href="">{{ key }}</a></div>
+            {% for partNumber in data %}
+                {{ partNumber }}<br/>
+            {% endfor %}
+            <script>
+                $("#pnc_{{ key }}").on("mouseover", function(){
+                    $('img').mapster('set', true, '{{ key }}');
+                });
+                $("#pnc_{{ key }}").on("mouseout", function(){
+                    $('img').mapster('set', false, '{{ key }}');
+                });
+            </script>
     {% endfor %}
+    </div>
+    <div class="col-xs-10">
+        <map name="{{ illustration }}">
+        {% for data in pncCoords %}
+            {% if data.code in pncs|keys %}
+                <area id="area{{ data.code }}" data-name="{{ data.code }}" shape="rect" coords="{{ data.startX }},{{ data.startY }},{{ data.startX+data.endX }},{{ data.startY+data.endY }}" href="#" title="{{ data.code }}"/>
+                <script>
+                    $("area#area{{ data.code }}").on("mouseover", function(){
+                        $("#pnc_{{ data.code }}").addClass("btn-info");
+                    });
+                    $("area#area{{ data.code }}").on("mouseout", function(){
+                        $("#pnc_{{ data.code }}").removeClass("btn-info");
+                    });
+                </script>
+        {% endif %}
+    {% endfor %}
+    </map>
+    <img src="{{ asset('bundles/catalogmitsubishi/images/'~catalog~'/'~illustration~'.png') }}" usemap="#{{ illustration }}" />
+
+    </div>
+</div>
+    <script>
+        $('img').mapster({
+            fillColor: '70daf1',
+            fillOpacity: 0.3,
+            mapKey: 'data-name'
+        });
+    </script>
 {% endblock body %}

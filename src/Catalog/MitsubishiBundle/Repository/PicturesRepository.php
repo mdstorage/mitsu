@@ -18,7 +18,7 @@ class PicturesRepository extends EntityRepository
         $rsm->addScalarResult('startY', 'startY');
         $rsm->addScalarResult('endX', 'endX');
         $rsm->addScalarResult('endY', 'endY');
-        $rsm->addScalarResult('mgCode', 'mgCode');
+        $rsm->addScalarResult('code', 'code');
 
         $nativeQuery = $em->createNativeQuery('
         SELECT
@@ -26,7 +26,7 @@ class PicturesRepository extends EntityRepository
           p.startY,
           p.endX,
           p.endY,
-          p.desc_code1 as mgCode
+          p.desc_code1 as code
         FROM `pictures` p
         WHERE p.catalog = :catalog
         AND p.picture_file = :pictureFile

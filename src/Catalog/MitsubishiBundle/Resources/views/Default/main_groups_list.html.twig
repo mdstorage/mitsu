@@ -7,14 +7,14 @@
             <img src="{{ asset('bundles/catalogmitsubishi/images/'~catalog~'/'~illustration~'.png') }}" usemap="#{{ illustration }}" />
             <map name="{{ illustration }}">
                 {% for data in mgroup %}
-                    {% if data.mgCode in mgroups|keys %}
-                    <area id="area{{ data.mgCode }}" data-name="{{ data.mgCode }}" shape="rect" coords="{{ data.startX }},{{ data.startY }},{{ data.startX+data.endX }},{{ data.startY+data.endY }}" href="{{ path('catalog_mitsubishi_subgroups_list', {'catalog': catalog, 'model': model, 'catalogNum': catalogNum, 'classification': classification, 'mainGroup': data.mgCode}) }}" title="{{ mgroups[data.mgCode] }}"/>
+                    {% if data.code in mgroups|keys %}
+                    <area id="area{{ data.code }}" data-name="{{ data.code }}" shape="rect" coords="{{ data.startX }},{{ data.startY }},{{ data.startX+data.endX }},{{ data.startY+data.endY }}" href="{{ path('catalog_mitsubishi_subgroups_list', {'catalog': catalog, 'model': model, 'catalogNum': catalogNum, 'classification': classification, 'mainGroup': data.code}) }}" title="{{ mgroups[data.code] }}"/>
                     <script>
-                        $("area#area{{ data.mgCode }}").on("mouseover", function(){
-                            $("#mg_{{ data.mgCode }}").addClass("btn-info");
+                        $("area#area{{ data.code }}").on("mouseover", function(){
+                            $("#mg_{{ data.code }}").addClass("btn-info");
                         });
-                        $("area#area{{ data.mgCode }}").on("mouseout", function(){
-                            $("#mg_{{ data.mgCode }}").removeClass("btn-info");
+                        $("area#area{{ data.code }}").on("mouseout", function(){
+                            $("#mg_{{ data.code }}").removeClass("btn-info");
                         });
                     </script>
                     {% endif %}
