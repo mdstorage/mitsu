@@ -50,4 +50,39 @@ class SgroupRepository extends EntityRepository
 
         return $sgroups;
     }
+
+    public function getSgroupDesc($catalog, $catalogNum, $model, $mainGroup, $subGroup)
+    {
+        $em = $this->getEntityManager();
+
+        $rsm = new ResultSetMapping();
+
+        $rsm->addScalarResult('descEn', 'descEn');
+
+        $nativeQuery = $em->createNativeQuery('
+        SELECT
+
+          d.desc_en as descEn
+        FROM
+          `sgroup` s
+        LEFT JOIN `descriptions` d ON d.TS = s.TS
+        WHERE
+          s.Catalog = :catalog
+          AND s.`Catalog Num` = :catalogNum
+          AND s.Model = :model
+          AND s.MainGroup = :mainGroup
+          AND s.SubGroup = :subGroup
+          AND d.catalog = :catalog
+          LIMIT 1
+        ', $rsm)
+            ->setParameter('catalog', $catalog)
+            ->setParameter('catalogNum', $catalogNum)
+            ->setParameter('model', $model)
+            ->setParameter('subGroup', $subGroup)
+            ->setParameter('mainGroup', $mainGroup);
+
+        $descSgroup = $nativeQuery->getSingleScalarResult();
+
+        return $descSgroup;
+    }
 } 

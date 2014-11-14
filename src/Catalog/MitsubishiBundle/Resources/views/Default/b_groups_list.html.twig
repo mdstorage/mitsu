@@ -1,5 +1,9 @@
-{% extends '::base.html.twig' %}
-
+{% extends 'CatalogMitsubishiBundle:Default:sub_groups_list.html.twig' %}
+{% block summary %}
+    {{ parent() }}<br/>
+    <b>Подгруппа запчастей</b>:
+            {{ descSubGroup }} ({{ subGroup }})
+{% endblock summary %}
 {% block body %}
     <h3>Выбрать схему:</h3>
     <div class="row">
@@ -8,6 +12,7 @@
         <a href="{{ path('catalog_mitsubishi_pncs_list', {'catalog': catalog, 'model': model,
             'mainGroup': mainGroup,
             'subGroup': subGroup,
+            'catalogNum': catalogNum,
             'classification': classification,
             'illustration': data.illustration
         }) }}">

@@ -3,6 +3,7 @@
 namespace Catalog\MitsubishiBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,7 +30,13 @@ class DefaultController extends Controller
         if ($request->isXmlHttpRequest()){
             $catalog = $request->get('catalog');
             $catalogNum = $request->get('catalogNum');
+
             $modelsList = $this->get('catalog_mitsubishi.repository.models')->getModelsListByCatalogNum($catalog, $catalogNum);
+
+            $descEnCatalogNum = $this->get('catalog_mitsubishi.repository.modeldesc')->getCatalogNumDesc($catalog, $catalogNum);
+
+            setcookie('descCatalogNum', $descEnCatalogNum, 0, '/');
+
             return $this->render('CatalogMitsubishiBundle:Default:models_list.html.twig', array(
                 'modelsList'=>$modelsList,
                 'catalog'=>$catalog,
@@ -41,11 +48,16 @@ class DefaultController extends Controller
     {
         $classificationsList = $this->get('catalog_mitsubishi.repository.models')->getClassificationsListByModel($catalog, $catalogNum, $model);
 
+        $descEnModel = $this->get('catalog_mitsubishi.repository.models')->getModelNameByModel($catalog, $catalogNum, $model);
+
+        setcookie('descModel', $descEnModel, 0, '/');
+
         return $this->render('CatalogMitsubishiBundle:Default:classifications_list.html.twig', array(
             'classificationsList'=>$classificationsList,
             'catalog'=>$catalog,
             'catalogNum'=>$catalogNum,
-            'model'=>$model));
+            'model'=>$model
+        ));
     }
 
     public function mainGroupsListAction($catalog, $catalogNum, $model, $classification)
@@ -53,6 +65,12 @@ class DefaultController extends Controller
         $illustration = $this->get('catalog_mitsubishi.repository.mgroup')->getMgroupsIllustration($catalog, $catalogNum, $model, $classification);
         $mgroups = $this->get('catalog_mitsubishi.repository.mgroup')->getMgroupsByModel($catalog, $catalogNum, $model, $classification);
         $mgroup = $this->get('catalog_mitsubishi.repository.pictures')->getGroupsByPicture($catalog, $illustration);
+
+        setcookie('mgroups', json_encode($mgroups), 0, '/');
+
+        $descEnClassification = $this->get('catalog_mitsubishi.repository.models')->getClassificationDesc($catalog, $catalogNum, $model, $classification);
+
+        setcookie('descClassification', $descEnClassification, 0, '/');
 
         return $this->render('CatalogMitsubishiBundle:Default:main_groups_list.html.twig', array(
             'illustration'=>$illustration,
@@ -82,6 +100,7 @@ class DefaultController extends Controller
     public function bGroupsListAction($catalog, $catalogNum, $model, $mainGroup, $subGroup, $classification)
     {
         $bgroups = $this->get('catalog_mitsubishi.repository.bgroup')->getBgroupsBySgroup($catalog, $catalogNum, $model, $mainGroup, $subGroup, $classification);
+        $descSgroup = $this->get('catalog_mitsubishi.repository.sgroup')->getSgroupDesc($catalog, $catalogNum, $model, $mainGroup, $subGroup);
 
         return $this->render('CatalogMitsubishiBundle:Default:b_groups_list.html.twig', array(
             'bgroups'=>$bgroups,
@@ -90,20 +109,29 @@ class DefaultController extends Controller
             'model'=>$model,
             'mainGroup'=>$mainGroup,
             'subGroup'=>$subGroup,
+            'descSubGroup'=>$descSgroup,
             'classification'=>$classification
         ));
     }
 
-    public function pncsListAction($catalog, $model, $mainGroup, $subGroup, $classification, $illustration)
+    public function pncsListAction($catalog, $model, $catalogNum, $mainGroup, $subGroup, $classification, $illustration)
     {
         $pncCoords = $this->get('catalog_mitsubishi.repository.pictures')->getGroupsByPicture($catalog, $illustration);
         $pncs = $this->get('catalog_mitsubishi.repository.partgroup')->getPncsByModel($catalog, $model, $mainGroup, $subGroup, $classification);
+
+        $descSgroup = $this->get('catalog_mitsubishi.repository.sgroup')->getSgroupDesc($catalog, $catalogNum, $model, $mainGroup, $subGroup);
 
         return $this->render('CatalogMitsubishiBundle:Default:pncs_list.html.twig', array(
             'pncCoords'=>$pncCoords,
             'pncs'=>$pncs,
             'catalog'=>$catalog,
-            'illustration'=>$illustration
+            'catalogNum'=>$catalogNum,
+            'model'=>$model,
+            'mainGroup'=>$mainGroup,
+            'subGroup'=>$subGroup,
+            'classification'=>$classification,
+            'illustration'=>$illustration,
+            'descSubGroup'=>$descSgroup
         ));
     }
 }

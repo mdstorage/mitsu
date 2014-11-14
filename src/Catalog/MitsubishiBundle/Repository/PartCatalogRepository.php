@@ -35,6 +35,8 @@ class PartCatalogRepository extends EntityRepository
               AND pg.MainGroup = :mainGroup
               AND pg.SubGroup = :subGroup
               AND (pg.Classification = :classification OR pg.Classification = "")
+              GROUP BY pg.PartNumber
+              ORDER BY pg.PNC
         ', $rsm)
         ->setParameter('catalog', $catalog)
         ->setParameter('model', $model)

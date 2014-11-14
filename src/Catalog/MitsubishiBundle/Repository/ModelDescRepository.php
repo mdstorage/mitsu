@@ -3,6 +3,7 @@
 namespace Catalog\MitsubishiBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
 
 class ModelDescRepository extends EntityRepository
 {
@@ -13,14 +14,25 @@ class ModelDescRepository extends EntityRepository
         $this->descriptionRepository = $descriptionRepository;
     }
 
-    public function getCatalogNumData($catalogNum)
+    public function getCatalogNumDesc($catalog, $catalogNum)
     {
         $em = $this->getEntityManager();
 
-        $query = $em->createQuery('
-            SELECT md.name FROM CatalogMitsubishiBundle:ModelDesc WHERE md.$catalogNum LIKE %:catalogNum%
-        ')
-        ->setParameter('catalogNum', $catalogNum);
+        $rsm = new ResultSetMapping();
+
+        $rsm->addScalarResult('descEn', 'descEn');
+
+        $query = $em->createNativeQuery('
+            SELECT d.desc_en as descEn
+            FROM `model_desc` md
+            LEFT JOIN `descriptions` d ON d.TS = TRIM(md.name)
+            WHERE TRIM(md.catalog) = :catalog
+            AND TRIM(md.Catalog_Num) = :catalogNum
+            AND d.catalog = :catalog
+            LIMIT 1
+        ', $rsm)
+            ->setParameter('catalog', $catalog)
+            ->setParameter('catalogNum', $catalogNum);
 
         try {
             $result = $query->getSingleScalarResult();

@@ -27,7 +27,33 @@ class ModelsRepository extends EntityRepository
         return $catalogList;
     }
 
+    public function getModelNameByModel($catalog, $catalogNum, $model)
+    {
+        $em = $this->getEntityManager();
 
+        $rsm = new ResultSetMapping();
+
+        $rsm->addScalarResult('descEn', 'descEn');
+
+        $nativeQuery = $em->createNativeQuery('
+        SELECT
+          d.desc_en as descEn
+        FROM `models` m
+        LEFT JOIN `descriptions` d ON m.Name1 = d.TS
+        WHERE m.catalog = :catalog
+        AND m.Catalog_Num = :catalogNum
+        AND m.Model = :model
+        AND d.catalog = :catalog
+        LIMIT 1
+        ', $rsm)
+            ->setParameter('catalog', $catalog)
+            ->setParameter('catalogNum', $catalogNum)
+            ->setParameter('model', $model);
+
+        $descEn = $nativeQuery->getSingleScalarResult();
+
+        return $descEn;
+    }
 
     public function getCatalogNumsListByCatalog($catalog)
     {
@@ -95,6 +121,36 @@ class ModelsRepository extends EntityRepository
         return $modelList;
     }
 
+    public function getClassificationDesc($catalog, $catalogNum, $model, $classification)
+    {
+        $em = $this->getEntityManager();
+
+        $rsm = new ResultSetMapping();
+
+        $rsm->addScalarResult('descEn', 'descEn');
+
+        $nativeQuery = $em->createNativeQuery('
+        SELECT
+          d.desc_en as descEn
+        FROM `models` m
+        LEFT JOIN `descriptions` d ON m.Name = d.TS
+        WHERE m.catalog = :catalog
+        AND m.Catalog_Num = :catalogNum
+        AND m.Model = :model
+        AND m.Classification = :classification
+        AND d.catalog = :catalog
+        LIMIT 1
+        ', $rsm)
+            ->setParameter('catalog', $catalog)
+            ->setParameter('catalogNum', $catalogNum)
+            ->setParameter('model', $model)
+            ->setParameter('classification', $classification);
+
+        $descEn = $nativeQuery->getSingleScalarResult();
+
+        return $descEn;
+    }
+
     public function getClassificationsListByModel($catalog, $catalogNum, $model)
     {
         $em = $this->getEntityManager();
@@ -111,11 +167,13 @@ class ModelsRepository extends EntityRepository
         FROM `models` m
         LEFT JOIN `descriptions` d ON m.name = d.TS
         WHERE m.catalog = :catalog
+        AND m.Catalog_NUM = :catalogNum
         AND m.Model = :model
         AND d.catalog = :catalog
         GROUP BY m.Classification
         ', $rsm)
             ->setParameter('catalog', $catalog)
+            ->setParameter('catalogNum', $catalogNum)
             ->setParameter('model', $model);
 
         $classificationsList = $nativeQuery->getResult();

@@ -1,5 +1,11 @@
-{% extends '::base.html.twig' %}
-
+{% extends 'CatalogMitsubishiBundle:Default:classifications_list.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('catalog_mitsubishi_homepage') }}">Выбрать регион, модель, модификацию</a> >> <a href="{{ path('catalog_mitsubishi_classifications_list', {'catalog': catalog, 'catalogNum': catalogNum, 'model': model}) }}">Выбрать комплектацию</a> >> Выбрать группу запчастей
+{% endblock breadcrumbs %}
+{% block summary %}
+    {{ parent() }}<br/>
+    <b>Комплектация</b>: {{ app.session.get('descClassification') }} ({{ classification }})
+{% endblock summary %}
 {% block body %}
 <h3>Выбрать группу запчастей:</h3>
     <div class="row">

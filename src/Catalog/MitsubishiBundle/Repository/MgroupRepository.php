@@ -79,4 +79,8 @@ class MgroupRepository extends EntityRepository
 
         return $mgroups;
     }
+
+    public function getMgroupDesc($catalog, $catalogNum, $model){
+        return true;
+    }
 } 
