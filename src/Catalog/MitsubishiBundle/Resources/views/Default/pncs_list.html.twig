@@ -21,7 +21,7 @@
 <tbody>
                 {% for item in data.partNumbers %}
                     <tr>
-                        <td>{{ item.partNumber }}</td>
+                        <td><a href="http://v3.ryli.by/search/preload/?article={{ item.partNumber }}">{{ item.partNumber }}</a></td>
                         <td>{{ item.startDate }}</td>
                         <td>{{ item.endDate }}</td>
                         <td>{{ item.quantity }}</td>
