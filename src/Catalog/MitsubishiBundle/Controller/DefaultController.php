@@ -35,7 +35,14 @@ class DefaultController extends Controller
 
             $descEnCatalogNum = $this->get('catalog_mitsubishi.repository.modeldesc')->getCatalogNumDesc($catalog, $catalogNum);
 
+            setcookie('descCatalogNum', '');
             setcookie('descCatalogNum', $descEnCatalogNum, 0, '/');
+
+            $modelsArray = array();
+            foreach($modelsList as $item){
+                $modelsArray[$item['model']] = $item['descEn'];
+            }
+            setcookie($catalog.$catalogNum, json_encode($modelsArray), 0, '/');
 
             return $this->render('CatalogMitsubishiBundle:Default:models_list.html.twig', array(
                 'modelsList'=>$modelsList,
@@ -44,13 +51,21 @@ class DefaultController extends Controller
         }
     }
 
+    /**
+     * @param $catalog
+     * @param $catalogNum
+     * @param $model
+     * @return Response
+     */
     public function classificationsListAction($catalog, $catalogNum, $model)
     {
         $classificationsList = $this->get('catalog_mitsubishi.repository.models')->getClassificationsListByModel($catalog, $catalogNum, $model);
 
-        $descEnModel = $this->get('catalog_mitsubishi.repository.models')->getModelNameByModel($catalog, $catalogNum, $model);
-
-        setcookie('descModel', $descEnModel, 0, '/');
+        $classificationsArray = array();
+        foreach($classificationsList as $item){
+            $classificationsArray[$item['classification']] = $item['descEn'];
+        }
+        setcookie('classificationsArray', json_encode($classificationsArray), 0, '/');
 
         return $this->render('CatalogMitsubishiBundle:Default:classifications_list.html.twig', array(
             'classificationsList'=>$classificationsList,
@@ -70,6 +85,7 @@ class DefaultController extends Controller
 
         $descEnClassification = $this->get('catalog_mitsubishi.repository.models')->getClassificationDesc($catalog, $catalogNum, $model, $classification);
 
+        setcookie('descClassification', '');
         setcookie('descClassification', $descEnClassification, 0, '/');
 
         return $this->render('CatalogMitsubishiBundle:Default:main_groups_list.html.twig', array(
@@ -119,6 +135,11 @@ class DefaultController extends Controller
         $pncCoords = $this->get('catalog_mitsubishi.repository.pictures')->getGroupsByPicture($catalog, $illustration);
         $pncs = $this->get('catalog_mitsubishi.repository.partgroup')->getPncsByModel($catalog, $model, $mainGroup, $subGroup, $classification);
 
+        $pncCoordsCodes = array();
+        foreach($pncCoords as $code){
+            $pncCoordsCodes[$code['code']] = $code['code'];
+        }
+
         $descSgroup = $this->get('catalog_mitsubishi.repository.sgroup')->getSgroupDesc($catalog, $catalogNum, $model, $mainGroup, $subGroup);
 
         return $this->render('CatalogMitsubishiBundle:Default:pncs_list.html.twig', array(
@@ -131,7 +152,8 @@ class DefaultController extends Controller
             'subGroup'=>$subGroup,
             'classification'=>$classification,
             'illustration'=>$illustration,
-            'descSubGroup'=>$descSgroup
+            'descSubGroup'=>$descSgroup,
+            'pncCoordsCodes'=>$pncCoordsCodes
         ));
     }
 }

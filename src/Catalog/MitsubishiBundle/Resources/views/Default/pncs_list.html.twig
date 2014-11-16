@@ -6,17 +6,34 @@
 <h3>Выбрать запчасть:</h3>
     {% set newArray = [] %}
 <div class="row">
-    <div class="col-xs-2">
+    <div class="col-xs-3">
     {% for key, data in pncs %}
-            <div id="pnc_{{ key}}" ><a href="#">{{ key }}</a></div>
-            {% for partNumber in data %}
-                    <div id="prt_{{ key }}" class="hidden">
-                        {{ partNumber }}<br/>
-                    </div>
-            {% endfor %}
+        {% if key in pncCoordsCodes %}
+            <div id="pnc_{{ key}}" class="small" ><b>{{ key }} {{ data.descEn }}</b></div>
+            <div id="prt_{{ key }}" class="hidden">
+                <table class="table small">
+                    <thead>
+                    <td>Артикул</td>
+                    <td>Начало производства</td>
+                    <td>Конец производства</td>
+                    <td>Количество</td>
+                    </thead>
+<tbody>
+                {% for item in data.partNumbers %}
+                    <tr>
+                        <td>{{ item.partNumber }}</td>
+                        <td>{{ item.startDate }}</td>
+                        <td>{{ item.endDate }}</td>
+                        <td>{{ item.quantity }}</td>
+                    </tr>
+                {% endfor %}
+</tbody>
+                </table>
+            </div>
             <script>
                 $("#pnc_{{ key }}").on("mouseover", function(){
                     $('img').mapster('set', true, '{{ key }}');
+                    $(this).css('cursor', 'pointer');
                 });
                 $("#pnc_{{ key }}").on("mouseout", function(){
                     $('img').mapster('set', false, '{{ key }}');
@@ -25,9 +42,10 @@
                     $('#prt_{{ key }}').toggleClass("hidden");
                 });
             </script>
+        {% endif%}
     {% endfor %}
     </div>
-    <div class="col-xs-10">
+    <div class="col-xs-9">
         <map name="{{ illustration }}">
         {% for data in pncCoords %}
                 {% if data.code in pncs|keys %}

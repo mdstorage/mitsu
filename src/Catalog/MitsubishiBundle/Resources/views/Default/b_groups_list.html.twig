@@ -1,4 +1,11 @@
 {% extends 'CatalogMitsubishiBundle:Default:sub_groups_list.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('catalog_mitsubishi_homepage') }}">Выбрать регион, модель, модификацию</a> >>
+    <a href="{{ path('catalog_mitsubishi_classifications_list', {'catalog': catalog, 'catalogNum': catalogNum, 'model': model}) }}">Выбрать комплектацию</a> >>
+    <a href="{{ path('catalog_mitsubishi_maingroups_list', {'catalog': catalog, 'catalogNum': catalogNum, 'model': model, 'classification': classification}) }}">Выбрать группу запчастей</a> >>
+<a href="{{ path('catalog_mitsubishi_subgroups_list', {'catalog': catalog, 'catalogNum': catalogNum, 'model': model, 'classification': classification, 'mainGroup': mainGroup}) }}">Выбрать подгруппу запчастей</a> >>
+    Выбрать схему
+{% endblock breadcrumbs %}
 {% block summary %}
     {{ parent() }}<br/>
     <b>Подгруппа запчастей</b>:

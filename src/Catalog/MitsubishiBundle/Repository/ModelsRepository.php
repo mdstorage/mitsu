@@ -80,7 +80,8 @@ class ModelsRepository extends EntityRepository
         WHERE m.catalog = :catalog
         AND TRIM(md.catalog) = :catalog
         AND d.catalog = :catalog
-        GROUP BY d.desc_en;
+        GROUP BY m.Catalog_Num
+        ORDER BY d.desc_en, m.Rep_Model;
         ', $rsm)
             ->setParameter('catalog', $catalog);
 

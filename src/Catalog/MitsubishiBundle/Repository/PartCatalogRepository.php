@@ -22,19 +22,33 @@ class PartCatalogRepository extends EntityRepository
 
         $rsm->addScalarResult('pnc', 'pnc');
         $rsm->addScalarResult('partNumber', 'partNumber');
+        $rsm->addScalarResult('descEn', 'descEn');
+        $rsm->addScalarResult('startDate', 'startDate');
+        $rsm->addScalarResult('endDate', 'endDate');
+        $rsm->addScalarResult('quantity', 'quantity');
 
         $nativeQuery = $em->createNativeQuery('
             SELECT
               pg.PNC as pnc,
-              pg.PartNumber as partNumber
+              pg.PartNumber as partNumber,
+              pg.StartDate as startDate,
+              pg.EndDate as endDate,
+              pg.Qty as quantity,
+              d.desc_en as descEn
             FROM
               `part_catalog` pg
+            LEFT JOIN
+              `pnc` ON pg.PNC = pnc.pnc
+            LEFT JOIN
+              `descriptions` d ON pnc.desc_code = d.TS
             WHERE
               pg.catalog = :catalog
-              AND pg.Model = :model
+              AND (pg.Model = :model)
               AND pg.MainGroup = :mainGroup
               AND pg.SubGroup = :subGroup
               AND (pg.Classification = :classification OR pg.Classification = "")
+              AND pnc.catalog = :catalog
+              AND d.catalog = :catalog
               GROUP BY pg.PartNumber
               ORDER BY pg.PNC
         ', $rsm)
@@ -48,7 +62,13 @@ class PartCatalogRepository extends EntityRepository
 
         $pncs = array();
         foreach ($nativeResult as $item){
-            $pncs[$item['pnc']][] = $item['partNumber'];
+            $pncs[$item['pnc']]['descEn'] = $item['descEn'];
+            $pncs[$item['pnc']]['partNumbers'][] = array(
+                'partNumber'=>$item['partNumber'],
+                'startDate'=>$item['startDate'],
+                'endDate'=>$item['endDate'],
+                'quantity'=>$item['quantity'],
+            );
         }
 
         return $pncs;
