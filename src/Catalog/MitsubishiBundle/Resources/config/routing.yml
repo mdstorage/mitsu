@@ -32,3 +32,8 @@ catalog_mitsubishi_pncs_list:
    path:     /mitsubishi/pncsList/{illustration}/{catalog}/{model}/{mainGroup}/{subGroup}/{classification}/{catalogNum}
    defaults: {_controller: CatalogMitsubishiBundle:Default:pncsList}
 
+catalog_mitsubishi_find_vin:
+   path:      /mitsubishi/find/vin
+   defaults: {_controller: CatalogMitsubishiBundle:Default:findVin}
+   requirements: {_method: POST}
+

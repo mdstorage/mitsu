@@ -16,19 +16,23 @@
             <script src="{{ asset('bundles/catalogmitsubishi/js/bootstrap.min.js') }}"></script>
             <script src="{{ asset('bundles/catalogmitsubishi/js/jquery.imagemapster.min.js') }}"></script>
         {% endblock %}
-        <div class="container-fluid">
-            <div class="breadcrumb">
-                {% block breadcrumbs %}
-                {% endblock breadcrumbs %}
-            </div>
+        <div class="mitsu">
+            <div class="container-fluid">
+                <div class="breadcrumb">
+                    {% block breadcrumbs %}
+                    {% endblock breadcrumbs %}
+                </div>
+                {% block vin %}{% endblock vin %}
+                {% block summary_set%}
+                <div class="alert alert-info">
+                    <div class="row">
+                        {% block summary %}{% endblock summary%}
+                    </div>
+                </div>
+                {% endblock summary_set%}
 
-            {% block summary_set%}
-            <div class="alert alert-info">
-                {% block summary %}{% endblock summary%}
+                {% block body %}{% endblock body%}
             </div>
-            {% endblock summary_set%}
-
-            {% block body %}{% endblock body%}
         </div>
     </body>
 </html>

@@ -3,7 +3,6 @@
 namespace Catalog\MitsubishiBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -22,6 +21,18 @@ class DefaultController extends Controller
             $catalog = $request->get('catalog');
             $vncsList = $this->get('catalog_mitsubishi.repository.models')->getCatalogNumsListByCatalog($catalog);
             return $this->render('CatalogMitsubishiBundle:Default:vncs_list.html.twig', array('vncsList'=>$vncsList, 'catalog'=>$catalog));
+        }
+    }
+
+    public function findVinAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()){
+            $vin = $request->get('vin');
+            $byVin = $this->get('catalog_mitsubishi.repository.vin')->findByVin($vin);
+            while ($byVin['xref'] !== ""){
+                $byVin = $this->get('catalog_mitsubishi.repository.vin')->findByVin($vin, $byVin['xref']);
+            }
+            return $this->render('CatalogMitsubishiBundle:Default:find_vin.html.twig', array('byVin'=>$byVin));
         }
     }
 

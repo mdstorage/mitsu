@@ -21,9 +21,17 @@
 <tbody>
                 {% for item in data.partNumbers %}
                     <tr>
-                        <td><a href="http://v3.ryli.by/search/preload/?article={{ item.partNumber }}">{{ item.partNumber }}</a></td>
-                        <td>{{ item.startDate }}</td>
-                        <td>{{ item.endDate }}</td>
+                        <td><a href="http://v3.ryli.by/search/preload/?article={{ item.partNumber }}" target="_blank">{{ item.partNumber }}</a></td>
+                        <td>{{ item.startDate|slice(4,2) }}/{{ item.startDate|slice(0,4) }}</td>
+
+                        <td>
+                            {% if item.endDate != "" %}
+                                {{ item.endDate|slice(4,2) }}/{{ item.endDate|slice(0,4) }}
+                            {% else %}
+                                ...
+                            {% endif %}
+                        </td>
+
                         <td>{{ item.quantity }}</td>
                     </tr>
                 {% endfor %}
@@ -34,9 +42,11 @@
                 $("#pnc_{{ key }}").on("mouseover", function(){
                     $('img').mapster('set', true, '{{ key }}');
                     $(this).css('cursor', 'pointer');
+                    $(this).addClass('btn-info');
                 });
                 $("#pnc_{{ key }}").on("mouseout", function(){
                     $('img').mapster('set', false, '{{ key }}');
+                    $(this).removeClass('btn-info');
                 });
                 $("#pnc_{{ key }}").on("click", function(){
                     $('#prt_{{ key }}').toggleClass("hidden");

@@ -53,6 +53,12 @@ services:
         factory_method: getRepository
         arguments: [Catalog\MitsubishiBundle\Entity\PartCatalog]
 
+  catalog_mitsubishi.repository.vin:
+        class: Catalog\MitsubishiBundle\Repository\VinRepository
+        factory_service: doctrine.orm.entity_manager
+        factory_method: getRepository
+        arguments: [Catalog\MitsubishiBundle\Entity\Vin]
+
   json_decode.extension:
         class: Catalog\MitsubishiBundle\Twig\Extension\JsonExtension
         tags:

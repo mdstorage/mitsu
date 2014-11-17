@@ -4,10 +4,13 @@
     <a href="{{ path('catalog_mitsubishi_homepage') }}">Выбрать регион, модель, модификацию</a> >> Выбрать комплектацию
 {% endblock breadcrumbs %}
     {% block summary %}
+        <div class="col-xs-6">
             <h4>Информация:</h4>
+
             <b>Регион</b>: {{ catalog }}<br/>
             <b>Модель</b>: {{ app.request.cookies.get('descCatalogNum') }} ({{ catalogNum }})<br/>
             <b>Модификация</b>: {{ app.request.cookies.get(catalog~catalogNum)|json_decode[model] }} ({{ model }})
+        </div>
     {% endblock summary %}
 {% block body %}
     <h3>Выбрать комплектацию:</h3>

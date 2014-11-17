@@ -1,7 +1,57 @@
 {% extends '::base.html.twig' %}
 {% block breadcrumbs %}
-    Каталог
+    Выбрать регион, модель, модификацию
 {% endblock breadcrumbs %}
+{% block vin %}
+    <div class="alert alert-dismissable">
+        <div class="row">
+            <div class="col-xs-6">
+                <h3>Поиск по VIN</h3>
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-xs-10">
+                            <input type="text" class="form-control" id="vin" placeholder="Введите VIN"/>
+                        </div>
+                        <input type="button" class="btn btn-info" value="Искать" id="vin-button"/>
+                    </div>
+                </div>
+                <div id="vin-result"></div>
+            </div>
+            <div class="col-xs-6">
+                <h3>Поиск по FRAME</h3>
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-xs-4">
+                            <input type="text" class="form-control" id="frame-1"/>
+                        </div>
+                        <div class="col-xs-6">
+                            <input type="text" class="form-control" id="frame-2"/>
+                        </div>
+                        <input type="button" class="btn btn-info" value="Искать" id="frame-button"/>
+                    </div>
+                </div>
+                <div id="frame-result"></div>
+            </div>
+        </div>
+    <script>
+        $("#vin-button").on('click', function(){
+            $.ajax({
+                type:   'POST',
+                async:  false,
+                url:    "{{ path('catalog_mitsubishi_find_vin') }}",
+                data:   { vin: $("#vin").val() },
+                success: function(data) {
+                    $("#vin-result").html(data);
+                }
+            });
+        });
+        $("#frame-button").on('click', function(){
+            alert($("#frame-1").val()+"-"+$("#frame-2").val());
+        });
+    </script>
+
+    </div>
+{% endblock vin %}
 {% block summary_set %}
 {% endblock summary_set %}
 {% block body %}

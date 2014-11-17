@@ -3,7 +3,7 @@
     <a href="{{ path('catalog_mitsubishi_homepage') }}">Выбрать регион, модель, модификацию</a> >> <a href="{{ path('catalog_mitsubishi_classifications_list', {'catalog': catalog, 'catalogNum': catalogNum, 'model': model}) }}">Выбрать комплектацию</a> >> Выбрать группу запчастей
 {% endblock breadcrumbs %}
 {% block summary %}
-    {{ parent() }}<br/>
+    {{ parent() }}
     <b>Комплектация</b>: {{ (app.request.cookies.get('classificationsArray')|json_decode)[classification] }} ({{ classification }})
 {% endblock summary %}
 {% block body %}
