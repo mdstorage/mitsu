@@ -12,6 +12,8 @@ class DefaultController extends Controller
     {
         $catalogsList = $this->get('catalog_mitsubishi.repository.models')->getCatalogsList();
 
+        setcookie('prodDate', '');
+
         return $this->render('CatalogMitsubishiBundle:Default:catalogs_list.html.twig', array('catalogsList'=>$catalogsList));
     }
 
@@ -28,11 +30,48 @@ class DefaultController extends Controller
     {
         if ($request->isXmlHttpRequest()){
             $vin = $request->get('vin');
-            $byVin = $this->get('catalog_mitsubishi.repository.vin')->findByVin($vin);
-            while ($byVin['xref'] !== ""){
-                $byVin = $this->get('catalog_mitsubishi.repository.vin')->findByVin($vin, $byVin['xref']);
+            if (isset($vin)){
+                $byVin = $this->get('catalog_mitsubishi.repository.vin')->findByVin($vin);
+
+                return $this->byVinProcessing($byVin, $vin, "", "");
             }
-            return $this->render('CatalogMitsubishiBundle:Default:find_vin.html.twig', array('byVin'=>$byVin));
+        }
+    }
+
+    public function findFrameAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()){
+            $frame1 = $request->get('frame1');
+            $frame2 = $request->get('frame2');
+            if (isset($frame1) && isset($frame2)){
+                $byVin = $this->get('catalog_mitsubishi.repository.vin')->findByVin("", "", $frame1, $frame2);
+                return $this->byVinProcessing($byVin, "", $frame1, $frame2);
+            }
+        }
+    }
+
+    private function byVinProcessing($byVin, $vin = "", $frame1 = "", $frame2 = "")
+    {
+        if($byVin){
+            while ($byVin['xref'] !== ""){
+                $byVin = $this->get('catalog_mitsubishi.repository.vin')->findByVin($vin, $byVin['xref'], $frame1, $frame2);
+            }
+            $catalogNum = $this->get('catalog_mitsubishi.repository.models')->getCatalogNumByModelClassification($byVin['catalog'], $byVin['model'], $byVin['classification']);
+            $modelName = $this->get('catalog_mitsubishi.repository.models')->getModelNameByModel($byVin['catalog'], $catalogNum['catalogNum'], $byVin['model']);
+            $classificationDesc = $this->get('catalog_mitsubishi.repository.models')->getClassificationDesc($byVin['catalog'], $catalogNum['catalogNum'], $byVin['model'], $byVin['classification']);
+            setcookie('descCatalogNum', '');
+            setcookie('descCatalogNum', $catalogNum['descEn'], 0, '/');
+            setcookie($byVin['catalog'].$catalogNum['catalogNum'], json_encode(array($byVin['model']=>$modelName)), 0, '/');
+            setcookie('classificationsArray', json_encode(array($byVin['classification']=>$classificationDesc)), 0, '/');
+            setcookie('prodDate', $byVin['prodDate'], 0, '/');
+            return $this->render('CatalogMitsubishiBundle:Default:find_vin.html.twig', array(
+                'byVin'=>$byVin,
+                'catalogNum'=>$catalogNum,
+                'modelName'=>$modelName,
+                'classificationDesc'=>$classificationDesc
+            ));
+        } else {
+            return new Response("По Вашему запросу ничего не найдено.");
         }
     }
 
@@ -144,7 +183,7 @@ class DefaultController extends Controller
     public function pncsListAction($catalog, $model, $catalogNum, $mainGroup, $subGroup, $classification, $illustration)
     {
         $pncCoords = $this->get('catalog_mitsubishi.repository.pictures')->getGroupsByPicture($catalog, $illustration);
-        $pncs = $this->get('catalog_mitsubishi.repository.partgroup')->getPncsByModel($catalog, $model, $mainGroup, $subGroup, $classification);
+        $pncs = $this->get('catalog_mitsubishi.repository.partgroup')->getPncsByModel($catalog, $model, $mainGroup, $subGroup, $classification, isset($_COOKIE['prodDate'])?:"");
 
         $pncCoordsCodes = array();
         foreach($pncCoords as $code){

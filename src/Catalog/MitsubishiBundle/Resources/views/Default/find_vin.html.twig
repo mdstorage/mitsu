@@ -1,3 +1,20 @@
-Регион: {{ byVin.catalog }}<br/>
-Модель: {{ byVin.model }}<br/>
-Модификация: {{ byVin.classification }}
+{% if byVin is defined %}
+    Регион: {{ byVin.catalog }}<br/>
+    Модель: {{ catalogNum.descEn }}<br/>
+    Модификация: {{ modelName }} ({{ byVin.model }})<br/>
+    Комплектация: {{ classificationDesc }} ({{ byVin.classification }})<br/>
+    Дата производства: {{ byVin.prodDate|slice(4,2) }}/{{ byVin.prodDate|slice(0,4) }}<br/><br/>
+    <input type="button" value="Перейти в каталог" class="btn btn-default" id="toCatalog"/>
+    <script>
+        $("input#toCatalog").on('click', function(){
+            window.location.href = "{{ path('catalog_mitsubishi_maingroups_list', {
+                'catalog': byVin.catalog,
+                'catalogNum': catalogNum.catalogNum,
+                'model': byVin.model,
+                'classification': byVin.classification
+            }) }}";
+        });
+    </script>
+{% else %}
+        Ничего
+{% endif %}

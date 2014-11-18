@@ -37,3 +37,8 @@ catalog_mitsubishi_find_vin:
    defaults: {_controller: CatalogMitsubishiBundle:Default:findVin}
    requirements: {_method: POST}
 
+catalog_mitsubishi_find_frame:
+   path:      /mitsubishi/find/frame
+   defaults: {_controller: CatalogMitsubishiBundle:Default:findFrame}
+   requirements: {_method: POST}
+

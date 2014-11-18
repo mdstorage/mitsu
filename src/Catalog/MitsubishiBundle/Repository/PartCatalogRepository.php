@@ -14,8 +14,14 @@ use Doctrine\ORM\Query\ResultSetMapping;
 
 class PartCatalogRepository extends EntityRepository
 {
-    public function getPncsByModel($catalog, $model, $mainGroup, $subGroup, $classification)
+    public function getPncsByModel($catalog, $model, $mainGroup, $subGroup, $classification, $prodDate = "")
     {
+        if ($prodDate !== ""){
+            $prodDateString = 'AND (pg.EndDate >= :prodDate OR pg.EndDate = "")';
+        } else {
+            $prodDateString = "";
+        }
+
         $em = $this->getEntityManager();
 
         $rsm = new ResultSetMapping();
@@ -46,17 +52,18 @@ class PartCatalogRepository extends EntityRepository
               AND (pg.Model = :model)
               AND pg.MainGroup = :mainGroup
               AND pg.SubGroup = :subGroup
-              AND (pg.Classification = :classification OR pg.Classification = "")
+              AND (pg.Classification = :classification OR pg.Classification = "")' . $prodDateString . '
               AND pnc.catalog = :catalog
               AND d.catalog = :catalog
-              GROUP BY pg.PartNumber
-              ORDER BY pg.PNC
+              GROUP BY pg.PartNumber, pg.StartDate, pg.EndDate
+              ORDER BY pg.PNC, pg.StartDate
         ', $rsm)
         ->setParameter('catalog', $catalog)
         ->setParameter('model', $model)
         ->setParameter('mainGroup', $mainGroup)
         ->setParameter('subGroup', $subGroup)
-        ->setParameter('classification', $classification);
+        ->setParameter('classification', $classification)
+            ->setParameter('prodDate', $prodDate);
 
         $nativeResult = $nativeQuery->getResult();
 

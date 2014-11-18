@@ -94,6 +94,37 @@ class ModelsRepository extends EntityRepository
         return $catalogList;
     }
 
+    public function getCatalogNumByModelClassification($catalog, $model, $classification)
+    {
+        $em = $this->getEntityManager();
+
+        $rsm = new ResultSetMapping();
+
+        $rsm->addScalarResult('catalogNum', 'catalogNum');
+        $rsm->addScalarResult('descEn', 'descEn');
+
+        $nativeQuery = $em->createNativeQuery('
+        SELECT
+          m.Catalog_Num as catalogNum,
+          d.desc_en as descEn
+        FROM `models` m
+        LEFT JOIN `model_desc` md ON m.Catalog_Num = TRIM(md.catalog_num)
+        LEFT JOIN `descriptions` d ON TRIM(md.name) = d.TS
+        WHERE m.Model = :model
+        AND m.Classification = :classification
+        AND TRIM(md.catalog) = :catalog
+        AND d.catalog = :catalog
+        LIMIT 1
+        ', $rsm)
+            ->setParameter('catalog', $catalog)
+            ->setParameter('model', $model)
+            ->setParameter('classification', $classification);
+
+        $catalogNum = $nativeQuery->getSingleResult();
+
+        return $catalogNum;
+    }
+
     public function getModelsListByCatalogNum($catalog, $catalogNum)
     {
         $em = $this->getEntityManager();

@@ -68,7 +68,7 @@
                         $("#pnc_{{ data.code }}").removeClass("btn-info");
                     });
                     $("area#area{{ data.code }}{{ data.startX }}").on("click", function(){
-                        $("#prt_{{ data.code }}").toggleClass("hidden");
+                        $("#prt_{{ data.code }}").removeClass("hidden");
                     });
                 </script>
                 {% elseif data.code|slice(2,1) == " "%}

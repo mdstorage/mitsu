@@ -35,6 +35,11 @@
         </div>
     <script>
         $("#vin-button").on('click', function(){
+            if($("#vin").val().length !== 17){
+                alert("VIN должен состоять из 17 знаков!");
+                return;
+            }
+            $("#vin-result").html('<img src={{ asset("bundles/catalogmitsubishi/images/loading.gif") }} height="150px" />');
             $.ajax({
                 type:   'POST',
                 async:  false,
@@ -46,7 +51,18 @@
             });
         });
         $("#frame-button").on('click', function(){
-            alert($("#frame-1").val()+"-"+$("#frame-2").val());
+            if($("#frame-1").val().length > 0 && $("#frame-2").val().length > 0){
+                $("#frame-result").html('<img src={{ asset("bundles/catalogmitsubishi/images/loading.gif") }} height="150px" />');
+                $.ajax({
+                    type:   'POST',
+                    async:  false,
+                    url:    "{{ path('catalog_mitsubishi_find_frame') }}",
+                    data:   { frame1: $("#frame-1").val(), frame2: $("#frame-2").val() },
+                    success: function(data) {
+                        $("#frame-result").html(data);
+                    }
+                });
+            }
         });
     </script>
 
