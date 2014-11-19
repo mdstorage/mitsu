@@ -1,0 +1,21 @@
+<h4>Запчасть с указанным артикулом используется в следующих моделях:</h4>
+<h3>Выбрать регион:</h3>
+<ul class="nav nav-pills" role="tablist">
+    {% for catalog, catalogNums in catalogsList %}
+        {% if loop.index == 1 %}
+            <li role="region" class="active" id="{{ catalog }}"><a href="#">{{ catalog }}</a></li>
+            {% for catalogNum, data in catalogNums %}
+                {{ data.descEn }}<br/>
+                {% for model, data in data.models %}
+                    {{ data.descEn }}<br/>
+                    {% for classification, data in data.classifications %}
+                        {{ data }}<br/>
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        {% else %}
+            <li role="region" id="{{ catalog }}"><a href="#">{{ catalog }}</a></li>
+        {% endif %}
+
+    {% endfor %}
+</ul>

@@ -42,3 +42,8 @@ catalog_mitsubishi_find_frame:
    defaults: {_controller: CatalogMitsubishiBundle:Default:findFrame}
    requirements: {_method: POST}
 
+catalog_mitsubishi_find_articul:
+   path:      /mitsubishi/find/articul
+   defaults: {_controller: CatalogMitsubishiBundle:Default:findArticul}
+   requirements: {_method: POST}
+
