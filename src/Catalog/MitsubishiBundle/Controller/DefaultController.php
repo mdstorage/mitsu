@@ -61,7 +61,7 @@ class DefaultController extends Controller
             $classificationDesc = $this->get('catalog_mitsubishi.repository.models')->getClassificationDesc($byVin['catalog'], $catalogNum['catalogNum'], $byVin['model'], $byVin['classification']);
             setcookie('descCatalogNum', '');
             setcookie('descCatalogNum', $catalogNum['descEn'], 0, '/');
-            setcookie($byVin['catalog'].$catalogNum['catalogNum'], json_encode(array($byVin['model']=>$modelName)), 0, '/');
+            setcookie($byVin['catalog'].$catalogNum['catalogNum'], serialize(array($byVin['model']=>$modelName)), 0, '/');
             setcookie('classificationsArray', serialize(array($byVin['classification']=>$classificationDesc)), 0, '/');
             setcookie('prodDate', $byVin['prodDate'], 0, '/');
             return $this->render('CatalogMitsubishiBundle:Default:find_vin.html.twig', array(
