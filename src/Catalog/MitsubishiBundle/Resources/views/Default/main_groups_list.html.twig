@@ -4,7 +4,7 @@
 {% endblock breadcrumbs %}
 {% block summary %}
     {{ parent() }}
-    <b>Комплектация</b>: {{ (app.request.cookies.get('classificationsArray')|json_decode)[classification] }} ({{ classificaon }})#}
+    <b>Комплектация</b>: {{ (app.request.cookies.get('classificationsArray')|json_decode)[classification] }} ({{ classification }})
 {% endblock summary %}
 {% block body %}
 <h3>Выбрать группу запчастей:</h3>
