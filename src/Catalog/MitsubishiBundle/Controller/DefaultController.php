@@ -62,7 +62,7 @@ class DefaultController extends Controller
             setcookie('descCatalogNum', '');
             setcookie('descCatalogNum', $catalogNum['descEn'], 0, '/');
             setcookie($byVin['catalog'].$catalogNum['catalogNum'], json_encode(array($byVin['model']=>$modelName)), 0, '/');
-            setcookie('classificationsArray', json_encode(array($byVin['classification']=>$classificationDesc)), 0, '/');
+            setcookie('classificationsArray', serialize(array($byVin['classification']=>$classificationDesc)), 0, '/');
             setcookie('prodDate', $byVin['prodDate'], 0, '/');
             return $this->render('CatalogMitsubishiBundle:Default:find_vin.html.twig', array(
                 'byVin'=>$byVin,
@@ -72,6 +72,31 @@ class DefaultController extends Controller
             ));
         } else {
             return new Response("По Вашему запросу ничего не найдено.");
+        }
+    }
+
+    public function findArticulAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()){
+            $articul = $request->get('articul');
+
+            $partNumbers = $this->get('catalog_mitsubishi.repository.partgroup')->findModelByArticul($articul);
+
+            $catalogsList = array();
+            foreach($partNumbers as $partNumber){
+                if($partNumber['model'] && $partNumber['classification']){
+                    $catalogNum = $this->get('catalog_mitsubishi.repository.models')->getCatalogNumByModelClassification($partNumber['catalog'], $partNumber['model'], $partNumber['classification']);
+                    $modelName = $this->get('catalog_mitsubishi.repository.models')->getModelNameByModel($partNumber['catalog'], $catalogNum['catalogNum'], $partNumber['model']);
+                    $classificationDesc = $this->get('catalog_mitsubishi.repository.models')->getClassificationDesc($partNumber['catalog'], $catalogNum['catalogNum'], $partNumber['model'], $partNumber['classification']);
+                    $catalogsList[$partNumber['catalog']][$catalogNum['catalogNum']]['descEn'] = $catalogNum['descEn'];
+                    $catalogsList[$partNumber['catalog']][$catalogNum['catalogNum']]['models'][$partNumber['model']]['descEn'] = $modelName;
+                    $catalogsList[$partNumber['catalog']][$catalogNum['catalogNum']]['models'][$partNumber['model']]['classifications'][$partNumber['classification']] = $classificationDesc;
+                }
+            }
+
+            return $this->render('CatalogMitsubishiBundle:Default:find_articul.html.twig', array(
+                'catalogsList'=>$catalogsList
+            ));
         }
     }
 
@@ -92,7 +117,7 @@ class DefaultController extends Controller
             foreach($modelsList as $item){
                 $modelsArray[$item['model']] = $item['descEn'];
             }
-            setcookie($catalog.$catalogNum, json_encode($modelsArray), 0, '/');
+            setcookie($catalog.$catalogNum, serialize($modelsArray), 0, '/');
 
             return $this->render('CatalogMitsubishiBundle:Default:models_list.html.twig', array(
                 'modelsList'=>$modelsList,
@@ -115,7 +140,7 @@ class DefaultController extends Controller
         foreach($classificationsList as $item){
             $classificationsArray[$item['classification']] = $item['descEn'];
         }
-        setcookie('classificationsArray', json_encode($classificationsArray), 0, '/');
+        setcookie('classificationsArray', serialize($classificationsArray), 0, '/');
 
         return $this->render('CatalogMitsubishiBundle:Default:classifications_list.html.twig', array(
             'classificationsList'=>$classificationsList,
@@ -131,7 +156,7 @@ class DefaultController extends Controller
         $mgroups = $this->get('catalog_mitsubishi.repository.mgroup')->getMgroupsByModel($catalog, $catalogNum, $model, $classification);
         $mgroup = $this->get('catalog_mitsubishi.repository.pictures')->getGroupsByPicture($catalog, $illustration);
 
-        setcookie('mgroups', json_encode($mgroups), 0, '/');
+        setcookie('mgroups', serialize($mgroups), 0, '/');
 
         $descEnClassification = $this->get('catalog_mitsubishi.repository.models')->getClassificationDesc($catalog, $catalogNum, $model, $classification);
 

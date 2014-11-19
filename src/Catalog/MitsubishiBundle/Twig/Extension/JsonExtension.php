@@ -26,7 +26,7 @@ class JsonExtension extends Twig_Extension
     }
 
     public function jsonDecode($str) {
-        return json_decode($str, true);
+        return unserialize($str);
     }
 }{
 
