@@ -2,8 +2,45 @@
 {% block breadcrumbs %}
     Выбрать регион, модель, модификацию
 {% endblock breadcrumbs %}
+{% block articul %}
+    <div class="alert alert-dismissable" id="articul-group">
+        <div class="row">
+            <div class="col-xs-6">
+                <h3>Поиск запчасти по артикулу</h3>
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-xs-10">
+                            <input type="text" class="form-control" id="articul" placeholder="Введите артикул запчасти"/>
+                        </div>
+                        <input type="button" class="btn btn-info" value="Искать" id="articul-button"/>
+                    </div>
+                </div>
+                <div id="articul-result"></div>
+            </div>
+        </div>
+        <script>
+            $("#articul-button").on('click', function(){
+                if($("#articul").val().length !== 8){
+                    alert("Артикул должен состоять из 8 знаков!");
+                    return;
+                }
+                $("#articul-result").html('<img src={{ asset("bundles/catalogmitsubishi/images/loading.gif") }} height="150px" />');
+                $.ajax({
+                    type:   'POST',
+                    async:  false,
+                    url:    "{{ path('catalog_mitsubishi_find_articul') }}",
+                    data:   { articul: $("#articul").val() },
+                    success: function(data) {
+                        $("#articul-result").html(data);
+                    }
+                });
+            });
+        </script>
+
+    </div>
+{% endblock articul %}
 {% block vin %}
-    <div class="alert alert-dismissable">
+    <div class="alert alert-dismissable" id="vin-frame-group">
         <div class="row">
             <div class="col-xs-6">
                 <h3>Поиск по VIN</h3>
@@ -71,46 +108,62 @@
 {% block summary_set %}
 {% endblock summary_set %}
 {% block body %}
-    <h3>Выбрать регион:</h3>
-    <ul class="nav nav-pills" role="tablist">
-        {% set radio_count = 0 %}
-        {% for catalog in catalogsList %}
-            {% if radio_count == 0 %}
-                <li role="region" class="active" id="{{ catalog.catalog }}"><a href="#">{{ catalog.catalog }}</a></li>
-            {% else %}
-                <li role="region" id="{{ catalog.catalog }}"><a href="#">{{ catalog.catalog }}</a></li>
-            {% endif %}
-            {% set radio_count = radio_count + 1 %}
-        {% endfor %}
-    </ul>
-    <script>
-        $(document).ready(function(){
+    <div class="alert alert-dismissable">
+        <h3><div id="manual-catalog-label">Ручной поиск в каталоге</div></h3>
+        <div class="hidden" id="manual-catalog">
+            <h3>Выбрать регион:</h3>
+            <ul class="nav nav-pills" role="tablist">
+                {% for catalog in catalogsList %}
+                    {% if loop.index == 1 %}
+                        <li role="region" class="active" id="{{ catalog.catalog }}"><a href="#">{{ catalog.catalog }}</a></li>
+                    {% else %}
+                        <li role="region" id="{{ catalog.catalog }}"><a href="#">{{ catalog.catalog }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            <script>
+                $(document).ready(function(){
 
-            $.ajax({
-                type:   'POST',
-                async:  false,
-                url:    "{{ path('catalog_mitsubishi_vncs_list') }}",
-                data:   { catalog: $("li.active[role=region]").attr('id') },
-                success: function(data) {
-                    $("#result").html(data);
-                }
-            });
-        })
-        $("li[role=region]").on('click', function(){
-            $("li.active").toggleClass('active');
-            $(this).toggleClass('active');
-            $("#result").html('<img src={{ asset("bundles/catalogmitsubishi/images/loading.gif") }} height="150px" />');
-            $.ajax({
-                type:   'POST',
-                async:  false,
-                url:    "{{ path('catalog_mitsubishi_vncs_list') }}",
-                data:   { catalog: $(this).attr('id') },
-                success: function(data) {
-                        $("#result").html(data);
-                }
-            });
-        });
-    </script>
-    <h3>Модельный ряд:</h3>
-    <div id="result"><img src="{{ asset('bundles/catalogmitsubishi/images/loading.gif') }}" height="150px" /></div>
+                    $.ajax({
+                        type:   'POST',
+                        async:  false,
+                        url:    "{{ path('catalog_mitsubishi_vncs_list') }}",
+                        data:   { catalog: $("li.active[role=region]").attr('id') },
+                        success: function(data) {
+                            $("#result").html(data);
+                        }
+                    });
+                })
+                $("li[role=region]").on('click', function(){
+                    $("li.active").toggleClass('active');
+                    $(this).toggleClass('active');
+                    $("#result").html('<img src={{ asset("bundles/catalogmitsubishi/images/loading.gif") }} height="150px" />');
+                    $.ajax({
+                        type:   'POST',
+                        async:  false,
+                        url:    "{{ path('catalog_mitsubishi_vncs_list') }}",
+                        data:   { catalog: $(this).attr('id') },
+                        success: function(data) {
+                            $("#result").html(data);
+                        }
+                    });
+                });
+            </script>
+            <h3>Модельный ряд:</h3>
+            <div id="result"><img src="{{ asset('bundles/catalogmitsubishi/images/loading.gif') }}" height="150px" /></div>
+        </div>
+    </div>
+<script>
+    $("#manual-catalog-label").on("click", function(){
+        $("#manual-catalog").toggleClass("hidden");
+        $("#articul-group").toggleClass("hidden");
+        $("#vin-frame-group").toggleClass("hidden");
+    });
+    $("#manual-catalog-label").on("mouseover", function(){
+        $(this).css("cursor", "pointer").addClass("btn-info");
+    });
+    $("#manual-catalog-label").on("mouseout", function(){
+        $(this).removeClass("btn-info");
+    });
+</script>
 {% endblock body %}

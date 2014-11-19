@@ -80,4 +80,34 @@ class PartCatalogRepository extends EntityRepository
 
         return $pncs;
     }
+
+    public function findModelByArticul($articul)
+    {
+        $em = $this->getEntityManager();
+
+        $rsm = new ResultSetMapping();
+
+        $rsm->addScalarResult('catalog', 'catalog');
+        $rsm->addScalarResult('model', 'model');
+        $rsm->addScalarResult('classification', 'classification');
+
+        $nativeQuery = $em->createNativeQuery('
+            SELECT
+              pc.Catalog as catalog,
+              pc.Model as model,
+              pc.Classification as classification
+            FROM
+              `part_catalog` pc
+            WHERE
+              pc.PartNumber = :articul
+        ', $rsm);
+
+        if ($articul){
+            $nativeQuery->setParameter('articul', $articul);
+        }
+
+        $nativeResult = $nativeQuery->getResult();
+
+        return $nativeResult;
+    }
 } 
