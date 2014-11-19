@@ -9,7 +9,7 @@
 
             <b>Регион</b>: {{ catalog }}<br/>
             <b>Модель</b>: {{ app.request.cookies.get('descCatalogNum') }} ({{ catalogNum }})<br/>
-            <b>Модификация</b>: {{ app.request.cookies.get(catalog~catalogNum)|json_decode[model] }} ({{ model }})
+            <b>Модификация</b>: {{ app.request.cookies.get(catalog~catalogNum)|json_decode[model] }} ({{ mol }})#}
         </div>
     {% endblock summary %}
 {% block body %}
