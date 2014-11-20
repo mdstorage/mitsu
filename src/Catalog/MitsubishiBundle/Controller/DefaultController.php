@@ -83,19 +83,35 @@ class DefaultController extends Controller
             $partNumbers = $this->get('catalog_mitsubishi.repository.partgroup')->findModelByArticul($articul);
 
             $catalogsList = array();
+            $mainSubGroup = array();
+            $pnc = array();
             foreach($partNumbers as $partNumber){
-                if($partNumber['model'] && $partNumber['classification']){
+                $mainSubGroup[$partNumber['mainGroup']] = $partNumber['subGroup'];
+                $pnc['pnc'] = $partNumber['pnc'];
+                if($partNumber['model']){
+                    if ($partNumber['classification']){
                     $catalogNum = $this->get('catalog_mitsubishi.repository.models')->getCatalogNumByModelClassification($partNumber['catalog'], $partNumber['model'], $partNumber['classification']);
                     $modelName = $this->get('catalog_mitsubishi.repository.models')->getModelNameByModel($partNumber['catalog'], $catalogNum['catalogNum'], $partNumber['model']);
+
                     $classificationDesc = $this->get('catalog_mitsubishi.repository.models')->getClassificationDesc($partNumber['catalog'], $catalogNum['catalogNum'], $partNumber['model'], $partNumber['classification']);
+
+                    setcookie('descCatalogNum', '', 0, '/');
+                    setcookie($partNumber['catalog'].$catalogNum['catalogNum'], '', 0, '/');
+                    setcookie('classificationsArray', '', 0, '/');
+                    setcookie('mgroups', '', 0, '/');
+
                     $catalogsList[$partNumber['catalog']][$catalogNum['catalogNum']]['descEn'] = $catalogNum['descEn'];
                     $catalogsList[$partNumber['catalog']][$catalogNum['catalogNum']]['models'][$partNumber['model']]['descEn'] = $modelName;
                     $catalogsList[$partNumber['catalog']][$catalogNum['catalogNum']]['models'][$partNumber['model']]['classifications'][$partNumber['classification']] = $classificationDesc;
+                    }
+
                 }
             }
 
             return $this->render('CatalogMitsubishiBundle:Default:find_articul.html.twig', array(
-                'catalogsList'=>$catalogsList
+                'catalogsList'=>$catalogsList,
+                'mainSubGroup'=>$mainSubGroup,
+                'pnc'=>$pnc['pnc']
             ));
         }
     }
@@ -188,13 +204,25 @@ class DefaultController extends Controller
         ));
     }
 
-    public function bGroupsListAction($catalog, $catalogNum, $model, $mainGroup, $subGroup, $classification)
+    public function bGroupsListAction($catalog, $catalogNum, $model, $mainGroup, $subGroup, $classification, $pnc=null)
     {
         $bgroups = $this->get('catalog_mitsubishi.repository.bgroup')->getBgroupsBySgroup($catalog, $catalogNum, $model, $mainGroup, $subGroup, $classification);
         $descSgroup = $this->get('catalog_mitsubishi.repository.sgroup')->getSgroupDesc($catalog, $catalogNum, $model, $mainGroup, $subGroup);
+        $pncGroups = array();
+        if ($pnc){
+            foreach ($bgroups as $bgroup) {
+                $pncCoords = $this->get('catalog_mitsubishi.repository.pictures')->getGroupsByPicture($catalog, $bgroup['illustration']);
+                if (in_array($pnc, $pncCoords)){
+                    $pncGroups[] = $bgroup;
+                    break;
+                }
+            }
+        } else {
+            $pncGroups = $bgroups;
+        }
 
         return $this->render('CatalogMitsubishiBundle:Default:b_groups_list.html.twig', array(
-            'bgroups'=>$bgroups,
+            'bgroups'=>$pncGroups,
             'catalog'=>$catalog,
             'catalogNum'=>$catalogNum,
             'model'=>$model,

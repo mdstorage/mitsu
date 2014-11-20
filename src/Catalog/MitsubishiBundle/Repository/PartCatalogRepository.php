@@ -90,12 +90,18 @@ class PartCatalogRepository extends EntityRepository
         $rsm->addScalarResult('catalog', 'catalog');
         $rsm->addScalarResult('model', 'model');
         $rsm->addScalarResult('classification', 'classification');
+        $rsm->addScalarResult('mainGroup', 'mainGroup');
+        $rsm->addScalarResult('subGroup', 'subGroup');
+        $rsm->addScalarResult('pnc', 'pnc');
 
         $nativeQuery = $em->createNativeQuery('
             SELECT
               pc.Catalog as catalog,
               pc.Model as model,
-              pc.Classification as classification
+              pc.Classification as classification,
+              pc.MainGroup as mainGroup,
+              pc.SubGroup as subGroup,
+              pc.PNC as pnc
             FROM
               `part_catalog` pc
             WHERE

@@ -39,4 +39,32 @@ class PicturesRepository extends EntityRepository
 
         return $groupsList;
     }
+
+    public function getByIllustrationPnc($catalog, $illustration, $pnc)
+    {
+        $em = $this->getEntityManager();
+
+        $rsm = new ResultSetMapping();
+
+        $rsm->addScalarResult('illustration', 'illustration');
+        $rsm->addScalarResult('pnc', 'pnc');
+
+        $nativeQuery = $em->createNativeQuery('
+        SELECT
+          p.picture_file as illustration,
+          p.desc_code1 as pnc
+        FROM `pictures` p
+        WHERE p.catalog = :catalog
+        AND p.picture_file = :pictureFile
+        AND p.desc_code1 = :pnc
+        LIMIT 1
+        ', $rsm)
+            ->setParameter('catalog', $catalog)
+            ->setParameter('pictureFile', $illustration)
+            ->setParameter('pnc', $pnc);
+
+        $illustration = $nativeQuery->getSingleResult();
+
+        return $illustration;
+    }
 } 
