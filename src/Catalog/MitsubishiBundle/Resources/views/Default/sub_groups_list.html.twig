@@ -18,7 +18,7 @@
             <div class="col-xs-3">
                 <a href="{{ path('catalog_mitsubishi_bgroups_list', {'catalog': catalog,  'model': model, 'catalogNum': catalogNum, 'classification': classification, 'mainGroup': mainGroup, 'subGroup': data.subGroup}) }}">
                     <div>
-                        {{ data.descEn }} ({{ data.subGroup }})
+                        {{ data.descEn | trans }} ({{ data.subGroup }})
                     </div>
                     <img src="{{ asset('bundles/catalogmitsubishi/images/'~catalog~'/'~data.illustration~'.png') }}" />
                 </a>
