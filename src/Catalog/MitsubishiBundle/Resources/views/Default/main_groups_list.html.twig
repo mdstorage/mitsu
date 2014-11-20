@@ -31,7 +31,7 @@
         </div>
         <div class="col-xs-2 small">
             {% for key, data in mgroups %}
-                <a id="mg_{{ key }}" href="{{ path('catalog_mitsubishi_subgroups_list', {'catalog': catalog, 'model': model, 'catalogNum': catalogNum, 'classification': classification, 'mainGroup': key}) }}"> ({{ key }}) {{ data }}</a><br/>
+                <a id="mg_{{ key }}" href="{{ path('catalog_mitsubishi_subgroups_list', {'catalog': catalog, 'model': model, 'catalogNum': catalogNum, 'classification': classification, 'mainGroup': key}) }}"> ({{ key }}) {{ data | trans }}</a><br/>
                 <script>
                     $("#mg_{{ key }}").on("mouseover", function(){
                         $('img').mapster('set', true, '{{ key }}');

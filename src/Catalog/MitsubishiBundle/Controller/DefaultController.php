@@ -168,6 +168,8 @@ class DefaultController extends Controller
 
     public function mainGroupsListAction($catalog, $catalogNum, $model, $classification)
     {
+
+        $locale = $this->get('translator')->trans('ENGINE', array(), 'mitsubishi_bundle');
         $illustration = $this->get('catalog_mitsubishi.repository.mgroup')->getMgroupsIllustration($catalog, $catalogNum, $model, $classification);
         $mgroups = $this->get('catalog_mitsubishi.repository.mgroup')->getMgroupsByModel($catalog, $catalogNum, $model, $classification);
         $mgroup = $this->get('catalog_mitsubishi.repository.pictures')->getGroupsByPicture($catalog, $illustration);
@@ -186,7 +188,8 @@ class DefaultController extends Controller
             'catalog'=>$catalog,
             'catalogNum'=>$catalogNum,
             'model'=>$model,
-            'classification'=>$classification
+            'classification'=>$classification,
+            'locale'=>$locale
         ));
     }
 
