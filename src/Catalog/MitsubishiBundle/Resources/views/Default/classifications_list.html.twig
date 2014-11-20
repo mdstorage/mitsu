@@ -8,8 +8,12 @@
             <h4>Информация:</h4>
 
             <b>Регион</b>: {{ catalog }}<br/>
+            {% if app.request.cookies.get('descCatalogNum') is defined %}
             <b>Модель</b>: {{ app.request.cookies.get('descCatalogNum') }} ({{ catalogNum }})<br/>
+            {% endif %}
+            {% if app.request.cookies.get(catalog~catalogNum) != "" %}
             <b>Модификация</b>: {{ (app.request.cookies.get(catalog~catalogNum)|json_decode)[model] }} ({{ model }})
+            {% endif %}
         </div>
     {% endblock summary %}
 {% block body %}

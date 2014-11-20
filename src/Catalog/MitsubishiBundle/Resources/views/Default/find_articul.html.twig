@@ -1,21 +1,84 @@
 <h4>Запчасть с указанным артикулом используется в следующих моделях:</h4>
+{% set mainGroupVar = "" %}
+{% set subGroupVar = "" %}
+{% for mainGroup, subGroup in mainSubGroup %}
+    {% set mainGroupVar = mainGroup  %}
+    {% set subGroupVar = subGroup  %}
+{% endfor %}
 <h3>Выбрать регион:</h3>
 <ul class="nav nav-pills" role="tablist">
     {% for catalog, catalogNums in catalogsList %}
-        {% if loop.index == 1 %}
-            <li role="region" class="active" id="{{ catalog }}"><a href="#">{{ catalog }}</a></li>
-            {% for catalogNum, data in catalogNums %}
-                {{ data.descEn }}<br/>
-                {% for model, data in data.models %}
-                    {{ data.descEn }}<br/>
-                    {% for classification, data in data.classifications %}
-                        {{ data }}<br/>
-                    {% endfor %}
-                {% endfor %}
-            {% endfor %}
-        {% else %}
-            <li role="region" id="{{ catalog }}"><a href="#">{{ catalog }}</a></li>
-        {% endif %}
-
+            {% if loop.index == 1 %}
+                <li role="region" class="active" id="{{ catalog }}"><a href="#">{{ catalog }}</a></li>
+            {% else %}
+                <li role="region" id="{{ catalog }}"><a href="#">{{ catalog }}</a></li>
+            {% endif %}
+        <script>
+            $("li#{{ catalog }}").on("click", function(){
+                $("[active=active]").toggleClass("hidden").attr("active", "");
+                $("#{{ catalog }}_models").toggleClass("hidden").attr("active", "active");
+                $(".active").toggleClass("active");
+                $(this).toggleClass("active");
+            })
+        </script>
     {% endfor %}
 </ul>
+
+{% for catalog, catalogNums in catalogsList %}
+    {% if loop.index == 1 %}
+        {% set hidden = "" %}
+        {% set active = "active" %}
+    {% else %}
+        {% set hidden = "hidden" %}
+        {% set active = "" %}
+    {% endif %}
+
+<div class="{{ hidden }}" id="{{ catalog }}_models" active = {{ active }}>
+    {% for catalogNum, data in catalogNums %}
+        <div class="vnc glyphicon-plus" id="{{ catalog }}{{ catalogNum }}" catalog="{{ catalog }}">
+            {{ data.descEn }} ({{ catalogNum }})<br/>
+        </div>
+        {% for model, data in data.models %}
+            <div id="all_{{ catalog }}{{ catalogNum }}{{ model }}" class="hidden">
+                <div id="{{ catalog }}{{ catalogNum }}{{ model }}" class="model glyphicon-plus">
+                    {{ data.descEn }} ({{ model }})
+                </div>
+                <script>
+                    $("#{{ catalog }}{{ catalogNum }}").on("click", function(){
+                        $("#all_{{ catalog }}{{ catalogNum }}{{ model }}").toggleClass("hidden");
+                        $(this).toggleClass("glyphicon-plus");
+                        $(this).toggleClass("glyphicon-minus");
+                    });
+                    $("#{{ catalog }}{{ catalogNum }}").on("mouseover", function(){
+                        $(this).css("cursor", "pointer");
+                        $(this).addClass("btn-info");
+                    });
+                    $("#{{ catalog }}{{ catalogNum }}").on("mouseout", function(){
+                        $(this).removeClass("btn-info");
+                    });
+                </script>
+
+                {% for classification, data in data.classifications %}
+                    <div class="classification hidden" id="{{ catalog }}{{ model }}{{ classification }}">
+                        <a href="{{ path('catalog_mitsubishi_bgroups_list', {'catalog': catalog , 'catalogNum': catalogNum , 'model': model, 'classification': classification, 'mainGroup': mainGroupVar, 'subGroup': subGroupVar, 'pnc': pnc }) }}">{{ data }} ({{ classification }})</a>
+                    </div>
+                    <script>
+                        $("#{{ catalog }}{{ catalogNum }}{{ model }}").on("click", function(){
+                            $("#{{ catalog }}{{ model }}{{ classification }}").toggleClass("hidden");
+                            $(this).toggleClass("glyphicon-plus");
+                            $(this).toggleClass("glyphicon-minus");
+                        });
+                        $("#{{ catalog }}{{ catalogNum }}{{ model }}").on("mouseover", function(){
+                            $(this).css("cursor", "pointer");
+                            $(this).addClass("btn-info");
+                        });
+                        $("#{{ catalog }}{{ catalogNum }}{{ model }}").on("mouseout", function(){
+                            $(this).removeClass("btn-info");
+                        });
+                    </script>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+{% endfor %}

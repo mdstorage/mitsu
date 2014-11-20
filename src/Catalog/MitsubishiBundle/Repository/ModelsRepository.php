@@ -111,7 +111,7 @@ class ModelsRepository extends EntityRepository
         LEFT JOIN `model_desc` md ON m.Catalog_Num = TRIM(md.catalog_num)
         LEFT JOIN `descriptions` d ON TRIM(md.name) = d.TS
         WHERE m.Model = :model
-        AND m.Classification = :classification
+        AND (m.Classification = :classification OR m.Classification = "")
         AND TRIM(md.catalog) = :catalog
         AND d.catalog = :catalog
         LIMIT 1
