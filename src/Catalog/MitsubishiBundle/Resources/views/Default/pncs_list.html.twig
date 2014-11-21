@@ -1,4 +1,5 @@
 {% extends 'CatalogMitsubishiBundle:Default:b_groups_list.html.twig' %}
+{% set hidden = "hidden" %}
 {% block summary %}
     {{ parent() }}
 {% endblock summary %}
@@ -10,7 +11,12 @@
     {% for key, data in pncs %}
         {% if key in pncCoordsCodes %}
             <div id="pnc_{{ key}}" class="small" ><b>{{ key }} {{ data.descEn }}</b></div>
-            <div id="prt_{{ key }}" class="hidden">
+            {% if pnc == key %}
+                {% set hidden = "" %}
+            {% else %}
+                {% set hidden = "hidden" %}
+            {% endif %}
+            <div id="prt_{{ key }}" class="{{ hidden }}">
                 <table class="table small">
                     <thead>
                     <td>Артикул</td>
