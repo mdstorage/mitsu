@@ -207,18 +207,23 @@ class DefaultController extends Controller
         ));
     }
 
-    public function bGroupsListAction($catalog, $catalogNum, $model, $mainGroup, $subGroup, $classification, $pnc=null)
+    public function bGroupsListAction($catalog, $catalogNum, $model, $mainGroup, $subGroup, $classification)
     {
         $bgroups = $this->get('catalog_mitsubishi.repository.bgroup')->getBgroupsBySgroup($catalog, $catalogNum, $model, $mainGroup, $subGroup, $classification);
         $descSgroup = $this->get('catalog_mitsubishi.repository.sgroup')->getSgroupDesc($catalog, $catalogNum, $model, $mainGroup, $subGroup);
         $pncGroups = array();
-        if ($pnc){
+
+        if ($this->getRequest()->get('pnc')){
+            $pnc = $this->getRequest()->get('pnc');
             foreach ($bgroups as $bgroup) {
                 $pncCoords = $this->get('catalog_mitsubishi.repository.pictures')->getGroupsByPicture($catalog, $bgroup['illustration']);
-                if (in_array($pnc, $pncCoords)){
-                    $pncGroups[] = $bgroup;
-                    break;
+                foreach($pncCoords as $pncCoord){
+                    if (array_search($pnc, $pncCoord)){
+                        $pncGroups[] = $bgroup;
+                        break;
+                    }
                 }
+
             }
         } else {
             $pncGroups = $bgroups;
@@ -232,7 +237,8 @@ class DefaultController extends Controller
             'mainGroup'=>$mainGroup,
             'subGroup'=>$subGroup,
             'descSubGroup'=>$descSgroup,
-            'classification'=>$classification
+            'classification'=>$classification,
+            'pnc'=>$pnc ?:""
         ));
     }
 
@@ -259,7 +265,8 @@ class DefaultController extends Controller
             'classification'=>$classification,
             'illustration'=>$illustration,
             'descSubGroup'=>$descSgroup,
-            'pncCoordsCodes'=>$pncCoordsCodes
+            'pncCoordsCodes'=>$pncCoordsCodes,
+            'pnc'=>$this->get('request')->get('pnc')
         ));
     }
 }

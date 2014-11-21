@@ -21,7 +21,8 @@
             'subGroup': subGroup,
             'catalogNum': catalogNum,
             'classification': classification,
-            'illustration': data.illustration
+            'illustration': data.illustration,
+            'pnc': pnc
         }) }}">
         <div>Схема: {{ loop.index }} из {{ bgroups|length }}</div>
         <img src="{{ asset('bundles/catalogmitsubishi/images/'~catalog~'/'~data.illustration~'.png') }}" width="300" />
