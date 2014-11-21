@@ -16,7 +16,7 @@
             <map name="{{ illustration }}">
                 {% for data in mgroup %}
                     {% if data.code in mgroups|keys %}
-                    <area id="area{{ data.code }}" data-name="{{ data.code }}" shape="rect" coords="{{ data.startX }},{{ data.startY }},{{ data.startX+data.endX }},{{ data.startY+data.endY }}" href="{{ path('catalog_mitsubishi_subgroups_list', {'catalog': catalog, 'model': model, 'catalogNum': catalogNum, 'classification': classification, 'mainGroup': data.code}) }}" title="{{ mgroups[data.code] }}"/>
+                    <area id="area{{ data.code }}" data-name="{{ data.code }}" shape="rect" coords="{{ data.startX }},{{ data.startY }},{{ data.startX+data.endX }},{{ data.startY+data.endY }}" href="{{ path('catalog_mitsubishi_subgroups_list', {'catalog': catalog, 'model': model, 'catalogNum': catalogNum, 'classification': classification, 'mainGroup': data.code}) }}" title="{{ mgroups[data.code] | trans }}"/>
                     <script>
                         $("area#area{{ data.code }}").on("mouseover", function(){
                             $("#mg_{{ data.code }}").addClass("btn-info");
