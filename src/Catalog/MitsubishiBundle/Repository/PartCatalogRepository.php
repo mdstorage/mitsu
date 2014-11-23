@@ -63,7 +63,7 @@ class PartCatalogRepository extends EntityRepository
         ->setParameter('mainGroup', $mainGroup)
         ->setParameter('subGroup', $subGroup)
         ->setParameter('classification', $classification)
-            ->setParameter('prodDate', $prodDate);
+        ->setParameter('prodDate', $prodDate);
 
         $nativeResult = $nativeQuery->getResult();
 
