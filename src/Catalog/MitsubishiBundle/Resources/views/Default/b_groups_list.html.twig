@@ -9,7 +9,7 @@
 {% block summary %}
     {{ parent() }}<br/>
     <b>Подгруппа запчастей</b>:
-            {{ descSubGroup }} ({{ subGroup }})
+            {{ descSubGroup | trans }} ({{ subGroup }})
 {% endblock summary %}
 {% block body %}
     <h3>Выбрать схему:</h3>

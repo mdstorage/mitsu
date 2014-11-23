@@ -8,7 +8,7 @@
 {% block summary %}
     {{ parent() }}<br/><br/>
     {% if app.request.cookies.get('mgroups') != "" %}
-        <b>Группа запчастей</b>: {{ (app.request.cookies.get('mgroups')|json_decode)[mainGroup] }} ({{ mainGroup }})
+        <b>Группа запчастей</b>: {{ ((app.request.cookies.get('mgroups')|json_decode)[mainGroup]) | trans }} ({{ mainGroup }})
     {% endif %}
 {% endblock summary %}
 {% block body %}

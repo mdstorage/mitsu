@@ -12,7 +12,7 @@ class DefaultController extends Controller
     {
         $catalogsList = $this->get('catalog_mitsubishi.repository.models')->getCatalogsList();
 
-        setcookie('prodDate', '');
+        setcookie('prodDate', '', 0, "/");
 
         return $this->render('CatalogMitsubishiBundle:Default:catalogs_list.html.twig', array('catalogsList'=>$catalogsList));
     }
@@ -213,8 +213,8 @@ class DefaultController extends Controller
         $descSgroup = $this->get('catalog_mitsubishi.repository.sgroup')->getSgroupDesc($catalog, $catalogNum, $model, $mainGroup, $subGroup);
         $pncGroups = array();
 
-        if ($this->getRequest()->get('pnc')){
-            $pnc = $this->getRequest()->get('pnc');
+        if ($this->get('request')->get('pnc')){
+            $pnc = $this->get('request')->get('pnc');
             foreach ($bgroups as $bgroup) {
                 $pncCoords = $this->get('catalog_mitsubishi.repository.pictures')->getGroupsByPicture($catalog, $bgroup['illustration']);
                 foreach($pncCoords as $pncCoord){
@@ -227,6 +227,7 @@ class DefaultController extends Controller
             }
         } else {
             $pncGroups = $bgroups;
+            $pnc = "";
         }
 
         return $this->render('CatalogMitsubishiBundle:Default:b_groups_list.html.twig', array(
@@ -238,14 +239,14 @@ class DefaultController extends Controller
             'subGroup'=>$subGroup,
             'descSubGroup'=>$descSgroup,
             'classification'=>$classification,
-            'pnc'=>$pnc ?:""
+            'pnc'=>$pnc
         ));
     }
 
     public function pncsListAction($catalog, $model, $catalogNum, $mainGroup, $subGroup, $classification, $illustration)
     {
         $pncCoords = $this->get('catalog_mitsubishi.repository.pictures')->getGroupsByPicture($catalog, $illustration);
-        $pncs = $this->get('catalog_mitsubishi.repository.partgroup')->getPncsByModel($catalog, $model, $mainGroup, $subGroup, $classification, isset($_COOKIE['prodDate'])?:"");
+        $pncs = $this->get('catalog_mitsubishi.repository.partgroup')->getPncsByModel($catalog, $model, $mainGroup, $subGroup, $classification, isset($_COOKIE['prodDate'])?$_COOKIE['prodDate']:"");
 
         $pncCoordsCodes = array();
         foreach($pncCoords as $code){
