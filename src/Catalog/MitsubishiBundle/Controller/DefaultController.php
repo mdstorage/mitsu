@@ -207,7 +207,7 @@ class DefaultController extends Controller
         ));
     }
 
-    public function bGroupsListAction($catalog, $catalogNum, $model, $mainGroup, $subGroup, $classification)
+    public function bGroupsListAction($catalog, $catalogNum, $model, $mainGroup, $subGroup, $classification, $pnc=null)
     {
         $bgroups = $this->get('catalog_mitsubishi.repository.bgroup')->getBgroupsBySgroup($catalog, $catalogNum, $model, $mainGroup, $subGroup, $classification);
         $descSgroup = $this->get('catalog_mitsubishi.repository.sgroup')->getSgroupDesc($catalog, $catalogNum, $model, $mainGroup, $subGroup);
@@ -238,7 +238,7 @@ class DefaultController extends Controller
             'subGroup'=>$subGroup,
             'descSubGroup'=>$descSgroup,
             'classification'=>$classification,
-            'pnc'=>$pnc ?:""
+            'pnc'=>$pnc ? $pnc : ""
         ));
     }
 
