@@ -1,3 +1,7 @@
+catalog_mazda:
+    resource: "@CatalogMazdaBundle/Resources/config/routing.yml"
+    prefix:   /
+
 catalog_mitsubishi:
     resource: "@CatalogMitsubishiBundle/Resources/config/routing.yml"
     prefix:   /
