@@ -1,0 +1,3 @@
+catalog_mazda_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogMazdaBundle:Default:index}
