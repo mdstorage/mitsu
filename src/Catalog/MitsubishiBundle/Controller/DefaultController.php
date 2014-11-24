@@ -89,7 +89,7 @@ class DefaultController extends Controller
                 $mainSubGroup[$partNumber['mainGroup']] = $partNumber['subGroup'];
                 $pnc['pnc'] = $partNumber['pnc'];
                 if($partNumber['model']){
-                    if ($partNumber['classification']){
+                    if ($partNumber['classification'] !== ""){
                     $catalogNum = $this->get('catalog_mitsubishi.repository.models')->getCatalogNumByModelClassification($partNumber['catalog'], $partNumber['model'], $partNumber['classification']);
                     $modelName = $this->get('catalog_mitsubishi.repository.models')->getModelNameByModel($partNumber['catalog'], $catalogNum['catalogNum'], $partNumber['model']);
 
@@ -104,6 +104,21 @@ class DefaultController extends Controller
                     $catalogsList[$partNumber['catalog']][$catalogNum['catalogNum']]['models'][$partNumber['model']]['descEn'] = $modelName;
                     $catalogsList[$partNumber['catalog']][$catalogNum['catalogNum']]['models'][$partNumber['model']]['classifications'][$partNumber['classification']] = $classificationDesc;
                     }
+                    else {
+                    $catalogNum = $this->get('catalog_mitsubishi.repository.models')->getCatalogNumByModelClassification($partNumber['catalog'], $partNumber['model'], $partNumber['classification']);
+                    $modelName = $this->get('catalog_mitsubishi.repository.models')->getModelNameByModel($partNumber['catalog'], $catalogNum['catalogNum'], $partNumber['model']);
+
+                    $classificationDesc = "Все";
+
+                    setcookie('descCatalogNum', '', 0, '/');
+                    setcookie($partNumber['catalog'].$catalogNum['catalogNum'], '', 0, '/');
+                    setcookie('classificationsArray', '', 0, '/');
+                    setcookie('mgroups', '', 0, '/');
+
+                    $catalogsList[$partNumber['catalog']][$catalogNum['catalogNum']]['descEn'] = $catalogNum['descEn'];
+                    $catalogsList[$partNumber['catalog']][$catalogNum['catalogNum']]['models'][$partNumber['model']]['descEn'] = $modelName;
+                    $catalogsList[$partNumber['catalog']][$catalogNum['catalogNum']]['models'][$partNumber['model']]['classifications']['all'] = $classificationDesc;
+                    }
 
                 }
             }
@@ -113,6 +128,8 @@ class DefaultController extends Controller
                 'mainSubGroup'=>$mainSubGroup,
                 'pnc'=>$pnc['pnc']
             ));
+
+//            return new Response(var_dump($catalogsList));
         }
     }
 
