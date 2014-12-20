@@ -18,6 +18,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Catalog\MitsubishiBundle\CatalogMitsubishiBundle(),
             new Catalog\MazdaBundle\CatalogMazdaBundle(),
+            new Catalog\CommonBundle\CatalogCommonBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
