@@ -12,20 +12,20 @@ class Region extends CommonElement implements RegionInterface{
 
     public function setModels(CollectionInterface $collection)
     {
-        $this->models = $collection;
+        $this->models = $collection->getCollection();
 
         return $this;
     }
 
     public function addModel(ModelInterface $model)
     {
-        $this->models->addCollectionItem($model);
+        $this->models[] = $model;
 
         return $this;
     }
 
     public function getModels()
     {
-        return $this->models->getCollection();
+        return $this->models;
     }
 } 

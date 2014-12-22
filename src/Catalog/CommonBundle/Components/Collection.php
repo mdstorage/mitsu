@@ -31,35 +31,8 @@ class Collection implements CollectionInterface{
         return $this;
     }
 
-    public function addCollectionItem(CommonInterface $object)
-    {
-        $this->collection[] = $object;
-
-        return $this;
-    }
-
     public function getCollection()
     {
         return $this->collection;
-    }
-
-    public function getCollectionCodes()
-    {
-        $codes = array();
-        foreach($this->collection as $item){
-            $codes[] = $item->getCode();
-        }
-
-        return $codes;
-    }
-
-    public function getCollectionItem($code)
-    {
-        foreach($this->collection as $item){
-            if($code === $item->getCode()){
-                return $item;
-            }
-        }
-        return null;
     }
 } 

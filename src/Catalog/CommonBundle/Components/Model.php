@@ -12,20 +12,20 @@ class Model extends CommonElement implements ModelInterface{
 
     public function setModifications(CollectionInterface $collection)
     {
-        $this->modifications = $collection;
+        $this->modifications = $collection->getCollection();
 
         return $this;
     }
 
     public function addModification(ModificationInterface $modification)
     {
-        $this->modifications->addCollectionItem($modification);
+        $this->modifications[] = $modification;
 
         return $this;
     }
 
     public function getModifications()
     {
-        return $this->modifications->getCollection();
+        return $this->modifications;
     }
 } 

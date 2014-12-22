@@ -12,20 +12,20 @@ class Modification extends CommonElement implements ModificationInterface{
 
     public function setComplectations(CollectionInterface $collection)
     {
-        $this->complectations = $collection;
+        $this->complectations = $collection->getCollection();
 
         return $this;
     }
 
     public function addComplectation(ComplectationInterface $object)
     {
-        $this->complectations->addCollectionItem($object);
+        $this->complectations[] = $object;
 
         return $this;
     }
 
     public function getComplectations()
     {
-        return $this->complectations->getCollection();
+        return $this->complectations;
     }
 } 

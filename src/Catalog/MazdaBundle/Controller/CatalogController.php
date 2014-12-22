@@ -1,8 +1,9 @@
 <?php
-
 namespace Catalog\MazdaBundle\Controller;
 
 
-class CatalogController {
+use Catalog\CommonBundle\Controller\CatalogController as BaseController;
+
+class CatalogController extends BaseController{
 
 } 

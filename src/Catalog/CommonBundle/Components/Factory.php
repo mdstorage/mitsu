@@ -17,7 +17,7 @@ class Factory {
         $oRegion = new Region();
         self::setParameters($oRegion, $code, $name, $options);
         if(!empty($models)){
-            $oRegion->setModels($models, self::createModel());
+            $oRegion->setModels(self::createCollection($models, self::createModel()));
         }
 
         return $oRegion;
@@ -40,7 +40,7 @@ class Factory {
 
         self::setParameters($oModification, $code, $name, $options);
         if(!empty($complectations)){
-            $oModification->setComplectations($complectations, self::createComplectation());
+            $oModification->setComplectations(self::createCollection($complectations, self::createComplectation()));
         }
 
         return $oModification;

@@ -3,12 +3,12 @@ namespace Catalog\CommonBundle\Components\Interfaces;
 
 interface SchemaInterface extends CommonInterface
 {
-    public function setPncs($pncs, PncInterface $pncClass);
+    public function setPncs(CollectionInterface $collection);
     public function getPncs();
 
-    public function setCommonArticuls($articuls, ArticulInterface $articulClass);
+    public function setCommonArticuls(CollectionInterface $collection);
     public function getCommonArticuls();
 
-    public function setRefGroups($groups, GroupInterface $groupClass);
+    public function setRefGroups(CollectionInterface $collection);
     public function getRefGroups();
 }
