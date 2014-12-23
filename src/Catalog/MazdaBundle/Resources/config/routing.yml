@@ -1,1 +1,8 @@
+catalog_mazda:
+  path:         /mazda/catalog/{regionCode}
+  defaults:     {_controller: CatalogMazdaBundle:Catalog:regionsModels, regionCode: null}
 
+#catalog_mazda_models:
+#  path:         /mazda/models
+#  defaults:     {_controller: CatalogMazdaBundle:Catalog:models}
+#  requirements: {_method: POST}

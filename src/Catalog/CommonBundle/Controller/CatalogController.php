@@ -3,24 +3,32 @@ namespace Catalog\CommonBundle\Controller;
 
 
 use Catalog\CommonBundle\Components\Factory;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-class CatalogController extends BaseController{
-    public function regionsModelsAction($articul, $regionCode=null)
+abstract class CatalogController extends BaseController{
+
+    abstract function bundle();
+
+    abstract function model();
+
+    public function regionsModelsAction($regionCode)
     {
         /*
          * Выборка регионов из базы данных для конкретного артикула
          */
-        $aRegions = FindArticulModel::getRegions($articul);
+        $aRegions = $this->model()->getRegions();
+
         if(empty($aRegions)){
-            throw new CHttpException("Запчасть с артикулом " .$articul. " отсутствует в каталоге.");
+            return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Регионы не найдены.'));
         } else {
             $oActiveRegion = Factory::createRegion();
             /*
              * Если регионы найдены, они помещаются в контейнер
              */
             $oContainer = Factory::createContainer()
-                ->setActiveArticul(Factory::createArticul($articul))
-                ->setRegions($aRegions, $oActiveRegion);
+                ->setRegions(Factory::createCollection($aRegions, $oActiveRegion));
+
             /*
              * Если пользователь задал регион, то этот регион становится активным
              */
@@ -38,16 +46,20 @@ class CatalogController extends BaseController{
             /*
              * Выборка моделей из базы для данного артикула и региона
              */
-            $models = FindArticulModel::getActiveRegionModels($articul, $oActiveRegion->getCode());
+
+            $models = $this->model()->getModels($oActiveRegion->getCode());
 
             if(empty($models)){
-                throw new CHttpException("Ошибка в выборе моделей для региона: " . $oActiveRegion->getRuname());
+                return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Модели не найдены.'));
             } else {
-                $oActiveRegion->setModels($models, Factory::createModel());
+                $oActiveRegion->setModels(Factory::createCollection($models, Factory::createModel()));
             }
 
             $oContainer->setActiveRegion($oActiveRegion);
-
         }
+
+        return $this->render($this->bundle() . ':Catalog:01_regions_models.html.twig', array(
+            'oContainer' => $oContainer
+        ));
     }
 } 

@@ -1,0 +1,38 @@
+{% extends '::base.html.twig' %}
+{% block breadcrumbs %}
+    Выбрать регион, модель, модификацию
+{% endblock breadcrumbs %}
+{% block body %}
+    {% block regions %}
+        <h3>Выбрать регион:</h3>
+        <ul class="nav nav-pills" role="tablist">
+            {% for region in oContainer.getRegions %}
+                <li role="region" class="{% if region.getCode == oContainer.getActiveRegion.getCode %}active{% endif %}" id="{{ region.getCode }}"><a href="{{ path('catalog_mazda', {'regionCode': region.getCode}) }}">{{ region.getRuname }}</a></li>
+            {% endfor %}
+        </ul>
+        {#<script>#}
+            {#$("li[role=region]").on('click', function(){#}
+                {#$("li.active").toggleClass('active');#}
+                {#$(this).toggleClass('active');#}
+                {#$("#result").html('<img src={{ asset("bundles/catalogmitsubishi/images/loading.gif") }} height="150px" />');#}
+                {#$.ajax({#}
+                    {#type:   'POST',#}
+                    {#async:  false,#}
+                    {#url:    "{% block ajaxUrl %}{% endblock ajaxUrl %}",#}
+                    {#data:   { regionCode: $(this).attr('id') },#}
+                    {#success: function(data) {#}
+                        {#$("#result").html(data);#}
+                    {#}#}
+                {#});#}
+            {#});#}
+        {#</script>#}
+    {% endblock regions %}
+    {% block models %}
+        <h3>Модельный ряд:</h3>
+        <div id="result">
+            {% for model in oContainer.getActiveRegion.getModels %}
+                {{ model.getRuname }}
+            {% endfor %}
+        </div>
+    {% endblock models %}
+{% endblock body %}
