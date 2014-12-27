@@ -34,11 +34,24 @@ class MazdaCatalogModel extends CatalogModel{
         return $regions;
 
     }
+
     public function getModels($regionCode)
     {
         $models = array();
-        $models['1'] = array(Constants::NAME=>$regionCode.' model', Constants::OPTIONS=>array());
+        for ($i=1; $i<10; $i++){
+            $models[$i] = array(Constants::NAME=>$regionCode.' model'.$i, Constants::OPTIONS=>array());
+        }
 
         return $models;
+    }
+
+    public function getModifications($regionCode, $modelCode)
+    {
+        $modifications = array();
+        for ($i=1; $i<10; $i++){
+            $modifications[$i] = array(Constants::NAME=>$regionCode.$modelCode.' modification'.$i, Constants::OPTIONS=>array());
+        }
+
+        return $modifications;
     }
 } 

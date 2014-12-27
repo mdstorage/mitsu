@@ -1,0 +1,5 @@
+{% extends '::base.html.twig' %}
+        {% block stylesheets %}
+            {{ parent() }}
+            <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/common.css') }}" media="all">
+        {% endblock %}

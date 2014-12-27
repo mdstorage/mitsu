@@ -27,7 +27,42 @@
                 {% block summary_set%}
                 <div class="alert alert-info">
                     <div class="row">
-                        {% block summary %}{% endblock summary%}
+                        {% block summary %}
+                            <div class="col-lg-4">
+                                <div>
+                                    {% block region %}
+                                        Регион: {% block regionRuname %}{% endblock regionRuname %}
+                                    {% endblock region %}
+                                </div>
+                                <div>
+                                    {% block model %}
+                                        Модель: {% block modelRuname %}{% endblock modelRuname %}
+                                    {% endblock model %}
+                                </div>
+                                <div>
+                                    {% block modification %}
+                                        Модификация: {% block modificationRuname %}{% endblock modificationRuname %}
+                                    {% endblock modification %}
+                                </div>
+                                <div>
+                                    {% block complectation %}
+                                        Комплектация: {% block complectationRuname %}{% endblock complectationRuname %}
+                                    {% endblock complectation %}
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div>
+                                    {% block group %}
+                                        Группа запчастей: {% block groupRuname %}{% endblock groupRuname %}
+                                    {% endblock group %}
+                                </div>
+                                <div>
+                                    {% block subGroup %}
+                                        Подгруппа запчастей: {% block subGroupRuname %}{% endblock subGroupRuname %}
+                                    {% endblock subGroup %}
+                                </div>
+                            </div>
+                        {% endblock summary%}
                     </div>
                 </div>
                 {% endblock summary_set%}

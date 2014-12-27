@@ -62,4 +62,27 @@ abstract class CatalogController extends BaseController{
             'oContainer' => $oContainer
         ));
     }
+
+    public function modificationsAction(Request $request)
+    {
+        $regionCode = $request->get('regionCode');
+        $modelCode = $request->get('modelCode');
+
+        $modifications = $this->model()->getModifications($regionCode, $modelCode);
+
+        $oContainer = Factory::createContainer()
+            ->setActiveModel(Factory::createModel($modelCode)
+                ->setModifications(Factory::createCollection($modifications, Factory::createModification())
+                )
+            );
+
+        return $this->render($this->bundle() . ':Catalog:02_modifications.html.twig', array(
+            'oContainer' => $oContainer
+        ));
+    }
+
+    public function complectationsAction()
+    {
+        $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+    }
 } 

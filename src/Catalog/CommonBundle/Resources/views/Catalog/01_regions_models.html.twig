@@ -1,7 +1,16 @@
-{% extends '::base.html.twig' %}
+{% extends 'CatalogCommonBundle::base.html.twig' %}
 {% block breadcrumbs %}
     Выбрать регион, модель, модификацию
 {% endblock breadcrumbs %}
+
+{% block regionRuname %}{{ oContainer.getActiveRegion.getRuname }}{% endblock regionRuname %}
+
+{% block model %}{% endblock model %}
+{% block modification %}{% endblock modification %}
+{% block complectation %}{% endblock complectation %}
+{% block group %}{% endblock group %}
+{% block subGroup %}{% endblock subGroup %}
+
 {% block body %}
     {% block regions %}
         <h3>Выбрать регион:</h3>
@@ -10,28 +19,38 @@
                 <li role="region" class="{% if region.getCode == oContainer.getActiveRegion.getCode %}active{% endif %}" id="{{ region.getCode }}"><a href="{{ path('catalog_mazda', {'regionCode': region.getCode}) }}">{{ region.getRuname }}</a></li>
             {% endfor %}
         </ul>
-        {#<script>#}
-            {#$("li[role=region]").on('click', function(){#}
-                {#$("li.active").toggleClass('active');#}
-                {#$(this).toggleClass('active');#}
-                {#$("#result").html('<img src={{ asset("bundles/catalogmitsubishi/images/loading.gif") }} height="150px" />');#}
-                {#$.ajax({#}
-                    {#type:   'POST',#}
-                    {#async:  false,#}
-                    {#url:    "{% block ajaxUrl %}{% endblock ajaxUrl %}",#}
-                    {#data:   { regionCode: $(this).attr('id') },#}
-                    {#success: function(data) {#}
-                        {#$("#result").html(data);#}
-                    {#}#}
-                {#});#}
-            {#});#}
-        {#</script>#}
     {% endblock regions %}
     {% block models %}
         <h3>Модельный ряд:</h3>
         <div id="result">
             {% for model in oContainer.getActiveRegion.getModels %}
-                {{ model.getRuname }}
+                <div class="model glyphicon-plus" id="{{ model.getCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}">
+                    {{ model.getRuname }}
+                </div>
+                <div id="modifications_for_model{{ model.getCode }}" class="hidden"></div>
+                <script>
+                    $("#{{ model.getCode }}").on("click", function(){
+                        $("#modifications_for_model{{ model.getCode }}").toggleClass("hidden");
+                        $(this).toggleClass("glyphicon-plus");
+                        $.ajax({
+                            type:   'POST',
+                            async:  false,
+                            url:    "{% block ajaxUrl %}{{ path('catalog_common_modifications') }}{% endblock ajaxUrl %}",
+                            data:   { regionCode: $(this).attr('regionCode'), modelCode: $(this).attr('id') },
+                            success: function(data) {
+                                $("#modifications_for_model{{ model.getCode }}").html(data);
+                            }
+                        });
+                        $(this).toggleClass("glyphicon-minus");
+                    });
+                    $("#{{ model.getCode }}").on("mouseover", function(){
+                        $(this).css("cursor", "pointer");
+                        $(this).addClass("btn-info");
+                    });
+                    $("#{{ model.getCode }}").on("mouseout", function(){
+                        $(this).removeClass("btn-info");
+                    });
+                </script>
             {% endfor %}
         </div>
     {% endblock models %}
