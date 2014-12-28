@@ -23,6 +23,11 @@ abstract class CommonElement implements CommonInterface{
         $this->name = $name;
     }
 
+    public function getName()
+    {
+        return $this->name;
+    }
+
     public function getRuname()
     {
         return $this->translate($this->name);

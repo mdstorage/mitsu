@@ -1,7 +1,14 @@
 <div class="modifications">
     {% for modification in oContainer.getActiveModel.getModifications %}
         <div>
-            {{ modification.getRuname }}
+            {% block modification %}
+                <a href="{% block modificationPath %}{% endblock modificationPath %}">
+                    {{ modification.getRuname }}
+                    {% for option in modification.getOptions %}
+                        {{ option }}
+                    {% endfor %}
+                </a>
+            {% endblock modification %}
         </div>
     {% endfor %}
 </div>

@@ -67,8 +67,15 @@ abstract class CatalogController extends BaseController{
     {
         $regionCode = $request->get('regionCode');
         $modelCode = $request->get('modelCode');
+        $parameters = array(
+            'regionCode' => $regionCode,
+            'modelCode' => $modelCode
+        );
 
         $modifications = $this->model()->getModifications($regionCode, $modelCode);
+
+        if(empty($modifications))
+            return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Модификации не найдены.'));
 
         $oContainer = Factory::createContainer()
             ->setActiveModel(Factory::createModel($modelCode)
@@ -77,12 +84,29 @@ abstract class CatalogController extends BaseController{
             );
 
         return $this->render($this->bundle() . ':Catalog:02_modifications.html.twig', array(
-            'oContainer' => $oContainer
+            'oContainer' => $oContainer,
+            'parameters' => $parameters
         ));
     }
 
-    public function complectationsAction()
+    public function complectationsAction($regionCode, $modelCode, $modificationCode)
     {
-        $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+
+        $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
+
+        if(empty($complectations))
+            return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Комплектации не найдены.'));
+
+        $oContainer = Factory::createContainer()
+            ->setActiveRegion(Factory::createRegion($regionCode, $regionCode))
+            ->setActiveModel(Factory::createModel($modelCode, $modelCode))
+            ->setActiveModification(Factory::createModification($modificationCode, $modificationCode)
+                ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
+
+        return $this->render($this->bundle() . ':Catalog:03_complectations.html.twig', array(
+            'oContainer' => $oContainer,
+            'parameters' => $parameters
+        ));
     }
 } 

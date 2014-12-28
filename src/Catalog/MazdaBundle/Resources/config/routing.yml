@@ -6,3 +6,7 @@ catalog_mazda_modifications:
   path:         /mazda/modifications
   defaults:     {_controller: CatalogMazdaBundle:Catalog:modifications}
   requirements: {_method: POST}
+
+catalog_mazda_complectations:
+  path:         /mazda/catalog/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogMazdaBundle:Catalog:complectations}

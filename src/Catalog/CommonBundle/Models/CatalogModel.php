@@ -22,4 +22,5 @@ abstract class CatalogModel{
     abstract function getRegions();
     abstract function getModels($regionCode);
     abstract function getModifications($regionCode, $modelCode);
+    abstract function getComplectations($regionCode, $modelCode, $modificationCode);
 }

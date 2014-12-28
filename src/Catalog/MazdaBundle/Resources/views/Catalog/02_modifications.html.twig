@@ -1,1 +1,9 @@
 {% extends 'CatalogCommonBundle:Catalog:02_modifications.html.twig' %}
+{% block modification %}
+    <a href="{{ path('catalog_mazda_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
+        {{ modification.getOption(constant('Catalog\\MazdaBundle\\Components\\MazdaConstants::PROD_YEAR')) }}
+        {{ modification.getOption(constant('Catalog\\MazdaBundle\\Components\\MazdaConstants::PROD_DATE')) }}
+        {{ modification.getOption(constant('Catalog\\MazdaBundle\\Components\\MazdaConstants::CARLINE')) }}
+        {{ modification.getRuname }}
+    </a>
+{% endblock modification %}
