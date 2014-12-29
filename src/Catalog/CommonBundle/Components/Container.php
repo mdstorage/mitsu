@@ -3,6 +3,7 @@ namespace Catalog\CommonBundle\Components;
 
 use Catalog\CommonBundle\Components\Interfaces\ArticulInterface;
 use Catalog\CommonBundle\Components\Interfaces\CollectionInterface;
+use Catalog\CommonBundle\Components\Interfaces\ComplectationInterface;
 use Catalog\CommonBundle\Components\Interfaces\GroupInterface;
 use Catalog\CommonBundle\Components\Interfaces\ModelInterface;
 use Catalog\CommonBundle\Components\Interfaces\ModificationInterface;
@@ -144,5 +145,17 @@ class Container {
     public function getActivePnc()
     {
         return $this->activePnc;
+    }
+
+    public function getActiveComplectation()
+    {
+        return $this->activeComplectation;
+    }
+
+    public function setActiveComplectation(ComplectationInterface $oComplectation)
+    {
+        $this->activeComplectation = $oComplectation;
+
+        return $this;
     }
 } 

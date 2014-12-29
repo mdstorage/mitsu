@@ -1,0 +1,33 @@
+{% extends 'CatalogCommonBundle::base.html.twig' %}
+{% block breadcrumbs %}
+    Выбрать регион, модель, модификацию / Выбрать комплектацию / Выбрать группу запчастей / Выбрать подгруппу запчастей
+{% endblock breadcrumbs %}
+
+{% block regionRuname %}{{ oContainer.getActiveRegion.getRuname }}{% endblock regionRuname %}
+{% block modelRuname %}{{ oContainer.getActiveModel.getRuname }}{% endblock modelRuname %}
+{% block modificationRuname %}{{ oContainer.getActiveModification.getRuname }}{% endblock modificationRuname %}
+{% block complectationRuname %}{{ oContainer.getActiveComplectation.getRuname }}{% endblock complectationRuname %}
+{% block groupRuname %}{{ oContainer.getActiveGroup.getRuname }}{% endblock groupRuname %}
+
+{% block subGroup %}{% endblock subGroup %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-lg-8">
+            <img src="{% block imagePath %}{% endblock imagePath %}" alt="{{ oContainer.getActiveGroup.getRuname }}" usemap="#{{ oContainer.getActiveGroup.getCode }}" />
+        </div>
+        <div class="col-lg-4">
+            {% block subgroups %}
+                <div class="subgroups">
+                    {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
+                        <div>
+                            {% block subgroupItem %}
+                                ({{ subgroup.getCode }}) {{ subgroup.getRuname }}
+                            {% endblock subgroupItem %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endblock subgroups %}
+        </div>
+    </div>
+{% endblock body %}

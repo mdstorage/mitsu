@@ -1,12 +1,20 @@
 catalog_mazda:
-  path:         /mazda/catalog/{regionCode}
+  path:         /mazda/catalog/0/{regionCode}
   defaults:     {_controller: CatalogMazdaBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_mazda_modifications:
-  path:         /mazda/modifications
+  path:         /mazda/catalog/1
   defaults:     {_controller: CatalogMazdaBundle:Catalog:modifications}
   requirements: {_method: POST}
 
 catalog_mazda_complectations:
-  path:         /mazda/catalog/{regionCode}/{modelCode}/{modificationCode}
+  path:         /mazda/catalog/2/{regionCode}/{modelCode}/{modificationCode}
   defaults:     {_controller: CatalogMazdaBundle:Catalog:complectations}
+
+catalog_mazda_groups:
+  path:         /mazda/catalog/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogMazdaBundle:Catalog:groups}
+
+catalog_mazda_subgroups:
+  path:         /mazda/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogMazdaBundle:Catalog:subgroups}

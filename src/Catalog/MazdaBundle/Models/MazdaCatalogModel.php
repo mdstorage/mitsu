@@ -109,4 +109,129 @@ class MazdaCatalogModel extends CatalogModel{
 
         return $complectations;
     }
+
+    public function getGroups($regionCode, $modelCode, $modificationCode)
+    {
+        $sql = "
+        SELECT `id`, `descr`
+        FROM pgroups
+        WHERE catalog = :regionCode AND catalog_number = :modificationCode AND lang = 1
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $groups = array();
+        foreach($aData as $item){
+            $groups[$item['id']] = array(
+                Constants::NAME     => $item['descr'],
+                Constants::OPTIONS  => array()
+            );
+        }
+
+        return $groups;
+    }
+
+    public function getGroup($regionCode, $modelCode, $modificationCode, $groupCode)
+    {
+        $sql = "
+        SELECT pg.cd, pg.descr, pp.pic_name
+        FROM pgroups pg
+        LEFT JOIN pgroup_pics pp ON (pg.id = pp.id AND pg.catalog = pp.catalog AND pg.catalog_number = pp.catalog_number)
+        WHERE pg.catalog = :regionCode
+            AND pg.catalog_number = :modificationCode
+            AND pg.id = :groupCode
+            AND pg.lang = 1
+        LIMIT 1
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('groupCode', $groupCode);
+        $query->execute();
+
+        $aData = $query->fetch();
+
+        $group = array(Constants::NAME => $aData['descr'], Constants::OPTIONS => array(Constants::CD => $aData['cd'], Constants::PICTURE => $aData['pic_name']));
+
+        return $group;
+    }
+
+    public function getSubgroups($regionCode, $modelCode, $modificationCode, $groupCode)
+    {
+        $sqlGroup = "
+        SELECT pp.cd, pp.pic_name
+        FROM pgroups pg
+        LEFT JOIN pgroup_pics pp ON (pg.id = pp.id AND pg.catalog = pp.catalog AND pg.catalog_number = pp.catalog_number)
+        WHERE pg.catalog = :regionCode
+            AND pg.catalog_number = :modificationCode
+            AND pg.id = :groupCode
+            AND pg.lang = 1
+        LIMIT 1
+        ";
+
+        $query = $this->conn->prepare($sqlGroup);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('groupCode', $groupCode);
+        $query->execute();
+
+        $aGroup = $query->fetch();
+
+        $sqlPicture = "
+            SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
+            FROM pictures p
+            WHERE p.cd = :cd
+              AND p.pic_name = :picName
+        ";
+
+        $query = $this->conn->prepare($sqlPicture);
+        $query->bindValue('cd', $aGroup['cd']);
+        $query->bindValue('picName', $aGroup['pic_name']);
+        $query->execute();
+
+        $aPicture = $query->fetchAll();
+
+        $labels = array();
+        foreach ($aPicture as $label){
+            $labels[$label['part_code']] = $label;
+        }
+
+        $sqlSubgroups = "
+        SELECT sg.sgroup, sg.descr
+        FROM sgroup sg
+        WHERE sg.catalog = :regionCode
+            AND sg.catalog_number = :modificationCode
+            AND sg.pgroup = :groupCode
+            AND sg.lang = 1
+        ";
+
+        $query = $this->conn->prepare($sqlSubgroups);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('groupCode', $groupCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $subgroups = array();
+        foreach($aData as $item){
+            $subgroups[$item['sgroup']] = array(
+                Constants::NAME => $item['descr'],
+                Constants::OPTIONS => array(
+                    Constants::X1 => $labels[substr($item['sgroup'], 0, 4)]['xs'],
+                    Constants::X2 => $labels[substr($item['sgroup'], 0, 4)]['xe'],
+                    Constants::Y1 => $labels[substr($item['sgroup'], 0, 4)]['ys'],
+                    Constants::Y2 => $labels[substr($item['sgroup'], 0, 4)]['ye']
+                )
+            );
+        }
+
+        return $subgroups;
+    }
 } 

@@ -2,6 +2,7 @@
 namespace Catalog\CommonBundle\Controller;
 
 
+use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Components\Factory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -105,6 +106,48 @@ abstract class CatalogController extends BaseController{
                 ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
 
         return $this->render($this->bundle() . ':Catalog:03_complectations.html.twig', array(
+            'oContainer' => $oContainer,
+            'parameters' => $parameters
+        ));
+    }
+
+    public function groupsAction($regionCode, $modelCode, $modificationCode)
+    {
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+
+        $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode);
+
+        if(empty($groups))
+            return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Группы не найдены.'));
+
+        $oContainer = Factory::createContainer()
+            ->setActiveRegion(Factory::createRegion($regionCode, $regionCode))
+            ->setActiveModel(Factory::createModel($modelCode, $modelCode))
+            ->setActiveModification(Factory::createModification($modificationCode, $modificationCode))
+            ->setGroups(Factory::createCollection($groups, Factory::createGroup()));
+
+        return $this->render($this->bundle() . ':Catalog:04_groups.html.twig', array(
+            'oContainer' => $oContainer,
+            'parameters' => $parameters
+        ));
+    }
+
+    public function subgroupsAction($regionCode, $modelCode, $modificationCode, $groupCode)
+    {
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+
+        $group = $this->model()->getGroup($regionCode, $modelCode, $modificationCode, $groupCode);
+        $subgroups = $this->model()->getSubgroups($regionCode, $modelCode, $modificationCode, $groupCode);
+
+        $oContainer = Factory::createContainer()
+            ->setActiveRegion(Factory::createRegion($regionCode, $regionCode))
+            ->setActiveModel(Factory::createModel($modelCode, $modelCode))
+            ->setActiveModification(Factory::createModification($modificationCode, $modificationCode))
+            ->setActiveGroup(Factory::createGroup($groupCode, $group[Constants::NAME], $group[Constants::OPTIONS])
+                ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup()))
+            );
+
+        return $this->render($this->bundle() . ':Catalog:05_subgroups.html.twig', array(
             'oContainer' => $oContainer,
             'parameters' => $parameters
         ));

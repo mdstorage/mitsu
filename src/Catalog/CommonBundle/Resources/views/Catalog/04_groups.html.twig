@@ -1,0 +1,24 @@
+{% extends 'CatalogCommonBundle::base.html.twig' %}
+{% block breadcrumbs %}
+    Выбрать регион, модель, модификацию / Выбрать комплектацию / Выбрать группу запчастей
+{% endblock breadcrumbs %}
+
+{% block regionRuname %}{{ oContainer.getActiveRegion.getRuname }}{% endblock regionRuname %}
+{% block modelRuname %}{{ oContainer.getActiveModel.getRuname }}{% endblock modelRuname %}
+{% block modificationRuname %}{{ oContainer.getActiveModification.getRuname }}{% endblock modificationRuname %}
+{% block complectationRuname %}{{ oContainer.getActiveComplectation.getRuname }}{% endblock complectationRuname %}
+
+{% block group %}{% endblock group %}
+{% block subGroup %}{% endblock subGroup %}
+
+{% block body %}
+    {% block groups %}
+        <div class="groups">
+            {% for group in oContainer.getGroups %}
+                <div>
+                    <a href="{% block pathToSubgroup %}{% endblock pathToSubgroup %}">{{ group.getRuname }}</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% endblock groups %}
+{% endblock body %}
