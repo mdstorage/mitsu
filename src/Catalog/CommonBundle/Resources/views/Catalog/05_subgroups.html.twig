@@ -19,13 +19,21 @@
         <div class="col-lg-4">
             {% block subgroups %}
                 <div class="subgroups">
-                    {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
-                        <div>
-                            {% block subgroupItem %}
-                                ({{ subgroup.getCode }}) {{ subgroup.getRuname }}
-                            {% endblock subgroupItem %}
-                        </div>
-                    {% endfor %}
+                    <map name="{{ oContainer.getActiveGroup.getCode }}">
+                        {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
+                            <area shape="rect" coords="
+                                {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }},
+                                {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y1')) }},
+                                {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X2')) }},
+                                {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y2')) }}
+                            " href="#" />
+                            <div>
+                                {% block subgroupItem %}
+                                    ({{ subgroup.getCode }}) {{ subgroup.getRuname }}
+                                {% endblock subgroupItem %}
+                            </div>
+                        {% endfor %}
+                    </map>
                 </div>
             {% endblock subgroups %}
         </div>
