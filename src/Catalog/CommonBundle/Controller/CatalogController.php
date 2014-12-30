@@ -152,4 +152,21 @@ abstract class CatalogController extends BaseController{
             'parameters' => $parameters
         ));
     }
+
+    public function schemasAction($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode)
+    {
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+
+        $oContainer = Factory::createContainer()
+            ->setActiveRegion(Factory::createRegion($regionCode, $regionCode))
+            ->setActiveModel(Factory::createModel($modelCode, $modelCode))
+            ->setActiveModification(Factory::createModification($modificationCode, $modificationCode))
+            ->setActiveGroup(Factory::createGroup($groupCode))
+        ->;
+
+        return $this->render($this->bundle() . ':Catalog:06_schemas.html.twig', array(
+            'oContainer' => $oContainer,
+            'parameters' => $parameters
+        ));
+    }
 } 

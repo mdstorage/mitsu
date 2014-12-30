@@ -21,28 +21,48 @@
                 <div class="subgroups">
                     <map name="{{ oContainer.getActiveGroup.getCode }}">
                         {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
-                            <area shape="rect" coords="
-                                {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }},
-                                {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y1')) }},
-                                {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X2')) }},
-                                {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y2')) }}
-                            " href="#" />
-                            <div>
-                                {% block subgroupItem %}
-                                    ({{ subgroup.getCode }}) {{ subgroup.getRuname }}
-                                {% endblock subgroupItem %}
-                            </div>
+                            {% block area %}
+                                <area shape="rect" coords="
+                                    {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }},
+                                    {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y1')) }},
+                                    {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X2')) }},
+                                    {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y2')) }}
+                                " href="#" id="{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}" data-name="{% block dataName %}{{ subgroup.getCode }}{% endblock dataName %}"/>
+                            {% endblock area %}
+                            {% block subgroupItem %}
+                                <div id="subgroup{{ subgroup.getCode }}">
+                                    <a href="{% block pathToSchemas %}{% endblock pathToSchemas %}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
+                                </div>
+                            {% endblock subgroupItem %}
+                            {% block cycleScript %}
+                                <script>
+                                    $("#{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}").on('mouseover', function(){
+                                        $("#subgroup{{ subgroup.getCode }}").toggleClass("btn-default");
+                                    });
+                                    $("#{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}").on('mouseout', function(){
+                                        $("#subgroup{{ subgroup.getCode }}").toggleClass("btn-default");
+                                    });
+                                    $("#{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}").on('click', function(){
+                                        $("#subgroup{{ subgroup.getCode }}").toggleClass("btn-info");
+                                    });
+                                </script>
+                            {% endblock cycleScript %}
                         {% endfor %}
                     </map>
                 </div>
             {% endblock subgroups %}
         </div>
     </div>
-    <script>
-        $('img').mapster({
-            fillColor: '70daf1',
-            fillOpacity: 0.3,
-            staticState: true
-        });
-    </script>
+    {% block mapsterScript %}
+        <script>
+            $('img').mapster({
+                fillColor: '70daf1',
+                fillOpacity: 0.3,
+                mapKey: 'data-name',
+                staticState: true
+            });
+        </script>
+    {% endblock mapsterScript %}
+    {% block pageScript %}
+    {% endblock pageScript %}
 {% endblock body %}

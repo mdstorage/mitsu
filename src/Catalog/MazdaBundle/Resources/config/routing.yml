@@ -18,3 +18,7 @@ catalog_mazda_groups:
 catalog_mazda_subgroups:
   path:         /mazda/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
   defaults:     {_controller: CatalogMazdaBundle:Catalog:subgroups}
+
+catalog_mazda_schemas:
+  path:         /mazda/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogMazdaBundle:Catalog:schemas}

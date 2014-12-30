@@ -4,6 +4,11 @@
 {% endblock breadcrumbs %}
 
 {% block complectation %}{% endblock complectation %}
+
 {% block imagePath %}
     {{ asset('bundles/catalogmazda/images/'~oContainer.getActiveGroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/image/'~oContainer.getActiveGroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::PICTURE'))|slice(0,3)~'/'~oContainer.getActiveGroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::PICTURE'))~'.png') }}
 {% endblock imagePath %}
+
+{% block pathToSchemas %}
+    {{ path('catalog_mazda_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}
+{% endblock pathToSchemas %}
