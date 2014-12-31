@@ -10,4 +10,5 @@ class MazdaConstants {
     const PROD_YEAR = 'prod_year';
     const PROD_DATE = 'prod_date';
     const CARLINE  = 'carline';
+    const PAGE = 'page';
 } 

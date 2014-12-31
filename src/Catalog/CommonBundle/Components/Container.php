@@ -75,6 +75,12 @@ class Container {
         return $this->groups;
     }
 
+    public function getGroup($code)
+    {
+        if(isset($this->groups[$code]))
+        return $this->groups[$code];
+    }
+
     public function setActiveGroup(GroupInterface $oGroup)
     {
         $this->activeGroup = $oGroup;

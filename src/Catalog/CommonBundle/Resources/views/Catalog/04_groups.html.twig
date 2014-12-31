@@ -12,6 +12,7 @@
 {% block subGroup %}{% endblock subGroup %}
 
 {% block body %}
+    {% block head %}<h3>Выбрать группу запчастей:</h3>{% endblock head %}
     {% block groups %}
         <div class="groups">
             {% for group in oContainer.getGroups %}

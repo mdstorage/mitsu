@@ -1,6 +1,6 @@
 {% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
 {% block breadcrumbs %}
-    Выбрать регион, модель, модификацию / Выбрать группу запчастей / Выбрать подгруппу запчастей
+    <a href="{{ path('catalog_mazda') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('catalog_mazda_groups', parameters) }}">Выбрать группу запчастей</a> / Выбрать подгруппу запчастей
 {% endblock breadcrumbs %}
 
 {% block complectation %}{% endblock complectation %}

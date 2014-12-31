@@ -24,7 +24,7 @@ class Collection implements CollectionInterface{
                 if(isset($data[Constants::OPTIONS])){
                     $oObject->setOptions($data[Constants::OPTIONS]);
                 }
-                $this->collection[] = $oObject;
+                $this->collection[$code] = $oObject;
             }
         }
 

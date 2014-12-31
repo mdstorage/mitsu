@@ -234,4 +234,44 @@ class MazdaCatalogModel extends CatalogModel{
 
         return $subgroups;
     }
+
+    public function getSchemas($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode)
+    {
+        $sqlSchemas = "
+        SELECT sp.cd, sp.pic_name, sp.descr
+        FROM sgroup_pics sp
+        WHERE sp.catalog = :regionCode
+            AND sp.catalog_number = :modificationCode
+            AND sp.sgroup = :subGroupCode
+            AND sp.lang = 1
+        UNION
+        SELECT s3.cd, s3.XC26ILFL, s3.XC26TKT1
+        FROM sgroup3 s3
+        WHERE s3.catalog = :regionCode
+            AND s3.catalog_number = :modificationCode
+            AND s3.XC26PSNO = :subGroupCode
+        ";
+
+        $query = $this->conn->prepare($sqlSchemas);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $schemas = array();
+        foreach($aData as $item){
+            if($item['pic_name']){
+                $schemas[$item['pic_name']] = array(
+                    Constants::NAME => $item['descr'],
+                    Constants::OPTIONS => array(
+                        Constants::CD => $item['cd']
+                    )
+                );
+            }
+        }
+
+        return $schemas;
+    }
 } 

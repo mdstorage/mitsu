@@ -40,7 +40,7 @@ abstract class CatalogController extends BaseController{
                  * Если пользователь не задавал регион, то в качестве активного выбирается первый из списка регионов объект
                  */
                 $regions = $oContainer->getRegions();
-                $oActiveRegion->setCode($regions[0]->getCode());
+                $oActiveRegion->setCode(reset($regions)->getCode());
             }
 
             $oActiveRegion->setName($oActiveRegion->getCode());
@@ -139,6 +139,9 @@ abstract class CatalogController extends BaseController{
         $group = $this->model()->getGroup($regionCode, $modelCode, $modificationCode, $groupCode);
         $subgroups = $this->model()->getSubgroups($regionCode, $modelCode, $modificationCode, $groupCode);
 
+        if(empty($subgroups))
+            return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Подгруппы не найдены.'));
+
         $oContainer = Factory::createContainer()
             ->setActiveRegion(Factory::createRegion($regionCode, $regionCode))
             ->setActiveModel(Factory::createModel($modelCode, $modelCode))
@@ -157,12 +160,21 @@ abstract class CatalogController extends BaseController{
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
+        $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode);
+        $subgroups = $this->model()->getSubgroups($regionCode, $modelCode, $modificationCode, $groupCode);
+        $schemas = $this->model()->getSchemas($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode);
+
+        if(empty($schemas))
+            return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Схемы не найдены.'));
+
         $oContainer = Factory::createContainer()
             ->setActiveRegion(Factory::createRegion($regionCode, $regionCode))
             ->setActiveModel(Factory::createModel($modelCode, $modelCode))
             ->setActiveModification(Factory::createModification($modificationCode, $modificationCode))
-            ->setActiveGroup(Factory::createGroup($groupCode))
-        ->;
+            ->setGroups(Factory::createCollection($groups, Factory::createGroup()))
+            ->setActiveGroup(Factory::createGroup($groupCode, $groupCode)
+                ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup())))
+            ->setSchemas(Factory::createCollection($schemas, Factory::createSchema()));
 
         return $this->render($this->bundle() . ':Catalog:06_schemas.html.twig', array(
             'oContainer' => $oContainer,

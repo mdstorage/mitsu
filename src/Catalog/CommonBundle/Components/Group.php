@@ -20,4 +20,10 @@ class Group extends CommonElement implements GroupInterface{
     {
         return $this->subgroups;
     }
+
+    public function getSubGroup($code)
+    {
+        if(isset($this->subgroups[$code]))
+            return $this->subgroups[$code];
+    }
 } 

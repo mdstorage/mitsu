@@ -1,1 +1,23 @@
 {% extends 'CatalogCommonBundle::base.html.twig' %}
+{% block breadcrumbs %}
+    Выбрать регион, модель, модификацию / Выбрать комплектацию / Выбрать группу запчастей / Выбрать подгруппу запчастей / Выбрать схему
+{% endblock breadcrumbs %}
+
+{% block regionRuname %}{{ oContainer.getActiveRegion.getRuname }}{% endblock regionRuname %}
+{% block modelRuname %}{{ oContainer.getActiveModel.getRuname }}{% endblock modelRuname %}
+{% block modificationRuname %}{{ oContainer.getActiveModification.getRuname }}{% endblock modificationRuname %}
+{% block complectationRuname %}{{ oContainer.getActiveComplectation.getRuname }}{% endblock complectationRuname %}
+{% block groupRuname %}{{ oContainer.getGroup(parameters['groupCode']).getRuname }}{% endblock groupRuname %}
+{% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
+
+{% block body %}
+    {% block schemas %}
+        <div class="schemas">
+            {% for schema in oContainer.getSchemas %}
+                {% block schema %}
+                    {{ shema.getCode }}<br/>
+                {% endblock schema %}
+            {% endfor %}
+        </div>
+    {% endblock schemas %}
+{% endblock body %}
