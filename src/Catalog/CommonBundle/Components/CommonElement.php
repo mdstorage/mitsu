@@ -3,6 +3,7 @@ namespace Catalog\CommonBundle\Components;
 
 
 use Catalog\CommonBundle\Components\Interfaces\CommonInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
 
@@ -12,6 +13,18 @@ abstract class CommonElement implements CommonInterface{
     private $name;
 
     private $options;
+
+    private $constants;
+
+    public function setConstants($constants)
+    {
+        $this->constants = $constants;
+    }
+
+    public function getConstants()
+    {
+        return $this->constants;
+    }
 
     public function setCode($code)
     {
@@ -75,10 +88,12 @@ abstract class CommonElement implements CommonInterface{
 
     private function translate($name)
     {
-        $translator = new Translator(Constants::LOCALE);
-        $translator->addLoader('yaml', new YamlFileLoader());
-        $translator->addResource('yaml', __DIR__.Constants::TRANSLATION_RESOURCE, Constants::LOCALE, Constants::TRANSLATION_DOMAIN);
+        $constants = $this->getConstants();
 
-        return $translator->trans($name, array(), Constants::TRANSLATION_DOMAIN);
+        $translator = new Translator($constants::LOCALE);
+        $translator->addLoader('yaml', new YamlFileLoader());
+        $translator->addResource('yaml', __DIR__.$constants::TRANSLATION_RESOURCE, $constants::LOCALE, $constants::TRANSLATION_DOMAIN);
+
+        return $translator->trans($name, array(), $constants::TRANSLATION_DOMAIN);
     }
 } 

@@ -6,7 +6,7 @@
 {% block complectation %}{% endblock complectation %}
 
 {% block imagePath %}
-    {{ asset('bundles/catalogmazda/images/'~oContainer.getActiveGroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/image/'~oContainer.getActiveGroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::PICTURE'))|slice(0,3)~'/'~oContainer.getActiveGroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::PICTURE'))~'.png') }}
+    {{ asset('bundles/catalogmazda/images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/image/'~oContainer.getActiveSchema.getCode|slice(0,3)~'/'~oContainer.getActiveSchema.getCode~'.png') }}
 {% endblock imagePath %}
 
 {% block pathToSchemas %}

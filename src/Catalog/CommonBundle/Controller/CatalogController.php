@@ -13,6 +13,13 @@ abstract class CatalogController extends BaseController{
 
     abstract function model();
 
+    abstract function bundleConstants();
+
+    public function __construct()
+    {
+        Factory::setConstants($this->bundleConstants());
+    }
+
     public function regionsModelsAction($regionCode)
     {
         /*
@@ -136,8 +143,11 @@ abstract class CatalogController extends BaseController{
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
-        $group = $this->model()->getGroup($regionCode, $modelCode, $modificationCode, $groupCode);
+        $groupSchemas = $this->model()->getGroupSchemas($regionCode, $modelCode, $modificationCode, $groupCode);
+        $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode);
         $subgroups = $this->model()->getSubgroups($regionCode, $modelCode, $modificationCode, $groupCode);
+
+        $schemas = Factory::createCollection($groupSchemas, Factory::createSchema())->getCollection();
 
         if(empty($subgroups))
             return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Подгруппы не найдены.'));
@@ -146,7 +156,8 @@ abstract class CatalogController extends BaseController{
             ->setActiveRegion(Factory::createRegion($regionCode, $regionCode))
             ->setActiveModel(Factory::createModel($modelCode, $modelCode))
             ->setActiveModification(Factory::createModification($modificationCode, $modificationCode))
-            ->setActiveGroup(Factory::createGroup($groupCode, $group[Constants::NAME], $group[Constants::OPTIONS])
+            ->setActiveSchema(reset($schemas)?:Factory::createSchema())
+            ->setActiveGroup(Factory::createGroup($groupCode, $groups[$groupCode][Constants::NAME], $groups[$groupCode][Constants::OPTIONS])
                 ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup()))
             );
 

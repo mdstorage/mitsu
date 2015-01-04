@@ -7,6 +7,10 @@
  */
 namespace Catalog\MazdaBundle\Components;
 class MazdaConstants {
+    const LOCALE    = 'ru_RU';
+    const TRANSLATION_RESOURCE = '/../../../../app/Resources/translations/mazda.ru.yml';
+    const TRANSLATION_DOMAIN = 'mazda';
+
     const PROD_YEAR = 'prod_year';
     const PROD_DATE = 'prod_date';
     const CARLINE  = 'carline';

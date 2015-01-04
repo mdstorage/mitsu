@@ -136,17 +136,14 @@ class MazdaCatalogModel extends CatalogModel{
         return $groups;
     }
 
-    public function getGroup($regionCode, $modelCode, $modificationCode, $groupCode)
+    public function getGroupSchemas($regionCode, $modelCode, $modificationCode, $groupCode)
     {
         $sql = "
-        SELECT pg.cd, pg.descr, pp.pic_name
-        FROM pgroups pg
-        LEFT JOIN pgroup_pics pp ON (pg.id = pp.id AND pg.catalog = pp.catalog AND pg.catalog_number = pp.catalog_number)
-        WHERE pg.catalog = :regionCode
-            AND pg.catalog_number = :modificationCode
-            AND pg.id = :groupCode
-            AND pg.lang = 1
-        LIMIT 1
+        SELECT pp.cd, pp.pic_name
+        FROM pgroup_pics pp
+        WHERE pp.catalog = :regionCode
+            AND pp.catalog_number = :modificationCode
+            AND pp.id = :groupCode
         ";
 
         $query = $this->conn->prepare($sql);
@@ -155,11 +152,14 @@ class MazdaCatalogModel extends CatalogModel{
         $query->bindValue('groupCode', $groupCode);
         $query->execute();
 
-        $aData = $query->fetch();
+        $aData = $query->fetchAll();
 
-        $group = array(Constants::NAME => $aData['descr'], Constants::OPTIONS => array(Constants::CD => $aData['cd'], Constants::PICTURE => $aData['pic_name']));
+        $groupSchemas = array();
+        foreach ($aData as $item) {
+            $groupSchemas[$item['pic_name']] = array(Constants::NAME => $item['pic_name'], Constants::OPTIONS => array(Constants::CD => $item['cd']));
+        }
 
-        return $group;
+        return $groupSchemas;
     }
 
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $groupCode)
@@ -223,12 +223,12 @@ class MazdaCatalogModel extends CatalogModel{
         foreach($aData as $item){
             $subgroups[$item['sgroup']] = array(
                 Constants::NAME => $item['descr'],
-                Constants::OPTIONS => array(
+                Constants::OPTIONS => $labels[substr($item['sgroup'], 0, 4)] ? array(
                     Constants::X1 => $labels[substr($item['sgroup'], 0, 4)]['xs'],
                     Constants::X2 => $labels[substr($item['sgroup'], 0, 4)]['xe'],
                     Constants::Y1 => $labels[substr($item['sgroup'], 0, 4)]['ys'],
                     Constants::Y2 => $labels[substr($item['sgroup'], 0, 4)]['ye']
-                )
+                ) : array()
             );
         }
 

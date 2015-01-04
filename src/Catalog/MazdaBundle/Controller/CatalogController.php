@@ -3,7 +3,6 @@ namespace Catalog\MazdaBundle\Controller;
 
 
 use Catalog\CommonBundle\Controller\CatalogController as BaseController;
-use Catalog\MazdaBundle\Models\MazdaCatalogModel;
 
 class CatalogController extends BaseController{
 
@@ -15,5 +14,10 @@ class CatalogController extends BaseController{
     public function model()
     {
         return $this->get('mazda.catalog.model');
+    }
+
+    public function bundleConstants()
+    {
+        return 'Catalog\MazdaBundle\Components\MazdaConstants';
     }
 } 
