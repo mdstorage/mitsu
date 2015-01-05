@@ -172,6 +172,8 @@ abstract class CatalogController extends BaseController{
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
         $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode);
+        $groupsCollection = Factory::createCollection($groups, Factory::createGroup())->getCollection();
+
         $subgroups = $this->model()->getSubgroups($regionCode, $modelCode, $modificationCode, $groupCode);
         $schemas = $this->model()->getSchemas($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode);
 
@@ -182,12 +184,37 @@ abstract class CatalogController extends BaseController{
             ->setActiveRegion(Factory::createRegion($regionCode, $regionCode))
             ->setActiveModel(Factory::createModel($modelCode, $modelCode))
             ->setActiveModification(Factory::createModification($modificationCode, $modificationCode))
-            ->setGroups(Factory::createCollection($groups, Factory::createGroup()))
-            ->setActiveGroup(Factory::createGroup($groupCode, $groupCode)
+            ->setActiveGroup($groupsCollection[$groupCode]
                 ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup())))
             ->setSchemas(Factory::createCollection($schemas, Factory::createSchema()));
 
         return $this->render($this->bundle() . ':Catalog:06_schemas.html.twig', array(
+            'oContainer' => $oContainer,
+            'parameters' => $parameters
+        ));
+    }
+
+    public function schemaAction($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode)
+    {
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+
+        $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode);
+        $groupsCollection = Factory::createCollection($groups, Factory::createGroup())->getCollection();
+
+        $subgroups = $this->model()->getSubgroups($regionCode, $modelCode, $modificationCode, $groupCode);
+
+        $schema = $this->model()->getSchema($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode);
+        $schemaCollection = Factory::createCollection($schema, Factory::createSchema())->getCollection();
+
+        $oContainer = Factory::createContainer()
+            ->setActiveRegion(Factory::createRegion($regionCode, $regionCode))
+            ->setActiveModel(Factory::createModel($modelCode, $modelCode))
+            ->setActiveModification(Factory::createModification($modificationCode, $modificationCode))
+            ->setActiveGroup($groupsCollection[$groupCode]
+                ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup())))
+            ->setActiveSchema($schemaCollection[$schemaCode]);
+
+        return $this->render($this->bundle() . ':Catalog:07_schema.html.twig', array(
             'oContainer' => $oContainer,
             'parameters' => $parameters
         ));

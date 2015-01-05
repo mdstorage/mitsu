@@ -1,0 +1,10 @@
+{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% block breadcrumbs %}
+    Выбрать регион, модель, модификацию / Выбрать группу запчастей / Выбрать подгруппу запчастей / Выбрать схему / Выбрать запчасть
+{% endblock breadcrumbs %}
+
+{% block complectation %}{% endblock complectation %}
+
+{% block image %}
+    <img src="{{ asset('bundles/catalogmazda/images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/image/'~oContainer.getActiveSchema.getCode|slice(0,3)~'/'~oContainer.getActiveSchema.getCode~'.png') }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
+{% endblock image %}

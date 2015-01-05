@@ -1,6 +1,6 @@
 {% extends 'CatalogCommonBundle::base.html.twig' %}
 {% block breadcrumbs %}
-    Выбрать регион, модель, модификацию / Выбрать комплектацию / Выбрать группу запчастей / Выбрать подгруппу запчастей / Выбрать схему
+    Выбрать регион, модель, модификацию / Выбрать комплектацию / Выбрать группу запчастей / Выбрать подгруппу запчастей / Выбрать схему / Выбрать запчасть
 {% endblock breadcrumbs %}
 
 {% block regionRuname %}{{ oContainer.getActiveRegion.getRuname }}{% endblock regionRuname %}
@@ -11,13 +11,10 @@
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
 
 {% block body %}
-    {% block schemas %}
-        <div class="schemas">
-            {% for schema in oContainer.getSchemas %}
-                {% block schema %}
-                    {{ shema.getCode }}<br/>
-                {% endblock schema %}
-            {% endfor %}
+    {% block schema %}
+        <div class="schema">
+            {% block image %}
+            {% endblock image %}
         </div>
-    {% endblock schemas %}
+    {% endblock schema %}
 {% endblock body %}

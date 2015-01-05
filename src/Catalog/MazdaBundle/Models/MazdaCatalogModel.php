@@ -144,6 +144,7 @@ class MazdaCatalogModel extends CatalogModel{
         WHERE pp.catalog = :regionCode
             AND pp.catalog_number = :modificationCode
             AND pp.id = :groupCode
+        LIMIT 1
         ";
 
         $query = $this->conn->prepare($sql);
@@ -238,14 +239,14 @@ class MazdaCatalogModel extends CatalogModel{
     public function getSchemas($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode)
     {
         $sqlSchemas = "
-        SELECT sp.cd, sp.pic_name, sp.descr
+        SELECT sp.cd, sp.pic_name, sp.XC26TKT1, sp.descr
         FROM sgroup_pics sp
         WHERE sp.catalog = :regionCode
             AND sp.catalog_number = :modificationCode
             AND sp.sgroup = :subGroupCode
             AND sp.lang = 1
         UNION
-        SELECT s3.cd, s3.XC26ILFL, s3.XC26TKT1
+        SELECT s3.cd, s3.XC26ILFL, s3.XC26TKT1, null
         FROM sgroup3 s3
         WHERE s3.catalog = :regionCode
             AND s3.catalog_number = :modificationCode
@@ -263,8 +264,33 @@ class MazdaCatalogModel extends CatalogModel{
         $schemas = array();
         foreach($aData as $item){
             if($item['pic_name']){
+                $aDescr = array();
+                foreach (explode(" ", $item['XC26TKT1']) as $code) {
+                    $sql = "
+                    SELECT ad.descr
+                    FROM additional_descs ad
+                    WHERE ad.catalog = :regionCode
+                        AND ad.catalog_number = :modificationCode
+                        AND ad.cd = :cd
+                        AND ad.id = :id
+                        AND ad.lang = 1
+                    LIMIT 1
+                    ";
+
+                    $query = $this->conn->prepare($sql);
+                    $query->bindValue('regionCode', $regionCode);
+                    $query->bindValue('modificationCode', $modificationCode);
+                    $query->bindValue('cd', $item['cd']);
+                    $query->bindValue('id', $code);
+                    $query->execute();
+
+                    $aDescr[] = $query->fetchColumn();
+
+                    $add_descr = implode(" ", $aDescr);
+                }
+
                 $schemas[$item['pic_name']] = array(
-                    Constants::NAME => $item['descr'],
+                    Constants::NAME => $item['descr'] . " " . $add_descr,
                     Constants::OPTIONS => array(
                         Constants::CD => $item['cd']
                     )
@@ -273,5 +299,46 @@ class MazdaCatalogModel extends CatalogModel{
         }
 
         return $schemas;
+    }
+
+    public function getSchema($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode)
+    {
+        $sqlSchemas = "
+        SELECT sp.cd, sp.XC26TKT1, sp.descr
+        FROM sgroup_pics sp
+        WHERE sp.catalog = :regionCode
+            AND sp.catalog_number = :modificationCode
+            AND sp.sgroup = :subGroupCode
+            AND sp.pic_name = :schemaCode
+            AND sp.lang = 1
+        UNION
+        SELECT s3.cd, s3.XC26TKT1, null
+        FROM sgroup3 s3
+        WHERE s3.catalog = :regionCode
+            AND s3.catalog_number = :modificationCode
+            AND s3.XC26ILFL = :schemaCode
+            AND s3.XC26PSNO = :subGroupCode
+        ";
+
+        $query = $this->conn->prepare($sqlSchemas);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('schemaCode', $schemaCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $schema = array();
+        foreach ($aData as $item) {
+            $schema[$schemaCode] = array(
+                Constants::NAME => $schemaCode,
+                Constants::OPTIONS => array(
+                    Constants::CD => $item['cd']
+                )
+            );
+        }
+
+        return $schema;
     }
 } 
