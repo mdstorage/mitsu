@@ -26,3 +26,8 @@ catalog_mazda_schemas:
 catalog_mazda_schema:
   path:         /mazda/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
   defaults:     {_controller: CatalogMazdaBundle:Catalog:schema}
+
+catalog_mazda_articuls:
+  path:         /mazda/catalog/7
+  defaults:     {_controller: CatalogMazdaBundle:Catalog:articuls}
+  requirements: {_method: POST}

@@ -11,6 +11,7 @@
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
 
 {% block body %}
+    {% block head %}<h3>Выбрать схему:</h3>{% endblock head %}
     {% block schemas %}
         <div class="schemas">
             {% for schema in oContainer.getSchemas %}

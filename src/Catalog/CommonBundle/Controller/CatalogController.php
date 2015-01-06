@@ -73,28 +73,30 @@ abstract class CatalogController extends BaseController{
 
     public function modificationsAction(Request $request)
     {
-        $regionCode = $request->get('regionCode');
-        $modelCode = $request->get('modelCode');
-        $parameters = array(
-            'regionCode' => $regionCode,
-            'modelCode' => $modelCode
-        );
-
-        $modifications = $this->model()->getModifications($regionCode, $modelCode);
-
-        if(empty($modifications))
-            return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Модификации не найдены.'));
-
-        $oContainer = Factory::createContainer()
-            ->setActiveModel(Factory::createModel($modelCode)
-                ->setModifications(Factory::createCollection($modifications, Factory::createModification())
-                )
+        if ($request->isXmlHttpRequest()) {
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+            $parameters = array(
+                'regionCode' => $regionCode,
+                'modelCode' => $modelCode
             );
 
-        return $this->render($this->bundle() . ':Catalog:02_modifications.html.twig', array(
-            'oContainer' => $oContainer,
-            'parameters' => $parameters
-        ));
+            $modifications = $this->model()->getModifications($regionCode, $modelCode);
+
+            if(empty($modifications))
+                return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Модификации не найдены.'));
+
+            $oContainer = Factory::createContainer()
+                ->setActiveModel(Factory::createModel($modelCode)
+                    ->setModifications(Factory::createCollection($modifications, Factory::createModification())
+                    )
+                );
+
+            return $this->render($this->bundle() . ':Catalog:02_modifications.html.twig', array(
+                'oContainer' => $oContainer,
+                'parameters' => $parameters
+            ));
+        }
     }
 
     public function complectationsAction($regionCode, $modelCode, $modificationCode)
@@ -205,6 +207,16 @@ abstract class CatalogController extends BaseController{
 
         $schema = $this->model()->getSchema($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode);
         $schemaCollection = Factory::createCollection($schema, Factory::createSchema())->getCollection();
+        $oActiveSchema = $schemaCollection[$schemaCode];
+
+        $pncs = $this->model()->getPncs($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $oActiveSchema->getOption(Constants::CD));
+        $commonArticuls = $this->model()->getCommonArticuls($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $oActiveSchema->getOption(Constants::CD));
+        $refGroups = $this->model()->getReferGroups($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $oActiveSchema->getOption(Constants::CD));
+
+        $oActiveSchema
+            ->setPncs(Factory::createCollection($pncs, Factory::createPnc()))
+            ->setCommonArticuls(Factory::createCollection($commonArticuls, Factory::createArticul()))
+            ->setRefGroups(Factory::createCollection($refGroups, Factory::createGroup()));
 
         $oContainer = Factory::createContainer()
             ->setActiveRegion(Factory::createRegion($regionCode, $regionCode))
@@ -212,11 +224,29 @@ abstract class CatalogController extends BaseController{
             ->setActiveModification(Factory::createModification($modificationCode, $modificationCode))
             ->setActiveGroup($groupsCollection[$groupCode]
                 ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup())))
-            ->setActiveSchema($schemaCollection[$schemaCode]);
+            ->setActiveSchema($oActiveSchema);
 
         return $this->render($this->bundle() . ':Catalog:07_schema.html.twig', array(
             'oContainer' => $oContainer,
             'parameters' => $parameters
         ));
+    }
+
+    public function articulsAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $regionCode = $request->get('regionCode');
+            $modificationCode = $request->get('modificationCode');
+            $cd = $request->get('cd');
+            $parameters = array(
+                'regionCode' => $regionCode,
+                'modificationCode' => $modificationCode,
+                'cd' => $cd
+            );
+
+            return $this->render($this->bundle() . ':Catalog:08_articuls.html.twig', array(
+                'parameters' => $parameters
+            ));
+        }
     }
 } 

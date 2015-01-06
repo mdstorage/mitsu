@@ -28,29 +28,31 @@
                     {{ model.getRuname }}
                 </div>
                 <div id="modifications_for_model{{ model.getCode }}" class="hidden"></div>
-                <script>
-                    $("#{{ model.getCode }}").on("click", function(){
-                        $("#modifications_for_model{{ model.getCode }}").toggleClass("hidden");
-                        $(this).toggleClass("glyphicon-plus");
-                        $.ajax({
-                            type:   'POST',
-                            async:  false,
-                            url:    "{% block ajaxUrl %}{{ path('catalog_common_modifications') }}{% endblock ajaxUrl %}",
-                            data:   { regionCode: $(this).attr('regionCode'), modelCode: $(this).attr('name') },
-                            success: function(data) {
-                                $("#modifications_for_model{{ model.getCode }}").html(data);
-                            }
+                {% block modificationScript %}
+                    <script>
+                        $("#{{ model.getCode }}").on("click", function(){
+                            $("#modifications_for_model{{ model.getCode }}").toggleClass("hidden");
+                            $(this).toggleClass("glyphicon-plus");
+                            $.ajax({
+                                type:   'POST',
+                                async:  false,
+                                url:    "{% block ajaxUrl %}{{ path('catalog_common_modifications') }}{% endblock ajaxUrl %}",
+                                data:   { regionCode: $(this).attr('regionCode'), modelCode: $(this).attr('name') },
+                                success: function(data) {
+                                    $("#modifications_for_model{{ model.getCode }}").html(data);
+                                }
+                            });
+                            $(this).toggleClass("glyphicon-minus");
                         });
-                        $(this).toggleClass("glyphicon-minus");
-                    });
-                    $("#{{ model.getCode }}").on("mouseover", function(){
-                        $(this).css("cursor", "pointer");
-                        $(this).addClass("btn-info");
-                    });
-                    $("#{{ model.getCode }}").on("mouseout", function(){
-                        $(this).removeClass("btn-info");
-                    });
-                </script>
+                        $("#{{ model.getCode }}").on("mouseover", function(){
+                            $(this).css("cursor", "pointer");
+                            $(this).addClass("btn-info");
+                        });
+                        $("#{{ model.getCode }}").on("mouseout", function(){
+                            $(this).removeClass("btn-info");
+                        });
+                    </script>
+                {% endblock modificationScript %}
             {% endfor %}
         </div>
     {% endblock models %}

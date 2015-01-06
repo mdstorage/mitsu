@@ -341,4 +341,151 @@ class MazdaCatalogModel extends CatalogModel{
 
         return $schema;
     }
+
+    public function getPncs($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
+    {
+        $sqlSchemaLabels = "
+        SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
+        FROM pictures p
+        WHERE p.catalog = :regionCode
+          AND p.cd = :cd
+          AND p.pic_name = :schemaCode
+          AND p.XC26ECHK = 1
+        ";
+
+        $query = $this->conn->prepare($sqlSchemaLabels);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('cd', $cd);
+        $query->bindValue('schemaCode', $schemaCode);
+        $query->execute();
+
+        $aDataLabels = $query->fetchAll();
+
+        $sqlSchemaLabelsDescr = "
+        SELECT pn.id, pn.descr
+        FROM print_names pn
+        WHERE pn.catalog = ?
+          AND pn.cd = ?
+          AND pn.lang = 1
+          AND pn.id IN (?)
+        ";
+
+        $query = $this->conn->executeQuery($sqlSchemaLabelsDescr, array(
+            $regionCode,
+            $cd,
+            array_column($aDataLabels, 'part_code')
+        ), array(
+            \PDO::PARAM_STR,
+            \PDO::PARAM_STR,
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
+        ));
+
+        $aDataDescr = $query->fetchAll();
+
+        $sqlGroupPncs = "
+        SELECT pc.dcod
+        FROM part_catalog pc
+        WHERE pc.catalog = :regionCode
+          AND pc.cd = :cd
+          AND pc.catalog_number = :modificationCode
+          AND pc.sgroup = :subGroupCode
+        GROUP BY pc.dcod
+        ";
+
+        $query = $this->conn->prepare($sqlGroupPncs);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('cd', $cd);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->execute();
+
+        $aDataGroupPncs = $query->fetchAll();
+
+        $pncs = array();
+        foreach ($aDataLabels as $item) {
+            if (in_array($item['part_code'], array_column($aDataGroupPncs, 'dcod'))){
+                $pncs[$item['part_code']][Constants::OPTIONS][Constants::COORDS][] = array(
+                    Constants::X1 => $item['xs'],
+                    Constants::Y1 => $item['ys'],
+                    Constants::X2 => $item['xe'],
+                    Constants::Y2 => $item['ye'],);
+            }
+        }
+
+        foreach ($aDataDescr as $item) {
+            $pncs[$item['id']][Constants::NAME] = $item['descr'];
+        }
+
+        return $pncs;
+    }
+
+    public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
+    {
+        $sqlSchemaLabels = "
+        SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
+        FROM pictures p
+        WHERE p.catalog = :regionCode
+          AND p.cd = :cd
+          AND p.pic_name = :schemaCode
+          AND p.XC26ECHK = 2
+        ";
+
+        $query = $this->conn->prepare($sqlSchemaLabels);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('cd', $cd);
+        $query->bindValue('schemaCode', $schemaCode);
+        $query->execute();
+
+        $aDataLabels = $query->fetchAll();
+
+        $articuls = array();
+        foreach ($aDataLabels as $item) {
+            $articuls[$item['part_code']] = array(
+                Constants::NAME => $item['part_code'],
+            );
+            $articuls[$item['part_code']][Constants::OPTIONS][Constants::COORDS][] = array(
+                Constants::X1 => $item['xs'],
+                Constants::Y1 => $item['ys'],
+                Constants::X2 => $item['xe'],
+                Constants::Y2 => $item['ye'],
+            );
+        }
+
+        return $articuls;
+    }
+
+    public function getReferGroups($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
+    {
+        $sqlSchemaLabels = "
+        SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
+        FROM pictures p
+        WHERE p.catalog = :regionCode
+          AND p.cd = :cd
+          AND p.pic_name = :schemaCode
+          AND p.XC26ECHK = 3
+        ";
+
+        $query = $this->conn->prepare($sqlSchemaLabels);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('cd', $cd);
+        $query->bindValue('schemaCode', $schemaCode);
+        $query->execute();
+
+        $aDataLabels = $query->fetchAll();
+
+        $groups = array();
+        foreach ($aDataLabels as $item) {
+            $groups[$item['part_code']] = array(
+                Constants::NAME => $item['part_code'],
+            );
+            $groups[$item['part_code']][Constants::OPTIONS][Constants::COORDS][] = array(
+                Constants::X1 => $item['xs'],
+                Constants::Y1 => $item['ys'],
+                Constants::X2 => $item['xe'],
+                Constants::Y2 => $item['ye'],
+            );
+        }
+
+        return $groups;
+    }
 } 

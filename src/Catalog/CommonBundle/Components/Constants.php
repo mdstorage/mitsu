@@ -9,6 +9,7 @@ class Constants {
     const OPTIONS = 'options';
     const CD = 'cd';
     const PICTURE = 'picture';
+    const COORDS = 'coords';
 
     const X1 = 'x1';
     const X2 = 'x2';
