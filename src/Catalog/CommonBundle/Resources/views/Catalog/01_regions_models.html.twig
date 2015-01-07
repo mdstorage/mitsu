@@ -16,7 +16,7 @@
         <h3>Выбрать регион:</h3>
         <ul class="nav nav-pills" role="tablist">
             {% for region in oContainer.getRegions %}
-                <li role="region" class="{% if region.getCode == oContainer.getActiveRegion.getCode %}active{% endif %}" id="{{ region.getCode }}"><a href="{{ path('catalog_mazda', {'regionCode': region.getCode}) }}">{{ region.getRuname }}</a></li>
+                <li role="region" class="{% if region.getCode == oContainer.getActiveRegion.getCode %}active{% endif %}" id="{{ region.getCode }}"><a href="{% block regionPath %}{{ path('catalog_mazda', {'regionCode': region.getCode}) }}{% endblock regionPath %}">{{ region.getRuname }}</a></li>
             {% endfor %}
         </ul>
     {% endblock regions %}

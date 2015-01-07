@@ -16,6 +16,7 @@
         <div class="row">
             <map name="{{ oContainer.getActiveSchema.getCode }}">
             <div class="col-lg-4">
+                {% if oContainer.getActiveSchema.getPncs %}
                 <h4>Семейства запчастей</h4>
                 {% block pncs %}
                     {% for pnc in oContainer.getActiveSchema.getPncs %}
@@ -62,6 +63,8 @@
                         {% endblock articulForPnc %}
                     {% endfor %}
                 {% endblock pncs %}
+                {% endif %}
+                {% if oContainer.getActiveSchema.getCommonArticuls %}
                 <h4>Общие запчасти</h4>
                 {% block commonArticuls %}
                     {% for commonArticul in oContainer.getActiveSchema.getCommonArticuls %}
@@ -80,6 +83,8 @@
                         {% endblock commonArticul %}
                     {% endfor %}
                 {% endblock commonArticuls %}
+                {% endif %}
+                {% if oContainer.getActiveSchema.getRefGroups %}
                 <h4>Связанные группы</h4>
                 {% block refGroups %}
                     {% for refGroup in oContainer.getActiveSchema.getRefGroups %}
@@ -98,6 +103,7 @@
                         {% endblock refGroup %}
                     {% endfor %}
                 {% endblock refGroups %}
+                {% endif %}
             </div>
             <div class="col-lg-8">
                 <div class="schema">

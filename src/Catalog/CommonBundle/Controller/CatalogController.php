@@ -238,6 +238,7 @@ abstract class CatalogController extends BaseController{
             $regionCode = $request->get('regionCode');
             $modificationCode = $request->get('modificationCode');
             $cd = $request->get('cd');
+
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modificationCode' => $modificationCode,

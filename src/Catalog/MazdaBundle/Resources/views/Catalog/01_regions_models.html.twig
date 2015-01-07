@@ -1,2 +1,3 @@
 {% extends 'CatalogCommonBundle:Catalog:01_regions_models.html.twig' %}
+{% block regionPath %}{{ path('catalog_mazda', {'regionCode': region.getCode}) }}{% endblock regionPath %}
 {% block ajaxUrl %}{{ path('catalog_mazda_modifications') }}{% endblock ajaxUrl %}

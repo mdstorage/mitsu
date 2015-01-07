@@ -262,6 +262,7 @@ class MazdaCatalogModel extends CatalogModel{
         $aData = $query->fetchAll();
 
         $schemas = array();
+        $add_descr = "";
         foreach($aData as $item){
             if($item['pic_name']){
                 $aDescr = array();
@@ -440,9 +441,8 @@ class MazdaCatalogModel extends CatalogModel{
 
         $articuls = array();
         foreach ($aDataLabels as $item) {
-            $articuls[$item['part_code']] = array(
-                Constants::NAME => $item['part_code'],
-            );
+            $articuls[$item['part_code']][Constants::NAME] = $item['part_code'];
+
             $articuls[$item['part_code']][Constants::OPTIONS][Constants::COORDS][] = array(
                 Constants::X1 => $item['xs'],
                 Constants::Y1 => $item['ys'],
@@ -475,9 +475,7 @@ class MazdaCatalogModel extends CatalogModel{
 
         $groups = array();
         foreach ($aDataLabels as $item) {
-            $groups[$item['part_code']] = array(
-                Constants::NAME => $item['part_code'],
-            );
+            $groups[$item['part_code']][Constants::NAME] = $item['part_code'];
             $groups[$item['part_code']][Constants::OPTIONS][Constants::COORDS][] = array(
                 Constants::X1 => $item['xs'],
                 Constants::Y1 => $item['ys'],
@@ -487,5 +485,10 @@ class MazdaCatalogModel extends CatalogModel{
         }
 
         return $groups;
+    }
+
+    public function getArticuls()
+    {
+
     }
 } 
