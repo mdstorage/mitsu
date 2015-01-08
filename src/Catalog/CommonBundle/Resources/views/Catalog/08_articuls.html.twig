@@ -1,1 +1,20 @@
-{{ parameters.cd }}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Артикул</th>
+            <th>Кол-во</th>
+            <th>Период производства</th>
+            <th>Примеч.</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for articul in oContainer.getActivePnc.getArticuls %}
+        <tr>
+            <td><a href="{% block articulPath %}{% endblock articulPath %}" target="_blank">{{ articul.getCode }}</a></td>
+            <td class="small">{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }}</td>
+            <td class="small">{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|date_convertor }} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|date_convertor }}</td>
+            <td class="small">{{ articul.getRuname }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

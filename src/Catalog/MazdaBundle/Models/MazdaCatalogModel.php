@@ -487,8 +487,66 @@ class MazdaCatalogModel extends CatalogModel{
         return $groups;
     }
 
-    public function getArticuls()
+    public function getArticuls($regionCode, $cd, $modificationCode, $subGroupCode, $pncCode)
     {
+        $sqlArticuls = "
+        SELECT pc.part_name, pc.quantity, pc.sdate, pc.edate, pc.desc_id
+        FROM part_catalog pc
+        WHERE pc.catalog = :regionCode
+          AND pc.cd = :cd
+          AND pc.catalog_number = :modificationCode
+          AND pc.sgroup = :subGroupCode
+          AND pc.dcod = :pncCode
+        ";
 
+        $query = $this->conn->prepare($sqlArticuls);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('cd', $cd);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('pncCode', $pncCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $sqlArticulsDescr = "
+        SELECT pd.id, GROUP_CONCAT(pd.descr SEPARATOR '; ') as descr
+        FROM part_descs pd
+        WHERE pd.catalog = ?
+          AND pd.cd = ?
+          AND pd.catalog_number = ?
+          AND pd.lang = 1
+          AND pd.id IN (?)
+        GROUP BY pd.id
+        ";
+
+        $query = $this->conn->executeQuery($sqlArticulsDescr, array(
+            $regionCode,
+            $cd,
+            $modificationCode,
+            array_column($aData, 'desc_id')
+        ), array(
+            \PDO::PARAM_STR,
+            \PDO::PARAM_STR,
+            \PDO::PARAM_STR,
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
+        ));
+
+        $aDataDescr = $query->fetchAll();
+        $aDataDescr = array_combine(array_column($aDataDescr, 'id'), array_column($aDataDescr, 'descr'));
+
+        $articuls = array();
+        foreach ($aData as $item) {
+            $articuls[$item['part_name']] = array(
+                Constants::NAME => isset($aDataDescr[$item['desc_id']]) ? $aDataDescr[$item['desc_id']] : "",
+                Constants::OPTIONS => array(
+                    Constants::QUANTITY => $item['quantity'],
+                    Constants::START_DATE => $item['sdate'],
+                    Constants::END_DATE => $item['edate']
+                )
+            );
+        }
+
+        return $articuls;
     }
 } 

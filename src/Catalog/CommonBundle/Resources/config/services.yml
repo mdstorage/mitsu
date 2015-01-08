@@ -2,3 +2,7 @@ services:
 #    catalog_common.example:
 #        class: Catalog\CommonBundle\Example
 #        arguments: [@service_id, "plain_value", %parameter%]
+  date_convertor.extension:
+        class: Catalog\CommonBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}

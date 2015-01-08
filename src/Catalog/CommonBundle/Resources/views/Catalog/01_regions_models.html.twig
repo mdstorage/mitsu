@@ -1,4 +1,6 @@
 {% extends 'CatalogCommonBundle::base.html.twig' %}
+{% set modelsListLenght = oContainer.getActiveRegion.getModels|length %}
+
 {% block breadcrumbs %}
     Выбрать регион, модель, модификацию
 {% endblock breadcrumbs %}
@@ -16,44 +18,61 @@
         <h3>Выбрать регион:</h3>
         <ul class="nav nav-pills" role="tablist">
             {% for region in oContainer.getRegions %}
-                <li role="region" class="{% if region.getCode == oContainer.getActiveRegion.getCode %}active{% endif %}" id="{{ region.getCode }}"><a href="{% block regionPath %}{{ path('catalog_mazda', {'regionCode': region.getCode}) }}{% endblock regionPath %}">{{ region.getRuname }}</a></li>
+                <li role="region" class="{% if region.getCode == oContainer.getActiveRegion.getCode %}active{% endif %}" id="{{ region.getCode }}"><a href="{% block regionPath %}{{ path('', {'regionCode': region.getCode}) }}{% endblock regionPath %}">{{ region.getRuname }}</a></li>
             {% endfor %}
         </ul>
     {% endblock regions %}
     {% block models %}
         <h3>Модельный ряд:</h3>
-        <div id="result">
-            {% for model in oContainer.getActiveRegion.getModels %}
-                <div class="model glyphicon-plus" id="{{ model.getCode }}" name="{{ model.getName }}" regionCode="{{ oContainer.getActiveRegion.getCode }}">
-                    {{ model.getRuname }}
+        <div class="row">
+            <div class="col-lg-6">
+                <div id="result">
+                    {% for model in oContainer.getActiveRegion.getModels %}
+                        {% if loop.index <= modelsListLenght/2|round %}
+                            {% block halfList %}
+                                    <div class="model glyphicon-plus" id="{{ model.getCode }}" name="{{ model.getName }}" regionCode="{{ oContainer.getActiveRegion.getCode }}">
+                                        {{ model.getRuname }}
+                                    </div>
+                                    <div id="modifications_for_model{{ model.getCode }}" class="hidden"></div>
+                                {% block modificationScript %}
+                                    <script>
+                                        $("#{{ model.getCode }}").on("click", function(){
+                                            $("#modifications_for_model{{ model.getCode }}").toggleClass("hidden");
+                                            $(this).toggleClass("glyphicon-plus");
+                                            $.ajax({
+                                                type:   'POST',
+                                                async:  false,
+                                                url:    "{% block ajaxUrl %}{{ path('catalog_common_modifications') }}{% endblock ajaxUrl %}",
+                                                data:   { regionCode: $(this).attr('regionCode'), modelCode: $(this).attr('name') },
+                                                success: function(data) {
+                                                    $("#modifications_for_model{{ model.getCode }}").html(data);
+                                                }
+                                            });
+                                            $(this).toggleClass("glyphicon-minus");
+                                        });
+                                        $("#{{ model.getCode }}").on("mouseover", function(){
+                                            $(this).css("cursor", "pointer");
+                                            $(this).addClass("btn-info");
+                                        });
+                                        $("#{{ model.getCode }}").on("mouseout", function(){
+                                            $(this).removeClass("btn-info");
+                                        });
+                                    </script>
+                                {% endblock modificationScript %}
+                            {% endblock halfList %}
+                        {% endif %}
+                    {% endfor %}
                 </div>
-                <div id="modifications_for_model{{ model.getCode }}" class="hidden"></div>
-                {% block modificationScript %}
-                    <script>
-                        $("#{{ model.getCode }}").on("click", function(){
-                            $("#modifications_for_model{{ model.getCode }}").toggleClass("hidden");
-                            $(this).toggleClass("glyphicon-plus");
-                            $.ajax({
-                                type:   'POST',
-                                async:  false,
-                                url:    "{% block ajaxUrl %}{{ path('catalog_common_modifications') }}{% endblock ajaxUrl %}",
-                                data:   { regionCode: $(this).attr('regionCode'), modelCode: $(this).attr('name') },
-                                success: function(data) {
-                                    $("#modifications_for_model{{ model.getCode }}").html(data);
-                                }
-                            });
-                            $(this).toggleClass("glyphicon-minus");
-                        });
-                        $("#{{ model.getCode }}").on("mouseover", function(){
-                            $(this).css("cursor", "pointer");
-                            $(this).addClass("btn-info");
-                        });
-                        $("#{{ model.getCode }}").on("mouseout", function(){
-                            $(this).removeClass("btn-info");
-                        });
-                    </script>
-                {% endblock modificationScript %}
-            {% endfor %}
+            </div>
+            <div class="col-lg-6">
+                <div id="result">
+                    {% for model in oContainer.getActiveRegion.getModels %}
+                        {% if loop.index > modelsListLenght/2|round %}
+                            {{ block('halfList') }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     {% endblock models %}
 {% endblock body %}

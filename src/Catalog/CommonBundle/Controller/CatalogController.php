@@ -238,14 +238,25 @@ abstract class CatalogController extends BaseController{
             $regionCode = $request->get('regionCode');
             $modificationCode = $request->get('modificationCode');
             $cd = $request->get('cd');
+            $subGroupCode = $request->get('subGroupCode');
+            $pncCode = $request->get('pncCode');
 
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modificationCode' => $modificationCode,
-                'cd' => $cd
+                'cd' => $cd,
+                'subGroupCode' => $subGroupCode,
+                'pncCode' => $pncCode
             );
 
+            $articuls = $this->model()->getArticuls($regionCode, $cd, $modificationCode, $subGroupCode, $pncCode);
+            $oContainer = Factory::createContainer()
+                ->setActivePnc(Factory::createPnc($pncCode, $pncCode)
+                    ->setArticuls(Factory::createCollection($articuls, Factory::createArticul()))
+                );
+
             return $this->render($this->bundle() . ':Catalog:08_articuls.html.twig', array(
+                'oContainer' => $oContainer,
                 'parameters' => $parameters
             ));
         }

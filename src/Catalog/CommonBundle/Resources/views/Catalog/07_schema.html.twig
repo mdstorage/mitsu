@@ -29,16 +29,18 @@
                                     $("#pnc_{{ pnc.getCode }}").on("click", function(){
                                         $("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
                                         $(this).toggleClass("glyphicon-plus");
+                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} />');
                                         $.ajax({
                                             type:   'POST',
                                             async:  false,
                                             url:    "{% block ajaxUrl %}{{ path('catalog_common_articuls') }}{% endblock ajaxUrl %}",
-                                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', cd: '{{ oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD')) }}', subGroupCode: '{{ parameters.subGroupCode }}' },
+                                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', cd: '{{ oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD')) }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}' },
                                             success: function(data) {
                                                 $("#articul_for_pnc{{ pnc.getCode }}").html(data);
                                             }
                                         });
                                         $(this).toggleClass("glyphicon-minus");
+                                        $(this).toggleClass("btn-success");
                                     });
                                     $("#pnc_{{ pnc.getCode }}").on("mouseover", function(){
                                         $(this).css("cursor", "pointer");
@@ -69,8 +71,8 @@
                 {% block commonArticuls %}
                     {% for commonArticul in oContainer.getActiveSchema.getCommonArticuls %}
                         {% block commonArticul %}
-                            <div>
-                                {{ commonArticul.getCode }}
+                            <div id="articul_{{ commonArticul.getCode }}">
+                                <a href="{% block articulPath %}{% endblock articulPath %}" target="_blank">{{ commonArticul.getCode }}</a>
                             </div>
                             {% for coords in commonArticul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
                                 <area shape="rect" coords="

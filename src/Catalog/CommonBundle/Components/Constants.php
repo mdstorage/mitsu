@@ -10,6 +10,9 @@ class Constants {
     const CD = 'cd';
     const PICTURE = 'picture';
     const COORDS = 'coords';
+    const QUANTITY = 'quantity';
+    const START_DATE = 'start_date';
+    const END_DATE = 'end_date';
 
     const X1 = 'x1';
     const X2 = 'x2';
