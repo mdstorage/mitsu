@@ -224,7 +224,7 @@ class MazdaCatalogModel extends CatalogModel{
         foreach($aData as $item){
             $subgroups[$item['sgroup']] = array(
                 Constants::NAME => $item['descr'],
-                Constants::OPTIONS => $labels[substr($item['sgroup'], 0, 4)] ? array(
+                Constants::OPTIONS => isset($labels[substr($item['sgroup'], 0, 4)]) ? array(
                     Constants::X1 => $labels[substr($item['sgroup'], 0, 4)]['xs'],
                     Constants::X2 => $labels[substr($item['sgroup'], 0, 4)]['xe'],
                     Constants::Y1 => $labels[substr($item['sgroup'], 0, 4)]['ys'],
@@ -548,5 +548,27 @@ class MazdaCatalogModel extends CatalogModel{
         }
 
         return $articuls;
+    }
+
+    public function getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode)
+    {
+        $sqlGroup = "
+        SELECT s.pgroup
+        FROM sgroup s
+        WHERE s.catalog = :regionCode
+          AND s.catalog_number = :modificationCode
+          AND s.sgroup = :subGroupCode
+          AND s.lang = 1
+        ";
+
+        $query = $this->conn->prepare($sqlGroup);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->execute();
+
+        $groupCode = $query->fetchColumn(0);
+
+        return $groupCode;
     }
 } 

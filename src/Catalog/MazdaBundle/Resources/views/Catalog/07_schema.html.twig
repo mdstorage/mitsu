@@ -13,4 +13,5 @@
 {% endblock image %}
 
 {% block ajaxUrl %}{{ path('catalog_mazda_articuls') }}{% endblock ajaxUrl %}
-{% block articulPath %}http://v3.ryli.by/search/preload/?article={{ commonArticul.getCode }}{% endblock articulPath %}
+{% block articulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock articulPath %}
+{% block subGroupPath %}{{ path('catalog_mazda_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}

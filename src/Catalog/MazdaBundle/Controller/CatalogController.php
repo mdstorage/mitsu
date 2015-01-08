@@ -20,4 +20,11 @@ class CatalogController extends BaseController{
     {
         return 'Catalog\MazdaBundle\Components\MazdaConstants';
     }
+
+    public function getGroupBySubgroupAction($regionCode, $modelCode, $modificationCode, $subGroupCode)
+    {
+        $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode);
+
+        return $this->schemasAction($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode);
+    }
 } 

@@ -18,4 +18,6 @@ class Constants {
     const X2 = 'x2';
     const Y1 = 'y1';
     const Y2 = 'y2';
+
+    const FIND_PATH = 'http://v3.ryli.by/search/preload/?article=';
 } 

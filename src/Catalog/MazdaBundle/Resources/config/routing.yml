@@ -31,3 +31,7 @@ catalog_mazda_articuls:
   path:         /mazda/catalog/7
   defaults:     {_controller: CatalogMazdaBundle:Catalog:articuls}
   requirements: {_method: POST}
+
+catalog_mazda_group:
+  path:         /mazda/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogMazdaBundle:Catalog:getGroupBySubgroup}
