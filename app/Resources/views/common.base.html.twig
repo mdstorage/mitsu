@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Каталог {% block brand %}{% endblock brand %}{% endblock title%}</title>
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap.min.css') }}" media="all">
+        <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap-theme.min.css') }}" media="all">
+    {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+</head>
+<body>
+{% block javascripts %}
+    <script src="{{ asset('bundles/catalogcommon/js/jquery-2.1.1.min.js') }}"></script>
+    <script src="{{ asset('bundles/catalogcommon/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('bundles/catalogcommon/js/jquery.imagemapster.min.js') }}"></script>
+{% endblock %}
+{% block source %}{% endblock source %}
+<div class="main">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Каталог {{ block('brand') }}</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="{{ 'catalog' in app.request.getPathInfo ? 'active'}}"><a href="{% block catalogPath %}{% endblock catalogPath %}">Каталог</a></li>
+                    <li {{ 'vin' in app.request.getPathInfo ? 'active'}}><a href="{% block vinPath %}{% endblock vinPath %}">Поиск по VIN</a></li>
+                    <li {{ 'articul' in app.request.getPathInfo ? 'active'}}><a href="{% block articulPath %}{% endblock articulPath %}">Поиск запчасти по артикулу</a></li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+
+
+    <div class="container-fluid">
+        <div class="breadcrumb">
+            {% block breadcrumbs %}
+            {% endblock breadcrumbs %}
+        </div>
+        {% block summary_set%}
+            <div class="alert alert-info">
+                <div class="row">
+                    {% block summary %}
+                        <div class="col-lg-4">
+                            <div>
+                                {% block region %}
+                                    <b>Регион:</b> {% block regionRuname %}{% endblock regionRuname %}
+                                {% endblock region %}
+                            </div>
+                            <div>
+                                {% block model %}
+                                    <b>Модель:</b> {% block modelRuname %}{% endblock modelRuname %}
+                                {% endblock model %}
+                            </div>
+                            <div>
+                                {% block modification %}
+                                    <b>Модификация:</b> {% block modificationRuname %}{% endblock modificationRuname %}
+                                {% endblock modification %}
+                            </div>
+                            <div>
+                                {% block complectation %}
+                                    <b>Комплектация:</b> {% block complectationRuname %}{% endblock complectationRuname %}
+                                {% endblock complectation %}
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div>
+                                {% block group %}
+                                    <b>Группа запчастей:</b> {% block groupRuname %}{% endblock groupRuname %}
+                                {% endblock group %}
+                            </div>
+                            <div>
+                                {% block subGroup %}
+                                    <b>Подгруппа запчастей:</b> {% block subGroupRuname %}{% endblock subGroupRuname %}
+                                {% endblock subGroup %}
+                            </div>
+                        </div>
+                    {% endblock summary%}
+                </div>
+            </div>
+        {% endblock summary_set%}
+        {% block body %}{% endblock body%}
+    </div>
+</div>
+</body>
+</html>

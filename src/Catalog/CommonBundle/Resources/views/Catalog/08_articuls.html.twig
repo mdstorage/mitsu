@@ -10,7 +10,7 @@
     <tbody>
     {% for articul in oContainer.getActivePnc.getArticuls %}
         <tr>
-            <td><a href="{% block articulPath %}{% endblock articulPath %}" target="_blank">{{ articul.getCode }}</a></td>
+            <td><a href="{% block commonArticulPath %}{% endblock commonArticulPath %}" target="_blank">{{ articul.getCode }}</a></td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }}</td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|date_convertor }} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|date_convertor }}</td>
             <td>{{ articul.getRuname }}</td>

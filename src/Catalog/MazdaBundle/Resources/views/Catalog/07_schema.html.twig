@@ -1,4 +1,5 @@
 {% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% use 'CatalogMazdaBundle::mazda.base.html.twig' %}
 {% block breadcrumbs %}
     <a href="{{ path('catalog_mazda') }}">Выбрать регион, модель, модификацию</a> /
     <a href="{{ path('catalog_mazda_groups', parameters) }}">Выбрать группу запчастей</a> /
@@ -13,5 +14,5 @@
 {% endblock image %}
 
 {% block ajaxUrl %}{{ path('catalog_mazda_articuls') }}{% endblock ajaxUrl %}
-{% block articulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock articulPath %}
+{% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{{ path('catalog_mazda_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}

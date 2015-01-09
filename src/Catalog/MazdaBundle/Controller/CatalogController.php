@@ -2,13 +2,15 @@
 namespace Catalog\MazdaBundle\Controller;
 
 
+use Catalog\CommonBundle\Components\Factory;
+use Catalog\CommonBundle\Components\Interfaces\CommonInterface;
 use Catalog\CommonBundle\Controller\CatalogController as BaseController;
 
 class CatalogController extends BaseController{
 
     public function bundle()
     {
-        return 'CatalogMazdaBundle';
+        return 'CatalogMazdaBundle:Catalog';
     }
 
     public function model()

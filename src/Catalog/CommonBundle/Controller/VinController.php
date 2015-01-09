@@ -2,6 +2,6 @@
 namespace Catalog\CommonBundle\Controller;
 
 
-class VinController extends BaseController{
+abstract class VinController extends CatalogController{
 
-} 
+}

@@ -72,7 +72,7 @@ class MazdaCatalogModel extends CatalogModel{
 
         $modifications = array();
         foreach($aData as $item){
-            $modifications[$item['catalog_number']] = array(
+            $modifications[str_replace(" ", "_", $item['catalog_number'])] = array(
                 Constants::NAME     => $item['catalog_number'],
                 Constants::OPTIONS  => array(
                     MazdaConstants::PROD_YEAR   => $item['prod_year'],

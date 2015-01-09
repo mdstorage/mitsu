@@ -9,17 +9,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class CatalogController extends BaseController{
 
-    abstract function bundle();
-
-    abstract function model();
-
-    abstract function bundleConstants();
-
-    public function __construct()
-    {
-        Factory::setConstants($this->bundleConstants());
-    }
-
     public function regionsModelsAction($regionCode)
     {
         /*
@@ -64,9 +53,11 @@ abstract class CatalogController extends BaseController{
             }
 
             $oContainer->setActiveRegion($oActiveRegion);
+
+            $this->filter($oContainer);
         }
 
-        return $this->render($this->bundle() . ':Catalog:01_regions_models.html.twig', array(
+        return $this->render($this->bundle() . ':01_regions_models.html.twig', array(
             'oContainer' => $oContainer
         ));
     }
@@ -92,7 +83,9 @@ abstract class CatalogController extends BaseController{
                     )
                 );
 
-            return $this->render($this->bundle() . ':Catalog:02_modifications.html.twig', array(
+            $this->filter($oContainer);
+
+            return $this->render($this->bundle() . ':02_modifications.html.twig', array(
                 'oContainer' => $oContainer,
                 'parameters' => $parameters
             ));
@@ -114,7 +107,9 @@ abstract class CatalogController extends BaseController{
             ->setActiveModification(Factory::createModification($modificationCode, $modificationCode)
                 ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
 
-        return $this->render($this->bundle() . ':Catalog:03_complectations.html.twig', array(
+        $this->filter($oContainer);
+
+        return $this->render($this->bundle() . ':03_complectations.html.twig', array(
             'oContainer' => $oContainer,
             'parameters' => $parameters
         ));
@@ -135,7 +130,9 @@ abstract class CatalogController extends BaseController{
             ->setActiveModification(Factory::createModification($modificationCode, $modificationCode))
             ->setGroups(Factory::createCollection($groups, Factory::createGroup()));
 
-        return $this->render($this->bundle() . ':Catalog:04_groups.html.twig', array(
+        $this->filter($oContainer);
+
+        return $this->render($this->bundle() . ':04_groups.html.twig', array(
             'oContainer' => $oContainer,
             'parameters' => $parameters
         ));
@@ -163,7 +160,9 @@ abstract class CatalogController extends BaseController{
                 ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup()))
             );
 
-        return $this->render($this->bundle() . ':Catalog:05_subgroups.html.twig', array(
+        $this->filter($oContainer);
+
+        return $this->render($this->bundle() . ':05_subgroups.html.twig', array(
             'oContainer' => $oContainer,
             'parameters' => $parameters
         ));
@@ -190,7 +189,9 @@ abstract class CatalogController extends BaseController{
                 ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup())))
             ->setSchemas(Factory::createCollection($schemas, Factory::createSchema()));
 
-        return $this->render($this->bundle() . ':Catalog:06_schemas.html.twig', array(
+        $this->filter($oContainer);
+
+        return $this->render($this->bundle() . ':06_schemas.html.twig', array(
             'oContainer' => $oContainer,
             'parameters' => $parameters
         ));
@@ -226,7 +227,9 @@ abstract class CatalogController extends BaseController{
                 ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup())))
             ->setActiveSchema($oActiveSchema);
 
-        return $this->render($this->bundle() . ':Catalog:07_schema.html.twig', array(
+        $this->filter($oContainer);
+
+        return $this->render($this->bundle() . ':07_schema.html.twig', array(
             'oContainer' => $oContainer,
             'parameters' => $parameters
         ));
@@ -255,7 +258,9 @@ abstract class CatalogController extends BaseController{
                     ->setArticuls(Factory::createCollection($articuls, Factory::createArticul()))
                 );
 
-            return $this->render($this->bundle() . ':Catalog:08_articuls.html.twig', array(
+            $this->filter($oContainer);
+
+            return $this->render($this->bundle() . ':08_articuls.html.twig', array(
                 'oContainer' => $oContainer,
                 'parameters' => $parameters
             ));

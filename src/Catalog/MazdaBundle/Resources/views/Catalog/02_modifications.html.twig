@@ -1,4 +1,5 @@
 {% extends 'CatalogCommonBundle:Catalog:02_modifications.html.twig' %}
+{% use 'CatalogMazdaBundle::mazda.base.html.twig' %}
 {% block modification %}
     <a href="{{ path('catalog_mazda_groups', parameters|merge({'modificationCode': modification.getCode})) }}">
         {{ modification.getOption(constant('Catalog\\MazdaBundle\\Components\\MazdaConstants::PROD_YEAR')) }}

@@ -27,8 +27,9 @@
                             {% block pncScript %}
                                 <script>
                                     $("#pnc_{{ pnc.getCode }}").on("click", function(){
+                                        {% block pncClick %}
                                         $("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
-                                        $(this).toggleClass("glyphicon-plus");
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
                                         $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} />');
                                         $.ajax({
                                             type:   'POST',
@@ -39,8 +40,9 @@
                                                 $("#articul_for_pnc{{ pnc.getCode }}").html(data);
                                             }
                                         });
-                                        $(this).toggleClass("glyphicon-minus");
-                                        $(this).toggleClass("small");
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
+                                        {% endblock pncClick %}
                                     });
                                     $("#pnc_{{ pnc.getCode }}").on("mouseover", function(){
                                         $(this).css("cursor", "pointer");
@@ -58,6 +60,13 @@
                                         {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }},
                                         {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}
                                     " href="#" id="{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" data-name="{% block dataName %}{{ pnc.getCode }}{% endblock dataName %}"/>
+                                {% block pncAreaScript %}
+                                    <script>
+                                        $("area#{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}").on("click", function(){
+                                            {{ block('pncClick') }}
+                                        })
+                                    </script>
+                                {% endblock pncAreaScript %}
                             {% endfor %}
                         {% endblock pnc %}
                         {% block articulForPnc %}
@@ -72,7 +81,7 @@
                     {% for commonArticul in oContainer.getActiveSchema.getCommonArticuls %}
                         {% block commonArticul %}
                             <div id="articul_{{ commonArticul.getCode }}">
-                                <a href="{% block articulPath %}{% endblock articulPath %}" target="_blank">{{ commonArticul.getCode }}</a>
+                                <a href="{% block commonArticulPath %}{% endblock commonArticulPath %}" target="_blank">{{ commonArticul.getCode }}</a>
                             </div>
                             {% for coords in commonArticul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
                                 <area shape="rect" coords="
@@ -80,7 +89,7 @@
                                         {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }},
                                         {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }},
                                         {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}
-                                    " target="_blank" href="{{ block('articulPath') }}" id="{{ commonArticul.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" data-name="{% block dataNameCommonArticul %}{{ commonArticul.getCode }}{% endblock dataNameCommonArticul %}"/>
+                                    " target="_blank" href="{{ block('commonArticulPath') }}" id="{{ commonArticul.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" data-name="{% block dataNameCommonArticul %}{{ commonArticul.getCode }}{% endblock dataNameCommonArticul %}"/>
                             {% endfor %}
                         {% endblock commonArticul %}
                     {% endfor %}

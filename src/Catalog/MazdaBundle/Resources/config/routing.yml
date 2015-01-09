@@ -35,3 +35,7 @@ catalog_mazda_articuls:
 catalog_mazda_group:
   path:         /mazda/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
   defaults:     {_controller: CatalogMazdaBundle:Catalog:getGroupBySubgroup}
+
+vin_mazda:
+  path:         /mazda/vin/0
+  defaults:     {_controller: CatalogMazdaBundle:Vin:index}

@@ -1,7 +1,7 @@
-{% extends '::base.html.twig' %}
-        {% block stylesheets %}
-            {{ parent() }}
-            {% block userStylesheets %}
-                <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/common.css') }}" media="all">
-            {% endblock userStylesheets %}
-        {% endblock %}
+{% extends '::common.base.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    {% block userStylesheets %}
+        <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/common.css') }}" media="all">
+    {% endblock userStylesheets %}
+{% endblock %}
