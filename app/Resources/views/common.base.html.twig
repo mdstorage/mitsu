@@ -33,8 +33,8 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li class="{{ 'catalog' in app.request.getPathInfo ? 'active'}}"><a href="{% block catalogPath %}{% endblock catalogPath %}">Каталог</a></li>
-                    <li {{ 'vin' in app.request.getPathInfo ? 'active'}}><a href="{% block vinPath %}{% endblock vinPath %}">Поиск по VIN</a></li>
-                    <li {{ 'articul' in app.request.getPathInfo ? 'active'}}><a href="{% block articulPath %}{% endblock articulPath %}">Поиск запчасти по артикулу</a></li>
+                    <li class="{{ 'vin' in app.request.getPathInfo ? 'active'}}"><a href="{% block vinPath %}{% endblock vinPath %}">Поиск по VIN</a></li>
+                    <li class="{{ 'articul' in app.request.getPathInfo ? 'active'}}"><a href="{% block articulPath %}{% endblock articulPath %}">Поиск запчасти по артикулу</a></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->

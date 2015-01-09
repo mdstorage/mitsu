@@ -1,3 +1,2 @@
 {% extends 'CatalogCommonBundle:Vin:01_index.html.twig' %}
-{% block brand %}Mazda{% endblock brand %}
-{% block vinPath %}{{ path('vin_mazda') }}{% endblock vinPath %}
+{% use 'CatalogMazdaBundle::mazda.base.html.twig' %}
