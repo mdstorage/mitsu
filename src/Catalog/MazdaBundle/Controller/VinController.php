@@ -1,7 +1,10 @@
 <?php
 namespace Catalog\MazdaBundle\Controller;
 
+use Catalog\CommonBundle\Components\Constants;
+use Catalog\CommonBundle\Components\Factory;
 use Catalog\CommonBundle\Controller\VinController as BaseController;
+use Symfony\Component\HttpFoundation\Request;
 
 class VinController extends BaseController{
 
@@ -12,7 +15,7 @@ class VinController extends BaseController{
 
     public function model()
     {
-        return $this->get('mazda.catalog.model');
+        return $this->get('mazda.vin.model');
     }
 
     public function bundleConstants()
@@ -25,8 +28,10 @@ class VinController extends BaseController{
         return $oContainer;
     }
 
-    public function indexAction()
+    public function articulsAction(Request $request)
     {
-        return $this->render($this->bundle().':01_index.html.twig');
+        $prodDate = $request->cookies->get('mazdaProdDate');
+        $this->addFilter('prodDateFilter', array('prodDate' => $prodDate));
+        return parent::articulsAction($request);
     }
 } 
