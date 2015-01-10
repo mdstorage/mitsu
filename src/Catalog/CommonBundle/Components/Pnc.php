@@ -36,4 +36,13 @@ class Pnc extends CommonElement implements PncInterface{
     {
         return $this->articuls;
     }
+
+    public function removeArticul($articulCode)
+    {
+        $articuls = $this->getArticuls();
+        unset($articuls[$articulCode]);
+        $this->articuls = $articuls;
+
+        return $this;
+    }
 } 

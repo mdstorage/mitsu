@@ -50,7 +50,7 @@ class MazdaCatalogModel extends CatalogModel{
 
         $models = array();
         foreach($aData as $item){
-            $models[md5($item['model_name'])] = array(Constants::NAME=>$item['model_name'], Constants::OPTIONS=>array());
+            $models[$item['model_name']] = array(Constants::NAME=>$item['model_name'], Constants::OPTIONS=>array());
         }
 
         return $models;

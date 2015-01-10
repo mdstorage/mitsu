@@ -37,7 +37,7 @@
                 </tr>
                 <tr>
                     <td>Дата выпуска:</td>
-                    <td>{{ result.prod_date|date_convertor }}</td>
+                    <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|date_convertor }}</td>
                 </tr>
             </table>
         </div>

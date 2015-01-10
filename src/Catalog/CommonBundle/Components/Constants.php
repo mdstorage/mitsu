@@ -13,6 +13,7 @@ class Constants {
     const QUANTITY = 'quantity';
     const START_DATE = 'start_date';
     const END_DATE = 'end_date';
+    const PROD_DATE = 'PROD_DATE';
 
     const X1 = 'x1';
     const X2 = 'x2';

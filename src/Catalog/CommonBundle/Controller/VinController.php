@@ -2,6 +2,7 @@
 namespace Catalog\CommonBundle\Controller;
 
 
+use Catalog\CommonBundle\Components\Constants;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,14 +18,13 @@ abstract class VinController extends CatalogController{
         if ($request->isXmlHttpRequest()) {
 
             $vin = $request->get('vin');
-            setcookie('mazdaProdDate');
-            $result = $this->model()->getVinFinderResult($vin);
-            setcookie('mazdaProdDate', $result['prod_date']);
 
+            $result = $this->model()->getVinFinderResult($vin);
             if (!$result) {
                 return $this->render($this->bundle().':empty.html.twig');
             }
 
+            setcookie(Constants::PROD_DATE, $result[Constants::PROD_DATE]);
             return $this->render($this->bundle().':02_result.html.twig', array(
                 'result' => $result
             ));

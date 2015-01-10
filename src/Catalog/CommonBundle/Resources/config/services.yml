@@ -6,3 +6,7 @@ services:
         class: Catalog\CommonBundle\Twig\Extension\DateConvertorExtension
         tags:
             - { name: twig.extension}
+  md5.extension:
+        class: Catalog\CommonBundle\Twig\Extension\Md5Extension
+        tags:
+            - { name: twig.extension}

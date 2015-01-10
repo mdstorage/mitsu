@@ -43,6 +43,7 @@ class MazdaVinModel extends MazdaCatalogModel {
         $aModel = $query->fetch();
 
         $result = array();
+
         if ($aData) {
             $result = array(
                 'region' => $aData['catalog'],
@@ -53,7 +54,7 @@ class MazdaVinModel extends MazdaCatalogModel {
                 'complectation' => $aData['MDLCD'].$aData['MSCSPCCD'],
                 'ext_color' => $aData['ext_color'],
                 'int_color' => $aData['int_color'],
-                'prod_date' => $aData['prod_date']
+                Constants::PROD_DATE => $aData['prod_date']
             );
         }
 
