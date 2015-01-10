@@ -15,7 +15,7 @@
 
 {% block body %}
     {% block regions %}
-        <h3>Выбрать регион:</h3>
+        {% block head %}<h3>Выбрать регион:</h3>{% endblock head %}
         <ul class="nav nav-pills" role="tablist">
             {% for region in oContainer.getRegions %}
                 <li role="region" class="{% if region.getCode == oContainer.getActiveRegion.getCode %}active{% endif %}" id="{{ region.getCode }}"><a href="{% block regionPath %}{{ path('', {'regionCode': region.getCode}) }}{% endblock regionPath %}">{{ region.getRuname }}</a></li>

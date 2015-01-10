@@ -1,0 +1,48 @@
+{% extends 'CatalogCommonBundle:Vin:02_result.html.twig' %}
+{% block specification %}
+    <div class="row">
+    <div class="col-lg-8">
+            <table class="table table-bordered">
+                <tr>
+                    <td>Регион:</td>
+                    <td>{{ result.region }}</td>
+                </tr>
+                <tr>
+                    <td>Страна:</td>
+                    <td>{{ result.country }}</td>
+                </tr>
+                <tr>
+                    <td>Модель:</td>
+                    <td>{{ result.model }}</td>
+                </tr>
+                <tr>
+                    <td>Модельный год:</td>
+                    <td>{{ result.prod_year }}</td>
+                </tr>
+                <tr>
+                    <td>Модификация:</td>
+                    <td>{{ result.modification }}</td>
+                </tr>
+                <tr>
+                    <td>Комплектация:</td>
+                    <td>{{ result.complectation }}</td>
+                </tr>
+                <tr>
+                    <td>Цвет экстерьера:</td>
+                    <td>{{ result.ext_color }}</td>
+                </tr>
+                <tr>
+                    <td>Цвет интерьера:</td>
+                    <td>{{ result.int_color }}</td>
+                </tr>
+                <tr>
+                    <td>Дата выпуска:</td>
+                    <td>{{ result.prod_date|date_convertor }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+{% endblock specification %}
+{% block catalogPath %}
+    {{ path('vin_mazda_groups', {'regionCode': result.region, 'modelCode': result.model, 'modificationCode': result.modification}) }}
+{% endblock catalogPath %}
