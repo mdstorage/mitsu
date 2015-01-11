@@ -21,6 +21,7 @@
                 </div>
         </div>
     {% endblock vin %}
+    {% block frame %}{% endblock frame %}
     {% block vinScript %}
         <script>
             $("#vin-button").on('click', function(){
@@ -41,4 +42,5 @@
             });
         </script>
     {% endblock vinScript %}
+    {% block frameScript %}{% endblock frameScript %}
 {% endblock body %}

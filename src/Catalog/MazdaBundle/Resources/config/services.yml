@@ -10,3 +10,7 @@ services:
   mazda.vin.model:
     class: Catalog\MazdaBundle\Models\MazdaVinModel
     arguments:  ['@doctrine.dbal.mazda_connection']
+
+  mazda.articul.model:
+    class: Catalog\MazdaBundle\Models\MazdaArticulModel
+    arguments:  ['@doctrine.dbal.mazda_connection']

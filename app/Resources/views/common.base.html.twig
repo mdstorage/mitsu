@@ -41,10 +41,12 @@
     </nav>
 
     <div class="container-fluid">
-        <div class="breadcrumb">
-            {% block breadcrumbs %}
-            {% endblock breadcrumbs %}
-        </div>
+        {% block breadcrumbs_set %}
+            <div class="breadcrumb">
+                {% block breadcrumbs %}
+                {% endblock breadcrumbs %}
+            </div>
+        {% endblock breadcrumbs_set %}
         {% block summary_set%}
             <div class="alert alert-info">
                 <div class="row">
