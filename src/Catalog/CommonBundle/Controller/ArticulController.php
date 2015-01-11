@@ -17,7 +17,7 @@ abstract class ArticulController extends CatalogController{
         $articulRegions = $this->model()->getArticulRegions($articul);
         $articulModels  = $this->model()->getArticulModels($articul);
 
-        $this->addFilter('aticulModelsFilter', array(
+        $this->addFilter('aticulRegionModelsFilter', array(
             'articulRegions' => $articulRegions,
             'articulModels'  => $articulModels
         ));
@@ -28,6 +28,13 @@ abstract class ArticulController extends CatalogController{
     public function aticulRegionModelsFilter($oContainer, $parameters)
     {
         $articulModels = $parameters['articulModels'];
+
+        foreach ($oContainer->getActiveRegion()->getModels() as $model) {
+            if (!in_array($model->getCode(), $articulModels)) {
+                $oContainer->getActiveRegion()->removeModel($model->getCode());
+            }
+        }
+
         return $oContainer;
     }
 } 

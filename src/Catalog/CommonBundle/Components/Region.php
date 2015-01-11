@@ -28,4 +28,13 @@ class Region extends CommonElement implements RegionInterface{
     {
         return $this->models;
     }
+
+    public function removeModel($modelCode)
+    {
+        $models = $this->getModels();
+        unset($models[$modelCode]);
+        $this->models = $models;
+
+        return $this;
+    }
 } 
