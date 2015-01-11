@@ -27,6 +27,6 @@ abstract class ArticulController extends CatalogController{
 
     public function aticulRegionModelsFilter($oContainer, $parameters)
     {
-
+        return $oContainer;
     }
 } 
