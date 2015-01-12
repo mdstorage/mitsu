@@ -1,0 +1,46 @@
+{% extends 'CatalogCommonBundle::base.html.twig' %}
+{% block breadcrumbs %}
+    Поиск по номеру кузова
+{% endblock breadcrumbs %}
+{% block summary_set %}{% endblock summary_set %}
+{% block body %}
+    {% block vin %}
+        <div class="alert alert-dismissable" id="vin-frame-group">
+            <div class="row">
+                <div class="col-xs-6">
+                    {% block head %}<h3>Поиск по VIN</h3>{% endblock head %}
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-xs-10">
+                                <input type="text" class="form-control" id="vin" placeholder="Введите VIN"/>
+                            </div>
+                            <input type="button" class="btn btn-info" value="Искать" id="vin-button"/>
+                        </div>
+                    </div>
+                    <div id="vin-result"></div>
+                </div>
+        </div>
+    {% endblock vin %}
+    {% block frame %}{% endblock frame %}
+    {% block vinScript %}
+        <script>
+            $("#vin-button").on('click', function(){
+                if($("#vin").val().length !== 17){
+                    alert("VIN должен состоять из 17 знаков!");
+                    return;
+                }
+                $("#vin-result").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="20px" />');
+                $.ajax({
+                    type:   'POST',
+                    async:  false,
+                    url:    "{% block vinAjaxPath %}{{ path('catalog_mitsubishi_find_vin') }}{% endblock vinAjaxPath %}",
+                    data:   { vin: $("#vin").val() },
+                    success: function(data) {
+                        $("#vin-result").html(data);
+                    }
+                });
+            });
+        </script>
+    {% endblock vinScript %}
+    {% block frameScript %}{% endblock frameScript %}
+{% endblock body %}

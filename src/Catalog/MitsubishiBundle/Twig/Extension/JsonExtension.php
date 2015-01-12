@@ -28,6 +28,4 @@ class JsonExtension extends Twig_Extension
     public function jsonDecode($str) {
         return unserialize(stripslashes($str));
     }
-}{
-
-} 
+}

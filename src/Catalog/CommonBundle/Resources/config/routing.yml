@@ -1,0 +1,8 @@
+catalog_common_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogCommonBundle:Default:index }
+
+catalog_common_modifications:
+  path:         /common/modifications
+  defaults:     {_controller: CatalogCommonBundle:Catalog:modifications}
+  requirements: {_method: POST}

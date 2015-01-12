@@ -1,0 +1,3 @@
+{% extends 'CatalogCommonBundle:Vin:01_index.html.twig' %}
+{% use 'CatalogMazdaBundle::mazda.base.html.twig' %}
+{% block vinAjaxPath %}{{ path('vin_mazda_result') }}{% endblock vinAjaxPath %}

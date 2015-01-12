@@ -45,13 +45,24 @@ assetic:
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver:   "%database_driver%"
-        host:     "%database_host%"
-        port:     "%database_port%"
-        dbname:   "%database_name%"
-        user:     "%database_user%"
-        password: "%database_password%"
-        charset:  UTF8
+      default_connection: mitsubishi
+      connections:
+        mitsubishi:
+          dbname:   "%database_name%"
+          user:     "%database_user%"
+          password: "%database_password%"
+          charset:  UTF8
+          driver:   "%database_driver%"
+          host:     "%database_host%"
+          port:     "%database_port%"
+        mazda:
+          dbname:   mazda
+          user:     root
+          password: 123456
+          charset:  UTF8
+          driver:   "%database_driver%"
+          host:     "%database_host%"
+          port:     "%database_port%"
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
         #     e.g. database_path: "%kernel.root_dir%/data/data.db3"

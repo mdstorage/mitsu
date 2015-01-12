@@ -2,12 +2,16 @@
 
 namespace Catalog\MazdaBundle\Controller;
 
-class DefaultController extends BaseController
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Catalog\CommonBundle\Components\Factory;
+
+class DefaultController extends Controller
 {
     public function indexAction($name)
     {
-        $this->clearParams();
-        $this->addParam('name', $name);
-        return $this->render('CatalogMazdaBundle:Default:index.html.twig', array('params' => $this->getParams()));
+        $region = Factory::createRegion();
+        $region->setName('EU');
+
+        return $this->render('CatalogMazdaBundle:Default:index.html.twig', array('name' => $region->getRuname()));
     }
 }

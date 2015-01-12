@@ -1,0 +1,69 @@
+{% extends 'CatalogCommonBundle::base.html.twig' %}
+{% block breadcrumbs %}
+    Выбрать регион, модель, модификацию / Выбрать комплектацию / Выбрать группу запчастей / Выбрать подгруппу запчастей
+{% endblock breadcrumbs %}
+
+{% block regionRuname %}{{ oContainer.getActiveRegion.getRuname }}{% endblock regionRuname %}
+{% block modelRuname %}{{ oContainer.getActiveModel.getRuname }}{% endblock modelRuname %}
+{% block modificationRuname %}{{ oContainer.getActiveModification.getRuname }}{% endblock modificationRuname %}
+{% block complectationRuname %}{{ oContainer.getActiveComplectation.getRuname }}{% endblock complectationRuname %}
+{% block groupRuname %}{{ oContainer.getActiveGroup.getRuname }}{% endblock groupRuname %}
+
+{% block subGroup %}{% endblock subGroup %}
+
+{% block body %}
+    {% block head %}<h3>Выбрать подгруппу запчастей:</h3>{% endblock head %}
+    <div class="row">
+        <div class="col-lg-8">
+            <img src="{% block imagePath %}{% endblock imagePath %}" alt="{{ oContainer.getActiveGroup.getRuname }}" usemap="#{{ oContainer.getActiveGroup.getCode }}" />
+        </div>
+        <div class="col-lg-4">
+            {% block subgroups %}
+                <div class="subgroups">
+                    <map name="{{ oContainer.getActiveGroup.getCode }}">
+                        {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
+                            {% block area %}
+                                <area shape="rect" coords="
+                                    {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }},
+                                    {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y1')) }},
+                                    {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X2')) }},
+                                    {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y2')) }}
+                                " href="#" id="{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}" data-name="{% block dataName %}{{ subgroup.getCode }}{% endblock dataName %}"/>
+                            {% endblock area %}
+                            {% block subgroupItem %}
+                                <div id="subgroup{{ subgroup.getCode }}">
+                                    <a href="{% block pathToSchemas %}{% endblock pathToSchemas %}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
+                                </div>
+                            {% endblock subgroupItem %}
+                            {% block cycleScript %}
+                                <script>
+                                    $("#{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}").on('mouseover', function(){
+                                        $("#subgroup{{ subgroup.getCode }}").toggleClass("btn-default");
+                                    });
+                                    $("#{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}").on('mouseout', function(){
+                                        $("#subgroup{{ subgroup.getCode }}").toggleClass("btn-default");
+                                    });
+                                    $("#{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}").on('click', function(){
+                                        $("#subgroup{{ subgroup.getCode }}").toggleClass("btn-info");
+                                    });
+                                </script>
+                            {% endblock cycleScript %}
+                        {% endfor %}
+                    </map>
+                </div>
+            {% endblock subgroups %}
+        </div>
+    </div>
+    {% block mapsterScript %}
+        <script>
+            $('img').mapster({
+                fillColor: '70daf1',
+                fillOpacity: 0.3,
+                mapKey: 'data-name',
+                staticState: true
+            });
+        </script>
+    {% endblock mapsterScript %}
+    {% block pageScript %}
+    {% endblock pageScript %}
+{% endblock body %}
