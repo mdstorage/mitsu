@@ -165,9 +165,9 @@ abstract class ArticulController extends CatalogController{
     {
         $articulPncs = $parameters['articulPncs'];
 
-        foreach ($oContainer->getActiveSchema()->getPncs() as &$pnc) {
+        foreach ($oContainer->getActiveSchema()->getPncs() as $pnc) {
             if (in_array($pnc->getCode(), $articulPncs)) {
-                $pnc->onActive();
+                $oContainer->getActiveSchema()->setActivePnc($pnc->getCode());
             }
         }
 
