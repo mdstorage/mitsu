@@ -1,0 +1,32 @@
+<div class="vnc glyphicon-plus" id="{{ data.catalogNum }}" catalog="{{ catalog }}">
+    {% if data.endDate|trim == '' %}
+        {% set endDate = '...' %}
+    {% else %}
+        {% set endDate = data.endDate|slice(5, 2)~'/'~data.endDate|slice(1, 4) %}
+    {% endif %}
+    {{ data.descEn }} ({{ data.repModel }}) {{ data.startDate|slice(5, 2) }}/{{ data.startDate|slice(1, 4) }} - {{ endDate }}<br/>
+</div>
+<div id="model{{ data.catalogNum }}" class="hidden"></div>
+<script>
+    $("#{{ data.catalogNum }}").on("click", function(){
+        $("#model{{ data.catalogNum }}").toggleClass("hidden");
+        $(this).toggleClass("glyphicon-plus");
+        $.ajax({
+            type:   'POST',
+            async:  false,
+            url:    "{{ path('catalog_mitsubishi_models_list') }}",
+            data:   { catalog: $(this).attr('catalog'), catalogNum: $(this).attr('id') },
+            success: function(data) {
+                $("#model{{ data.catalogNum }}").html(data);
+            }
+        });
+        $(this).toggleClass("glyphicon-minus");
+    });
+    $("#{{ data.catalogNum }}").on("mouseover", function(){
+        $(this).css("cursor", "pointer");
+        $(this).addClass("btn-info");
+    });
+    $("#{{ data.catalogNum }}").on("mouseout", function(){
+        $(this).removeClass("btn-info");
+    });
+</script>

@@ -1,0 +1,35 @@
+{% extends 'CatalogCommonBundle::base.html.twig' %}
+{% block breadcrumbs %}
+    Поиск запчасти по артикулу
+{% endblock breadcrumbs %}
+{% block summary_set %}{% endblock summary_set %}
+{% block body %}
+    {% block articul %}
+        <div class="alert alert-dismissable" id="articul-group">
+            <div class="row">
+                <div class="col-xs-6">
+                    <h3>Поиск запчасти по артикулу</h3>
+                    <form class="form-horizontal" action="{% block formAction %}{% endblock formAction %}">
+                        <div class="form-group">
+                            <div class="col-xs-10">
+                                <input type="text" class="form-control" id="articul" name="articul" placeholder="Введите артикул запчасти"/>
+                            </div>
+                            <input type="submit" class="btn btn-info" value="Искать" id="articul-button"/>
+                        </div>
+                    </form>
+                    <div id="articul-result"></div>
+                </div>
+            </div>
+            {% block articulScript %}
+                <script>
+                    $("#articul-button").on('click', function(){
+                        if($("#articul").val().length < 8){
+                            alert("Артикул должен содержать не менее 8 знаков!");
+                            return;
+                        }
+                    });
+                </script>
+            {% endblock articulScript %}
+        </div>
+    {% endblock articul %}
+{% endblock body %}

@@ -1,0 +1,13 @@
+.mitsu{
+    margin: 20px;
+}
+.vnc{
+    font-weight: bold;
+}
+.model{
+    margin-left: 40px;
+}
+
+.classification{
+    margin-left: 60px;
+}

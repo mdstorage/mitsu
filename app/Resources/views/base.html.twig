@@ -2,21 +2,20 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Mitsubishi{% endblock %}</title>
+        <title>{% block title %}Каталог{% endblock %}</title>
         {% block stylesheets %}
-            <link rel="stylesheet" href="{{ asset('bundles/catalogmitsubishi/css/bootstrap.min.css') }}" media="all">
-            <link rel="stylesheet" href="{{ asset('bundles/catalogmitsubishi/css/bootstrap-theme.min.css') }}" media="all">
-            <link rel="stylesheet" href="{{ asset('bundles/catalogmitsubishi/css/mitsubishi.css') }}" media="all">
+            <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap.min.css') }}" media="all">
+            <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap-theme.min.css') }}" media="all">
         {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
         {% block javascripts %}
-            <script src="{{ asset('bundles/catalogmitsubishi/js/jquery-2.1.1.min.js') }}"></script>
-            <script src="{{ asset('bundles/catalogmitsubishi/js/bootstrap.min.js') }}"></script>
-            <script src="{{ asset('bundles/catalogmitsubishi/js/jquery.imagemapster.min.js') }}"></script>
+            <script src="{{ asset('bundles/catalogcommon/js/jquery-2.1.1.min.js') }}"></script>
+            <script src="{{ asset('bundles/catalogcommon/js/bootstrap.min.js') }}"></script>
+            <script src="{{ asset('bundles/catalogcommon/js/jquery.imagemapster.min.js') }}"></script>
         {% endblock %}
-        <div class="mitsu">
+        <div class="main">
             <div class="container-fluid">
                 <div class="breadcrumb">
                     {% block breadcrumbs %}
@@ -27,7 +26,42 @@
                 {% block summary_set%}
                 <div class="alert alert-info">
                     <div class="row">
-                        {% block summary %}{% endblock summary%}
+                        {% block summary %}
+                            <div class="col-lg-4">
+                                <div>
+                                    {% block region %}
+                                        <b>Регион:</b> {% block regionRuname %}{% endblock regionRuname %}
+                                    {% endblock region %}
+                                </div>
+                                <div>
+                                    {% block model %}
+                                        <b>Модель:</b> {% block modelRuname %}{% endblock modelRuname %}
+                                    {% endblock model %}
+                                </div>
+                                <div>
+                                    {% block modification %}
+                                        <b>Модификация:</b> {% block modificationRuname %}{% endblock modificationRuname %}
+                                    {% endblock modification %}
+                                </div>
+                                <div>
+                                    {% block complectation %}
+                                        <b>Комплектация:</b> {% block complectationRuname %}{% endblock complectationRuname %}
+                                    {% endblock complectation %}
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div>
+                                    {% block group %}
+                                        <b>Группа запчастей:</b> {% block groupRuname %}{% endblock groupRuname %}
+                                    {% endblock group %}
+                                </div>
+                                <div>
+                                    {% block subGroup %}
+                                        <b>Подгруппа запчастей:</b> {% block subGroupRuname %}{% endblock subGroupRuname %}
+                                    {% endblock subGroup %}
+                                </div>
+                            </div>
+                        {% endblock summary%}
                     </div>
                 </div>
                 {% endblock summary_set%}
