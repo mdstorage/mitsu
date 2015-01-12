@@ -74,4 +74,93 @@ class MazdaArticulModel extends MazdaCatalogModel{
 
         return $modifications;
     }
+
+    public function getArticulGroups($articulCode, $modificationCode)
+    {
+        $sqlGroup = "
+        SELECT s.pgroup
+        FROM sgroup s
+        WHERE s.sgroup IN (?)
+        GROUP BY s.pgroup
+        ";
+
+        $query = $this->conn->executeQuery($sqlGroup, array(
+            $this->getArticulSubGroups($articulCode, $modificationCode)
+        ), array(
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
+        ));
+
+
+        $aData = $query->fetchAll();
+
+        $groups = array_column($aData, 'pgroup');
+
+        return $groups;
+    }
+
+    public function getArticulSubGroups($articulCode, $modificationCode)
+    {
+        $sqlSubGroup = "
+        SELECT pc.sgroup
+        FROM part_catalog pc
+        WHERE pc.part_name = :articulCode
+          AND pc.catalog_number = :modificationCode
+        GROUP BY pc.sgroup
+        ";
+
+        $query = $this->conn->prepare($sqlSubGroup);
+        $query->bindValue('articulCode', $articulCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->execute();
+
+        $subGroups = array_column($query->fetchAll(), 'sgroup');
+
+        return $subGroups;
+    }
+
+    public function getArticulSchemas($articulCode, $modificationCode, $subGroupCode)
+    {
+        $sqlSchema = "
+        SELECT p.pic_name
+        FROM pictures p
+        WHERE p.part_code IN (?) OR p.part_code = ?
+        GROUP BY p.pic_name
+        ";
+
+        $query = $this->conn->executeQuery($sqlSchema, array(
+            $this->getArticulPncs($articulCode, $modificationCode, $subGroupCode),
+            $articulCode
+        ), array(
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+            \PDO::PARAM_STR
+        ));
+
+        $aData = $query->fetchAll();
+
+        $schemas = array_column($aData, 'pic_name');
+
+        return $schemas;
+    }
+
+    public function getArticulPncs($articulCode, $modificationCode, $subGroupCode)
+    {
+        $sqlPnc = "
+        SELECT pc.dcod
+        FROM part_catalog pc
+        WHERE pc.part_name = :articulCode
+            AND pc.catalog_number = :modificationCode
+            AND pc.sgroup = :subGroupCode
+        GROUP BY pc.dcod
+        ";
+
+        $query = $this->conn->prepare($sqlPnc);
+        $query->bindValue('articulCode', $articulCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->execute();
+
+        $pncs = array_column($query->fetchAll(), 'dcod');
+
+        return $pncs;
+    }
 } 

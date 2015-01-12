@@ -9,7 +9,7 @@
 {% block schema %}
     {% if schema.getCode is not empty %}
             <div class="col-xs-3">
-        <a href="{{ path('catalog_mazda_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+        <a href="{{ path('articul_mazda_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
                     <div class="row">
                         {{ schema.getRuname }}

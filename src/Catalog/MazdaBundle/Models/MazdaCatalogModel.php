@@ -456,20 +456,43 @@ class MazdaCatalogModel extends CatalogModel{
 
     public function getReferGroups($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
+        $sqlSubgroups = "
+        SELECT sg.sgroup
+        FROM sgroup sg
+        WHERE sg.catalog = :regionCode
+            AND sg.catalog_number = :modificationCode
+            AND sg.lang = 1
+        GROUP BY sg.sgroup
+        ";
+
+        $query = $this->conn->prepare($sqlSubgroups);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->execute();
+
+        $subgroups = $query->fetchAll();
+
         $sqlSchemaLabels = "
         SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
         FROM pictures p
-        WHERE p.catalog = :regionCode
-          AND p.cd = :cd
-          AND p.pic_name = :schemaCode
+        WHERE p.catalog = ?
+          AND p.cd = ?
+          AND p.pic_name = ?
           AND p.XC26ECHK = 3
+          AND p.part_code IN (?)
         ";
 
-        $query = $this->conn->prepare($sqlSchemaLabels);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('cd', $cd);
-        $query->bindValue('schemaCode', $schemaCode);
-        $query->execute();
+        $query = $this->conn->executeQuery($sqlSchemaLabels, array(
+            $regionCode,
+            $cd,
+            $schemaCode,
+            array_column($subgroups, 'sgroup')
+        ), array(
+            \PDO::PARAM_STR,
+            \PDO::PARAM_STR,
+            \PDO::PARAM_STR,
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
+        ));
 
         $aDataLabels = $query->fetchAll();
 

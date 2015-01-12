@@ -13,6 +13,24 @@
     <img src="{{ asset('bundles/catalogmazda/images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/image/'~oContainer.getActiveSchema.getCode|slice(0,3)~'/'~oContainer.getActiveSchema.getCode~'.png') }}" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
 {% endblock image %}
 
-{% block ajaxUrl %}{{ path('catalog_mazda_articuls') }}{% endblock ajaxUrl %}
+{% block ajaxUrl %}{{ path('articul_mazda_articuls') }}{% endblock ajaxUrl %}
 {% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{{ path('catalog_mazda_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
+{% block pncScript %}
+    {% if pnc.isActive %}
+        <script>
+            $(document).ready(function(){
+                {{ block('pncClick') }}
+            });
+        </script>
+
+    {% endif %}
+    {{ parent() }}
+{% endblock pncScript %}
+{% set a = [] %}
+{% for pnc in oContainer.getActiveSchema.getPncs %}
+    {% if pnc.isActive %}
+        {% set a = a|merge([pnc.getCode]) %}
+    {% endif %}
+{% endfor %}
+{% block activeLabel %}{{ a|join(',') }}{% endblock activeLabel %}

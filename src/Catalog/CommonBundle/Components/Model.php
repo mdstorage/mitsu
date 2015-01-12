@@ -28,4 +28,13 @@ class Model extends CommonElement implements ModelInterface{
     {
         return $this->modifications;
     }
+
+    public function removeModification($modificationCode)
+    {
+        $modifications = $this->getModifications();
+        unset($modifications[$modificationCode]);
+        $this->modifications = $modifications;
+
+        return $this;
+    }
 } 

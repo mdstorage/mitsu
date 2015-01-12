@@ -37,15 +37,17 @@ class VinController extends BaseController{
 
     public function articulsAction(Request $request)
     {
-        $prodDate = $request->cookies->get(Constants::PROD_DATE);
-        $this->addFilter('prodDateFilter', array(Constants::PROD_DATE => $prodDate));
-        return parent::articulsAction($request);
+        if ($request->isXmlHttpRequest()) {
+            $prodDate = $request->cookies->get(Constants::PROD_DATE);
+            $this->addFilter('prodDateFilter', array(Constants::PROD_DATE => $prodDate));
+            return parent::articulsAction($request);
+        }
     }
 
-    public function getGroupBySubgroupAction($regionCode, $modelCode, $modificationCode, $subGroupCode)
+    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
         $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode);
 
-        return $this->schemasAction($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode);
+        return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode);
     }
 } 
