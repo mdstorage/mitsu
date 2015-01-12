@@ -24,4 +24,17 @@ abstract class CatalogModel{
     abstract function getModifications($regionCode, $modelCode);
     abstract function getComplectations($regionCode, $modelCode, $modificationCode);
     abstract function getGroups($regionCode, $modelCode, $modificationCode);
+
+    protected function array_column($array, $column)
+    {
+        $return = array();
+
+        foreach ($array as $value) {
+            if (isset($value[$column])) {
+                $return[] = $value[$column];
+            }
+        }
+
+        return $return;
+    }
 }
