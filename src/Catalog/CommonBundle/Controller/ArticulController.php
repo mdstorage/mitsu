@@ -39,7 +39,7 @@ abstract class ArticulController extends CatalogController{
         $articulModels = $parameters['articulModels'];
 
         foreach ($oContainer->getActiveRegion()->getModels() as $model) {
-            if (!in_array($model->getCode(), $articulModels)) {
+            if (!in_array($model->getCode(), $articulModels, true)) {
                 $oContainer->getActiveRegion()->removeModel($model->getCode());
             }
         }
@@ -66,7 +66,7 @@ abstract class ArticulController extends CatalogController{
         $articulModifications = $parameters['articulModifications'];
 
         foreach ($oContainer->getActiveModel()->getModifications() as $modification) {
-            if (!in_array($modification->getCode(), $articulModifications)) {
+            if (!in_array($modification->getCode(), $articulModifications, true)) {
                 $oContainer->getActiveModel()->removeModification($modification->getCode());
             }
         }
@@ -91,7 +91,7 @@ abstract class ArticulController extends CatalogController{
         $articulGroups = $parameters['articulGroups'];
 
         foreach ($oContainer->getGroups() as $group) {
-            if (!in_array($group->getCode(), $articulGroups)) {
+            if (!in_array($group->getCode(), $articulGroups, true)) {
                 $oContainer->removeGroup($group->getCode());
             }
         }
@@ -116,7 +116,7 @@ abstract class ArticulController extends CatalogController{
         $articulSubGroups = $parameters['articulSubGroups'];
 
         foreach ($oContainer->getActiveGroup()->getSubGroups() as $subgroup) {
-            if (!in_array($subgroup->getCode(), $articulSubGroups)) {
+            if (!in_array($subgroup->getCode(), $articulSubGroups, true)) {
                 $oContainer->getActiveGroup()->removeSubGroup($subgroup->getCode());
             }
         }
@@ -141,7 +141,7 @@ abstract class ArticulController extends CatalogController{
         $articulSchemas = $parameters['articulSchemas'];
 
         foreach ($oContainer->getSchemas() as $schema) {
-            if (!in_array($schema->getCode(), $articulSchemas)) {
+            if (!in_array($schema->getCode(), $articulSchemas, true)) {
                 $oContainer->removeSchema($schema->getCode());
             }
         }
