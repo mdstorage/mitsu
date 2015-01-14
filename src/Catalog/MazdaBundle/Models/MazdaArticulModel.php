@@ -80,13 +80,16 @@ class MazdaArticulModel extends MazdaCatalogModel{
         $sqlGroup = "
         SELECT s.pgroup
         FROM sgroup s
-        WHERE s.sgroup IN (?)
+        WHERE s.catalog_number = ?
+          AND s.sgroup IN (?)
         GROUP BY s.pgroup
         ";
 
         $query = $this->conn->executeQuery($sqlGroup, array(
+            $modificationCode,
             $this->getArticulSubGroups($articulCode, $modificationCode)
         ), array(
+            \PDO::PARAM_STR,
             \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
         ));
 
