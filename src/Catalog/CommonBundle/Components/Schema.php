@@ -23,6 +23,13 @@ class Schema extends CommonElement implements SchemaInterface{
         return $this->pncs;
     }
 
+    public function setActivePnc($code)
+    {
+        $this->pncs[$code]->onActive();
+
+        return $this;
+    }
+
     public function setCommonArticuls(CollectionInterface $collection)
     {
 

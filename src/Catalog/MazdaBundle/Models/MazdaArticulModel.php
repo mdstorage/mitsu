@@ -52,7 +52,7 @@ class MazdaArticulModel extends MazdaCatalogModel{
 
         $aData = $query->fetchAll();
 
-        $models = array_column($aData, 'model_name');
+        $models = $this->array_column($aData, 'model_name');
 
         return $models;
     }
@@ -70,7 +70,7 @@ class MazdaArticulModel extends MazdaCatalogModel{
         $query->bindValue('articulCode', $articulCode);
         $query->execute();
 
-        $modifications = array_column($query->fetchAll(), 'catalog_number');
+        $modifications = $this->array_column($query->fetchAll(), 'catalog_number');
 
         return $modifications;
     }
@@ -80,20 +80,23 @@ class MazdaArticulModel extends MazdaCatalogModel{
         $sqlGroup = "
         SELECT s.pgroup
         FROM sgroup s
-        WHERE s.sgroup IN (?)
+        WHERE s.catalog_number = ?
+          AND s.sgroup IN (?)
         GROUP BY s.pgroup
         ";
 
         $query = $this->conn->executeQuery($sqlGroup, array(
+            $modificationCode,
             $this->getArticulSubGroups($articulCode, $modificationCode)
         ), array(
+            \PDO::PARAM_STR,
             \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
         ));
 
 
         $aData = $query->fetchAll();
 
-        $groups = array_column($aData, 'pgroup');
+        $groups = $this->array_column($aData, 'pgroup');
 
         return $groups;
     }
@@ -113,7 +116,7 @@ class MazdaArticulModel extends MazdaCatalogModel{
         $query->bindValue('modificationCode', $modificationCode);
         $query->execute();
 
-        $subGroups = array_column($query->fetchAll(), 'sgroup');
+        $subGroups = $this->array_column($query->fetchAll(), 'sgroup');
 
         return $subGroups;
     }
@@ -137,7 +140,7 @@ class MazdaArticulModel extends MazdaCatalogModel{
 
         $aData = $query->fetchAll();
 
-        $schemas = array_column($aData, 'pic_name');
+        $schemas = $this->array_column($aData, 'pic_name');
 
         return $schemas;
     }
@@ -159,7 +162,7 @@ class MazdaArticulModel extends MazdaCatalogModel{
         $query->bindValue('subGroupCode', $subGroupCode);
         $query->execute();
 
-        $pncs = array_column($query->fetchAll(), 'dcod');
+        $pncs = $this->array_column($query->fetchAll(), 'dcod');
 
         return $pncs;
     }

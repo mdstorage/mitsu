@@ -374,7 +374,7 @@ class MazdaCatalogModel extends CatalogModel{
         $query = $this->conn->executeQuery($sqlSchemaLabelsDescr, array(
             $regionCode,
             $cd,
-            array_column($aDataLabels, 'part_code')
+            $this->array_column($aDataLabels, 'part_code')
         ), array(
             \PDO::PARAM_STR,
             \PDO::PARAM_STR,
@@ -404,7 +404,7 @@ class MazdaCatalogModel extends CatalogModel{
 
         $pncs = array();
         foreach ($aDataLabels as $item) {
-            if (in_array($item['part_code'], array_column($aDataGroupPncs, 'dcod'))){
+            if (in_array($item['part_code'], $this->array_column($aDataGroupPncs, 'dcod'))){
                 $pncs[$item['part_code']][Constants::OPTIONS][Constants::COORDS][] = array(
                     Constants::X1 => $item['xs'],
                     Constants::Y1 => $item['ys'],
@@ -486,7 +486,7 @@ class MazdaCatalogModel extends CatalogModel{
             $regionCode,
             $cd,
             $schemaCode,
-            array_column($subgroups, 'sgroup')
+            $this->array_column($subgroups, 'sgroup')
         ), array(
             \PDO::PARAM_STR,
             \PDO::PARAM_STR,
@@ -547,7 +547,7 @@ class MazdaCatalogModel extends CatalogModel{
             $regionCode,
             $cd,
             $modificationCode,
-            array_column($aData, 'desc_id')
+            $this->array_column($aData, 'desc_id')
         ), array(
             \PDO::PARAM_STR,
             \PDO::PARAM_STR,
@@ -556,7 +556,7 @@ class MazdaCatalogModel extends CatalogModel{
         ));
 
         $aDataDescr = $query->fetchAll();
-        $aDataDescr = array_combine(array_column($aDataDescr, 'id'), array_column($aDataDescr, 'descr'));
+        $aDataDescr = array_combine($this->array_column($aDataDescr, 'id'), $this->array_column($aDataDescr, 'descr'));
 
         $articuls = array();
         foreach ($aData as $item) {
