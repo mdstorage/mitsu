@@ -52,7 +52,7 @@ class VinController extends BaseController{
             'complectationCode' => $complectationCode
         ));
 
-        return $this->groupsAction($request, $regionCode, $modelCode, $modificationCode);
+        return $this->groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
     }
 
     public function vinGroupFilter($oContainer, $parameters)
