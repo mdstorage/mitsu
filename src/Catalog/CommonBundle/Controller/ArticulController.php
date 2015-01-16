@@ -74,7 +74,7 @@ abstract class ArticulController extends CatalogController{
         return $oContainer;
     }
 
-    public function groupsAction(Request $request, $regionCode, $modelCode, $modificationCode)
+    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulGroups = $this->model()->getArticulGroups($articul, $modificationCode);
@@ -99,7 +99,7 @@ abstract class ArticulController extends CatalogController{
         return $oContainer;
     }
 
-    public function subgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $groupCode)
+    public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulSubGroups = $this->model()->getArticulSubGroups($articul, $modificationCode);
@@ -108,7 +108,7 @@ abstract class ArticulController extends CatalogController{
             'articulSubGroups' => $articulSubGroups
         ));
 
-        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $groupCode);
+        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
     }
 
     public function aticulSubGroupsFilter($oContainer, $parameters)
@@ -124,7 +124,7 @@ abstract class ArticulController extends CatalogController{
         return $oContainer;
     }
 
-    public function schemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode)
+    public function schemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulSchemas = $this->model()->getArticulSchemas($articul, $modificationCode, $subGroupCode);
@@ -133,7 +133,7 @@ abstract class ArticulController extends CatalogController{
             'articulSchemas' => $articulSchemas
         ));
 
-        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode);
+        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
     }
 
     public function aticulSchemasFilter($oContainer, $parameters)
@@ -149,7 +149,7 @@ abstract class ArticulController extends CatalogController{
         return $oContainer;
     }
 
-    public function schemaAction(Request $request, $regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode)
+    public function schemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulPncs = $this->model()->getArticulPncs($articul, $modificationCode, $subGroupCode);
@@ -158,7 +158,7 @@ abstract class ArticulController extends CatalogController{
             'articulPncs' => $articulPncs
         ));
 
-        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode);
+        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode);
     }
 
     public function aticulPncsFilter($oContainer, $parameters)
