@@ -44,6 +44,30 @@ class VinController extends BaseController{
         }
     }
 
+    public function vinGroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode)
+    {
+        $this->addFilter('vinGroupFilter', array(
+            'regionCode' => $regionCode,
+            'modificationCode' => $modificationCode,
+            'complectationCode' => $complectationCode
+        ));
+
+        return $this->groupsAction($request, $regionCode, $modelCode, $modificationCode);
+    }
+
+    public function vinGroupFilter($oContainer, $parameters)
+    {
+        $groups = $this->model()->getVinGroups($parameters['regionCode'], $parameters['modificationCode'], $parameters['complectationCode']);
+
+        foreach ($oContainer->getGroups() as $group) {
+            if (!in_array($group->getCode(), $groups, true)) {
+                $oContainer->removeGroup($group->getCode());
+            }
+        }
+
+        return $oContainer;
+    }
+
     public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
         $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode);
