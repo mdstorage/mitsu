@@ -48,8 +48,8 @@ vin_mazda_result:
   requirements: {_method: POST}
 
 vin_mazda_groups:
-  path:         /mazda/vin/3/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogMazdaBundle:Vin:groups}
+  path:         /mazda/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogMazdaBundle:Vin:vinGroups}
 
 vin_mazda_subgroups:
   path:         /mazda/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
