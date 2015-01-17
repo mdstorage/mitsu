@@ -14,7 +14,7 @@ class Factory {
         return $oContainer;
     }
 
-    public static function createRegion($code=null, $name=null, $options=null, $models=array())
+    public static function createRegion($code=null, $name=null, $options=array(), $models=array())
     {
         $oRegion = new Region();
         $oRegion->setConstants(self::$constants);

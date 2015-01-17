@@ -51,7 +51,7 @@ class MazdaVinModel extends MazdaCatalogModel {
                 'prod_year' => $aModel['prod_year'],
                 'modification' => $aData['catalog_number'],
                 'country' => $aData['XC26EDST'],
-                'complectation' => $aData['MDLCD'],
+                'complectation' => $aData['MDLCD'] . $aData['MSCSPCCD'],
                 'ext_color' => $aData['ext_color'],
                 'int_color' => $aData['int_color'],
                 Constants::PROD_DATE => $aData['prod_date']
@@ -83,6 +83,30 @@ class MazdaVinModel extends MazdaCatalogModel {
         return $additionalParameters;
     }
 
+    public function getVinOptionsSet($regionCode, $modificationCode, $complectationCode, $complectationSubCode)
+    {
+        $sqlOptionsSet = "
+        SELECT m.`XC26OPT1`
+        FROM model3 m
+        WHERE m.catalog = :regionCode
+          AND m.catalog_number = :modificationCode
+          AND m.MDLCD = :MDLCD
+          AND m.`MSCSPCCD` = :complectationSubCode
+        LIMIT 1
+        ";
+
+        $query = $this->conn->prepare($sqlOptionsSet);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('MDLCD', $complectationCode);
+        $query->bindValue('complectationSubCode', $complectationSubCode);
+        $query->execute();
+
+        $sqlOptionsSet = $query->fetchColumn(0);
+
+        return $sqlOptionsSet;
+    }
+
     public function getVinGroups($regionCode, $modificationCode, $complectationCode)
     {
         $additionalParameters = $this->getVinAdditionalParameters($regionCode, $modificationCode, $complectationCode);
@@ -112,6 +136,85 @@ class MazdaVinModel extends MazdaCatalogModel {
         $aDataDescr = $query->fetchAll();
 
         return $this->array_column($aDataDescr, 'id');
+    }
+
+    public function getVinSubGroups($regionCode, $modificationCode, $complectationCode, $subComplectationCode)
+    {
+        $additionalParameters = $this->getVinAdditionalParameters($regionCode, $modificationCode, $complectationCode);
+        $optionsSet = $this->getVinOptionsSet($regionCode, $modificationCode, $complectationCode, $subComplectationCode);
+
+        $sqlSubGroups = "
+        SELECT DISTINCT
+            s3.XC26PSNO as subGroupCode,
+            IF (s3.XC26SLSU > 0, SUBSTRING(s3.XC26TKT1, 1, s3.XC26SLSU * 6), '') as sgOptions,
+            IF (s3.XC26SLSU > 0, SUBSTRING(s3.XC26TKT1, s3.XC26SLSU * 6 + 1), s3.XC26TKT1) as sgParameters
+        FROM
+            sgroup3 s3
+        WHERE s3.catalog = :regionCode
+          AND s3.catalog_number = :modificationCode
+        ";
+
+        $query = $this->conn->prepare($sqlSubGroups);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $subgroups = array();
+        foreach ($aData as $item) {
+            if ((!$item['sgOptions'] && !$item['sgParameters']) || ($item['sgOptions'] && substr_count($optionsSet, $item['sgOptions'])) || ($item['sgParameters'] && array_intersect(explode(" ", $item['sgParameters']), explode(" ", $additionalParameters)) == explode(" ", $item['sgParameters']))) {
+                $subgroups[] = $item['subGroupCode'];
+            }
+        }
+
+        return $subgroups;
+    }
+
+    public function getVinSchemas($regionCode, $modificationCode, $complectationCode, $subComplectationCode, $subGroupCode)
+    {
+        $additionalParameters = $this->getVinAdditionalParameters($regionCode, $modificationCode, $complectationCode);
+        $optionsSet = $this->getVinOptionsSet($regionCode, $modificationCode, $complectationCode, $subComplectationCode);
+
+        $sqlSchemas = "
+        SELECT DISTINCT
+            sp.pic_name,
+            IF (sp.XC26SLSU > 0, SUBSTRING(sp.XC26TKT1, 1, sp.XC26SLSU * 6), '') as sgOptions,
+            IF (sp.XC26SLSU > 0, SUBSTRING(sp.XC26TKT1, sp.XC26SLSU * 6 + 1), sp.XC26TKT1) as sgParameters
+        FROM sgroup_pics sp
+        WHERE sp.catalog = :regionCode
+            AND sp.catalog_number = :modificationCode
+            AND sp.sgroup = :subGroupCode
+            AND sp.pic_name != ''
+            AND sp.lang = 1
+        UNION
+        SELECT DISTINCT
+            s3.XC26ILFL,
+            IF (s3.XC26SLSU > 0, SUBSTRING(s3.XC26TKT1, 1, s3.XC26SLSU * 6), '') as sgOptions,
+            IF (s3.XC26SLSU > 0, SUBSTRING(s3.XC26TKT1, s3.XC26SLSU * 6 + 1), s3.XC26TKT1) as sgParameters
+        FROM sgroup3 s3
+        WHERE s3.catalog = :regionCode
+            AND s3.catalog_number = :modificationCode
+            AND s3.XC26PSNO = :subGroupCode
+            AND s3.XC26ILFL != ''
+        ";
+
+        $query = $this->conn->prepare($sqlSchemas);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $schemas = array();
+
+        foreach ($aData as $item) {
+            if ((!$item['sgOptions'] && !$item['sgParameters']) || ($item['sgOptions'] && substr_count($optionsSet, $item['sgOptions'])) || ($item['sgParameters'] && array_intersect(explode(" ", $item['sgParameters']), explode(" ", $additionalParameters)) == explode(" ", $item['sgParameters']))) {
+                $schemas[] = $item['pic_name'];
+            }
+        }
+        return $schemas;
     }
 
 } 

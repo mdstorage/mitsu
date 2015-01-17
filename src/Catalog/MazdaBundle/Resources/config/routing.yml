@@ -53,11 +53,11 @@ vin_mazda_groups:
 
 vin_mazda_subgroups:
   path:         /mazda/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogMazdaBundle:Vin:subgroups}
+  defaults:     {_controller: CatalogMazdaBundle:Vin:vinSubgroups}
 
 vin_mazda_schemas:
   path:         /mazda/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogMazdaBundle:Vin:schemas}
+  defaults:     {_controller: CatalogMazdaBundle:Vin:vinSchemas}
 
 vin_mazda_schema:
   path:         /mazda/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
