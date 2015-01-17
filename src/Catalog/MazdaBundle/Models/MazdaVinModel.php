@@ -138,13 +138,49 @@ class MazdaVinModel extends MazdaCatalogModel {
         return $this->array_column($aDataDescr, 'id');
     }
 
+    public function getVinSubGroups($regionCode, $modificationCode, $complectationCode, $subComplectationCode)
+    {
+        $additionalParameters = $this->getVinAdditionalParameters($regionCode, $modificationCode, $complectationCode);
+        $optionsSet = $this->getVinOptionsSet($regionCode, $modificationCode, $complectationCode, $subComplectationCode);
+
+        $sqlSubGroups = "
+        SELECT DISTINCT
+            s3.XC26PSNO as subGroupCode,
+            IF (s3.XC26SLSU > 0, SUBSTRING(s3.XC26TKT1, 1, s3.XC26SLSU * 6), '') as sgOptions,
+            IF (s3.XC26SLSU > 0, SUBSTRING(s3.XC26TKT1, s3.XC26SLSU * 6 + 1), s3.XC26TKT1) as sgParameters
+        FROM
+            sgroup3 s3
+        WHERE s3.catalog = :regionCode
+          AND s3.catalog_number = :modificationCode
+        ";
+
+        $query = $this->conn->prepare($sqlSubGroups);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $subgroups = array();
+        foreach ($aData as $item) {
+            if ((!$item['sgOptions'] && !$item['sgParameters']) || ($item['sgOptions'] && substr_count($optionsSet, $item['sgOptions'])) || ($item['sgParameters'] && array_intersect(explode(" ", $item['sgParameters']), explode(" ", $additionalParameters)) == explode(" ", $item['sgParameters']))) {
+                $subgroups[] = $item['subGroupCode'];
+            }
+        }
+
+        return $subgroups;
+    }
+
     public function getVinSchemas($regionCode, $modificationCode, $complectationCode, $subComplectationCode, $subGroupCode)
     {
         $additionalParameters = $this->getVinAdditionalParameters($regionCode, $modificationCode, $complectationCode);
         $optionsSet = $this->getVinOptionsSet($regionCode, $modificationCode, $complectationCode, $subComplectationCode);
 
         $sqlSchemas = "
-        SELECT sp.pic_name, sp.`XC26SLSU`, sp.`XC26SKSU`, sp.XC26TKT1
+        SELECT DISTINCT
+            sp.pic_name,
+            IF (sp.XC26SLSU > 0, SUBSTRING(sp.XC26TKT1, 1, sp.XC26SLSU * 6), '') as sgOptions,
+            IF (sp.XC26SLSU > 0, SUBSTRING(sp.XC26TKT1, sp.XC26SLSU * 6 + 1), sp.XC26TKT1) as sgParameters
         FROM sgroup_pics sp
         WHERE sp.catalog = :regionCode
             AND sp.catalog_number = :modificationCode
@@ -152,7 +188,10 @@ class MazdaVinModel extends MazdaCatalogModel {
             AND sp.pic_name != ''
             AND sp.lang = 1
         UNION
-        SELECT s3.XC26ILFL, s3.`XC26SLSU`, s3.`XC26SKSU`, s3.XC26TKT1
+        SELECT DISTINCT
+            s3.XC26ILFL,
+            IF (s3.XC26SLSU > 0, SUBSTRING(s3.XC26TKT1, 1, s3.XC26SLSU * 6), '') as sgOptions,
+            IF (s3.XC26SLSU > 0, SUBSTRING(s3.XC26TKT1, s3.XC26SLSU * 6 + 1), s3.XC26TKT1) as sgParameters
         FROM sgroup3 s3
         WHERE s3.catalog = :regionCode
             AND s3.catalog_number = :modificationCode
@@ -168,18 +207,13 @@ class MazdaVinModel extends MazdaCatalogModel {
 
         $aData = $query->fetchAll();
 
-
-
         $schemas = array();
 
         foreach ($aData as $item) {
-            $array = array_intersect(explode(" ", $item['XC26TKT1']), explode(" ", $additionalParameters));
-$all[] = explode(" ", $item['XC26TKT1']);
-            if (($item['XC26SKSU'] == 0 && $item['XC26SLSU'] == 0) || ($array || substr_count($optionsSet, $item['XC26TKT1']) > 0)) {
+            if ((!$item['sgOptions'] && !$item['sgParameters']) || ($item['sgOptions'] && substr_count($optionsSet, $item['sgOptions'])) || ($item['sgParameters'] && array_intersect(explode(" ", $item['sgParameters']), explode(" ", $additionalParameters)) == explode(" ", $item['sgParameters']))) {
                 $schemas[] = $item['pic_name'];
             }
         }
-var_dump($all);die;
         return $schemas;
     }
 

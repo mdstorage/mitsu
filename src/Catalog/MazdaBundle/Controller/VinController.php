@@ -44,6 +44,18 @@ class VinController extends BaseController{
         return $this->groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
     }
 
+    public function vinSubgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
+    {
+        $this->addFilter('vinSubGroupFilter', array(
+            'regionCode' => $regionCode,
+            'modificationCode' => $modificationCode,
+            'complectationCode' => substr($complectationCode, 0, 4),
+            'subComplectationCode' => substr($complectationCode, 3, 3)
+        ));
+
+        return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+    }
+
     public function vinSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
         $this->addFilter('vinSchemasFilter', array(

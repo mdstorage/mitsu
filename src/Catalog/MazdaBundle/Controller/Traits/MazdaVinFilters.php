@@ -38,6 +38,19 @@ trait MazdaVinFilters {
         return $oContainer;
     }
 
+    public function vinSubgroupFilter($oContainer, $parameters)
+    {
+        $subgroups = $this->model()->getVinSubGroups($parameters['regionCode'], $parameters['modificationCode'], $parameters['complectationCode'], $parameters['subComplectationCode']);
+
+        foreach ($oContainer->getActiveGroup()->getSubGroups() as $subGroup) {
+            if (!in_array($subGroup->getCode(), $subgroups, true)) {
+                $oContainer->getActiveGroup()->removeSubgroup($subGroup->getCode());
+            }
+        }
+
+        return $oContainer;
+    }
+
     public function vinSchemasFilter($oContainer, $parameters)
     {
         $schemas = $this->model()->getVinSchemas($parameters['regionCode'], $parameters['modificationCode'], $parameters['complectationCode'], $parameters['subComplectationCode'], $parameters['subGroupCode']);
