@@ -1,0 +1,38 @@
+{% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
+{% use 'CatalogMercedesBundle::mercedes.base.html.twig' %}
+{% set complectationsListLenght = oContainer.getActiveModification.getComplectations|length %}
+{% block complectations %}
+    <div class="complectations">
+        <div class="row">
+            <div class="col-lg-4">
+                <div id="result">
+                    {% for complectation in oContainer.getActiveModification.getComplectations %}
+                        {% if loop.index <= (complectationsListLenght/3|round + 1) %}
+                            {% block halfList %}
+                                {{ complectation.getCode }} {{ complectation.getRuname }} <br/>
+                            {% endblock halfList %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div id="result">
+                    {% for complectation in oContainer.getActiveModification.getComplectations %}
+                        {% if loop.index > (complectationsListLenght/3|round + 1) and loop.index <= (complectationsListLenght*2/3|round + 1) %}
+                            {{ block('halfList') }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div id="result">
+                    {% for complectation in oContainer.getActiveModification.getComplectations %}
+                        {% if loop.index > (complectationsListLenght*2/3|round + 1) %}
+                            {{ block('halfList') }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock complectations %}

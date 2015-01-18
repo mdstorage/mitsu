@@ -1,0 +1,12 @@
+catalog_mercedes:
+  path:         /mercedes/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_mercedes_modifications:
+  path:         /mercedes/catalog/1
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_mercedes_complectations:
+  path:         /mercedes/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:complectations}

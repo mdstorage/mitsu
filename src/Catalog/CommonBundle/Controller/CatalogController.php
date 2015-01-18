@@ -96,15 +96,21 @@ abstract class CatalogController extends BaseController{
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
+        $regions = $this->model()->getRegions();
+        $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
+        $models = $this->model()->getModels($regionCode);
+        $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
+        $modifications = $this->model()->getModifications($regionCode, $modelCode);
+        $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
         $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
 
         if(empty($complectations))
             return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Комплектации не найдены.'));
 
         $oContainer = Factory::createContainer()
-            ->setActiveRegion(Factory::createRegion($regionCode, $regionCode))
-            ->setActiveModel(Factory::createModel($modelCode, $modelCode))
-            ->setActiveModification(Factory::createModification($modificationCode, $modificationCode)
+            ->setActiveRegion($regionsCollection[$regionCode])
+            ->setActiveModel($modelsCollection[$modelCode])
+            ->setActiveModification($modificationsCollection[$modificationCode]
                 ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
 
         $this->filter($oContainer);
