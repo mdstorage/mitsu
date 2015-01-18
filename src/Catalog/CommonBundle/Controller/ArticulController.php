@@ -114,8 +114,9 @@ abstract class ArticulController extends CatalogController{
     public function aticulSubGroupsFilter($oContainer, $parameters)
     {
         $articulSubGroups = $parameters['articulSubGroups'];
-
+        $ar = array();
         foreach ($oContainer->getActiveGroup()->getSubGroups() as $subgroup) {
+$ar[]=$subgroup->getCode();
             if (!in_array($subgroup->getCode(), $articulSubGroups, true)) {
                 $oContainer->getActiveGroup()->removeSubGroup($subgroup->getCode());
             }
