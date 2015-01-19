@@ -16,6 +16,7 @@ abstract class CatalogController extends BaseController{
          */
         $aRegions = $this->model()->getRegions();
 
+
         if(empty($aRegions)){
             return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Регионы не найдены.'));
         } else {
@@ -23,23 +24,23 @@ abstract class CatalogController extends BaseController{
             /*
              * Если регионы найдены, они помещаются в контейнер
              */
+            $regionsCollection = Factory::createCollection($aRegions, $oActiveRegion);
             $oContainer = Factory::createContainer()
-                ->setRegions(Factory::createCollection($aRegions, $oActiveRegion));
+                ->setRegions($regionsCollection);
 
             /*
              * Если пользователь задал регион, то этот регион становится активным
              */
+            $regionsList = $regionsCollection->getCollection();
             if (!is_null($regionCode)){
-                $oActiveRegion->setCode($regionCode);
+                $oActiveRegion = $regionsList[$regionCode];
             } else{
                 /*
                  * Если пользователь не задавал регион, то в качестве активного выбирается первый из списка регионов объект
                  */
-                $regions = $oContainer->getRegions();
-                $oActiveRegion->setCode(reset($regions)->getCode());
+                $oActiveRegion = reset($regionsList);
             }
-
-            $oActiveRegion->setName($oActiveRegion->getCode());
+            
             /*
              * Выборка моделей из базы для данного артикула и региона
              */
