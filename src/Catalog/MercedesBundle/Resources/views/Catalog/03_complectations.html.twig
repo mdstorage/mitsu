@@ -3,36 +3,17 @@
 {% set complectationsListLenght = oContainer.getActiveModification.getComplectations|length %}
 {% block complectations %}
     <div class="complectations">
-        <div class="row">
-            <div class="col-lg-4">
-                <div id="result">
-                    {% for complectation in oContainer.getActiveModification.getComplectations %}
-                        {% if loop.index <= (complectationsListLenght/3|round + 1) %}
-                            {% block halfList %}
-                                {{ complectation.getCode }} {{ complectation.getRuname }} <br/>
-                            {% endblock halfList %}
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div id="result">
-                    {% for complectation in oContainer.getActiveModification.getComplectations %}
-                        {% if loop.index > (complectationsListLenght/3|round + 1) and loop.index <= (complectationsListLenght*2/3|round + 1) %}
-                            {{ block('halfList') }}
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div id="result">
-                    {% for complectation in oContainer.getActiveModification.getComplectations %}
-                        {% if loop.index > (complectationsListLenght*2/3|round + 1) %}
-                            {{ block('halfList') }}
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
+            <table class="table table-responsive">
+                {% for complectation in oContainer.getActiveModification.getComplectations %}
+                    <tr>
+                        <td>{{ complectation.getCode|slice(4) }}</td>
+                        <td>
+                            <a href="{{ path('catalog_mercedes_groups', parameters|merge({ 'complectationCode': complectation.getCode })) }}">{{ complectation.getRuname }}</a>
+                        </td>
+                        <td>{{ complectation.getOption('REMARKS') }}</td>
+                    </tr>
+
+                {% endfor %}
+            </table>
     </div>
 {% endblock complectations %}

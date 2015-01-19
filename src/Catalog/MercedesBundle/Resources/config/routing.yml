@@ -10,3 +10,7 @@ catalog_mercedes_modifications:
 catalog_mercedes_complectations:
   path:         /mercedes/catalog/2/{regionCode}/{modelCode}/{modificationCode}
   defaults:     {_controller: CatalogMercedesBundle:Catalog:complectations}
+
+catalog_mercedes_groups:
+  path:         /mercedes/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:groups}

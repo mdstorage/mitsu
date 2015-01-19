@@ -100,12 +100,16 @@ class MercedesCatalogModel extends CatalogModel{
     {
         $sqlComplectations = "
         SELECT DISTINCT
-            IF (SUBBM2 != '', concat(TYPE, '.', SUBBM1, '.', SUBBM2), concat(TYPE, '.', SUBBM1)) modification,
-            SALESDES
+            IF (models.SUBBM2 != '', concat(models.TYPE, '.', models.SUBBM1, '-', models.SUBBM2), concat(models.TYPE, '.', models.SUBBM1)) COMPLECTATION,
+            models.SALESDES TRADEMARK,
+            models.CATNUM,
+            models.REMARKS
         FROM
-            alltext_models_v
+            alltext_models_v as models
         WHERE
-            APPINF LIKE :regionCode AND CLASS = :modelCode AND AGGTYPE = :modificationCode;
+            models.APPINF LIKE :regionCode
+            AND models.CLASS = :modelCode
+            AND models.AGGTYPE = :modificationCode
         ";
 
         $query = $this->conn->prepare($sqlComplectations);
@@ -119,18 +123,50 @@ class MercedesCatalogModel extends CatalogModel{
         $complectations = array();
 
         foreach ($aData as $item) {
-            $complectations[$item['modification']] = array(
-                Constants::NAME => $item['SALESDES'],
-                Constants::OPTIONS => array()
-            );
+            $complectations[$item['CATNUM'] . "." . $item['COMPLECTATION']][Constants::NAME] = $item['TRADEMARK'];
+            $complectations[$item['CATNUM'] . "." . $item['COMPLECTATION']][Constants::OPTIONS]['REMARKS'] = $item['REMARKS'];
         }
-
         return $complectations;
     }
 
-    public function getGroups($regionCode, $modelCode, $modificationCode)
+    public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
+    {
+        $complectationCode = substr($complectationCode, 0, 3);
+        $sqlGroups = "
+            SELECT
+                GROUPS.GROUPNUM, IFNULL(DIC_RU.TEXT, DIC_EN.TEXT) DESCR
+            FROM
+                alltext_bm_group_v GROUPS
+                LEFT OUTER JOIN alltext_bm_dictionary_v DIC_RU
+                    ON DIC_RU.DESCIDX = GROUPS.DESCIDX
+                    AND DIC_RU.LANG = 'R'
+                LEFT OUTER JOIN alltext_bm_dictionary_v DIC_EN
+                    ON DIC_EN.DESCIDX = GROUPS.DESCIDX
+                    AND DIC_EN.LANG = 'E'
+            WHERE
+                GROUPS.CATNUM = :complectationCode
+            ORDER BY
+                GROUPS.GROUPNUM
+        ";
+
+        $query = $this->conn->prepare($sqlGroups);
+        $query->bindValue('complectationCode', $complectationCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $groups = array();
+        foreach ($aData as $item) {
+            $groups[$item['GROUPNUM']] = array(
+                Constants::NAME => iconv('Windows-1251', 'UTF-8', $item['DESCR'])
+            );
+        }
+
+        return $groups;
+    }
+
+    public function getComplectationAgregats()
     {
 
     }
-
 } 
