@@ -61,7 +61,7 @@ doctrine:
           password: 123456
           charset:  UTF8
           driver:   "%database_driver%"
-          host:     "%database_host%"
+          host:     localhost
           port:     "%database_port%"
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
