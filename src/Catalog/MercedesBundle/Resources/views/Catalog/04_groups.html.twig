@@ -5,3 +5,11 @@
 {% endblock breadcrumbs %}
 
 {% block pathToSubgroup %}{{ path('catalog_mazda_subgroups', parameters|merge({'groupCode': group.getCode})) }}{% endblock pathToSubgroup %}
+{% block picture %}
+    {% for modification in oContainer.getActiveModel.getModifications %}
+        {{ modification.getRuname }}<br/>
+        {% for complectation in modification.getOption('COMPLECTATIONS') %}
+            <a href="{{ path('catalog_mercedes_groups', parameters|merge({'modificationCode': modification.getCode, 'complectationCode': complectation})) }}">{{ complectation }}</a> <br/>
+        {% endfor %}
+    {% endfor %}
+{% endblock picture %}

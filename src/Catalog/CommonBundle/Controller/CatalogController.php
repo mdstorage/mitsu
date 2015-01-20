@@ -130,21 +130,24 @@ abstract class CatalogController extends BaseController{
 
         if(empty($groups))
             return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Группы не найдены.'));
-
+        $oContainer = Factory::createContainer();
         $regions = $this->model()->getRegions();
         $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
         $models = $this->model()->getModels($regionCode);
         $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
         $modifications = $this->model()->getModifications($regionCode, $modelCode);
         $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
-        $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
-        $complectationsCollection = Factory::createCollection($complectations, Factory::createComplectation())->getCollection();
+        if ($complectationCode) {
+            $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
+            $complectationsCollection = Factory::createCollection($complectations, Factory::createComplectation())->getCollection();
+            $oContainer->setActiveComplectation($complectationsCollection[$complectationCode]);
+        }
 
-        $oContainer = Factory::createContainer()
+
+        $oContainer
             ->setActiveRegion($regionsCollection[$regionCode])
             ->setActiveModel($modelsCollection[$modelCode])
             ->setActiveModification($modificationsCollection[$modificationCode])
-            ->setActiveComplectation($complectationsCollection[$complectationCode])
             ->setGroups(Factory::createCollection($groups, Factory::createGroup()));
 
         $this->filter($oContainer);
@@ -158,15 +161,18 @@ abstract class CatalogController extends BaseController{
     public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
-
+        $oContainer = Factory::createContainer();
         $regions = $this->model()->getRegions();
         $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
         $models = $this->model()->getModels($regionCode);
         $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
         $modifications = $this->model()->getModifications($regionCode, $modelCode);
         $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
-        $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
-        $complectationsCollection = Factory::createCollection($complectations, Factory::createComplectation())->getCollection();
+        if ($complectationCode) {
+            $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
+            $complectationsCollection = Factory::createCollection($complectations, Factory::createComplectation())->getCollection();
+            $oContainer->setActiveComplectation($complectationsCollection[$complectationCode]);
+        }
         $groupSchemas = $this->model()->getGroupSchemas($regionCode, $modelCode, $modificationCode, $groupCode);
         $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);
         $subgroups = $this->model()->getSubgroups($regionCode, $modelCode, $modificationCode, $groupCode);
@@ -176,11 +182,10 @@ abstract class CatalogController extends BaseController{
         if(empty($subgroups))
             return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Подгруппы не найдены.'));
 
-        $oContainer = Factory::createContainer()
+        $oContainer
             ->setActiveRegion($regionsCollection[$regionCode])
             ->setActiveModel($modelsCollection[$modelCode])
             ->setActiveModification($modificationsCollection[$modificationCode])
-            ->setActiveComplectation($complectationsCollection[$complectationCode])
             ->setActiveSchema(reset($schemas)?:Factory::createSchema())
             ->setActiveGroup(Factory::createGroup($groupCode, $groups[$groupCode][Constants::NAME], $groups[$groupCode][Constants::OPTIONS])
                 ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup()))

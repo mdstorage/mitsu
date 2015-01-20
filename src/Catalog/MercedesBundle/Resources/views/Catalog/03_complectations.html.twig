@@ -6,7 +6,9 @@
             <table class="table table-responsive">
                 {% for complectation in oContainer.getActiveModification.getComplectations %}
                     <tr>
-                        <td>{{ complectation.getCode|slice(4) }}</td>
+                        <td>
+                            <a href="{{ path('catalog_mercedes_groups', parameters|merge({ 'complectationCode': complectation.getCode })) }}">{{ complectation.getCode|slice(4) }}</a>
+                        </td>
                         <td>
                             <a href="{{ path('catalog_mercedes_groups', parameters|merge({ 'complectationCode': complectation.getCode })) }}">{{ complectation.getRuname }}</a>
                         </td>

@@ -165,8 +165,93 @@ class MercedesCatalogModel extends CatalogModel{
         return $groups;
     }
 
-    public function getComplectationAgregats()
+    public function getComplectationAgregats($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
+        $catnum = substr($complectationCode, 0, 3);
+        $model = substr($complectationCode, 4);
 
+        $sqlAggregates = "
+        SELECT
+            FRONTAX `VA`,
+            STEER `LG`,
+            REARAX `HA`,
+            A_BODY `FH`,
+            ENGINE `M`,
+            PLATFRM `P`,
+            AUTO `GA`,
+            MANUAL `GM`,
+            EXHAUSTSYS `AS`,
+            EMOTOR `E`,
+            HVBATTERY `B`,
+            FUELCELL `N`
+        FROM
+            alltext_bm_spm_v details
+        WHERE
+            CATNUM = :complectationCode AND MODEL = :model;
+        ";
+
+        $query = $this->conn->prepare($sqlAggregates);
+        $query->bindValue('complectationCode', $catnum);
+        $query->bindValue('model', $model);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $slqAggTypes = "
+        SELECT DAG_AGGTYPE_CODE, AGGTYPE_DESC
+        FROM alltext_aggtype_code_map_v
+        ";
+
+        $aAggData = $this->conn->executeQuery($slqAggTypes)->fetchAll();
+        $aAggs = array_combine($this->array_column($aAggData, 'DAG_AGGTYPE_CODE'), $this->array_column($aAggData, 'AGGTYPE_DESC'));
+
+        $aggregates = array();
+        foreach ($aData as $item) {
+            foreach ($item as $key => $value) {
+                if ($value) {
+                    $aggregates[$key] = array(
+                        Constants::NAME => $aAggs[$key],
+                        Constants::OPTIONS => array(
+                            'COMPLECTATIONS' => substr_count($value, " ") ? explode("      ", $value) : str_split($value, 7)
+                        )
+                    );
+                    foreach ($aggregates[$key][Constants::OPTIONS]['COMPLECTATIONS'] as &$v) {
+                        $v = $this->getCatnum($regionCode, $modelCode, $modificationCode, $v) . "." . $v;
+                    }
+                }
+            }
+        }
+
+        return $aggregates;
+    }
+
+    public function getCatnum($regionCode, $modelCode, $modificationCode, $complectationCode)
+    {
+        $type = substr($complectationCode, 0, 3);
+        $sub1 = substr($complectationCode, 4, 3);
+        $sub2 = substr($complectationCode, 8, 3) ?: '';
+
+        $sqlCatnum = "
+        SELECT CATNUM
+        FROM alltext_models_v
+        WHERE APPINF LIKE :regionCode
+          AND AGGTYPE = :modelCode
+          AND TYPE = :mtype
+          AND SUBBM1 = :sub1
+          AND SUBBM2 = :sub2
+        LIMIT 1
+        ";
+
+        $query = $this->conn->prepare($sqlCatnum);
+        $query->bindValue('regionCode', '%' . $regionCode . '%');
+        $query->bindValue('modelCode', $modificationCode);
+        $query->bindValue('mtype', $type);
+        $query->bindValue('sub1', $sub1);
+        $query->bindValue('sub2', $sub2);
+        $query->execute();
+
+        $catnum = $query->fetchColumn(0);
+
+        return $catnum;
     }
 } 
