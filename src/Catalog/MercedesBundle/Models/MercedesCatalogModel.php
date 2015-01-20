@@ -216,7 +216,13 @@ class MercedesCatalogModel extends CatalogModel{
                         )
                     );
                     foreach ($aggregates[$key][Constants::OPTIONS]['COMPLECTATIONS'] as &$v) {
-                        $v = $this->getCatnum($regionCode, $modelCode, $modificationCode, $v) . "." . $v;
+                        $catnum = $this->getCatnum($regionCode, $modelCode, $key, $v);
+                        if ($catnum) {
+                            $v = $catnum . "." . $v;
+                        } else {
+                            unset($v);
+                        }
+
                     }
                 }
             }
