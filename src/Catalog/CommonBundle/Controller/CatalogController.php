@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class CatalogController extends BaseController{
 
-    public function regionsModelsAction($regionCode)
+    public function regionsModelsAction(Request $request, $regionCode = null)
     {
         /*
          * Выборка регионов из базы данных для конкретного артикула
@@ -92,7 +92,7 @@ abstract class CatalogController extends BaseController{
         }
     }
 
-    public function complectationsAction($regionCode, $modelCode, $modificationCode)
+    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
@@ -115,7 +115,7 @@ abstract class CatalogController extends BaseController{
         ));
     }
 
-    public function groupsAction($regionCode, $modelCode, $modificationCode)
+    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
@@ -138,7 +138,7 @@ abstract class CatalogController extends BaseController{
         ));
     }
 
-    public function subgroupsAction($regionCode, $modelCode, $modificationCode, $groupCode)
+    public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
@@ -168,7 +168,7 @@ abstract class CatalogController extends BaseController{
         ));
     }
 
-    public function schemasAction($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode)
+    public function schemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
@@ -197,7 +197,7 @@ abstract class CatalogController extends BaseController{
         ));
     }
 
-    public function schemaAction($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode)
+    public function schemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 

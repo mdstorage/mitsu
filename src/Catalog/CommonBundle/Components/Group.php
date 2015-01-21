@@ -26,4 +26,11 @@ class Group extends CommonElement implements GroupInterface{
         if(isset($this->subgroups[$code]))
             return $this->subgroups[$code];
     }
+
+    public function removeSubGroup($code)
+    {
+        unset($this->subgroups[$code]);
+
+        return $this;
+    }
 } 

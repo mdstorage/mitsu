@@ -5,6 +5,7 @@ namespace Catalog\MazdaBundle\Controller;
 use Catalog\CommonBundle\Components\Factory;
 use Catalog\CommonBundle\Components\Interfaces\CommonInterface;
 use Catalog\CommonBundle\Controller\CatalogController as BaseController;
+use Symfony\Component\HttpFoundation\Request;
 
 class CatalogController extends BaseController{
 
@@ -23,10 +24,10 @@ class CatalogController extends BaseController{
         return 'Catalog\MazdaBundle\Components\MazdaConstants';
     }
 
-    public function getGroupBySubgroupAction($regionCode, $modelCode, $modificationCode, $subGroupCode)
+    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
         $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode);
 
-        return $this->schemasAction($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode);
+        return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode);
     }
 } 

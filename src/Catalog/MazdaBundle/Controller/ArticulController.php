@@ -3,6 +3,7 @@ namespace Catalog\MazdaBundle\Controller;
 
 
 use Catalog\CommonBundle\Controller\ArticulController as BaseController;
+use Symfony\Component\HttpFoundation\Request;
 
 class ArticulController extends BaseController{
 
@@ -19,5 +20,12 @@ class ArticulController extends BaseController{
     public function bundleConstants()
     {
         return 'Catalog\MazdaBundle\Components\MazdaConstants';
+    }
+
+    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $subGroupCode)
+    {
+        $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode);
+
+        return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode);
     }
 } 

@@ -81,6 +81,13 @@ class Container {
         return $this->groups[$code];
     }
 
+    public function removeGroup($code)
+    {
+        unset($this->groups[$code]);
+
+        return $this;
+    }
+
     public function setActiveGroup(GroupInterface $oGroup)
     {
         $this->activeGroup = $oGroup;
@@ -127,6 +134,13 @@ class Container {
     public function getSchemas()
     {
         return $this->schemas;
+    }
+
+    public function removeSchema($code)
+    {
+        unset($this->schemas[$code]);
+
+        return $this;
     }
 
     public function setActiveSchema(SchemaInterface $oSchema)

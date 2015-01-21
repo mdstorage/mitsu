@@ -374,7 +374,7 @@ class MazdaCatalogModel extends CatalogModel{
         $query = $this->conn->executeQuery($sqlSchemaLabelsDescr, array(
             $regionCode,
             $cd,
-            array_column($aDataLabels, 'part_code')
+            $this->array_column($aDataLabels, 'part_code')
         ), array(
             \PDO::PARAM_STR,
             \PDO::PARAM_STR,
@@ -404,7 +404,7 @@ class MazdaCatalogModel extends CatalogModel{
 
         $pncs = array();
         foreach ($aDataLabels as $item) {
-            if (in_array($item['part_code'], array_column($aDataGroupPncs, 'dcod'))){
+            if (in_array($item['part_code'], $this->array_column($aDataGroupPncs, 'dcod'))){
                 $pncs[$item['part_code']][Constants::OPTIONS][Constants::COORDS][] = array(
                     Constants::X1 => $item['xs'],
                     Constants::Y1 => $item['ys'],
@@ -456,20 +456,43 @@ class MazdaCatalogModel extends CatalogModel{
 
     public function getReferGroups($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
+        $sqlSubgroups = "
+        SELECT sg.sgroup
+        FROM sgroup sg
+        WHERE sg.catalog = :regionCode
+            AND sg.catalog_number = :modificationCode
+            AND sg.lang = 1
+        GROUP BY sg.sgroup
+        ";
+
+        $query = $this->conn->prepare($sqlSubgroups);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->execute();
+
+        $subgroups = $query->fetchAll();
+
         $sqlSchemaLabels = "
         SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
         FROM pictures p
-        WHERE p.catalog = :regionCode
-          AND p.cd = :cd
-          AND p.pic_name = :schemaCode
+        WHERE p.catalog = ?
+          AND p.cd = ?
+          AND p.pic_name = ?
           AND p.XC26ECHK = 3
+          AND p.part_code IN (?)
         ";
 
-        $query = $this->conn->prepare($sqlSchemaLabels);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('cd', $cd);
-        $query->bindValue('schemaCode', $schemaCode);
-        $query->execute();
+        $query = $this->conn->executeQuery($sqlSchemaLabels, array(
+            $regionCode,
+            $cd,
+            $schemaCode,
+            $this->array_column($subgroups, 'sgroup')
+        ), array(
+            \PDO::PARAM_STR,
+            \PDO::PARAM_STR,
+            \PDO::PARAM_STR,
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
+        ));
 
         $aDataLabels = $query->fetchAll();
 
@@ -524,7 +547,7 @@ class MazdaCatalogModel extends CatalogModel{
             $regionCode,
             $cd,
             $modificationCode,
-            array_column($aData, 'desc_id')
+            $this->array_column($aData, 'desc_id')
         ), array(
             \PDO::PARAM_STR,
             \PDO::PARAM_STR,
@@ -533,7 +556,7 @@ class MazdaCatalogModel extends CatalogModel{
         ));
 
         $aDataDescr = $query->fetchAll();
-        $aDataDescr = array_combine(array_column($aDataDescr, 'id'), array_column($aDataDescr, 'descr'));
+        $aDataDescr = array_combine($this->array_column($aDataDescr, 'id'), $this->array_column($aDataDescr, 'descr'));
 
         $articuls = array();
         foreach ($aData as $item) {

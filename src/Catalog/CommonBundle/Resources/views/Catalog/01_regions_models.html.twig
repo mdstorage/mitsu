@@ -28,7 +28,7 @@
             <div class="col-lg-6">
                 <div id="result">
                     {% for model in oContainer.getActiveRegion.getModels %}
-                        {% if loop.index <= modelsListLenght/2|round %}
+                        {% if loop.index <= (modelsListLenght/2|round + 1) %}
                             {% block halfList %}
                                     {% set modelCode = model.getCode|md5 %}
                                     <div class="model glyphicon-plus" id="{{ modelCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}">
@@ -68,7 +68,7 @@
             <div class="col-lg-6">
                 <div id="result">
                     {% for model in oContainer.getActiveRegion.getModels %}
-                        {% if loop.index > modelsListLenght/2|round %}
+                        {% if loop.index > (modelsListLenght/2|round + 1) %}
                             {{ block('halfList') }}
                         {% endif %}
                     {% endfor %}

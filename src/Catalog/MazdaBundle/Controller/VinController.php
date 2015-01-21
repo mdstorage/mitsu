@@ -4,10 +4,11 @@ namespace Catalog\MazdaBundle\Controller;
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Components\Factory;
 use Catalog\CommonBundle\Controller\VinController as BaseController;
+use Catalog\MazdaBundle\Controller\Traits\MazdaVinFilters;
 use Symfony\Component\HttpFoundation\Request;
 
 class VinController extends BaseController{
-
+    use MazdaVinFilters;
     public function bundle()
     {
         return 'CatalogMazdaBundle:Vin';
@@ -23,29 +24,55 @@ class VinController extends BaseController{
         return 'Catalog\MazdaBundle\Components\MazdaConstants';
     }
 
-    public function prodDateFilter($oContainer, $parameters)
-    {
-        $prodDate = $parameters[Constants::PROD_DATE];
-        foreach ($oContainer->getActivePnc()->getArticuls() as $key => $articul) {
-            if ($articul->getOption(Constants::START_DATE) > $prodDate || $articul->getOption(Constants::END_DATE) < $prodDate) {
-                $oContainer->getActivePnc()->removeArticul($key);
-            }
-        }
-
-        return $oContainer;
-    }
-
     public function articulsAction(Request $request)
     {
-        $prodDate = $request->cookies->get(Constants::PROD_DATE);
-        $this->addFilter('prodDateFilter', array(Constants::PROD_DATE => $prodDate));
-        return parent::articulsAction($request);
+        if ($request->isXmlHttpRequest()) {
+            $prodDate = $request->cookies->get(Constants::PROD_DATE);
+            $this->addFilter('prodDateFilter', array(Constants::PROD_DATE => $prodDate));
+            return parent::articulsAction($request);
+        }
     }
 
-    public function getGroupBySubgroupAction($regionCode, $modelCode, $modificationCode, $subGroupCode)
+    public function vinGroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode)
+    {
+        $this->addFilter('vinGroupFilter', array(
+            'regionCode' => $regionCode,
+            'modificationCode' => $modificationCode,
+            'complectationCode' => substr($complectationCode, 0, 4)
+        ));
+
+        return $this->groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
+    }
+
+    public function vinSubgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
+    {
+        $this->addFilter('vinSubGroupFilter', array(
+            'regionCode' => $regionCode,
+            'modificationCode' => $modificationCode,
+            'complectationCode' => substr($complectationCode, 0, 4),
+            'subComplectationCode' => substr($complectationCode, 3, 3)
+        ));
+
+        return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+    }
+
+    public function vinSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
+    {
+        $this->addFilter('vinSchemasFilter', array(
+            'regionCode' => $regionCode,
+            'modificationCode' => $modificationCode,
+            'complectationCode' => substr($complectationCode, 0, 4),
+            'subComplectationCode' => substr($complectationCode, 3, 3),
+            'subGroupCode' => $subGroupCode
+        ));
+
+        return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
+    }
+
+    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
         $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode);
 
-        return $this->schemasAction($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode);
+        return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode);
     }
 } 
