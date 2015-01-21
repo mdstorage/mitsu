@@ -1,0 +1,4 @@
+services:
+#    catalog_tec_doc.example:
+#        class: Catalog\TecDocBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
