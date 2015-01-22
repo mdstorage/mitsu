@@ -4,7 +4,7 @@
     <a href="{{ path('catalog_mercedes') }}">Выбрать регион, модель, модификацию</a> / Выбрать группу запчастей
 {% endblock breadcrumbs %}
 
-{% block pathToSubgroup %}{{ path('catalog_mazda_subgroups', parameters|merge({'groupCode': group.getCode})) }}{% endblock pathToSubgroup %}
+{% block pathToSubgroup %}{{ path('catalog_mercedes_subgroups', parameters|merge({'groupCode': group.getCode})) }}{% endblock pathToSubgroup %}
 {% block picture %}
     {% for modification in oContainer.getActiveModel.getModifications %}
         {{ modification.getRuname }}<br/>

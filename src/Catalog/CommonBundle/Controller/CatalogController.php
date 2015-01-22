@@ -175,7 +175,8 @@ abstract class CatalogController extends BaseController{
         }
         $groupSchemas = $this->model()->getGroupSchemas($regionCode, $modelCode, $modificationCode, $groupCode);
         $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);
-        $subgroups = $this->model()->getSubgroups($regionCode, $modelCode, $modificationCode, $groupCode);
+        $groupsCollection = Factory::createCollection($groups, Factory::createGroup())->getCollection();
+        $subgroups = $this->model()->getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
 
         $schemas = Factory::createCollection($groupSchemas, Factory::createSchema())->getCollection();
 
@@ -187,7 +188,7 @@ abstract class CatalogController extends BaseController{
             ->setActiveModel($modelsCollection[$modelCode])
             ->setActiveModification($modificationsCollection[$modificationCode])
             ->setActiveSchema(reset($schemas)?:Factory::createSchema())
-            ->setActiveGroup(Factory::createGroup($groupCode, $groups[$groupCode][Constants::NAME], $groups[$groupCode][Constants::OPTIONS])
+            ->setActiveGroup($groupsCollection[$groupCode]
                 ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup()))
             );
 

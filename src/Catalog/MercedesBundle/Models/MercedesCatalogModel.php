@@ -268,4 +268,41 @@ class MercedesCatalogModel extends CatalogModel{
 
         return $catnum;
     }
+
+    public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode){
+        $sqlBmSubGroups = "
+        select BM_SG_E.GROUPNUM, BM_SG_E.SUBGRP, IFNULL(BM_SG_R.TEXT, BM_SG_E.TEXT) TEXT
+        from alltext_bm_subgrp_v BM_SG_E
+            LEFT OUTER JOIN alltext_bm_subgrp_v BM_SG_R
+                ON BM_SG_R.CATNUM = BM_SG_E.CATNUM
+                AND BM_SG_R.GROUPNUM = BM_SG_E.GROUPNUM
+                AND BM_SG_R.SUBGRP = BM_SG_E.SUBGRP
+                AND BM_SG_R.LANG = 'R'
+        where BM_SG_E.CATNUM = :complectationCode /* Выбранный каталог */
+                AND BM_SG_E.GROUPNUM = :groupCode /* выбранная группа */
+                AND BM_SG_E.LANG = 'E'
+        order by BM_SG_E.SUBGRP
+        ";
+
+        $query = $this->conn->prepare($sqlBmSubGroups);
+        $query->bindValue('complectationCode', substr($complectationCode, 0, 3));
+        $query->bindValue('groupCode', $groupCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $subgroups = array();
+        foreach ($aData as $item) {
+            $subgroups[$item['SUBGRP']] = array(
+                Constants::NAME => iconv('Windows-1251', 'UTF-8', $item['TEXT']),
+                Constants::OPTIONS => array()
+            );
+        }
+        return $subgroups;
+    }
+
+    public function getGroupSchemas()
+    {
+        return array();
+    }
 } 
