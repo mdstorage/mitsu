@@ -211,10 +211,18 @@ class MercedesCatalogModel extends CatalogModel{
                 if ($value) {
                     $aggregates[$key] = array(
                         Constants::NAME => $aAggs[$key],
-                        Constants::OPTIONS => array(
-                            'COMPLECTATIONS' => substr_count($value, " ") ? explode("      ", $value) : str_split($value, 7)
-                        )
                     );
+                    $string = $value;
+                    while ($string) {
+                        $type = substr($string, 0, 3);
+                        $string = substr($string, 4);
+                        $subtypes = substr_count($string, ".") ? substr($string, 0, strpos($string, ".") - 3) : $string;
+                        $string = substr($string, strlen($subtypes));
+                        foreach (str_split(str_replace(array(',', ' '), '', $subtypes), 3) as $subtype) {
+                            $aggregates[$key][Constants::OPTIONS]['COMPLECTATIONS'][] = $type . "." . $subtype;
+                        }
+                    }
+                    //die;
                     foreach ($aggregates[$key][Constants::OPTIONS]['COMPLECTATIONS'] as &$v) {
                         $catnum = $this->getCatnum($regionCode, $modelCode, $key, $v);
                         if ($catnum) {
