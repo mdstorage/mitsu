@@ -33,4 +33,17 @@ class CatalogController extends BaseController{
 
         return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
     }
+
+    public function subGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
+    {
+        $this->addFilter('catalogSubGroupsFilter', array(
+            'regionCode' => $regionCode,
+            'modelCode' => $modelCode,
+            'modificationCode' => $modificationCode,
+            'complectationCode' => $complectationCode,
+            'groupCode' => $groupCode
+        ));
+
+        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+    }
 } 

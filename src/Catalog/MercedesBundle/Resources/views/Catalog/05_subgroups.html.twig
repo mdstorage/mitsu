@@ -4,10 +4,22 @@
     <a href="{{ path('catalog_mercedes') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('catalog_mercedes_groups', parameters) }}">Выбрать группу запчастей</a> / Выбрать подгруппу запчастей
 {% endblock breadcrumbs %}
 
-{% block imagePath %}
-    {{ asset('bundles/catalogmazda/images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/image/'~oContainer.getActiveSchema.getCode|slice(0,3)~'/'~oContainer.getActiveSchema.getCode~'.png') }}
-{% endblock imagePath %}
+
+{% block subgroupImage %}{% endblock subgroupImage %}
+{% block subgroups %}
+    {{ parent() }}
+    {% block saSubgroups %}
+        {% if oContainer.getGroups is not empty %}
+            <h4>SA-каталог (специальная комплектация)</h4>
+            {% for subgroup in oContainer.getGroups %}
+                {{ block('subgroupItem') }}
+            {% endfor %}
+        {% endif %}
+    {% endblock saSubgroups %}
+{% endblock subgroups %}
+
+{% block imagePath %}{% endblock imagePath %}
 
 {% block pathToSchemas %}
-    {{ path('catalog_mazda_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}
+    {{ path('catalog_mercedes_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}
 {% endblock pathToSchemas %}

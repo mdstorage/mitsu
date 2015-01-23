@@ -207,8 +207,8 @@ abstract class CatalogController extends BaseController{
         $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);
         $groupsCollection = Factory::createCollection($groups, Factory::createGroup())->getCollection();
 
-        $subgroups = $this->model()->getSubgroups($regionCode, $modelCode, $modificationCode, $groupCode);
-        $schemas = $this->model()->getSchemas($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode);
+        $subgroups = $this->model()->getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+        $schemas = $this->model()->getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
 
         if(empty($schemas))
             return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Схемы не найдены.'));

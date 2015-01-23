@@ -165,6 +165,12 @@ class MercedesCatalogModel extends CatalogModel{
         return $groups;
     }
 
+    /*
+     * Классификация такова, что весь автомобиль разбит на агрегаты, агрегаты имеют группы, группы имеют подгруппы.
+     * Все агрегаты, кроме "шасси", имеют только группы. Шасси может иметь группы и другие агрегаты. Т.е. на уровне групп
+     * для агрегата "шасси" может быть агрегат "двигатель".
+     * Метод предназначен для поиска "вложенных" агрегатов для агрегата "шасси".
+     */
     public function getComplectationAgregats($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
         $catnum = substr($complectationCode, 0, 3);
@@ -218,19 +224,27 @@ class MercedesCatalogModel extends CatalogModel{
                         $string = substr($string, 4);
                         $subtypes = substr_count($string, ".") ? substr($string, 0, strpos($string, ".") - 3) : $string;
                         $string = substr($string, strlen($subtypes));
-                        foreach (str_split(str_replace(array(',', ' '), '', $subtypes), 3) as $subtype) {
+                        foreach (str_split(str_replace(array(',', ' ', '-'), '', $subtypes), 3) as $subtype) {
                             $aggregates[$key][Constants::OPTIONS]['COMPLECTATIONS'][] = $type . "." . $subtype;
                         }
                     }
                     //die;
-                    foreach ($aggregates[$key][Constants::OPTIONS]['COMPLECTATIONS'] as &$v) {
-                        $catnum = $this->getCatnum($regionCode, $modelCode, $key, $v);
-                        if ($catnum) {
-                            $v = $catnum . "." . $v;
-                        } else {
-                            unset($v);
+                    foreach ($aggregates[$key][Constants::OPTIONS]['COMPLECTATIONS'] as $complKey=>$complVal) {
+                        $aCatnum = $this->getCatnum($regionCode, $modelCode, $key, $complVal);
+                        $code = $complVal;
+                        unset($aggregates[$key][Constants::OPTIONS]['COMPLECTATIONS'][$complKey]);
+                        foreach ($aCatnum as $catnum) {
+                            if ($catnum['CATNUM']) {
+                                $aggregates[$key][Constants::OPTIONS]['COMPLECTATIONS'][$catnum['CATNUM'] . "." . $code] =  $catnum['SALESDES'];
+                            }
                         }
-
+                        /*
+                         * Удаляем те агрегаты, для комплектации которых не найдены (например, type, submm есть, а catnum пуст),
+                         * поскольку они все равно отобразятся с ошибкой
+                         */
+                        if (!$aggregates[$key][Constants::OPTIONS]['COMPLECTATIONS']) {
+                            unset($aggregates[$key]);
+                        }
                     }
                 }
             }
@@ -246,14 +260,13 @@ class MercedesCatalogModel extends CatalogModel{
         $sub2 = substr($complectationCode, 8, 3) ?: '';
 
         $sqlCatnum = "
-        SELECT CATNUM
+        SELECT DISTINCT CATNUM, SALESDES
         FROM alltext_models_v
         WHERE APPINF LIKE :regionCode
           AND AGGTYPE = :modelCode
           AND TYPE = :mtype
           AND SUBBM1 = :sub1
           AND SUBBM2 = :sub2
-        LIMIT 1
         ";
 
         $query = $this->conn->prepare($sqlCatnum);
@@ -264,12 +277,13 @@ class MercedesCatalogModel extends CatalogModel{
         $query->bindValue('sub2', $sub2);
         $query->execute();
 
-        $catnum = $query->fetchColumn(0);
+        $catnum = $query->fetchAll();
 
         return $catnum;
     }
 
-    public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode){
+    public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
+    {
         $sqlBmSubGroups = "
         select BM_SG_E.GROUPNUM, BM_SG_E.SUBGRP, IFNULL(BM_SG_R.TEXT, BM_SG_E.TEXT) TEXT
         from alltext_bm_subgrp_v BM_SG_E
@@ -289,20 +303,96 @@ class MercedesCatalogModel extends CatalogModel{
         $query->bindValue('groupCode', $groupCode);
         $query->execute();
 
-        $aData = $query->fetchAll();
+        $aDataBM = $query->fetchAll();
 
-        $subgroups = array();
-        foreach ($aData as $item) {
-            $subgroups[$item['SUBGRP']] = array(
+        $subgroupsBM = array();
+        foreach ($aDataBM as $item) {
+            $subgroupsBM[$item['SUBGRP']] = array(
                 Constants::NAME => iconv('Windows-1251', 'UTF-8', $item['TEXT']),
                 Constants::OPTIONS => array()
             );
         }
+
+        $subgroups = $subgroupsBM;
+
         return $subgroups;
+    }
+
+    public function getSaSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
+    {
+        $sqlSaSubGroups = "
+        select sa.SANUM,  ifnull(desc_r.TEXT, desc_e.TEXT) TEXT, sa.CODEONE,  sa.CODETWO
+        from alltext_bm_saidx_v sa
+         left outer join alltext_sa_dictionary_v desc_e
+            ON desc_e.DESCIDX = sa.DESCIDX
+            AND desc_e.LANG = 'E'
+            left outer join alltext_sa_dictionary_v desc_r
+            ON desc_r.DESCIDX = sa.DESCIDX
+            AND desc_r.LANG = 'R'
+        where sa.CATNUM = :complectationCode
+          AND sa.GROUPNUM = :groupCode
+        order by SANUM
+        ";
+
+        $query = $this->conn->prepare($sqlSaSubGroups);
+        $query->bindValue('complectationCode', substr($complectationCode, 0, 3));
+        $query->bindValue('groupCode', $groupCode);
+        $query->execute();
+
+        $aDataSA = $query->fetchAll();
+
+        $subgroupsSA = array();
+        foreach ($aDataSA as $item) {
+            $subgroupsSA[trim($item['SANUM'])] = array(
+                Constants::NAME => iconv('Windows-1251', 'UTF-8', $item['TEXT']),
+                Constants::OPTIONS => array()
+            );
+        }
+
+        return $subgroupsSA;
     }
 
     public function getGroupSchemas()
     {
         return array();
+    }
+
+    public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
+    {
+        $sqlSchemas = "
+            select
+                CONTREC,
+                CALLOUT,
+                seqnum,
+                CONCAT(IMGTYPE,
+                        GROUPNUM,
+                        SUBGRP,
+                        SEQNO,
+                        RESTIMG) IMAGE_CODE
+            from
+                alltext_bm_npg_v
+            where
+                CATNUM = :complectationCode
+                AND GROUPNUM = :groupCode
+            ORDER BY SEQNUM
+        ";
+
+        $query = $this->conn->prepare($sqlSchemas);
+        $query->bindValue('complectationCode', substr($complectationCode, 0, 3));
+        $query->bindValue('groupCode', $groupCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $schemas = array();
+        foreach ($aData as $item) {
+            $schemas[$item['IMAGE_CODE']] = array(
+                Constants::NAME => $item['IMAGE_CODE'],
+                Constants::OPTIONS => array(
+                    'seqnum' => $item['seqnum']
+                )
+            );
+        }
+        return $schemas;
     }
 } 
