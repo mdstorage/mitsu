@@ -218,7 +218,7 @@ class MercedesCatalogModel extends CatalogModel{
                         $string = substr($string, 4);
                         $subtypes = substr_count($string, ".") ? substr($string, 0, strpos($string, ".") - 3) : $string;
                         $string = substr($string, strlen($subtypes));
-                        foreach (str_split(str_replace(array(',', ' '), '', $subtypes), 3) as $subtype) {
+                        foreach (str_split(str_replace(array(',', ' ', '-'), '', $subtypes), 3) as $subtype) {
                             $aggregates[$key][Constants::OPTIONS]['COMPLECTATIONS'][] = $type . "." . $subtype;
                         }
                     }
