@@ -14,9 +14,11 @@
 {% block body %}
     {% block head %}<h3>Выбрать подгруппу запчастей:</h3>{% endblock head %}
     <div class="row">
+        {% block subgroupImage %}
         <div class="col-lg-8">
             <img src="{% block imagePath %}{% endblock imagePath %}" alt="{{ oContainer.getActiveGroup.getRuname }}" usemap="#{{ oContainer.getActiveGroup.getCode }}" />
         </div>
+        {% endblock subgroupImage %}
         <div class="col-lg-4">
             {% block subgroups %}
                 <div class="subgroups">

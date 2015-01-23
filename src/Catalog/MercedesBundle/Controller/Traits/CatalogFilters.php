@@ -22,4 +22,21 @@ trait CatalogFilters {
 
         return $oContainer;
     }
+
+    public function catalogSubGroupsFilter($oContainer, $parameters)
+    {
+        $saSubGroups = $this->model()->getSaSubgroups(
+            $parameters['regionCode'],
+            $parameters['modelCode'],
+            $parameters['modificationCode'],
+            $parameters['complectationCode'],
+            $parameters['groupCode']
+        );
+
+        $saSubGroupsCollection = Factory::createCollection($saSubGroups, Factory::createGroup());
+
+        $oContainer->setGroups($saSubGroupsCollection);
+
+        return $oContainer;
+    }
 } 
