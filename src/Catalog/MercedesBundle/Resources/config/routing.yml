@@ -22,3 +22,12 @@ catalog_mercedes_subgroups:
 catalog_mercedes_schemas:
   path:         /mercedes/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogMercedesBundle:Catalog:schemas}
+
+catalog_mercedes_schema:
+  path:         /mercedes/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:schema}
+
+catalog_mercedes_articuls:
+  path:         /mercedes/catalog/7
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:articuls}
+  requirements: {_method: POST}

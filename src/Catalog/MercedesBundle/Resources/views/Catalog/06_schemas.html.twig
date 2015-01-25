@@ -1,21 +1,19 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
-{% use 'CatalogMazdaBundle::mazda.base.html.twig' %}
+{% use 'CatalogMercedesBundle::mercedes.base.html.twig' %}
 {% block breadcrumbs %}
     <a href="{{ path('catalog_mazda') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('catalog_mazda_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('catalog_mazda_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
 {% endblock breadcrumbs %}
 
-{% block complectation %}{% endblock complectation %}
-
 {% block schema %}
     {% if schema.getCode is not empty %}
             <div class="col-xs-3">
-        <a href="{{ path('catalog_mazda_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+        <a href="{{ path('catalog_mercedes_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
                     <div class="row">
                         {{ schema.getRuname }}
                     </div>
                     <div class="row">
-                        {#<img src="{{ asset('bundles/catalogmecedes/images/'~schema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/image/'~schema.getCode|slice(0,3)~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>#}
+                        <img src="{{ asset('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png')|file_exists() ? asset('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png') : asset('bundles/catalogmercedes/images/BM_IMAGES_ARC/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
                     </div>
 
         </a>

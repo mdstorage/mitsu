@@ -357,7 +357,7 @@ class MercedesCatalogModel extends CatalogModel{
         return array();
     }
 
-    public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
+    public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
         $sqlSchemas = "
             select
@@ -374,12 +374,14 @@ class MercedesCatalogModel extends CatalogModel{
             where
                 CATNUM = :complectationCode
                 AND GROUPNUM = :groupCode
+                AND SUBGRP = :subGroupCode
             ORDER BY SEQNUM
         ";
 
         $query = $this->conn->prepare($sqlSchemas);
         $query->bindValue('complectationCode', substr($complectationCode, 0, 3));
         $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -394,5 +396,107 @@ class MercedesCatalogModel extends CatalogModel{
             );
         }
         return $schemas;
+    }
+
+    public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
+    {
+        $sqlLabels = "
+            select
+                CALLOUT,
+                CONCAT(IMGTYPE,
+                        GROUPNUM,
+                        SUBGRP,
+                        SEQNO,
+                        RESTIMG) IMAGE_CODE
+            from
+                alltext_bm_npg_v
+            where
+                CATNUM = :complectationCode
+                AND GROUPNUM = :groupCode
+                AND SUBGRP = :subGroupCode
+        ";
+
+        $query = $this->conn->prepare($sqlLabels);
+        $query->bindValue('complectationCode', substr($complectationCode, 0, 3));
+        $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+//        var_dump($aData);die;
+//        $schemaCode = $aData['IMAGE_CODE'];
+//        $aLabels = explode(" ", $aData['CALLOUT']);
+
+        $sqlPncs = "
+        (select image_name, x, y, `desc` as pnc from bm_images_arc_image_v where image_name = :schemaCode)
+        UNION
+        (select image_name, x, y, `desc` as pnc from bm_images_image_v where image_name = :schemaCode)
+        order by CAST(pnc AS UNSIGNED)
+        ";
+
+        $query = $this->conn->prepare($sqlPncs);
+        $query->bindValue('schemaCode', $schemaCode);
+        $query->execute();
+
+        $aPncs = $query->fetchAll();
+        $pncs = array();
+        foreach ($aPncs as $item) {
+            if ($item) {
+                $pncs[$item['pnc']][Constants::OPTIONS][Constants::COORDS][] = array(
+                    Constants::X1 => $item['x'] - 8,
+                    Constants::Y1 => $item['y'] - 12,
+                    Constants::X2 => $item['x'] + 15,
+                    Constants::Y2 => $item['y'] + 8);
+            }
+        }
+        return $pncs;
+    }
+
+    public function getCommonArticuls()
+    {
+        $commonArticuls = array();
+        return $commonArticuls;
+    }
+
+    public function getReferGroups()
+    {
+        $referGroups = array();
+        return $referGroups;
+    }
+
+    public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, $options)
+    {
+        $sqlArticuls = "
+        SELECT `PARTTYPE`, `PARTNUM`, `alltext_bm_parts2_v`.`QUANTBM`
+        FROM `alltext_bm_parts2_v`
+        WHERE `CATNUM` = :complectationCode
+        AND `GROUPNUM` = :groupCode
+        AND `SUBGRP` = :subGroupCode
+        AND `CALLOUT` = :pncCode
+        ";
+
+        $query = $this->conn->prepare($sqlArticuls);
+        $query->bindValue('complectationCode', substr($complectationCode, 0, 3));
+        $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('pncCode', str_pad($pncCode, 3, "0", STR_PAD_LEFT));
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+
+        $articuls = array();
+        foreach ($aData as $item) {
+            $articuls[$item['PARTTYPE'] . $item['PARTNUM']] = array(
+                Constants::NAME => $item['PARTTYPE'] . $item['PARTNUM'],
+                Constants::OPTIONS => array(
+                    Constants::QUANTITY => $item['QUANTBM'],
+                    Constants::START_DATE => '00000000',
+                    Constants::END_DATE => '99999999'
+                )
+            );
+        }
+
+        return $articuls;
     }
 } 
