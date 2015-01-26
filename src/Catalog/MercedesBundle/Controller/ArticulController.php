@@ -1,11 +1,23 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: misha
- * Date: 17.01.15
- * Time: 20:54
- */
+namespace Catalog\MercedesBundle\Controller;
 
-class ArticulController {
+use Assetic\Filter\GoogleClosure\BaseCompilerFilter;
+use Catalog\CommonBundle\Controller\ArticulController as BaseController;
+use Symfony\Component\HttpFoundation\Request;
 
+class ArticulController extends BaseController{
+    public function bundle()
+    {
+        return 'CatalogMercedesBundle:Articul';
+    }
+
+    public function model()
+    {
+        return $this->get('mercedes.articul.model');
+    }
+
+    public function bundleConstants()
+    {
+        return 'Catalog\MercedesBundle\Components\MercedesConstants';
+    }
 } 

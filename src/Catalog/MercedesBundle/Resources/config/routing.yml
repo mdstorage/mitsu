@@ -31,3 +31,14 @@ catalog_mercedes_articuls:
   path:         /mercedes/catalog/7
   defaults:     {_controller: CatalogMercedesBundle:Catalog:articuls}
   requirements: {_method: POST}
+
+
+#----------------------------------------------------------------------------------
+
+articul_mercedes:
+  path:         /mercedes/articul/0
+  defaults:     {_controller: CatalogMercedesBundle:Articul:index}
+
+articul_mercedes_find:
+  path:         /mercedes/articul/1
+  defaults:     {_controller: CatalogMercedesBundle:Articul:findByArticul}
