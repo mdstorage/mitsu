@@ -40,5 +40,18 @@ articul_mercedes:
   defaults:     {_controller: CatalogMercedesBundle:Articul:index}
 
 articul_mercedes_find:
-  path:         /mercedes/articul/1
-  defaults:     {_controller: CatalogMercedesBundle:Articul:findByArticul}
+  path:         /mercedes/articul/1/{regionCode}
+  defaults:     {_controller: CatalogMercedesBundle:Articul:findByArticul, regionCode: null}
+
+articul_mercedes_modifications:
+  path:         /mercedes/articul/3
+  defaults:     {_controller: CatalogMercedesBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_mercedes_complectations:
+  path:         /mercedes/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogMercedesBundle:Articul:complectations}
+
+articul_mercedes_groups:
+  path:         /mercedes/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogMercedesBundle:Articul:groups}
