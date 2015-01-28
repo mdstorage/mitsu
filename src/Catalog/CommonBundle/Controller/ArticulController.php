@@ -8,10 +8,10 @@ use Symfony\Component\HttpFoundation\Request;
 
 abstract class ArticulController extends CatalogController{
 
-    public function indexAction()
+    public function indexAction($error_message = null)
     {
         setcookie(Constants::ARTICUL, "");
-        return $this->render($this->bundle().':01_index.html.twig');
+        return $this->render($this->bundle().':01_index.html.twig', array('error_message' => $error_message));
     }
 
     public function findByArticulAction(Request $request, $regionCode = null)
@@ -20,14 +20,20 @@ abstract class ArticulController extends CatalogController{
             if ($articul = $request->get('articul')) {
                 setcookie(Constants::ARTICUL, $articul);
             } else {
-                return $this->render($this->bundle().':01_index.html.twig');
+                return $this->indexAction();
             }
         }
 
         $articulRegions = $this->model()->getArticulRegions($articul);
 
         if (empty($articulRegions)) {
-            return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Регионы не найдены.'));
+            setcookie(Constants::ARTICUL, "");
+            return $this->indexAction('Запчасть с таким артикулом не найдена.');
+//            $headers = $request->server->getHeaders();
+//            return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array(
+//                'message'=> 'Регионы не найдены.',
+//                'referer' => $headers['REFERER'])
+//            );
         }
 
         $articulModels  = $this->model()->getArticulModels($articul);

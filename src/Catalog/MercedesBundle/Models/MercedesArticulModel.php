@@ -118,7 +118,7 @@ class MercedesArticulModel extends MercedesCatalogModel{
         foreach ($aData as $item) {
             $modifications[] = $item['AGGTYPE'];
         }
-
+var_dump($articulCatnums);die;
         return $modifications;
     }
 
