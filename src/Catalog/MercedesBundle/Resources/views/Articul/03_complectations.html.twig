@@ -1,0 +1,21 @@
+{% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
+{% use 'CatalogMercedesBundle::mercedes.base.html.twig' %}
+{% set complectationsListLenght = oContainer.getActiveModification.getComplectations|length %}
+{% block complectations %}
+    <div class="complectations">
+            <table class="table table-responsive">
+                {% for complectation in oContainer.getActiveModification.getComplectations %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('articul_mercedes_groups', parameters|merge({ 'complectationCode': complectation.getCode })) }}">{{ complectation.getCode|slice(4) }}</a>
+                        </td>
+                        <td>
+                            <a href="{{ path('articul_mercedes_groups', parameters|merge({ 'complectationCode': complectation.getCode })) }}">{{ complectation.getRuname }}</a>
+                        </td>
+                        <td>{{ complectation.getOption('REMARKS') }}</td>
+                    </tr>
+
+                {% endfor %}
+            </table>
+    </div>
+{% endblock complectations %}

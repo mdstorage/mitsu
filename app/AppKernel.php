@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new Catalog\MitsubishiBundle\CatalogMitsubishiBundle(),
             new Catalog\MazdaBundle\CatalogMazdaBundle(),
             new Catalog\CommonBundle\CatalogCommonBundle(),
+            new Catalog\MercedesBundle\CatalogMercedesBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
