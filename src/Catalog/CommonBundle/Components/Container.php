@@ -50,6 +50,11 @@ class Container {
         return $this->regions;
     }
 
+    public function removeRegion($code)
+    {
+        unset($this->regions[$code]);
+    }
+
     public function setActiveRegion(RegionInterface $region)
     {
         $this->activeRegion = $region;

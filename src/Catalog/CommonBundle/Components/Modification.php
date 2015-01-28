@@ -28,4 +28,9 @@ class Modification extends CommonElement implements ModificationInterface{
     {
         return $this->complectations;
     }
+
+    public function removeComplectation($code)
+    {
+        unset($this->complectations[$code]);
+    }
 } 

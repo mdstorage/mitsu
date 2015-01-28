@@ -23,9 +23,10 @@ abstract class BaseController extends Controller
     {
         foreach ($this->getFilters() as $filter => $parameters) {
             if (method_exists($this, $filter)) {
-                return $this->$filter($object, $parameters);
+                $object = $this->$filter($object, $parameters);
             }
         }
+        return $object;
     }
 
     abstract function bundle();
