@@ -11,22 +11,21 @@ namespace Catalog\MercedesBundle\Controller\Traits;
 
 trait ArticulFilters {
 
-    public function articulGroupsFilter($oContainer, $parameters)
+    public function articulAggregatesFilter($oContainer, $parameters)
     {
-        $articulGroups = $parameters['articulGroups'];
-
-        foreach ($oContainer->getGroups() as $group) {
-            if (!in_array($group->getCode(), $articulGroups, true)) {
-                $oContainer->removeGroup($group->getCode());
+        $articulComplectations = $parameters['articulComplectations'];
+        $modifications = $oContainer->getActiveModel()->getModifications();
+        foreach ($modifications as $modificationCode => $modification) {
+            $complectations = $modification->getOption('COMPLECTATIONS');
+            foreach ($complectations as $complectationCode => $complectationRuname) {
+                if (!in_array($complectationCode, $articulComplectations)) {
+                    unset($complectations[$complectationCode]);
+                }
+            }
+            if (empty($complectations)) {
+                unset($modifications[$modificationCode]);
             }
         }
-
-        return $oContainer;
-    }
-
-    public function articulAggregatesFilter()
-    {
-        
     }
 
 } 

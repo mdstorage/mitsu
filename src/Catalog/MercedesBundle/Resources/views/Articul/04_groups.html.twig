@@ -5,10 +5,10 @@
     <link rel="stylesheet" href="{{ asset('bundles/catalogmercedes/css/mercedes.css') }}" media="all">
 {% endblock %}
 {% block breadcrumbs %}
-    <a href="{{ path('catalog_mercedes') }}">Выбрать регион, модель, модификацию</a> / Выбрать группу запчастей
+    <a href="{{ path('articul_mercedes') }}">Выбрать регион, модель, модификацию</a> / Выбрать группу запчастей
 {% endblock breadcrumbs %}
 
-{% block pathToSubgroup %}{{ path('catalog_mercedes_subgroups', parameters|merge({'groupCode': group.getCode})) }}{% endblock pathToSubgroup %}
+{% block pathToSubgroup %}{{ path('articul_mercedes_subgroups', parameters|merge({'groupCode': group.getCode})) }}{% endblock pathToSubgroup %}
 {% block picture %}
     {% for modification in oContainer.getActiveModel.getModifications %}
         {{ modification.getRuname }}<br/>

@@ -54,4 +54,21 @@ articul_mercedes_complectations:
 
 articul_mercedes_groups:
   path:         /mercedes/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogMercedesBundle:Articul:groups}
+  defaults:     {_controller: CatalogMercedesBundle:Articul:mercedesArticulGroups}
+
+articul_mercedes_subgroups:
+  path:         /mercedes/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogMercedesBundle:Articul:mercedesArticulSubgroups}
+
+articul_mercedes_schemas:
+  path:         /mercedes/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogMercedesBundle:Articul:mercedesArticulSchemas}
+
+articul_mercedes_schema:
+  path:         /mercedes/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogMercedesBundle:Articul:mercedesArticulSchema}
+
+articul_mercedes_articuls:
+  path:         /mercedes/articul/9
+  defaults:     {_controller: CatalogMercedesBundle:Articul:articuls}
+  requirements: {_method: POST}

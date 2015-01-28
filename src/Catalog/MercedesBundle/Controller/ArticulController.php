@@ -27,7 +27,7 @@ class ArticulController extends BaseController{
         return 'Catalog\MercedesBundle\Components\MercedesConstants';
     }
 
-    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
+    public function mercedesArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulGroups = $this->model()->getArticulGroups($articul, $complectationCode);
@@ -43,6 +43,54 @@ class ArticulController extends BaseController{
             'complectationCode' => $complectationCode
         ));
 
+        $articulModifications = $this->model()->getArticulModifications($articul);
+
+        $this->addFilter('articulModificationsFilter', array(
+            'articulModifications' => $articulModifications
+        ));
+
+        $articulComplectations = $this->model()->getArticulComplectations($articul);
+
+        $this->addFilter('articulAggregatesFilter', array(
+            'articulComplectations' => $articulComplectations
+        ));
+
         return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
+    }
+
+    public function mercedesArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
+    {
+        $articul = $request->cookies->get(Constants::ARTICUL);
+        $articulSubGroups = $this->model()->getArticulSubGroups($articul, $complectationCode, $groupCode);
+
+        $this->addFilter('aticulSubGroupsFilter', array(
+            'articulSubGroups' => $articulSubGroups
+        ));
+
+        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+    }
+
+    public function mercedesArticulSchemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null)
+    {
+        $articul = $request->cookies->get(Constants::ARTICUL);
+        $articulSchemas = $this->model()->getArticulSchemas($articul, $complectationCode, $groupCode, $subGroupCode);
+
+        $this->addFilter('aticulSchemasFilter', array(
+            'articulSchemas' => $articulSchemas
+        ));
+
+        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
+    }
+
+    public function mercedesArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null)
+    {
+        $articul = $request->cookies->get(Constants::ARTICUL);
+        $articulPncs = $this->model()->getArticulPncs($articul, $complectationCode, $groupCode, $subGroupCode);
+
+        $this->addFilter('aticulPncsFilter', array(
+            'articulPncs' => $articulPncs
+        ));
+
+        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode);
     }
 } 

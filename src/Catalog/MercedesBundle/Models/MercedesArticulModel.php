@@ -15,6 +15,7 @@ class MercedesArticulModel extends MercedesCatalogModel{
         FROM `alltext_bm_parts2_v`
         WHERE PARTTYPE = :parttype
         AND PARTNUM = :partnum
+        AND CALLOUT != ''
         GROUP BY CATNUM
         ";
 
@@ -152,7 +153,6 @@ class MercedesArticulModel extends MercedesCatalogModel{
 
     public function getArticulGroups($articul, $complectationCode)
     {
-        $groups = array();
 
         $sqlGroups = "
         SELECT GROUPNUM
@@ -160,6 +160,7 @@ class MercedesArticulModel extends MercedesCatalogModel{
         WHERE PARTTYPE = :parttype
         AND PARTNUM = :partnum
         AND CATNUM = :complectationCode
+        AND CALLOUT != ''
         GROUP BY GROUPNUM
         ";
 
@@ -170,7 +171,96 @@ class MercedesArticulModel extends MercedesCatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
+        $groups = $this->array_column($aData, 'GROUPNUM');
 
-        return $this->array_column($aData, 'GROUPNUM');
+        return $groups;
+    }
+
+    public function getArticulSubGroups($articul, $complectationCode, $groupCode)
+    {
+
+        $sqlSubGroups = "
+        SELECT SUBGRP
+        FROM `alltext_bm_parts2_v`
+        WHERE PARTTYPE = :parttype
+        AND PARTNUM = :partnum
+        AND CATNUM = :complectationCode
+        AND GROUPNUM = :groupCode
+        AND CALLOUT != ''
+        GROUP BY SUBGRP
+        ";
+
+        $query = $this->conn->prepare($sqlSubGroups);
+        $query->bindValue('parttype', substr($articul, 0, 1));
+        $query->bindValue('partnum', str_pad(substr($articul, 1), 12, " ", STR_PAD_LEFT));
+        $query->bindValue('complectationCode', substr($complectationCode, 0, 3));
+        $query->bindValue('groupCode', $groupCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $subGroups = $this->array_column($aData, 'SUBGRP');
+
+        return $subGroups;
+    }
+
+    public function getArticulSchemas($articul, $complectationCode, $groupCode, $subGroupCode)
+    {
+        $sqlSchema = "
+        SELECT image_name
+        FROM `bm_images_arc_image_v` image
+        WHERE image.desc IN (?)
+        GROUP BY image_name
+
+        UNION
+
+        SELECT image_name
+        FROM `bm_images_image_v` image
+        WHERE image.desc IN (?)
+        GROUP BY image_name
+        ";
+
+        $query = $this->conn->executeQuery($sqlSchema, array(
+            $this->getArticulPncs($articul, $complectationCode, $groupCode, $subGroupCode),
+            $this->getArticulPncs($articul, $complectationCode, $groupCode, $subGroupCode)
+        ), array(
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
+        ));
+
+        $aData = $query->fetchAll();
+
+        $schemas = $this->array_column($aData, 'image_name');
+
+        return $schemas;
+    }
+
+    public function getArticulPncs($articul, $complectationCode, $groupCode, $subGroupCode)
+    {
+        $sqlPncs = "
+        SELECT CAST(CALLOUT as UNSIGNED) CALLOUT
+        FROM `alltext_bm_parts2_v`
+        WHERE PARTTYPE = :parttype
+        AND PARTNUM = :partnum
+        AND CATNUM = :complectationCode
+        AND GROUPNUM = :groupCode
+        AND SUBGRP = :subGroupCode
+        AND CALLOUT != ''
+        GROUP BY CALLOUT
+        ";
+
+        $query = $this->conn->prepare($sqlPncs);
+        $query->bindValue('parttype', substr($articul, 0, 1));
+        $query->bindValue('partnum', str_pad(substr($articul, 1), 12, " ", STR_PAD_LEFT));
+        $query->bindValue('complectationCode', substr($complectationCode, 0, 3));
+        $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $subGroups = $this->array_column($aData, 'CALLOUT');
+
+        return $subGroups;
     }
 } 

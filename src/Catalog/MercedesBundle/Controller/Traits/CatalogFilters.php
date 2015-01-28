@@ -16,7 +16,7 @@ trait CatalogFilters {
     public function catalogGroupsFilter($oContainer, $parameters)
     {
         $aggregates = $this->model()->getComplectationAgregats($parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode'], $parameters['complectationCode']);
-        $aggCollection = Factory::createCollection($aggregates, Factory::createModel());
+        $aggCollection = Factory::createCollection($aggregates, Factory::createModification());
 
         $oContainer->getActiveModel()->setModifications($aggCollection);
 

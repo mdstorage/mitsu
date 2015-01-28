@@ -228,7 +228,7 @@ class MercedesCatalogModel extends CatalogModel{
                             $aggregates[$key][Constants::OPTIONS]['COMPLECTATIONS'][] = $type . "." . $subtype;
                         }
                     }
-                    //die;
+
                     foreach ($aggregates[$key][Constants::OPTIONS]['COMPLECTATIONS'] as $complKey=>$complVal) {
                         $aCatnum = $this->getCatnum($regionCode, $modelCode, $key, $complVal);
                         $code = $complVal;
