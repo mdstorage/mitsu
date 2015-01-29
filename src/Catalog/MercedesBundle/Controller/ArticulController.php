@@ -35,11 +35,12 @@ class ArticulController extends BaseController{
         $complectationCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
+        $articulGroups = $this->model()->getArticulGroups($articul, $complectationCode);
+
         $this->addFilter('articulGroupsFilter', array(
             'articulGroups' => $articulGroups
         ));
 
-        $articulGroups = $this->model()->getArticulGroups($articul, $complectationCode);
         $this->addFilter('catalogGroupsFilter', array(
             'regionCode' => $regionCode,
             'modelCode' => $modelCode,
