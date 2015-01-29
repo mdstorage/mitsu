@@ -27,15 +27,19 @@ class ArticulController extends BaseController{
         return 'Catalog\MercedesBundle\Components\MercedesConstants';
     }
 
-    public function mercedesArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
+    public function mercedesArticulGroupsAction(
+        Request $request,
+        $regionCode = null,
+        $modelCode = null,
+        $modificationCode = null,
+        $complectationCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
-        $articulGroups = $this->model()->getArticulGroups($articul, $complectationCode);
-
         $this->addFilter('articulGroupsFilter', array(
             'articulGroups' => $articulGroups
         ));
 
+        $articulGroups = $this->model()->getArticulGroups($articul, $complectationCode);
         $this->addFilter('catalogGroupsFilter', array(
             'regionCode' => $regionCode,
             'modelCode' => $modelCode,
@@ -43,14 +47,12 @@ class ArticulController extends BaseController{
             'complectationCode' => $complectationCode
         ));
 
-        $articulModifications = $this->model()->getArticulModifications($articul);
-
+        $articulModifications = $this->model()->getArticulModifications($articul, $regionCode, $modelCode);
         $this->addFilter('articulModificationsFilter', array(
             'articulModifications' => $articulModifications
         ));
 
         $articulComplectations = $this->model()->getArticulComplectations($articul);
-
         $this->addFilter('articulAggregatesFilter', array(
             'articulComplectations' => $articulComplectations
         ));
@@ -58,7 +60,13 @@ class ArticulController extends BaseController{
         return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
     }
 
-    public function mercedesArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
+    public function mercedesArticulSubgroupsAction(
+        Request $request,
+        $regionCode = null,
+        $modelCode = null,
+        $modificationCode = null,
+        $complectationCode = null,
+        $groupCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulSubGroups = $this->model()->getArticulSubGroups($articul, $complectationCode, $groupCode);
@@ -70,7 +78,14 @@ class ArticulController extends BaseController{
         return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
     }
 
-    public function mercedesArticulSchemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null)
+    public function mercedesArticulSchemasAction(
+        Request $request,
+        $regionCode = null,
+        $modelCode = null,
+        $modificationCode = null,
+        $complectationCode = null,
+        $groupCode = null,
+        $subGroupCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulSchemas = $this->model()->getArticulSchemas($articul, $complectationCode, $groupCode, $subGroupCode);
@@ -82,7 +97,15 @@ class ArticulController extends BaseController{
         return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
     }
 
-    public function mercedesArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null)
+    public function mercedesArticulSchemaAction(
+        Request $request,
+        $regionCode = null,
+        $modelCode = null,
+        $modificationCode = null,
+        $complectationCode = null,
+        $groupCode = null,
+        $subGroupCode = null,
+        $schemaCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulPncs = $this->model()->getArticulPncs($articul, $complectationCode, $groupCode, $subGroupCode);

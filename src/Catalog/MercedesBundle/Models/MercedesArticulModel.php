@@ -65,7 +65,7 @@ class MercedesArticulModel extends MercedesCatalogModel{
         return $regions;
     }
 
-    public function getArticulModels($articul)
+    public function getArticulModels($articul, $regionCode)
     {
         $articulCatnums = $this->getArticulCatnums($articul);
 
@@ -75,13 +75,16 @@ class MercedesArticulModel extends MercedesCatalogModel{
         FROM
             alltext_models_v amv
         WHERE amv.CATNUM IN (?)
+        AND APPINF LIKE ?
         GROUP BY amv.CLASS;
         ";
 
         $query = $this->conn->executeQuery($sqlModels, array(
-            $articulCatnums
+            $articulCatnums,
+            '%'.$regionCode.'%'
         ), array(
-            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+            \PDO::PARAM_STR
         ));
 
         $aData = $query->fetchAll();
@@ -94,7 +97,7 @@ class MercedesArticulModel extends MercedesCatalogModel{
         return $models;
     }
 
-    public function getArticulModifications($articul)
+    public function getArticulModifications($articul, $regionCode, $modelCode)
     {
         $articulCatnums = $this->getArticulCatnums($articul);
 
@@ -103,13 +106,19 @@ class MercedesArticulModel extends MercedesCatalogModel{
             models.AGGTYPE
         FROM
             mercedesbenz.alltext_models_v models
-        WHERE models.CATNUM IN (?);
+        WHERE models.CATNUM IN (?)
+        AND APPINF LIKE ?
+        AND CLASS = ?
         ";
 
         $query = $this->conn->executeQuery($sqlModifications, array(
-            $articulCatnums
+            $articulCatnums,
+            '%'.$regionCode.'%',
+            $modelCode
         ), array(
-            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+            \PDO::PARAM_STR,
+            \PDO::PARAM_STR
         ));
 
         $aData = $query->fetchAll();
@@ -118,7 +127,7 @@ class MercedesArticulModel extends MercedesCatalogModel{
         foreach ($aData as $item) {
             $modifications[] = $item['AGGTYPE'];
         }
-var_dump($articulCatnums);die;
+
         return $modifications;
     }
 

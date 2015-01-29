@@ -36,7 +36,11 @@ abstract class ArticulController extends CatalogController{
 //            );
         }
 
-        $articulModels  = $this->model()->getArticulModels($articul);
+        if (is_null($regionCode)){
+            $regionCode = $articulRegions[0];
+        }
+
+        $articulModels  = $this->model()->getArticulModels($articul, $regionCode);
 
         $this->addFilter('aticulRegionModelsFilter', array(
             'articulRegions' => $articulRegions,
@@ -88,7 +92,9 @@ abstract class ArticulController extends CatalogController{
     {
         if ($request->isXmlHttpRequest()) {
             $articul = $request->cookies->get(Constants::ARTICUL);
-            $articulModifications = $this->model()->getArticulModifications($articul);
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+            $articulModifications = $this->model()->getArticulModifications($articul, $regionCode, $modelCode);
 
             $this->addFilter('articulModificationsFilter', array(
                 'articulModifications' => $articulModifications
