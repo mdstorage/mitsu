@@ -27,7 +27,7 @@ class MazdaArticulModel extends MazdaCatalogModel{
 
         $regions = array();
         foreach($aData as $item){
-            $regions[$item['catalog']] = array(Constants::NAME=>$item['catalog'], Constants::OPTIONS=>array());
+            $regions[] = $item['catalog'];
         }
 
         return $regions;

@@ -97,19 +97,19 @@ articul_mazda_complectations:
 
 articul_mazda_groups:
   path:         /mazda/articul/5/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogMazdaBundle:Articul:groups}
+  defaults:     {_controller: CatalogMazdaBundle:Articul:mazdaArticulGroups}
 
 articul_mazda_subgroups:
   path:         /mazda/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogMazdaBundle:Articul:subgroups}
+  defaults:     {_controller: CatalogMazdaBundle:Articul:mazdaArticulSubgroups}
 
 articul_mazda_schemas:
   path:         /mazda/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogMazdaBundle:Articul:schemas}
+  defaults:     {_controller: CatalogMazdaBundle:Articul:mazdaArticulSchemas}
 
 articul_mazda_schema:
   path:         /mazda/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogMazdaBundle:Articul:schema}
+  defaults:     {_controller: CatalogMazdaBundle:Articul:mazdaArticulSchema}
 
 articul_mazda_articuls:
   path:         /mazda/articul/9
