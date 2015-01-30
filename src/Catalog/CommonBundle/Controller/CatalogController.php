@@ -18,7 +18,7 @@ abstract class CatalogController extends BaseController{
 
 
         if(empty($aRegions)){
-            return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Регионы не найдены.'));
+            return $this->error($request, 'Регионы не найдены.');
         } else {
             $oActiveRegion = Factory::createRegion();
             /*
@@ -48,7 +48,7 @@ abstract class CatalogController extends BaseController{
             $models = $this->model()->getModels($oActiveRegion->getCode());
 
             if(empty($models)){
-                return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Модели не найдены.'));
+                return $this->error($request, 'Модели не найдены.');
             } else {
                 $oActiveRegion->setModels(Factory::createCollection($models, Factory::createModel()));
             }
@@ -76,7 +76,7 @@ abstract class CatalogController extends BaseController{
             $modifications = $this->model()->getModifications($regionCode, $modelCode);
 
             if(empty($modifications))
-                return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Модификации не найдены.'));
+                return $this->error($request, 'Модификации не найдены.');
 
             $oContainer = Factory::createContainer()
                 ->setActiveModel(Factory::createModel($modelCode)
@@ -106,7 +106,7 @@ abstract class CatalogController extends BaseController{
         $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
 
         if(empty($complectations))
-            return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Комплектации не найдены.'));
+            return $this->error($request, 'Комплектации не найдены.');
 
         $oContainer = Factory::createContainer()
             ->setActiveRegion($regionsCollection[$regionCode])
@@ -129,7 +129,8 @@ abstract class CatalogController extends BaseController{
         $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);
 
         if(empty($groups))
-            return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Группы не найдены.'));
+            return $this->error($request, 'Группы не найдены.');
+
         $oContainer = Factory::createContainer();
         $regions = $this->model()->getRegions();
         $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
@@ -181,7 +182,7 @@ abstract class CatalogController extends BaseController{
         $schemas = Factory::createCollection($groupSchemas, Factory::createSchema())->getCollection();
 
         if(empty($subgroups))
-            return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Подгруппы не найдены.'));
+            return $this->error($request, 'Подгруппы не найдены.');
 
         $oContainer
             ->setActiveRegion($regionsCollection[$regionCode])
@@ -211,7 +212,7 @@ abstract class CatalogController extends BaseController{
         $schemas = $this->model()->getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
 
         if(empty($schemas))
-            return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array('message'=>'Схемы не найдены.'));
+            return $this->error($request, 'Схемы не найдены.');
 
         $oContainer = Factory::createContainer();
         $regions = $this->model()->getRegions();

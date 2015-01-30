@@ -29,11 +29,6 @@ abstract class ArticulController extends CatalogController{
         if (empty($articulRegions)) {
             setcookie(Constants::ARTICUL, "");
             return $this->indexAction('Запчасть с таким артикулом не найдена.');
-//            $headers = $request->server->getHeaders();
-//            return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array(
-//                'message'=> 'Регионы не найдены.',
-//                'referer' => $headers['REFERER'])
-//            );
         }
 
         if (is_null($regionCode)){
