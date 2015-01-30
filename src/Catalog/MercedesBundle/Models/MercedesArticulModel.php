@@ -165,7 +165,7 @@ class MercedesArticulModel extends MercedesCatalogModel{
 
         $sqlGroups = "
         SELECT GROUPNUM
-        FROM `alltext_bm_parts2_v`
+        FROM alltext_bm_parts2_v
         WHERE PARTTYPE = :parttype
         AND PARTNUM = :partnum
         AND CATNUM = :complectationCode
