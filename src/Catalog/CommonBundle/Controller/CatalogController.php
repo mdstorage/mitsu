@@ -1,7 +1,6 @@
 <?php
 namespace Catalog\CommonBundle\Controller;
 
-
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Components\Factory;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,9 +8,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class CatalogController extends BaseController{
 
+    /**
+     * Получение данных для страницы регионов и моделей
+     *
+     * @param Request $request Объект запроса (предоставляется Symfony2)
+     * @param string $regionCode Код региона (нужен для поиска модели)
+     *
+     */
     public function regionsModelsAction(Request $request, $regionCode = null)
     {
-        /*
+        /**
          * Выборка регионов из базы данных для конкретного артикула
          */
         $aRegions = $this->model()->getRegions();
@@ -21,14 +27,14 @@ abstract class CatalogController extends BaseController{
             return $this->error($request, 'Регионы не найдены.');
         } else {
             $oActiveRegion = Factory::createRegion();
-            /*
+            /**
              * Если регионы найдены, они помещаются в контейнер
              */
             $regionsCollection = Factory::createCollection($aRegions, $oActiveRegion);
             $oContainer = Factory::createContainer()
                 ->setRegions($regionsCollection);
 
-            /*
+            /**
              * Если пользователь задал регион, то этот регион становится активным
              */
             $regionsList = $regionsCollection->getCollection();
@@ -41,7 +47,7 @@ abstract class CatalogController extends BaseController{
                 $oActiveRegion = reset($regionsList);
             }
             
-            /*
+            /**
              * Выборка моделей из базы для данного артикула и региона
              */
 

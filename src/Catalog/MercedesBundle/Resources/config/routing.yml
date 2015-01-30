@@ -72,3 +72,14 @@ articul_mercedes_articuls:
   path:         /mercedes/articul/9
   defaults:     {_controller: CatalogMercedesBundle:Articul:articuls}
   requirements: {_method: POST}
+
+#-------------------------------------------------------------------------------------
+
+vin_mercedes:
+  path:         /mercedes/vin/0
+  defaults:     {_controller: CatalogMercedesBundle:Vin:index}
+
+vin_mercedes_result:
+  path:         /mercedes/vin/1
+  defaults:     {_controller: CatalogMercedesBundle:Vin:result}
+  requirements: {_method: POST}

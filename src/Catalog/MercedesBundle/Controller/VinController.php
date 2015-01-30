@@ -1,11 +1,28 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: misha
- * Date: 17.01.15
- * Time: 20:54
- */
+namespace Catalog\MercedesBundle\Controller;
 
-class VinController {
+use Catalog\CommonBundle\Components\Constants;
+use Catalog\CommonBundle\Components\Factory;
+use Catalog\CommonBundle\Controller\VinController as BaseController;
+use Catalog\MercedesBundle\Controller\Traits\VinFilters;
+use Symfony\Component\HttpFoundation\Request;
+
+class VinController extends BaseController{
+    use VinFilters;
+
+    public function bundle()
+    {
+        return 'CatalogMercedesBundle:Vin';
+    }
+
+    public function model()
+    {
+        return $this->get('mercedes.vin.model');
+    }
+
+    public function bundleConstants()
+    {
+        return 'Catalog\MercedesBundle\Components\MercedesConstants';
+    }
 
 } 
