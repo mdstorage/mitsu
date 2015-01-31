@@ -53,7 +53,7 @@ class ArticulController extends BaseController{
             'articulModifications' => $articulModifications
         ));
 
-        $articulComplectations = $this->model()->getArticulComplectations($articul);
+        $articulComplectations = $this->model()->getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode);
         $this->addFilter('articulAggregatesFilter', array(
             'articulComplectations' => $articulComplectations
         ));

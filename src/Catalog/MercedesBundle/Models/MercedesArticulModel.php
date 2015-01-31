@@ -131,7 +131,7 @@ class MercedesArticulModel extends MercedesCatalogModel{
         return $modifications;
     }
 
-    public function getArticulComplectations($articul)
+    public function getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode)
     {
         $articulCatnums = $this->getArticulCatnums($articul);
 
@@ -142,12 +142,21 @@ class MercedesArticulModel extends MercedesCatalogModel{
         FROM
             alltext_models_v as models
         WHERE models.CATNUM IN (?)
+          AND APPINF LIKE ?
+          AND CLASS = ?
+
         ";
 
         $query = $this->conn->executeQuery($sqlComplectations, array(
-            $articulCatnums
+            $articulCatnums,
+            '%'.$regionCode.'%',
+            $modelCode,
+//            $modificationCode
         ), array(
-            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+            \PDO::PARAM_STR,
+            \PDO::PARAM_STR,
+//            \PDO::PARAM_STR
         ));
 
         $aData = $query->fetchAll();
