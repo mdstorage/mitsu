@@ -10,6 +10,7 @@ abstract class VinController extends CatalogController{
 
     public function indexAction()
     {
+        setcookie(Constants::PROD_DATE, '');
         return $this->render($this->bundle().':01_index.html.twig');
     }
 
