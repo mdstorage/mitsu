@@ -28,6 +28,6 @@ class CatalogController extends BaseController{
     {
         $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode);
 
-        return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode);
+        return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, null, $groupCode, $subGroupCode);
     }
 } 

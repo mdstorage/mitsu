@@ -23,10 +23,10 @@
                     <td>Модификация:</td>
                     <td>{{ result.modification }}</td>
                 </tr>
-                {#<tr>#}
-                    {#<td>Комплектация:</td>#}
-                    {#<td>{{ result.complectation }}</td>#}
-                {#</tr>#}
+                <tr>
+                    <td>Комплектация:</td>
+                    <td>{{ result.complectation }}</td>
+                </tr>
                 {#<tr>#}
                     {#<td>Цвет экстерьера:</td>#}
                     {#<td>{{ result.ext_color }}</td>#}
@@ -44,5 +44,5 @@
     </div>
 {% endblock specification %}
 {% block catalogPath %}
-    {#{{ path('vin_mercedes_groups', {'regionCode': result.region, 'modelCode': result.model, 'modificationCode': result.modification, 'complectationCode': result.complectation}) }}#}
+    {{ path('vin_mercedes_groups', {'regionCode': result.region, 'modelCode': result.model, 'modificationCode': result.modification, 'complectationCode': result.complectation}) }}
 {% endblock catalogPath %}

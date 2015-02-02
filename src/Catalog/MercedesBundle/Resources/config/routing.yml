@@ -83,3 +83,7 @@ vin_mercedes_result:
   path:         /mercedes/vin/1
   defaults:     {_controller: CatalogMercedesBundle:Vin:result}
   requirements: {_method: POST}
+
+vin_mercedes_groups:
+  path:         /mercedes/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogMercedesBundle:Vin:groups}
