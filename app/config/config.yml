@@ -63,7 +63,6 @@ doctrine:
           driver:   "%database_driver%"
           host:     "%database_host%"
           port:     "%database_port%"
-
         subaru:
           dbname:   subaru
           user:     root
@@ -71,7 +70,7 @@ doctrine:
           charset:  UTF8
           driver:   "%database_driver%"
           host:     "%database_host%"
-
+          port:     "%database_port%"
         mercedes:
           dbname:   mercedesbenz
           user:     catsmitsuby

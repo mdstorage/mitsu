@@ -9,7 +9,8 @@
 namespace Catalog\CommonBundle\Models;
 
 use Doctrine\DBAL\Connection;
-abstract class VinModel {
+
+abstract class VinModel{
     protected $conn;
 
     public function __construct(Connection $connection)

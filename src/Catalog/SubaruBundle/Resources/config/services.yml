@@ -1,0 +1,16 @@
+services:
+#    catalog_subaru.example:
+#        class: Catalog\SubaruBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  subaru.catalog.model:
+    class: Catalog\SubaruBundle\Models\SubaruCatalogModel
+    arguments:  ['@doctrine.dbal.subaru_connection']
+
+  subaru.vin.model:
+    class: Catalog\SubaruBundle\Models\SubaruVinModel
+    arguments:  ['@doctrine.dbal.subaru_connection']  
+  
+  subaru.articul.model:
+    class: Catalog\SubaruBundle\Models\SubaruArticulModel
+    arguments:  ['@doctrine.dbal.subaru_connection']

@@ -25,6 +25,7 @@ abstract class VinController extends CatalogController{
             }
 
             setcookie(Constants::PROD_DATE, $result[Constants::PROD_DATE]);
+            
             return $this->render($this->bundle().':02_result.html.twig', array(
                 'result' => $result
             ));
