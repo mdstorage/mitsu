@@ -87,3 +87,20 @@ vin_mercedes_result:
 vin_mercedes_groups:
   path:         /mercedes/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
   defaults:     {_controller: CatalogMercedesBundle:Vin:groups}
+
+vin_mercedes_subgroups:
+  path:         /mercedes/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogMercedesBundle:Vin:subgroups}
+
+vin_mercedes_schemas:
+  path:         /mercedes/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogMercedesBundle:Vin:schemas}
+
+vin_mercedes_schema:
+  path:         /mercedes/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogMercedesBundle:Vin:schema}
+
+vin_mercedes_articuls:
+  path:         /mercedes/vin/7
+  defaults:     {_controller: CatalogMercedesBundle:Vin:articuls}
+  requirements: {_method: POST}

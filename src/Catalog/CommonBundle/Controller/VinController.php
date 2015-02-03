@@ -10,7 +10,12 @@ abstract class VinController extends CatalogController{
 
     public function indexAction()
     {
+        /**
+         * @deprecated Оставлен для совместимости с маздой
+         */
         setcookie(Constants::PROD_DATE, '');
+
+        setcookie(Constants::VIN, '');
         return $this->render($this->bundle().':01_index.html.twig');
     }
 
@@ -25,7 +30,12 @@ abstract class VinController extends CatalogController{
                 return $this->render($this->bundle().':empty.html.twig');
             }
 
+            /**
+             * @deprecated Оставлен для совместимости с маздой
+             */
             setcookie(Constants::PROD_DATE, $result[Constants::PROD_DATE]);
+
+            setcookie(Constants::VIN, $vin);
             return $this->render($this->bundle().':02_result.html.twig', array(
                 'result' => $result
             ));

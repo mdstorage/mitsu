@@ -6,16 +6,8 @@ use Catalog\MercedesBundle\Components\MercedesConstants;
 
 class MercedesVinModel extends MercedesCatalogModel
 {
-    /**
-     * Поиск конкретной модели по vin-коду
-     *
-     * @param $vin
-     * @return array
-     */
-    public function getVinFinderResult($vin)
+    private function getIdentDataByVin($vin)
     {
-       $result = array();
-
         $sqlVin = "
         SELECT
           IF (SUBSTRING(map.LOCATION, 1, 1) = 'E', '1',
@@ -44,6 +36,20 @@ class MercedesVinModel extends MercedesCatalogModel
         $query->execute();
 
         $aVin = $query->fetchAll();
+
+        return $aVin;
+    }
+    /**
+     * Поиск конкретной модели по vin-коду
+     *
+     * @param $vin
+     * @return array
+     */
+    public function getVinFinderResult($vin)
+    {
+        $result = array();
+
+        $aVin = $this->getIdentDataByVin($vin);
 
         foreach ($aVin as &$item) {
             $sqlModels = "
@@ -90,7 +96,6 @@ class MercedesVinModel extends MercedesCatalogModel
             $query->execute();
 
             $aInfo = $query->fetch();
-    //        var_dump($aInfo);die;
 
             if ($aData) {
                 $result = array(
@@ -107,5 +112,43 @@ class MercedesVinModel extends MercedesCatalogModel
             }
         }
         return $result;
+    }
+
+    private function getRtype3ByVin($vin)
+    {
+        $aVin = $this->getIdentDataByVin($vin);
+
+        $sSaCode = '';
+
+        if ($aVin) {
+            $aData = $aVin[0];
+
+            $tableName = strtolower($aData['DB_NAME'] . "_DC_RTYPE3_V");
+
+            $sqlInfo = "
+            SELECT SACODE_DATA
+            FROM " . $tableName . " info
+            WHERE info.WHC = :whc
+             AND info.CHASSBM = :chassbm
+             AND info.CHASS_IDENT = :chassIdent
+            ";
+
+            $query = $this->conn->prepare($sqlInfo);
+            $query->bindValue('whc', $aData['WHC']);
+            $query->bindValue('chassbm', $aData['CHASSBM']);
+            $query->bindValue('chassIdent', $aData['CHASS_IDENT']);
+            $query->execute();
+
+            $sSaCode = $query->fetchColumn();
+        }
+
+        $aSacodes = explode(" ", $sSaCode);
+
+        return $aSacodes;
+    }
+
+    public function getArticulsByVin($vin)
+    {
+        $sacodes = $this->getRtype3ByVin($vin);
     }
 }

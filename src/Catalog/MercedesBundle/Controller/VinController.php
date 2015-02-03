@@ -25,4 +25,12 @@ class VinController extends BaseController{
         return 'Catalog\MercedesBundle\Components\MercedesConstants';
     }
 
+    public function articulsAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $vin = $request->cookies->get(Constants::VIN);
+            $this->addFilter('vinArticulFilter', array(Constants::VIN => $vin));
+            return parent::articulsAction($request);
+        }
+    }
 } 
