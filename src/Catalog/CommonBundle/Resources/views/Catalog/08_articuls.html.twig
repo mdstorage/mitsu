@@ -1,3 +1,4 @@
+{% if oContainer.getActivePnc.getArticuls %}
 <table class="table small">
     <thead>
         <tr>
@@ -18,3 +19,6 @@
     {% endfor %}
     </tbody>
 </table>
+{% else %}
+    <div class="label label-danger">Запчасти отсутствуют</div>
+{% endif %}

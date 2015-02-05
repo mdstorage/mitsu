@@ -143,12 +143,12 @@ class MercedesVinModel extends MercedesCatalogModel
         }
 
         $aSacodes = explode(" ", $sSaCode);
-
         return $aSacodes;
     }
 
     public function getArticulsByVin($vin)
     {
         $sacodes = $this->getRtype3ByVin($vin);
+        return $sacodes;
     }
 }

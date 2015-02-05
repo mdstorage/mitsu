@@ -442,14 +442,45 @@ class MercedesCatalogModel extends CatalogModel{
         $pncs = array();
         foreach ($aPncs as $item) {
             if ($item) {
-                $pncs[$item['pnc']][Constants::OPTIONS][Constants::COORDS][] = array(
+                $pncCode = str_pad($item['pnc'], 3, '0', STR_PAD_LEFT);
+                $pncs[$pncCode][Constants::NAME] = iconv('Windows-1251', 'UTF-8', $this->getPncName($complectationCode, $groupCode, $subGroupCode, (string) $pncCode)) ;
+                $pncs[$pncCode][Constants::OPTIONS][Constants::COORDS][] = array(
                     Constants::X1 => $item['x'] - 8,
                     Constants::Y1 => $item['y'] - 12,
                     Constants::X2 => $item['x'] + 15,
                     Constants::Y2 => $item['y'] + 8);
             }
         }
+
         return $pncs;
+    }
+
+    private function getPncName($complectationCode, $groupCode, $subGroupCode, $pncCode)
+    {
+        $sqlPncName = "
+        SELECT IFNULL(nouns_ru.NOUN, nouns_en.NOUN) TEXT
+        FROM `alltext_bm_parts2_v` parts
+        LEFT OUTER JOIN `alltext_part_nouns_v` nouns_ru
+        ON nouns_ru.NOUNIDX = parts.NOUNIDX AND nouns_ru.LANG = 'R'
+        LEFT OUTER JOIN `alltext_part_nouns_v` nouns_en
+        ON nouns_en.NOUNIDX = parts.NOUNIDX AND nouns_en.LANG = 'E'
+        WHERE `CATNUM` = :complectationCode
+        AND `GROUPNUM` = :groupCode
+        AND `SUBGRP` = :subGroupCode
+        AND `CALLOUT` = :pnc
+        LIMIT 1
+        ";
+
+        $query = $this->conn->prepare($sqlPncName);
+        $query->bindValue('complectationCode', substr($complectationCode, 0, 3));
+        $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('pnc', $pncCode);
+        $query->execute();
+
+        $sData = $query->fetchColumn();
+
+        return $sData;
     }
 
     public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
@@ -500,7 +531,7 @@ class MercedesCatalogModel extends CatalogModel{
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, $options)
     {
         $sqlArticuls = "
-        SELECT parts.`PARTTYPE`, parts.`PARTNUM`, parts.`QUANTBM`, IFNULL(nouns_ru.NOUN, nouns_en.NOUN) TEXT
+        SELECT parts.`PARTTYPE`, parts.`PARTNUM`, parts.`CODEB`, parts.`QUANTBM`, IFNULL(nouns_ru.NOUN, nouns_en.NOUN) TEXT
         FROM `alltext_bm_parts2_v` parts
         LEFT OUTER JOIN `alltext_part_nouns_v` nouns_ru
         ON nouns_ru.NOUNIDX = parts.NOUNIDX AND nouns_ru.LANG = 'R'
@@ -528,7 +559,8 @@ class MercedesCatalogModel extends CatalogModel{
                 Constants::OPTIONS => array(
                     Constants::QUANTITY => substr($item['QUANTBM'], 0, 3),
                     Constants::START_DATE => '00000000',
-                    Constants::END_DATE => '99999999'
+                    Constants::END_DATE => '99999999',
+                    'CODEB' => $item['CODEB']
                 )
             );
         }
