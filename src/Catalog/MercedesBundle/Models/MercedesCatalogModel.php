@@ -414,15 +414,17 @@ class MercedesCatalogModel extends CatalogModel{
                 CATNUM = :complectationCode
                 AND GROUPNUM = :groupCode
                 AND SUBGRP = :subGroupCode
+                HAVING IMAGE_CODE =:schemaCode
         ";
 
         $query = $this->conn->prepare($sqlLabels);
         $query->bindValue('complectationCode', substr($complectationCode, 0, 3));
         $query->bindValue('groupCode', $groupCode);
         $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('schemaCode', $schemaCode);
         $query->execute();
 
-        $aData = $query->fetchAll();
+        $aData = $query->fetch();
 //        var_dump($aData);die;
 //        $schemaCode = $aData['IMAGE_CODE'];
 //        $aLabels = explode(" ", $aData['CALLOUT']);
@@ -443,12 +445,14 @@ class MercedesCatalogModel extends CatalogModel{
         foreach ($aPncs as $item) {
             if ($item) {
                 $pncCode = str_pad($item['pnc'], 3, '0', STR_PAD_LEFT);
-                $pncs[$pncCode][Constants::NAME] = iconv('Windows-1251', 'UTF-8', $this->getPncName($complectationCode, $groupCode, $subGroupCode, (string) $pncCode)) ;
-                $pncs[$pncCode][Constants::OPTIONS][Constants::COORDS][] = array(
-                    Constants::X1 => $item['x'] - 8,
-                    Constants::Y1 => $item['y'] - 12,
-                    Constants::X2 => $item['x'] + 15,
-                    Constants::Y2 => $item['y'] + 8);
+                if (in_array($pncCode, explode(" ", $aData['CALLOUT']))) {
+                    $pncs[$pncCode][Constants::NAME] = iconv('Windows-1251', 'UTF-8', $this->getPncName($complectationCode, $groupCode, $subGroupCode, (string) $pncCode)) ;
+                    $pncs[$pncCode][Constants::OPTIONS][Constants::COORDS][] = array(
+                        Constants::X1 => $item['x'] - 8,
+                        Constants::Y1 => $item['y'] - 12,
+                        Constants::X2 => $item['x'] + 15,
+                        Constants::Y2 => $item['y'] + 8);
+                }
             }
         }
 
