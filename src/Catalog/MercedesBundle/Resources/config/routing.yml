@@ -19,6 +19,10 @@ catalog_mercedes_subgroups:
   path:         /mercedes/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
   defaults:     {_controller: CatalogMercedesBundle:Catalog:subgroups}
 
+catalog_mercedes_safirstlevelsubgroups:
+  path:         /mercedes/catalog/41/{complectationCode}/{sanum}
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:saFirstLevelSubgroups}
+
 catalog_mercedes_schemas:
   path:         /mercedes/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogMercedesBundle:Catalog:schemas}

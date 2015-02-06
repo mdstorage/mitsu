@@ -46,4 +46,9 @@ class CatalogController extends BaseController{
 
         return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
     }
+
+    public function saFirstLevelSubgroupsAction($complectationCode, $sanum)
+    {
+        $this->model()->getSaFirstLevelSubgroups($complectationCode, $sanum);
+    }
 } 

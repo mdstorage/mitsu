@@ -345,13 +345,48 @@ class MercedesCatalogModel extends CatalogModel{
         foreach ($aDataSA as $item) {
             $subgroupsSA[trim($item['SANUM'])] = array(
                 Constants::NAME => iconv('Windows-1251', 'UTF-8', $item['TEXT']),
-                Constants::OPTIONS => array()
+                Constants::OPTIONS => array(
+                    'CODEONE' => $item['CODEONE'],
+                    'CODETWO' => $item['CODETWO'],
+                )
             );
         }
 
         return $subgroupsSA;
     }
 
+    public function getSaFirstLevelSubgroups($complectationCode, $sanum)
+    {
+        $sqlSaSubGroups = "
+        select sa.STRKVER,  ifnull(desc_r.TEXT, desc_e.TEXT) TEXT
+        from alltext_sa_strokes_v sa
+         left outer join alltext_sa_dictionary_v desc_e
+            ON desc_e.DESCIDX = sa.DESCIDX
+            AND desc_e.LANG = 'E'
+            left outer join alltext_sa_dictionary_v desc_r
+            ON desc_r.DESCIDX = sa.DESCIDX
+            AND desc_r.LANG = 'R'
+        where
+        sa.SANUM = :sanum
+        AND sa.MODEL = :model
+        AND (sa.SUBMOD LIKE :submod OR sa.SUBMOD = '')
+        order by sa.SANUM
+        ";
+
+        $query = $this->conn->prepare($sqlSaSubGroups);
+        $query->bindValue('sanum', ' ' . $sanum);
+        $query->bindValue('model', substr($complectationCode, 4, 3));
+        $query->bindValue('submod', '%' . substr($complectationCode, 8, 3) . '%');
+        $query->execute();
+
+        $aData = $query->fetchAll();
+        var_dump($aData);die;
+    }
+
+    /**
+     * Метод-заглушка
+     * @return array
+     */
     public function getGroupSchemas()
     {
         return array();
