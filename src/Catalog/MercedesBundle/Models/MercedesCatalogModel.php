@@ -369,18 +369,54 @@ class MercedesCatalogModel extends CatalogModel{
         where
         sa.SANUM = :sanum
         AND sa.MODEL = :model
-        AND (sa.SUBMOD LIKE :submod OR sa.SUBMOD = '')
         order by sa.SANUM
         ";
 
         $query = $this->conn->prepare($sqlSaSubGroups);
         $query->bindValue('sanum', ' ' . $sanum);
         $query->bindValue('model', substr($complectationCode, 4, 3));
-        $query->bindValue('submod', '%' . substr($complectationCode, 8, 3) . '%');
+//        $query->bindValue('submod', '%' . substr($complectationCode, 8, 3) . '%');
         $query->execute();
 
         $aData = $query->fetchAll();
-        var_dump($aData);die;
+
+        $saFirstLevelSubgroups = array();
+
+        foreach ($aData as $item) {
+            $saFirstLevelSubgroups[$item['STRKVER']] = array(
+                Constants::NAME => $item['TEXT'] == '' ? '---' : iconv('Windows-1251', 'UTF-8', $item['TEXT'])
+            );
+        }
+
+        return $saFirstLevelSubgroups;
+    }
+
+    public function getSaSchemas($sanum)
+    {
+        $sqlSaSchemas = "
+            select CONCAT(IMGTYPE,SANUM,SEQNO,RESTIMG) IMG,
+              CONTREC,
+              CALLOUT,
+              SUBGRP,
+              SEQNUM
+            from alltext_sa_npg_v
+            where SANO = :sanum
+            ORDER BY SEQNUM
+        ";
+
+        $query = $this->conn->prepare($sqlSaSchemas);
+        $query->bindValue('sanum', ' ' . $sanum);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $schemas = array();
+
+        foreach ($aData as $item) {
+            $schemas[$item['IMG']] = array();
+        }
+
+        return $schemas;
     }
 
     /**
