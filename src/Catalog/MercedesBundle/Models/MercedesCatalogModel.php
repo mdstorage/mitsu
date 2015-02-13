@@ -368,14 +368,11 @@ class MercedesCatalogModel extends CatalogModel{
             AND desc_r.LANG = 'R'
         where
         sa.SANUM = :sanum
-        AND sa.MODEL = :model
         order by sa.SANUM
         ";
 
         $query = $this->conn->prepare($sqlSaSubGroups);
         $query->bindValue('sanum', str_pad($sanum, 6, " ", STR_PAD_LEFT));
-        $query->bindValue('model', substr($complectationCode, 4, 3));
-//        $query->bindValue('submod', '%' . substr($complectationCode, 8, 3) . '%');
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -419,6 +416,159 @@ class MercedesCatalogModel extends CatalogModel{
         }
 
         return $schemas;
+    }
+
+    public function getSaPncs($sanum, $schemaCode)
+    {
+        /**
+         * Выбираем метки, которые принадлежат группе sanum (пока без привязки к рисункам)
+         */
+        $sqlSaPncs = "
+        SELECT
+          CAST(ITEMNO AS UNSIGNED) ITEMNO
+        FROM `alltext_sa_parts_v` parts
+        WHERE SANUM = :sanum AND ITEMNO != ''
+        GROUP BY ITEMNO
+        ";
+
+        $query = $this->conn->prepare($sqlSaPncs);
+        $query->bindValue('sanum', str_pad($sanum, 6, " ", STR_PAD_LEFT));
+        $query->execute();
+
+        $aSanumPncs = $this->array_column($query->fetchAll(), 'ITEMNO');
+
+        /**
+         * Выбираем метки на рисунке, которые входят в список принадлежащих группе sanum
+         */
+        $sqlImageSaPncs = "
+           (select image_name, x, y, `desc` as pnc from sa_images_arc_image_v where image_name = ? AND `desc` IN (?))
+            UNION
+            (select image_name, x, y, `desc` as pnc from sa_images_image_v where image_name = ? AND `desc` IN (?))
+            order by CAST(pnc AS UNSIGNED)
+        ";
+
+        $query = $this->conn->executeQuery($sqlImageSaPncs, array(
+            $schemaCode,
+            $aSanumPncs,
+            $schemaCode,
+            $aSanumPncs
+        ), array(
+            \PDO::PARAM_STR,
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+            \PDO::PARAM_STR,
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
+        ));
+
+        $aPncs = $query->fetchAll();
+
+        $pncs = array();
+        foreach ($aPncs as $item) {
+            if ($item) {
+                $pncCode = str_pad($item['pnc'], 3, '0', STR_PAD_LEFT);
+//                if (in_array($pncCode, explode(" ", $aData['CALLOUT']))) {
+                    $pncs[$pncCode][Constants::NAME] = iconv('Windows-1251', 'UTF-8', $this->getSaPncName($sanum, (string) $pncCode)) ;
+                    $pncs[$pncCode][Constants::OPTIONS][Constants::COORDS][] = array(
+                        Constants::X1 => $item['x'] - 8,
+                        Constants::Y1 => $item['y'] - 12,
+                        Constants::X2 => $item['x'] + 15,
+                        Constants::Y2 => $item['y'] + 8);
+//                }
+            }
+        }
+        return $pncs;
+    }
+
+    public function getSaCommonArticuls($sanum)
+    {
+        $sqlSaCommonArticuls = "
+        SELECT `PARTTYP`, `PARTNUM`, parts.`QUANTSA`, IFNULL(nouns_ru.NOUN, nouns_en.NOUN) TEXT
+        FROM `alltext_sa_parts_v` parts
+        LEFT OUTER JOIN `alltext_part_nouns_v` nouns_ru
+        ON nouns_ru.NOUNIDX = parts.NOUNIDX AND nouns_ru.LANG = 'R'
+        LEFT OUTER JOIN `alltext_part_nouns_v` nouns_en
+        ON nouns_en.NOUNIDX = parts.NOUNIDX AND nouns_en.LANG = 'E'
+        WHERE `SANUM` = :sanum
+        AND `ITEMNO` = ''
+        ";
+
+        $query = $this->conn->prepare($sqlSaCommonArticuls);
+        $query->bindValue('sanum', str_pad($sanum, 6, " ", STR_PAD_LEFT));
+        $query->execute();
+
+        $saCommonArticuls = $query->fetchAll();
+        $articuls = array();
+        foreach ($saCommonArticuls as $item) {
+            if ($item) {
+                $articuls[$item['PARTTYP'] . $item['PARTNUM']][Constants::OPTIONS][Constants::COORDS][] = array(
+                    Constants::X1 => 0,
+                    Constants::Y1 => 0,
+                    Constants::X2 => 0,
+                    Constants::Y2 => 0
+                );
+            }
+        }
+
+        return $articuls;
+    }
+
+    public function getSaPncName($sanum, $pncCode)
+    {
+        $sqlPncName = "
+        SELECT IFNULL(nouns_ru.NOUN, nouns_en.NOUN) TEXT
+        FROM `alltext_sa_parts_v` parts
+        LEFT OUTER JOIN `alltext_part_nouns_v` nouns_ru
+        ON nouns_ru.NOUNIDX = parts.NOUNIDX AND nouns_ru.LANG = 'R'
+        LEFT OUTER JOIN `alltext_part_nouns_v` nouns_en
+        ON nouns_en.NOUNIDX = parts.NOUNIDX AND nouns_en.LANG = 'E' OR nouns_en.LANG = 'N'
+        WHERE `SANUM` = :sanum
+        AND `ITEMNO` = :pnc
+        LIMIT 1
+        ";
+
+        $query = $this->conn->prepare($sqlPncName);
+        $query->bindValue('sanum', str_pad($sanum, 6, " ", STR_PAD_LEFT));
+        $query->bindValue('pnc', str_pad($pncCode, 3, "0", STR_PAD_LEFT));
+        $query->execute();
+
+        $sData = $query->fetchColumn();
+
+        return $sData;
+    }
+
+    public function getSaArticuls($sanum, $pncCode)
+    {
+        $sqlSaCommonArticuls = "
+        SELECT `PARTTYP`, `PARTNUM`, parts.`QUANTSA`, IFNULL(nouns_ru.NOUN, nouns_en.NOUN) TEXT
+        FROM `alltext_sa_parts_v` parts
+        LEFT OUTER JOIN `alltext_part_nouns_v` nouns_ru
+        ON nouns_ru.NOUNIDX = parts.NOUNIDX AND nouns_ru.LANG = 'R'
+        LEFT OUTER JOIN `alltext_part_nouns_v` nouns_en
+        ON nouns_en.NOUNIDX = parts.NOUNIDX AND nouns_en.LANG = 'E'
+        WHERE `SANUM` = :sanum
+        AND `ITEMNO` = :pncCode
+        ";
+
+        $query = $this->conn->prepare($sqlSaCommonArticuls);
+        $query->bindValue('sanum', str_pad($sanum, 6, " ", STR_PAD_LEFT));
+        $query->bindValue('pncCode', str_pad($pncCode, 3, "0", STR_PAD_LEFT));
+        $query->execute();
+
+        $saCommonArticuls = $query->fetchAll();
+        $articuls = array();
+        foreach ($saCommonArticuls as $item) {
+            if ($item) {
+                $articuls[$item['PARTTYP'] . $item['PARTNUM']] = array(
+                    Constants::NAME => iconv('Windows-1251', 'UTF-8', $item['TEXT']),
+                    Constants::OPTIONS => array(
+                        Constants::QUANTITY => substr($item['QUANTSA'], 0, 3),
+                        Constants::START_DATE => '00000000',
+                        Constants::END_DATE => '99999999'
+                    )
+                );
+            }
+        }
+
+        return $articuls;
     }
 
     /**
@@ -587,7 +737,7 @@ class MercedesCatalogModel extends CatalogModel{
         $articuls = array();
         foreach ($aData as $item) {
             if ($item) {
-                $pncs[$item['PARTTYPE'] . $item['PARTNUM']][Constants::OPTIONS][Constants::COORDS][] = array(
+                $articuls[$item['PARTTYPE'] . $item['PARTNUM']][Constants::OPTIONS][Constants::COORDS][] = array(
                     Constants::X1 => 0,
                     Constants::Y1 => 0,
                     Constants::X2 => 0,

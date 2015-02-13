@@ -161,8 +161,8 @@ class CatalogController extends BaseController{
         $schemaCollection = Factory::createCollection($schemas, Factory::createSchema())->getCollection();
         $oActiveSchema = $schemaCollection[$schemaCode];
 
-        $pncs = array();
-        $commonArticuls = array();
+        $pncs = $this->model()->getSaPncs($sanum, $schemaCode);
+        $commonArticuls = $this->model()->getSaCommonArticuls($sanum);
 
         $oActiveSchema
             ->setPncs(Factory::createCollection($pncs, Factory::createPnc()))
@@ -178,9 +178,28 @@ class CatalogController extends BaseController{
 
         $this->filter($oContainer);
 
-        return $this->render($this->bundle() . ':07_schema.html.twig', array(
+        return $this->render($this->bundle() . ':071_schema.html.twig', array(
             'oContainer' => $oContainer,
             'parameters' => $parameters
+        ));
+    }
+
+    public function saArticulsAction(Request $request)
+    {
+        $pncCode = $request->get('pncCode');
+        $sanum = $request->get('sanum');
+
+        $articuls = $this->model()->getSaArticuls($sanum, $pncCode);
+
+        $oContainer = Factory::createContainer()
+            ->setActivePnc(Factory::createPnc($pncCode, $pncCode)
+                    ->setArticuls(Factory::createCollection($articuls, Factory::createArticul()))
+            );
+
+        $this->filter($oContainer);
+
+        return $this->render($this->bundle() . ':08_articuls.html.twig', array(
+            'oContainer' => $oContainer
         ));
     }
 } 
