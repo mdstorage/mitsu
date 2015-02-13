@@ -99,7 +99,7 @@ class MercedesVinModel extends MercedesCatalogModel
 
             if ($aData) {
                 $result = array(
-                    'region' => trim($aData['APPINF']),
+                    'region' => trim($aVin[0]['MARKET']),
                     'model' => trim($aData['CLASS']),
                     'prod_year' => substr($aInfo['DDATE'], 1, 1) > 6 ? '19' . $aInfo['DDATE'] : '20' . $aInfo['DDATE'],
                     'modification' => $aData['AGGTYPE'],
