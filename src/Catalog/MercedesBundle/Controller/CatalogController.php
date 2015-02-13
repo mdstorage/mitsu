@@ -52,7 +52,10 @@ class CatalogController extends BaseController{
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
-        $groups = $this->model()->getSaFirstLevelSubgroups($complectationCode, $sanum);
+        $saFLSubGroups = $this->model()->getSaFirstLevelSubgroups($complectationCode, $sanum);
+
+        $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);
+        $groupsCollection = Factory::createCollection($groups, Factory::createGroup())->getCollection();
 
         if(empty($groups))
             return $this->error($request, 'Группы не найдены.');
@@ -71,16 +74,14 @@ class CatalogController extends BaseController{
         }
 
         $saSubGroups = $this->model()->getSaSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
-        $saSubGroupsCollection = Factory::createCollection($saSubGroups, Factory::createGroup())->getCollection();
-
-        //var_dump($saSubGroups);die;
 
         $oContainer
             ->setActiveRegion($regionsCollection[$regionCode])
             ->setActiveModel($modelsCollection[$modelCode])
             ->setActiveModification($modificationsCollection[$modificationCode])
-            ->setActiveGroup($saSubGroupsCollection[$sanum])
-            ->setGroups(Factory::createCollection($groups, Factory::createGroup()));
+            ->setActiveGroup($groupsCollection[$groupCode]
+                ->setSubGroups(Factory::createCollection($saSubGroups, Factory::createGroup())))
+            ->setGroups(Factory::createCollection($saFLSubGroups, Factory::createGroup()));
 
         $this->filter($oContainer);
 
@@ -90,12 +91,14 @@ class CatalogController extends BaseController{
         ));
     }
 
-    public function saSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $sanum)
+    public function saSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $sanum)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
-        $groups = $this->model()->getSaFirstLevelSubgroups($complectationCode, $sanum);
+        $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);
         $groupsCollection = Factory::createCollection($groups, Factory::createGroup())->getCollection();
+
+        $saSubGroups = $this->model()->getSaSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
 
         $schemas = $this->model()->getSaSchemas($sanum);
 
@@ -114,17 +117,68 @@ class CatalogController extends BaseController{
             $complectationsCollection = Factory::createCollection($complectations, Factory::createComplectation())->getCollection();
             $oContainer->setActiveComplectation($complectationsCollection[$complectationCode]);
         }
-        var_dump($schemas);die;
+
         $oContainer
             ->setActiveRegion($regionsCollection[$regionCode])
             ->setActiveModel($modelsCollection[$modelCode])
             ->setActiveModification($modificationsCollection[$modificationCode])
-            ->setActiveGroup($groupsCollection[$sanum])
+            ->setActiveGroup($groupsCollection[$groupCode]
+                ->setSubGroups(Factory::createCollection($saSubGroups, Factory::createGroup())))
             ->setSchemas(Factory::createCollection($schemas, Factory::createSchema()));
 
         $this->filter($oContainer);
 
-        return $this->render($this->bundle() . ':06_schemas.html.twig', array(
+        return $this->render($this->bundle() . ':061_schemas.html.twig', array(
+            'oContainer' => $oContainer,
+            'parameters' => $parameters
+        ));
+    }
+
+    public function saSchemaAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $sanum, $schemaCode)
+    {
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+        $parameters['subGroupCode'] = $sanum;
+
+        $oContainer = Factory::createContainer();
+        $regions = $this->model()->getRegions();
+        $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
+        $models = $this->model()->getModels($regionCode);
+        $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
+        $modifications = $this->model()->getModifications($regionCode, $modelCode);
+        $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
+        if ($complectationCode) {
+            $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
+            $complectationsCollection = Factory::createCollection($complectations, Factory::createComplectation())->getCollection();
+            $oContainer->setActiveComplectation($complectationsCollection[$complectationCode]);
+        }
+
+        $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);
+        $groupsCollection = Factory::createCollection($groups, Factory::createGroup())->getCollection();
+
+        $saSubGroups = $this->model()->getSaSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+
+        $schemas = $this->model()->getSaSchemas($sanum);
+        $schemaCollection = Factory::createCollection($schemas, Factory::createSchema())->getCollection();
+        $oActiveSchema = $schemaCollection[$schemaCode];
+
+        $pncs = array();
+        $commonArticuls = array();
+
+        $oActiveSchema
+            ->setPncs(Factory::createCollection($pncs, Factory::createPnc()))
+            ->setCommonArticuls(Factory::createCollection($commonArticuls, Factory::createArticul()));
+
+        $oContainer
+            ->setActiveRegion($regionsCollection[$regionCode])
+            ->setActiveModel($modelsCollection[$modelCode])
+            ->setActiveModification($modificationsCollection[$modificationCode])
+            ->setActiveGroup($groupsCollection[$groupCode]
+                ->setSubGroups(Factory::createCollection($saSubGroups, Factory::createGroup())))
+            ->setActiveSchema($oActiveSchema);
+
+        $this->filter($oContainer);
+
+        return $this->render($this->bundle() . ':07_schema.html.twig', array(
             'oContainer' => $oContainer,
             'parameters' => $parameters
         ));

@@ -4,6 +4,8 @@
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/catalogmercedes/css/mercedes.css') }}" media="all">
 {% endblock %}
+
+{% block subGroup %}<b>Подгруппа запчастей:</b> {{ oContainer.getActiveGroup.getSubGroup(parameters['sanum']).getRuname }}{% endblock subGroup %}
 {#{% block breadcrumbs %}#}
     {#<a href="{{ path('catalog_mercedes') }}">Выбрать регион, модель, модификацию</a> /#}
     {#<a href="{{ path('catalog_mercedes_complectations', parameters) }}">Выбрать комплектацию</a> /#}
@@ -39,7 +41,7 @@
             <h4>SA-каталог (специальная комплектация)</h4>
             {% for subgroup in oContainer.getGroups %}
                 <div id="subgroup{{ subgroup.getCode }}">
-                    <a href="{{ path('catalog_mercedes_saschemas', parameters|merge({'groupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
+                    <a href="{{ path('catalog_mercedes_saschemas', parameters) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
                 </div>
             {% endfor %}
         {% endif %}
@@ -47,6 +49,8 @@
 {% endblock subgroups %}
 
 {% block imagePath %}{% endblock imagePath %}
+{% block subGroupsMap %}{% endblock subGroupsMap %}
+{% block cycleScript %}{% endblock cycleScript %}
 
 {% block pathToSchemas %}
     {{ path('catalog_mercedes_saschemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}

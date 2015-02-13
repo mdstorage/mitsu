@@ -27,6 +27,10 @@ catalog_mercedes_saschemas:
   path:         /mercedes/catalog/42/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{sanum}
   defaults:     {_controller: CatalogMercedesBundle:Catalog:saSchemas}
 
+catalog_mercedes_saschema:
+  path:         /mercedes/catalog/43/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{sanum}/{schemaCode}
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:saSchema}
+
 catalog_mercedes_schemas:
   path:         /mercedes/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogMercedesBundle:Catalog:schemas}

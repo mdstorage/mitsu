@@ -373,7 +373,7 @@ class MercedesCatalogModel extends CatalogModel{
         ";
 
         $query = $this->conn->prepare($sqlSaSubGroups);
-        $query->bindValue('sanum', ' ' . $sanum);
+        $query->bindValue('sanum', str_pad($sanum, 6, " ", STR_PAD_LEFT));
         $query->bindValue('model', substr($complectationCode, 4, 3));
 //        $query->bindValue('submod', '%' . substr($complectationCode, 8, 3) . '%');
         $query->execute();
@@ -405,7 +405,7 @@ class MercedesCatalogModel extends CatalogModel{
         ";
 
         $query = $this->conn->prepare($sqlSaSchemas);
-        $query->bindValue('sanum', ' ' . $sanum);
+        $query->bindValue('sanum', str_pad($sanum, 6, " ", STR_PAD_LEFT));
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -413,7 +413,9 @@ class MercedesCatalogModel extends CatalogModel{
         $schemas = array();
 
         foreach ($aData as $item) {
-            $schemas[$item['IMG']] = array();
+            $schemas[$item['IMG']] = array(
+                Constants::NAME => $item['IMG']
+            );
         }
 
         return $schemas;

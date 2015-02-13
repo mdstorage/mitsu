@@ -7,17 +7,17 @@
     <a href="{{ path('catalog_mazda_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> /
     Выбрать схему
 {% endblock breadcrumbs %}
-
+{% block subGroup %}<b>Подгруппа запчастей:</b> {{ oContainer.getActiveGroup.getSubGroup(parameters['sanum']).getRuname }}{% endblock subGroup %}
 {% block schema %}
     {% if schema.getCode is not empty %}
             <div class="col-xs-3">
-        <a href="{{ path('catalog_mercedes_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+        <a href="{{ path('catalog_mercedes_saschema', parameters|merge({'schemaCode': schema.getCode, 'subGroupCode': parameters['sanum']})) }}">
 
                     <div class="row">
                         {{ schema.getRuname }}
                     </div>
                     <div class="row">
-                        <img src="{{ asset('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png')|file_exists() ? asset('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png') : asset('bundles/catalogmercedes/images/BM_IMAGES_ARC/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
+                        <img src="{{ asset('bundles/catalogmercedes/images/SA_IMAGES/'~schema.getCode~'.png')|file_exists() ? asset('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png') : asset('bundles/catalogmercedes/images/BM_IMAGES_ARC/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
                     </div>
 
         </a>
