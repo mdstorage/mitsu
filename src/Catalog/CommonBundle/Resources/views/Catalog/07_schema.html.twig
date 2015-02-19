@@ -97,7 +97,7 @@
                 {% endblock commonArticuls %}
                 {% endif %}
                 {% if oContainer.getActiveSchema.getRefGroups %}
-                <h4>Связанные группы</h4>
+                {% block refGroupsHead %}<h4>Связанные группы</h4>{% endblock refGroupsHead %}
                 {% block refGroups %}
                     {% for refGroup in oContainer.getActiveSchema.getRefGroups %}
                         {% block refGroup %}
