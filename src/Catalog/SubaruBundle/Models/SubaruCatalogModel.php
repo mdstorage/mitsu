@@ -318,14 +318,15 @@ class SubaruCatalogModel extends CatalogModel{
         
         foreach($aData as $item){
 		
-		
-		            $schemas[$item['image_file']] = array(
+		if ((substr_count($item['desc_en'],'MY')>0)&&(substr_count($item['desc_en'], substr($modificationCode, 1, 5))!=0)||(substr_count($item['desc_en'],'MY')==0))
+		           { $schemas[$item['image_file']] = array(
                     Constants::NAME => $item['desc_en'],
                     Constants::OPTIONS => array(
                         Constants::CD => $item['catalog'].$item['sub_dir'].$item['sub_wheel'].$item['num_model'].$item['page'],
                         'num_model' => $item['num_model']
                     )
                 );
+                }
             
         }
 
@@ -463,12 +464,13 @@ class SubaruCatalogModel extends CatalogModel{
         }
         */
         
+       
         $pncs = array();
         foreach ($aDataLabels as $item) {
             {
                 $pncs[$item['part_code']][Constants::OPTIONS][Constants::COORDS][] = array(
-                    Constants::X1 => $item['x']/2,
-                    Constants::Y1 => $item['y']/2-5,
+                    Constants::X1 => floor($item['x']/2),
+                    Constants::Y1 => ($item['y']/2-5),
                     Constants::X2 => ($item['x']/2+80),
                     Constants::Y2 => ($item['y']/2+20));
             }
@@ -534,10 +536,27 @@ $articuls = array();
         $query->execute();
 
         $aDataLabels = $query->fetchAll();
-
+        
         $groups = array();
         foreach ($aDataLabels as $item) {
-            $groups[$item['refer_fig']][Constants::NAME] = $item['refer_fig'];
+        	
+        $sqlSubgroups = "
+        SELECT desc_en
+        FROM sec_groups
+        WHERE catalog = :regionCode
+            AND model_code =:model_code
+            AND id = :refer_fig
+        ";
+
+        $query = $this->conn->prepare($sqlSubgroups);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('model_code', $modelCode);
+        $query->bindValue('refer_fig', $item['refer_fig']);
+        $query->execute();
+
+        $aData = $query->fetch();
+        
+            $groups[$item['refer_fig']][Constants::NAME] = $aData['desc_en'];
             $groups[$item['refer_fig']][Constants::OPTIONS][Constants::COORDS][] = array(
                 Constants::X1 => $item['x']/2,
                 Constants::Y1 => $item['y']/2-5,
@@ -545,7 +564,6 @@ $articuls = array();
                 Constants::Y2 => $item['y']/2+20,
             );
         }
-
         return $groups;
     }
 
@@ -616,22 +634,22 @@ $articuls = array();
     public function getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
         $sqlGroup = "
-        SELECT s.pgroup
-        FROM sgroup s
-        WHERE s.catalog = :regionCode
-          AND s.catalog_number = :modificationCode
-          AND s.sgroup = :subGroupCode
-          AND s.lang = 1
+        SELECT pri_group
+        FROM sec_groups
+        WHERE catalog = :regionCode
+          AND model_code = :model_code
+          AND id = :subGroupCode
         ";
 
         $query = $this->conn->prepare($sqlGroup);
         $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('model_code', $modelCode);
         $query->bindValue('subGroupCode', $subGroupCode);
         $query->execute();
 
         $groupCode = $query->fetchColumn(0);
 
         return $groupCode;
+        
     }
 } 

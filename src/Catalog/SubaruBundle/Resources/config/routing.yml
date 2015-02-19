@@ -29,11 +29,11 @@ catalog_subaru_schema:
 
 catalog_subaru_articuls:
   path:         /subaru/catalog/7
-  defaults:     {_controller: CatalogSubaruBundle:Catalog:articulsForSubaru}
+  defaults:     {_controller: CatalogSubaruBundle:Catalog:articuls}
   requirements: {_method: POST}
 
 catalog_subaru_group:
-  path:         /subaru/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /subaru/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
   defaults:     {_controller: CatalogSubaruBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ vin_subaru:
 
 vin_subaru_result:
   path:         /subaru/vin/1
-  defaults:     {_controller: CatalogSubaruBundle:Vin:result1}
+  defaults:     {_controller: CatalogSubaruBundle:Vin:result}
   requirements: {_method: POST}
 
 vin_subaru_groups:
@@ -57,7 +57,7 @@ vin_subaru_subgroups:
 
 vin_subaru_schemas:
   path:         /subaru/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogSubaruBundle:Vin:schemas}
+  defaults:     {_controller: CatalogSubaruBundle:Vin:vinSchemas}
 
 vin_subaru_schema:
   path:         /subaru/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
@@ -65,11 +65,11 @@ vin_subaru_schema:
 
 vin_subaru_articuls:
   path:         /subaru/vin/7
-  defaults:     {_controller: CatalogSubaruBundle:Vin:articulsForSubaru}
+  defaults:     {_controller: CatalogSubaruBundle:Vin:articuls}
   requirements: {_method: POST}
 
 vin_subaru_group:
-  path:         /subaru/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /subaru/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
   defaults:     {_controller: CatalogSubaruBundle:Vin:getGroupBySubgroup}
 
 #---------------------------------------------------------------------------------------------
@@ -93,23 +93,23 @@ articul_subaru_modifications:
 
 articul_subaru_complectations:
   path:         /subaru/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogSubaruBundle:Articul:complectations}
+  defaults:     {_controller: CatalogSubaruBundle:Articul:subaruArticulComplectations}
 
 articul_subaru_groups:
-  path:         /subaru/articul/5/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogSubaruBundle:Articul:groups}
+  path:         /subaru/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogSubaruBundle:Articul:subaruArticulgroups}
 
 articul_subaru_subgroups:
-  path:         /subaru/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogSubaruBundle:Articul:subgroups}
+  path:         /subaru/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogSubaruBundle:Articul:subaruArticulSubgroups}
 
 articul_subaru_schemas:
-  path:         /subaru/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogSubaruBundle:Articul:schemas}
+  path:         /subaru/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSubaruBundle:Articul:subaruArticulSchemas}
 
 articul_subaru_schema:
-  path:         /subaru/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogSubaruBundle:Articul:schema}
+  path:         /subaru/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogSubaruBundle:Articul:subaruArticulSchema}
 
 articul_subaru_articuls:
   path:         /subaru/articul/9
@@ -117,5 +117,5 @@ articul_subaru_articuls:
   requirements: {_method: POST}
 
 articul_subaru_group:
-  path:         /subaru/articul/10/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /subaru/articul/10/{regionCode}/{modelCode}/{modificationCode}/complectationCode/{subGroupCode}
   defaults:     {_controller: CatalogSubaruBundle:Articul:getGroupBySubgroup}

@@ -4,6 +4,6 @@
     <a href="{{ path('vin_subaru') }}">Поиск по номеру кузова</a> / Выбрать группу запчастей
 {% endblock breadcrumbs %}
 
-{% block complectation %}{% endblock complectation %}
+
 
 {% block pathToSubgroup %}{{ path('vin_subaru_subgroups', parameters|merge({'groupCode': group.getCode})) }}{% endblock pathToSubgroup %}

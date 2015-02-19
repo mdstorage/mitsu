@@ -25,33 +25,16 @@ class VinController extends BaseController{
     {
         return 'Catalog\SubaruBundle\Components\SubaruConstants';
     }
-    public function result1Action(Request $request)
-    {
-        
-       
-        if ($request->isXmlHttpRequest()) {
+    
 
-            $vin = $request->get('vin'); var_dump($this->model()); die; 
-            $result = $this->model()->getVinFinderResult($vin);
-           
-            if (!$result) {
-                return $this->render($this->bundle().':empty.html.twig');
-            }
-
-           setcookie(Constants::PROD_DATE, $result[Constants::PROD_DATE]);
-            
-            return $this->render($this->bundle().':02_result.html.twig', array(
-                'result' => $result
-            ));
-        }
-    }
-
-    public function articulsAction(Request $request)
+   public function articulsAction(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
             $prodDate = $request->cookies->get(Constants::PROD_DATE);
-            $this->addFilter('prodDateFilter', array(Constants::PROD_DATE => $prodDate));
+            $this->addFilter('prodDateFilter', array(Constants::PROD_DATE => $prodDate)); 
+            $this->addFilter('articulDescFilter', array('regionCode'=>$request->request->get('regionCode'), 'modelCode'=>$request->request->get('modelCode'), 'complectationCode'=>$request->request->get('complectationCode')));
             return parent::articulsAction($request);
+           
         }
     }
 
@@ -82,19 +65,20 @@ class VinController extends BaseController{
     {
         $this->addFilter('vinSchemasFilter', array(
             'regionCode' => $regionCode,
-            'modificationCode' => $modificationCode,
-            'complectationCode' => substr($complectationCode, 0, 4),
-            'subComplectationCode' => substr($complectationCode, 3, 3),
+            'modelCode' => $modelCode,
+            'modificationCode' => substr($modificationCode, 1, 5),
             'subGroupCode' => $subGroupCode
         ));
 
         return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
     }
+    
 
-    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $subGroupCode)
+     public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode)
     {
         $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode);
-
-        return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode);
+       
+        return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
+        
     }
 } 

@@ -4,7 +4,7 @@
     <a href="{{ path('catalog_subaru') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('catalog_subaru_complectations', parameters) }}">Выбрать комплектацию</a> / <a href="{{ path('catalog_subaru_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('catalog_subaru_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
 {% endblock breadcrumbs %}
 
-{% block complectation %}{% endblock complectation %}
+{% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
 
 {% block schema %}
     {% if schema.getCode is not empty %}

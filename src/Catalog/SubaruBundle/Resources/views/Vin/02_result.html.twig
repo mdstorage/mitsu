@@ -8,12 +8,12 @@
                     <td>{{ result.region }}</td>
                 </tr>
                 <tr>
-                    <td>Модель</td>:
+                    <td>Модель:</td>
                     <td>{{ result.model }}</td>
                 </tr>
                 <tr>
                     <td>Дата выпуска:</td>
-                    <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|date_convertor }}</td>
+                    <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|subaru_date_convertor }}</td>
                 </tr>
                 <tr>
                     <td>Модификация:</td>
@@ -56,5 +56,5 @@
     </div>
 {% endblock specification %}
 {% block catalogPath %}
-    {{ path('vin_subaru_groups', {'regionCode': result.region, 'modelCode': result.model|slice(1,3), 'modificationCode': result.modification, 'complectationCode': result.complectation}) }}
+    {{ path('vin_subaru_groups',({'regionCode': result.region, 'modelCode': result.model|slice(1,3), 'modificationCode': result.modification, 'complectationCode': result.complectation})) }}
 {% endblock catalogPath %}

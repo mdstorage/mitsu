@@ -137,69 +137,55 @@ class SubaruVinModel extends SubaruCatalogModel {
 
         return $result;
     }
-        public function getArticuls($regionCode, $cd, $modificationCode, $subGroupCode, $pncCode, $modelCode)
-    {
-        $sqlArticuls = "
+    
+     public function getVinCompl($regionCode, $modelCode, $complectationCode)
+     {
+	 	 $sql = "
         SELECT *
-        FROM part_catalog
-        WHERE catalog = :regionCode
-          AND model_code = :model_code
-          AND f8 = :modificationCode
-          AND sec_group = :subGroupCode
-          AND part_code = :pncCode
+        FROM body_desc
+        WHERE catalog = :regionCode 
+        AND model_code = :model_code
+        AND f1 = :f1
         ";
 
-        $query = $this->conn->prepare($sqlArticuls);
+        $query = $this->conn->prepare($sql);
         $query->bindValue('regionCode', $regionCode);
         $query->bindValue('model_code', $modelCode);
-        $query->bindValue('modificationCode', substr($modificationCode, 0, 1));
+        $query->bindValue('f1', $complectationCode);
+        $query->execute();
+
+        $aCompl = $query->fetch();
+        return $aCompl;
+	 }
+    
+    public function getVinSchemas($regionCode, $modelCode, $modificationCode, $subGroupCode)
+    {
+        $sqlSchemas = "
+        SELECT *
+        FROM part_images
+        WHERE catalog = :regionCode
+            AND model_code =:model_code
+            AND sec_group = :subGroupCode
+        ";
+
+        $query = $this->conn->prepare($sqlSchemas);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('model_code', $modelCode);
         $query->bindValue('subGroupCode', $subGroupCode);
-        $query->bindValue('pncCode', $pncCode);
         $query->execute();
 
         $aData = $query->fetchAll();
-       
 
-    /*    $sqlArticulsDescr = "
-        SELECT pd.id, GROUP_CONCAT(pd.descr SEPARATOR '; ') as descr
-        FROM part_descs pd
-        WHERE pd.catalog = ?
-          AND pd.cd = ?
-          AND pd.catalog_number = ?
-          AND pd.lang = 1
-          AND pd.id IN (?)
-        GROUP BY pd.id
-        ";
-
-        $query = $this->conn->executeQuery($sqlArticulsDescr, array(
-            $regionCode,
-            $cd,
-            $modificationCode,
-            array_column($aData, 'desc_id')
-        ), array(
-            \PDO::PARAM_STR,
-            \PDO::PARAM_STR,
-            \PDO::PARAM_STR,
-            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
-        ));
-
-        $aDataDescr = $query->fetchAll();
-        $aDataDescr = array_combine(array_column($aDataDescr, 'id'), array_column($aDataDescr, 'descr'));
-*/
-        $articuls = array();
-        foreach ($aData as $item) {
-            $articuls[$item['part_number']] = array(
-                Constants::NAME =>$item['model_restrictions'],
-                Constants::OPTIONS => array(
-                    Constants::QUANTITY => '',
-                    Constants::START_DATE => $item['sdate'],
-                    Constants::END_DATE => $item['edate']
-                )
-            );
-        }
+        $schemas = array();
         
+        foreach($aData as $item){
+		
+		 if ((substr_count($item['desc_en'],'MY')>0)&&(substr_count($item['desc_en'], $modificationCode)!=0)||(substr_count($item['desc_en'],'MY')==0))
+		           
+                $schemas[] = $item['image_file'];
+        }
 
-        return $articuls;
+        return $schemas;
     }
-
+        
 } 

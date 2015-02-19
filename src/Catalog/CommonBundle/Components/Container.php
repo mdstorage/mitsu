@@ -107,14 +107,14 @@ class Container {
 
     public function setActiveModification(ModificationInterface $oModification)
     {
-        $this->activeModificataion = $oModification;
+        $this->activeModification = $oModification;
 
         return $this;
     }
 
     public function getActiveModification()
     {
-        return $this->activeModificataion;
+        return $this->activeModification;
     }
 
     public function setActiveModel(ModelInterface $oModel)

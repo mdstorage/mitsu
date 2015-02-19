@@ -1,10 +1,9 @@
 {% extends 'CatalogCommonBundle:Catalog:02_modifications.html.twig' %}
-{% use 'CatalogMazdaBundle::mazda.base.html.twig' %}
+{% use 'CatalogSubaruBundle::subaru.base.html.twig' %}
 {% block modification %}
-    <a href="{{ path('catalog_mazda_groups', parameters|merge({'modificationCode': modification.getCode})) }}">
-        {{ modification.getOption(constant('Catalog\\MazdaBundle\\Components\\MazdaConstants::PROD_YEAR')) }}
-        {{ modification.getOption(constant('Catalog\\MazdaBundle\\Components\\MazdaConstants::PROD_DATE')) }}
-        {{ modification.getOption(constant('Catalog\\MazdaBundle\\Components\\MazdaConstants::CARLINE')) }}
+    <a href="{{ path('articul_subaru_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
         {{ modification.getRuname }}
+        ({{ modification.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|date_convertor }}
+        {{ modification.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|date_convertor }})
     </a>
 {% endblock modification %}

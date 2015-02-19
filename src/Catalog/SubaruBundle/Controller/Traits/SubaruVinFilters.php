@@ -24,6 +24,27 @@ trait SubaruVinFilters {
 
         return $oContainer;
     }
+    
+    public function articulDescFilter($oContainer, $parameters)
+    {
+        $aCompl = $this->model()->getVinCompl($parameters['regionCode'], $parameters['modelCode'], $parameters['complectationCode']);
+        foreach ($oContainer->getActivePnc()->getArticuls() as $key => $articul) 
+        
+        {        	
+            if ((substr_count($articul->getRuname(), $aCompl['body'])==0) &&
+            (substr_count($articul->getRuname(), $aCompl['engine1'])==0)&&
+            (substr_count($articul->getRuname(), $aCompl['train'])==0)&&
+            (substr_count($articul->getRuname(), $aCompl['trans'])==0)&&
+            (substr_count($articul->getRuname(), $aCompl['grade'])==0)&&
+            (substr_count($articul->getRuname(), $aCompl['sus'])==0)
+            ){
+                $oContainer->getActivePnc()->removeArticul($key);
+            }
+            
+        }if (count($oContainer->getActivePnc()->getArticuls())==0) {print_r('Выбранная запчасть на данную модель не устанавливается');die;}
+
+        return $oContainer; 
+    }
 
     public function vinGroupFilter($oContainer, $parameters)
     {
@@ -53,7 +74,7 @@ trait SubaruVinFilters {
 
     public function vinSchemasFilter($oContainer, $parameters)
     {
-        $schemas = $this->model()->getVinSchemas($parameters['regionCode'], $parameters['modificationCode'], $parameters['complectationCode'], $parameters['subComplectationCode'], $parameters['subGroupCode']);
+        $schemas = $this->model()->getVinSchemas($parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode'], $parameters['subGroupCode']);
 
         foreach ($oContainer->getSchemas() as $schema) {
             if (!in_array($schema->getCode(), $schemas, true)) {

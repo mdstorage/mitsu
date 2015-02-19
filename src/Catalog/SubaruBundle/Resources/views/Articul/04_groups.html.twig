@@ -1,9 +1,9 @@
 {% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
-{% use 'CatalogMazdaBundle::mazda.base.html.twig' %}
+{% use 'CatalogSubaruBundle::subaru.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('catalog_mazda') }}">Выбрать регион, модель, модификацию</a> / Выбрать группу запчастей
+    <a href="{{ path('articul_subaru_find') }}">Выбрать регион, модель, модификацию</a> / Выбрать группу запчастей
 {% endblock breadcrumbs %}
 
 {% block complectation %}{% endblock complectation %}
 
-{% block pathToSubgroup %}{{ path('catalog_mazda_subgroups', parameters|merge({'groupCode': group.getCode})) }}{% endblock pathToSubgroup %}
+{% block pathToSubgroup %}{{ path('articul_subaru_subgroups', parameters|merge({'groupCode': group.getCode})) }}{% endblock pathToSubgroup %}
