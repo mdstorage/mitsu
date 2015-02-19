@@ -12,10 +12,10 @@
     <img src="{{ asset('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png')|file_exists() ? asset('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png') : asset('bundles/catalogmercedes/images/BM_IMAGES_ARC/'~schema.getCode~'.png') }}" width="100%" usemap="#{{ schema.getCode }}" alt="{{ schema.getRuname }}"/>
 {% endblock image %}
 
-{% block ajaxUrl %}{{ path('catalog_mercedes_articuls') }}{% endblock ajaxUrl %}
+{% block ajaxUrl %}{{ path('catalog_mercedes_saarticuls') }}{% endblock ajaxUrl %}
 {% block ajaxData %}
     {{ parent() }}
-    , groupCode: '{{ parameters.groupCode }}', complectationCode: '{{ parameters.complectationCode }}'
+    , sanum: '{{ parameters.sanum }}'
 {% endblock ajaxData %}
 {% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{% endblock subGroupPath %}

@@ -22,6 +22,7 @@
         <div class="col-lg-4">
             {% block subgroups %}
                 <div class="subgroups">
+                    {% block subGroupsMap %}
                     <map name="{{ oContainer.getActiveGroup.getCode }}">
                         {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
                             {% block area %}
@@ -52,6 +53,7 @@
                             {% endblock cycleScript %}
                         {% endfor %}
                     </map>
+                    {% endblock subGroupsMap %}
                 </div>
             {% endblock subgroups %}
         </div>
@@ -66,6 +68,5 @@
             });
         </script>
     {% endblock mapsterScript %}
-    {% block pageScript %}
-    {% endblock pageScript %}
+    {% block pageScript %}{% endblock pageScript %}
 {% endblock body %}

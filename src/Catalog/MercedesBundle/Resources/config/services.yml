@@ -9,3 +9,7 @@ services:
   mercedes.articul.model:
     class: Catalog\MercedesBundle\Models\MercedesArticulModel
     arguments:  ['@doctrine.dbal.mercedes_connection']
+
+  mercedes.vin.model:
+    class: Catalog\MercedesBundle\Models\MercedesVinModel
+    arguments:  ['@doctrine.dbal.mercedes_connection']

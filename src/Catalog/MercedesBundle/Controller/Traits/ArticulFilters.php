@@ -23,9 +23,11 @@ trait ArticulFilters {
                 }
             }
             if (empty($complectations)) {
-                unset($modifications[$modificationCode]);
+                $oContainer->getActiveModel()->removeModification($modificationCode);
             }
         }
+
+        return $oContainer;
     }
 
 } 

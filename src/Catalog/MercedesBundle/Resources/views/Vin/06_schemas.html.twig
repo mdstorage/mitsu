@@ -1,16 +1,13 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogMercedesBundle::mercedes.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_mercedes_find') }}">Выбрать регион, модель, модификацию</a> /
-    <a href="{{ path('articul_mercedes_complectations', parameters) }}">Выбрать комплектацию</a> /
-    <a href="{{ path('articul_mercedes_groups', parameters) }}">Выбрать группу запчастей</a> /
-    <a href="{{ path('articul_mercedes_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
+    <a href="{{ path('vin_mercedes') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('vin_mercedes_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('vin_mercedes_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
 {% endblock breadcrumbs %}
 
 {% block schema %}
     {% if schema.getCode is not empty %}
             <div class="col-xs-3">
-        <a href="{{ path('articul_mercedes_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+        <a href="{{ path('vin_mercedes_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
                     <div class="row">
                         {{ schema.getRuname }}

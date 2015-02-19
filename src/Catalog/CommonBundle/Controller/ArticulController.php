@@ -115,7 +115,7 @@ abstract class ArticulController extends CatalogController{
     public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
-        $articulComplectations = $this->model()->getArticulComplectations($articul);
+        $articulComplectations = $this->model()->getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode);
 
         $this->addFilter('articulComplectationsFilter', array(
             'articulComplectations' => $articulComplectations
