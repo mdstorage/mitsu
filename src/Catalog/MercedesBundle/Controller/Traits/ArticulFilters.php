@@ -30,4 +30,16 @@ trait ArticulFilters {
         return $oContainer;
     }
 
+    public function articulSaSubgroupFilter($oContainer, $parameters)
+    {
+        $sanums = $parameters['sanums'];
+
+        foreach ($oContainer->getGroups() as $group) {
+            if (!in_array($group->getCode(), $sanums)) {
+                $oContainer->removeGroup($group->getCode());
+            }
+        }
+
+        return $oContainer;
+    }
 } 

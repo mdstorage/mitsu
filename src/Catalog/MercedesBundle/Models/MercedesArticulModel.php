@@ -6,6 +6,27 @@ use Catalog\MercedesBundle\Components\MercedesConstants;
 
 class MercedesArticulModel extends MercedesCatalogModel{
 
+    public function getArticulSanums($articul)
+    {
+        $sqlSanums = "
+        SELECT SANUM
+        FROM alltext_sa_parts_v
+        WHERE PARTTYP = :parttype
+        AND PARTNUM = :partnum
+        AND ITEMNO != ''
+        ";
+
+        $query = $this->conn->prepare($sqlSanums);
+        $query->bindValue('parttype', substr($articul, 0, 1));
+        $query->bindValue('partnum', str_pad(substr($articul, 1), 12, " ", STR_PAD_LEFT));
+        $query->execute();
+
+        $aData = $query->fetchAll();
+        $sanums = $this->array_column($aData, "SANUM");
+
+        return $sanums;
+    }
+
     private function getArticulCatnums($articul)
     {
         $catnums = array();
@@ -25,8 +46,27 @@ class MercedesArticulModel extends MercedesCatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
+        $catnums = $this->array_column($aData, 'CATNUM');
 
-        return $this->array_column($aData, 'CATNUM');
+        $sanums = $this->getArticulSanums($articul);
+
+        $sqlCatnums = "
+        SELECT CATNUM
+        FROM `alltext_bm_saidx_v`
+        WHERE SANUM IN (?)
+        GROUP BY CATNUM
+        ";
+
+        $query = $this->conn->executeQuery($sqlCatnums, array(
+            $sanums
+        ), array(
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
+        ));
+
+        $aData = $query->fetchAll();
+        $catnums = array_merge($catnums, $this->array_column($aData, 'CATNUM'));
+
+        return $catnums;
     }
 
     public function getArticulRegions($articul){
@@ -190,6 +230,26 @@ class MercedesArticulModel extends MercedesCatalogModel{
 
         $aData = $query->fetchAll();
         $groups = $this->array_column($aData, 'GROUPNUM');
+
+        $sanums = $this->getArticulSanums($articul);
+        $sqlGroups = "
+        SELECT GROUPNUM
+        FROM `alltext_bm_saidx_v`
+        WHERE SANUM IN (?)
+        AND CATNUM = ?
+        GROUP BY GROUPNUM
+        ";
+
+        $query = $this->conn->executeQuery($sqlGroups, array(
+            $sanums,
+            substr($complectationCode, 0, 3)
+        ), array(
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+            \PDO::PARAM_STR
+        ));
+
+        $aData = $query->fetchAll();
+        $groups = array_merge($groups, $this->array_column($aData, 'GROUPNUM'));
 
         return $groups;
     }

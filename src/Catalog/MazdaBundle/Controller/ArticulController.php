@@ -47,7 +47,7 @@ class ArticulController extends BaseController{
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulSubGroups = $this->model()->getArticulSubGroups($articul, $modificationCode);
 
-        $this->addFilter('aticulSubGroupsFilter', array(
+        $this->addFilter('articulSubGroupsFilter', array(
             'articulSubGroups' => $articulSubGroups
         ));
 
@@ -59,7 +59,7 @@ class ArticulController extends BaseController{
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulSchemas = $this->model()->getArticulSchemas($articul, $modificationCode, $subGroupCode);
 
-        $this->addFilter('aticulSchemasFilter', array(
+        $this->addFilter('articulSchemasFilter', array(
             'articulSchemas' => $articulSchemas
         ));
 
@@ -71,7 +71,7 @@ class ArticulController extends BaseController{
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulPncs = $this->model()->getArticulPncs($articul, $modificationCode, $subGroupCode);
 
-        $this->addFilter('aticulPncsFilter', array(
+        $this->addFilter('articulPncsFilter', array(
             'articulPncs' => $articulPncs
         ));
 

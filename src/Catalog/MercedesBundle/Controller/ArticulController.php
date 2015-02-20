@@ -72,8 +72,22 @@ class ArticulController extends BaseController{
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulSubGroups = $this->model()->getArticulSubGroups($articul, $complectationCode, $groupCode);
 
-        $this->addFilter('aticulSubGroupsFilter', array(
+        $this->addFilter('articulSubGroupsFilter', array(
             'articulSubGroups' => $articulSubGroups
+        ));
+
+        $this->addFilter('catalogSubGroupsFilter', array(
+            'regionCode'        => $regionCode,
+            'modelCode'         => $modelCode,
+            'modificationCode'  => $modificationCode,
+            'complectationCode' => $complectationCode,
+            'groupCode'         => $groupCode
+        ));
+
+        $sanums = $this->model()->getArticulSanums($articul);
+
+        $this->addFilter('articulSaSubgroupFilter', array(
+            'sanums' => $sanums
         ));
 
         return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
@@ -91,7 +105,7 @@ class ArticulController extends BaseController{
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulSchemas = $this->model()->getArticulSchemas($articul, $complectationCode, $groupCode, $subGroupCode);
 
-        $this->addFilter('aticulSchemasFilter', array(
+        $this->addFilter('articulSchemasFilter', array(
             'articulSchemas' => $articulSchemas
         ));
 
@@ -111,7 +125,7 @@ class ArticulController extends BaseController{
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulPncs = $this->model()->getArticulPncs($articul, $complectationCode, $groupCode, $subGroupCode);
 
-        $this->addFilter('aticulPncsFilter', array(
+        $this->addFilter('articulPncsFilter', array(
             'articulPncs' => $articulPncs
         ));
 
