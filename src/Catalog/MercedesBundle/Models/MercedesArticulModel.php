@@ -284,6 +284,8 @@ class MercedesArticulModel extends MercedesCatalogModel{
 
     public function getArticulSchemas($articul, $complectationCode, $groupCode, $subGroupCode)
     {
+        $articulPncs = $this->getArticulPncs($articul, $complectationCode, $groupCode, $subGroupCode);
+
         $sqlSchema = "
         SELECT image_name
         FROM `bm_images_arc_image_v` image
@@ -299,8 +301,8 @@ class MercedesArticulModel extends MercedesCatalogModel{
         ";
 
         $query = $this->conn->executeQuery($sqlSchema, array(
-            $this->getArticulPncs($articul, $complectationCode, $groupCode, $subGroupCode),
-            $this->getArticulPncs($articul, $complectationCode, $groupCode, $subGroupCode)
+            $articulPncs,
+            $articulPncs
         ), array(
             \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
             \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
@@ -340,5 +342,76 @@ class MercedesArticulModel extends MercedesCatalogModel{
         $subGroups = $this->array_column($aData, 'CALLOUT');
 
         return $subGroups;
+    }
+
+    public function getArticulSaSchemas($articul, $sanum)
+    {
+        $allSchemas = $this->getSaSchemas($sanum);
+
+        $articulSaPncs = $this->getArticulSaPncs($articul, $sanum);
+        $sqlSchema = "
+        SELECT image_name
+        FROM `sa_images_arc_image_v` image
+        WHERE image.image_name IN (?)
+        AND image.desc IN (?)
+        GROUP BY image_name
+
+        UNION
+
+        SELECT image_name
+        FROM `sa_images_image_v` image
+        WHERE image.image_name IN (?)
+        AND image.desc IN (?)
+        GROUP BY image_name
+        ";
+
+        $query = $this->conn->executeQuery($sqlSchema, array(
+            array_keys($allSchemas),
+            $articulSaPncs,
+            array_keys($allSchemas),
+            $articulSaPncs
+        ), array(
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
+        ));
+
+        $aData = $query->fetchAll();
+
+        $schemas = array_unique($this->array_column($aData, 'image_name'));
+
+        foreach ($allSchemas as $code => $schema) {
+            if (!in_array($code, $schemas)) {
+                unset($allSchemas[$code]);
+            }
+        }
+
+        return $allSchemas;
+    }
+
+    public function getArticulSaPncs($articul, $sanum)
+    {
+        $sqlPncs = "
+        SELECT CAST(ITEMNO as UNSIGNED) ITEMNO
+        FROM `alltext_sa_parts_v`
+        WHERE PARTTYP = :parttype
+        AND PARTNUM = :partnum
+        AND SANUM = :sanum
+        AND ITEMNO != ''
+        GROUP BY ITEMNO
+        ";
+
+        $query = $this->conn->prepare($sqlPncs);
+        $query->bindValue('parttype', substr($articul, 0, 1));
+        $query->bindValue('partnum', str_pad(substr($articul, 1), 12, " ", STR_PAD_LEFT));
+        $query->bindValue('sanum', str_pad($sanum, 6, " ", STR_PAD_LEFT));
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $articulSaPncs = $this->array_column($aData, 'ITEMNO');
+
+        return $articulSaPncs;
     }
 } 

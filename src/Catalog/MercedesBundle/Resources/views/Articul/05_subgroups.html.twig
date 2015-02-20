@@ -15,7 +15,7 @@
             <h4>SA-каталог (специальная комплектация)</h4>
             {% for subgroup in oContainer.getGroups %}
                 <div id="subgroup{{ subgroup.getCode }}">
-                    <a href="{{ path('catalog_mercedes_safirstlevelsubgroups', parameters|merge({'sanum': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
+                    <a href="{{ path('articul_mercedes_safirstlevelsubgroups', parameters|merge({'sanum': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
                 </div>
             {% endfor %}
         {% endif %}
