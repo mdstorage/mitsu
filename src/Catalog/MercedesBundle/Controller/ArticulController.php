@@ -218,4 +218,79 @@ class ArticulController extends BaseController{
         ));
     }
 
+    public function saSchemaAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $sanum, $schemaCode)
+    {
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+        $parameters['subGroupCode'] = $sanum;
+
+        $oContainer = Factory::createContainer();
+        $regions = $this->model()->getRegions();
+        $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
+        $models = $this->model()->getModels($regionCode);
+        $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
+        $modifications = $this->model()->getModifications($regionCode, $modelCode);
+        $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
+        if ($complectationCode) {
+            $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
+            $complectationsCollection = Factory::createCollection($complectations, Factory::createComplectation())->getCollection();
+            $oContainer->setActiveComplectation($complectationsCollection[$complectationCode]);
+        }
+
+        $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);
+        $groupsCollection = Factory::createCollection($groups, Factory::createGroup())->getCollection();
+
+        $saSubGroups = $this->model()->getSaSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+
+        $schemas = $this->model()->getSaSchemas($sanum);
+        $schemaCollection = Factory::createCollection($schemas, Factory::createSchema())->getCollection();
+        $oActiveSchema = $schemaCollection[$schemaCode];
+
+        $pncs = $this->model()->getSaPncs($sanum, $schemaCode);
+        $commonArticuls = $this->model()->getSaCommonArticuls($sanum);
+
+        $oActiveSchema
+            ->setPncs(Factory::createCollection($pncs, Factory::createPnc()))
+            ->setCommonArticuls(Factory::createCollection($commonArticuls, Factory::createArticul()));
+
+        $oContainer
+            ->setActiveRegion($regionsCollection[$regionCode])
+            ->setActiveModel($modelsCollection[$modelCode])
+            ->setActiveModification($modificationsCollection[$modificationCode])
+            ->setActiveGroup($groupsCollection[$groupCode]
+                ->setSubGroups(Factory::createCollection($saSubGroups, Factory::createGroup())))
+            ->setActiveSchema($oActiveSchema);
+
+        $articul = $request->cookies->get(Constants::ARTICUL);
+        $articulPncs = $this->model()->getArticulSaPncs($articul, $sanum);
+
+        $this->addFilter('articulPncsFilter', array(
+            'articulPncs' => $articulPncs
+        ));
+
+        $this->filter($oContainer);
+
+        return $this->render($this->bundle() . ':071_schema.html.twig', array(
+            'oContainer' => $oContainer,
+            'parameters' => $parameters
+        ));
+    }
+
+    public function saArticulsAction(Request $request)
+    {
+        $pncCode = $request->get('pncCode');
+        $sanum = $request->get('sanum');
+
+        $articuls = $this->model()->getSaArticuls($sanum, $pncCode);
+
+        $oContainer = Factory::createContainer()
+            ->setActivePnc(Factory::createPnc($pncCode, $pncCode)
+                ->setArticuls(Factory::createCollection($articuls, Factory::createArticul()))
+            );
+
+        $this->filter($oContainer);
+
+        return $this->render($this->bundle() . ':08_articuls.html.twig', array(
+            'oContainer' => $oContainer
+        ));
+    }
 } 
