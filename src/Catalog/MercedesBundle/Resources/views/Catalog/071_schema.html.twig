@@ -9,7 +9,7 @@
 {% endblock breadcrumbs %}
 {% set schema = oContainer.getActiveSchema %}
 {% block image %}
-    <img src="{{ asset('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png')|file_exists() ? asset('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png') : asset('bundles/catalogmercedes/images/BM_IMAGES_ARC/'~schema.getCode~'.png') }}" width="100%" usemap="#{{ schema.getCode }}" alt="{{ schema.getRuname }}"/>
+    <img src="{{ asset('bundles/catalogmercedes/images/SA_IMAGES/'~schema.getCode~'.png')|file_exists() ? asset('bundles/catalogmercedes/images/SA_IMAGES/'~schema.getCode~'.png') : asset('bundles/catalogmercedes/images/SA_IMAGES_ARC/'~schema.getCode~'.png') }}" width="100%" usemap="#{{ schema.getCode }}" alt="{{ schema.getRuname }}"/>
 {% endblock image %}
 
 {% block ajaxUrl %}{{ path('catalog_mercedes_saarticuls') }}{% endblock ajaxUrl %}
@@ -19,3 +19,33 @@
 {% endblock ajaxData %}
 {% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{% endblock subGroupPath %}
+    {% block mapsterScript %}
+        <script>
+            $('img').mapster({
+                stroke: true,
+                strokeColor: '70daf1',
+                strokeOpacity: 1,
+                strokeWidth: 1,
+                fill: true,
+                fillColor: '70daf1',
+                fillOpacity: 0.5,
+                mapKey: 'data-name',
+                render_highlight: {
+                    fillOpacity: 0.5
+                },
+                render_select: {
+                    fillOpacity: 0
+                },
+
+                onClick: function(e) {
+                    e.e.preventDefault();
+                    var target = $(this).attr('target');
+                    if (target=='_blank') {
+                        window.open($(this).attr('href'));
+                    }
+                    return false;
+                },
+                clickNavigate: false
+            }).mapster('set', true, '{% block activeLabel %}{% endblock activeLabel %}');
+        </script>
+    {% endblock mapsterScript %}
