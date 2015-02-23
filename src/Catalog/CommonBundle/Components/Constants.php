@@ -21,5 +21,7 @@ class Constants {
     const Y1 = 'y1';
     const Y2 = 'y2';
 
+    const VIN = 'VIN';
+
     const FIND_PATH = 'http://v3.ryli.by/search/preload/?article=';
 } 

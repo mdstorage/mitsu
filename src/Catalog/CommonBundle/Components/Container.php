@@ -50,6 +50,11 @@ class Container {
         return $this->regions;
     }
 
+    public function removeRegion($code)
+    {
+        unset($this->regions[$code]);
+    }
+
     public function setActiveRegion(RegionInterface $region)
     {
         $this->activeRegion = $region;
@@ -102,14 +107,14 @@ class Container {
 
     public function setActiveModification(ModificationInterface $oModification)
     {
-        $this->activeModificataion = $oModification;
+        $this->activeModification = $oModification;
 
         return $this;
     }
 
     public function getActiveModification()
     {
-        return $this->activeModificataion;
+        return $this->activeModification;
     }
 
     public function setActiveModel(ModelInterface $oModel)

@@ -63,6 +63,23 @@ doctrine:
           driver:   "%database_driver%"
           host:     "%database_host%"
           port:     "%database_port%"
+        subaru:
+          dbname:   subaru
+          user:     root
+          password: 123456
+          charset:  UTF8
+          driver:   "%database_driver%"
+          host:     "%database_host%"
+          port:     "%database_port%"
+        mercedes:
+          dbname:   mercedesbenz
+          user:     catsmitsuby
+          password: vY6hMc7kfSIOt3O
+          charset:  UTF8
+          driver:   "%database_driver%"
+          host:     suraman.newsolution.by
+
+          port:     "%database_port%"
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
         #     e.g. database_path: "%kernel.root_dir%/data/data.db3"

@@ -1,0 +1,10 @@
+{% extends 'CatalogCommonBundle:Catalog:02_modifications.html.twig' %}
+{% use 'CatalogSubaruBundle::subaru.base.html.twig' %}
+{% block modification %}
+    <a href="{{ path('catalog_subaru_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
+        {{ modification.getRuname }}
+        ({{ modification.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|subaru_date_convertor }}
+        {{ modification.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|subaru_date_convertor }})
+        
+    </a>
+{% endblock modification %}

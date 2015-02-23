@@ -1,0 +1,3 @@
+{% extends 'CatalogCommonBundle:Catalog:08_articuls.html.twig' %}
+
+{% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}{% endblock commonArticulPath %}
