@@ -28,7 +28,7 @@ abstract class CommonElement implements CommonInterface{
 
     public function setCode($code)
     {
-        $this->code = $code;
+        $this->code = (string) $code;
     }
 
     public function setName($name)

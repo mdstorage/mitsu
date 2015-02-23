@@ -3,14 +3,15 @@ namespace Catalog\CommonBundle\Controller;
 
 
 use Catalog\CommonBundle\Components\Constants;
+use Catalog\CommonBundle\Components\Factory;
 use Symfony\Component\HttpFoundation\Request;
 
 abstract class ArticulController extends CatalogController{
 
-    public function indexAction()
+    public function indexAction($error_message = null)
     {
         setcookie(Constants::ARTICUL, "");
-        return $this->render($this->bundle().':01_index.html.twig');
+        return $this->render($this->bundle().':01_index.html.twig', array('error_message' => $error_message));
     }
 
     public function findByArticulAction(Request $request, $regionCode = null)
@@ -19,16 +20,27 @@ abstract class ArticulController extends CatalogController{
             if ($articul = $request->get('articul')) {
                 setcookie(Constants::ARTICUL, $articul);
             } else {
-                return $this->render($this->bundle().':01_index.html.twig');
+                return $this->indexAction();
             }
         }
 
         $articulRegions = $this->model()->getArticulRegions($articul);
-        $articulModels  = $this->model()->getArticulModels($articul);
+
+        if (empty($articulRegions)) {
+            setcookie(Constants::ARTICUL, "");
+            return $this->indexAction('Запчасть с таким артикулом не найдена.');
+        }
+
+        if (is_null($regionCode)){
+            $regionCode = $articulRegions[0];
+        }
+
+        $articulModels  = $this->model()->getArticulModels($articul, $regionCode);
 
         $this->addFilter('aticulRegionModelsFilter', array(
             'articulRegions' => $articulRegions,
-            'articulModels'  => $articulModels
+            'articulModels'  => $articulModels,
+            'regionCode' => $regionCode
         ));
 
         return $this->regionsModelsAction($request, $regionCode);
@@ -37,6 +49,30 @@ abstract class ArticulController extends CatalogController{
     public function aticulRegionModelsFilter($oContainer, $parameters)
     {
         $articulModels = $parameters['articulModels'];
+        $articulRegions = $parameters['articulRegions'];
+        $regionCode = $parameters['regionCode'];
+
+        foreach ($oContainer->getRegions() as $region) {
+            if (!in_array($region->getCode(), $articulRegions, true)) {
+                $oContainer->removeRegion($region->getCode());
+            }
+        }
+
+        $regionsList = $oContainer->getRegions();
+
+        if (!is_null($regionCode)){
+            $oActiveRegion = $regionsList[$regionCode];
+        } else{
+            /*
+             * Если пользователь не задавал регион, то в качестве активного выбирается первый из списка регионов объект
+             */
+            $oActiveRegion = reset($regionsList);
+        }
+        $models = $this->model()->getModels($oActiveRegion->getCode());
+
+        $oContainer->setActiveRegion($oActiveRegion
+            ->setModels(Factory::createCollection($models, Factory::createModel()))
+        );
 
         foreach ($oContainer->getActiveRegion()->getModels() as $model) {
             if (!in_array($model->getCode(), $articulModels, true)) {
@@ -51,9 +87,11 @@ abstract class ArticulController extends CatalogController{
     {
         if ($request->isXmlHttpRequest()) {
             $articul = $request->cookies->get(Constants::ARTICUL);
-            $articulModifications = $this->model()->getArticulModifications($articul);
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+            $articulModifications = $this->model()->getArticulModifications($articul, $regionCode, $modelCode);
 
-            $this->addFilter('aticulModificationsFilter', array(
+            $this->addFilter('articulModificationsFilter', array(
                 'articulModifications' => $articulModifications
             ));
 
@@ -61,7 +99,7 @@ abstract class ArticulController extends CatalogController{
         }
     }
 
-    public function aticulModificationsFilter($oContainer, $parameters)
+    public function articulModificationsFilter($oContainer, $parameters)
     {
         $articulModifications = $parameters['articulModifications'];
 
@@ -74,19 +112,32 @@ abstract class ArticulController extends CatalogController{
         return $oContainer;
     }
 
-    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
+    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
-        $articulGroups = $this->model()->getArticulGroups($articul, $modificationCode);
+        $articulComplectations = $this->model()->getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode);
 
-        $this->addFilter('aticulGroupsFilter', array(
-            'articulGroups' => $articulGroups
+        $this->addFilter('articulComplectationsFilter', array(
+            'articulComplectations' => $articulComplectations
         ));
 
-        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode);
+        return parent::complectationsAction($request, $regionCode, $modelCode, $modificationCode);
     }
 
-    public function aticulGroupsFilter($oContainer, $parameters)
+    public function articulComplectationsFilter($oContainer, $parameters)
+    {
+        $articulComplectations = $parameters['articulComplectations'];
+
+        foreach ($oContainer->getActiveModification()->getComplectations() as $complectation) {
+            if (!in_array($complectation->getCode(), $articulComplectations, true)) {
+                $oContainer->getActiveModification()->removeComplectation($complectation->getCode());
+            }
+        }
+
+        return $oContainer;
+    }
+
+    public function articulGroupsFilter($oContainer, $parameters)
     {
         $articulGroups = $parameters['articulGroups'];
 
@@ -97,18 +148,6 @@ abstract class ArticulController extends CatalogController{
         }
 
         return $oContainer;
-    }
-
-    public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
-    {
-        $articul = $request->cookies->get(Constants::ARTICUL);
-        $articulSubGroups = $this->model()->getArticulSubGroups($articul, $modificationCode);
-
-        $this->addFilter('aticulSubGroupsFilter', array(
-            'articulSubGroups' => $articulSubGroups
-        ));
-
-        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
     }
 
     public function aticulSubGroupsFilter($oContainer, $parameters)
@@ -125,18 +164,6 @@ $ar[]=$subgroup->getCode();
         return $oContainer;
     }
 
-    public function schemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null)
-    {
-        $articul = $request->cookies->get(Constants::ARTICUL);
-        $articulSchemas = $this->model()->getArticulSchemas($articul, $modificationCode, $subGroupCode);
-
-        $this->addFilter('aticulSchemasFilter', array(
-            'articulSchemas' => $articulSchemas
-        ));
-
-        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
-    }
-
     public function aticulSchemasFilter($oContainer, $parameters)
     {
         $articulSchemas = $parameters['articulSchemas'];
@@ -148,18 +175,6 @@ $ar[]=$subgroup->getCode();
         }
 
         return $oContainer;
-    }
-
-    public function schemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null)
-    {
-        $articul = $request->cookies->get(Constants::ARTICUL);
-        $articulPncs = $this->model()->getArticulPncs($articul, $modificationCode, $subGroupCode);
-
-        $this->addFilter('aticulPncsFilter', array(
-            'articulPncs' => $articulPncs
-        ));
-
-        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode);
     }
 
     public function aticulPncsFilter($oContainer, $parameters)

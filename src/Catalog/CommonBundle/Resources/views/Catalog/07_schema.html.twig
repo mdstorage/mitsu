@@ -36,7 +36,7 @@
                                             type:   'POST',
                                             async:  false,
                                             url:    "{% block ajaxUrl %}{{ path('catalog_common_articuls') }}{% endblock ajaxUrl %}",
-                                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', cd: '{{ oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD')) }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}' },
+                                            data:   { {% block ajaxData %}regionCode: '{{ oContainer.getActiveRegion.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}'{% endblock ajaxData %} },
                                             success: function(data) {
                                                 $("#articul_for_pnc{{ pnc.getCode }}").html(data);
                                             }
@@ -97,7 +97,7 @@
                 {% endblock commonArticuls %}
                 {% endif %}
                 {% if oContainer.getActiveSchema.getRefGroups %}
-                <h4>Связанные группы</h4>
+                {% block refGroupsHead %}<h4>Связанные группы</h4>{% endblock refGroupsHead %}
                 {% block refGroups %}
                     {% for refGroup in oContainer.getActiveSchema.getRefGroups %}
                         {% block refGroup %}

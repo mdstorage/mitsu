@@ -1,6 +1,4 @@
-{% extends 'CatalogCommonBundle::base.html.twig' %}
-{% block breadcrumbs %}Используйте панель навигации браузера, чтобы вернуться на прежнюю страницу.{% endblock breadcrumbs %}
-{% block summary_set %}{% endblock summary_set %}
 {% block body %}
     {{ message }}
+    <a class="btn btn-danger" href="{{ referer }}">Вернуться</a>
 {% endblock body %}
