@@ -6,9 +6,11 @@
 
 
 
-{% block imagePath %}
-    {{ asset('bundles/catalogmazda/images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/image/'~oContainer.getActiveSchema.getCode|slice(0,3)~'/'~oContainer.getActiveSchema.getCode~'.png') }}
-{% endblock imagePath %}
+{% block subgroupImage %}
+        <div class="col-lg-8">
+            <img src="{{ asset('bundles/catalogsubaru/images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(0,2)~'/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(2,9)~'/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(11,2)~'/model'~oContainer.getActiveSchema.getOption('num_model')~'/part1/'~oContainer.getActiveSchema.getOption('num_image')~'.png') }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}" />
+        </div>
+        {% endblock subgroupImage %}
 
 {% block pathToSchemas %}
     {{ path('vin_subaru_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}

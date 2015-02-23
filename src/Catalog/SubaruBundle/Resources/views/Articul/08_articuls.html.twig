@@ -1,4 +1,4 @@
-{% extends 'CatalogCommonBundle:Catalog:08_articuls.html.twig' %}
+{% extends 'CatalogSubaruBundle:Catalog:08_articuls.html.twig' %}
 {% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}{% endblock commonArticulPath %}
 {% block articulItem %}
     {% if articul.getCode == app.request.cookies.get(constant('Catalog\\CommonBundle\\Components\\Constants::ARTICUL')) %}
