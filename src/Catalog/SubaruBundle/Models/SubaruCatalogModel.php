@@ -198,78 +198,87 @@ class SubaruCatalogModel extends CatalogModel{
 
     public function getGroupSchemas($regionCode, $modelCode, $modificationCode, $groupCode)
     {
-        /*$sql = "
-        SELECT pp.cd, pp.pic_name
-        FROM pgroup_pics pp
-        WHERE pp.catalog = :regionCode
-            AND pp.catalog_number = :modificationCode
-            AND pp.id = :groupCode
-        LIMIT 1
+        $sqlNumPrigroup = "
+        SELECT *
+        FROM pri_groups_full
+        WHERE catalog = :regionCode
+            AND model_code =:model_code
+            AND pri_group = :groupCode
         ";
-
-        $query = $this->conn->prepare($sql);
+    	$query = $this->conn->prepare($sqlNumPrigroup);
         $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('model_code', $modelCode);
         $query->bindValue('groupCode', $groupCode);
         $query->execute();
 
-        $aData = $query->fetchAll();
+        $aData = $query->fetch();  
+       
+        $sqlNumModel = "
+        SELECT num_model
+        FROM part_images
+        WHERE catalog = :regionCode
+            AND model_code =:model_code
+        GROUP BY num_model
+        ";
+    	$query = $this->conn->prepare($sqlNumModel);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('model_code', $modelCode);
+        $query->execute();
+
+        $aNumModel = $query->fetch();
 
         $groupSchemas = array();
-        foreach ($aData as $item) {
-            $groupSchemas[$item['pic_name']] = array(Constants::NAME => $item['pic_name'], Constants::OPTIONS => array(Constants::CD => $item['cd']));
-        }*/
-		$groupSchemas = array();
+    /*    foreach ($aData as $item)*/ {
+            $groupSchemas[$aData['num_image']] = array(Constants::NAME => $aData['num_image'], Constants::OPTIONS => array(
+              Constants::CD => $aData['catalog'].$aData['sub_dir'].$aData['sub_wheel'],
+                    	'num_model' => $aNumModel['num_model'],
+                        'num_image' => $aData['num_image']
+                ));
+        }
+		
         return $groupSchemas;
     }
 
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
-     /*   $sqlGroup = "
-        SELECT pp.cd, pp.pic_name
-        FROM pgroups pg
-        LEFT JOIN pgroup_pics pp ON (pg.id = pp.id AND pg.catalog = pp.catalog AND pg.catalog_number = pp.catalog_number)
-        WHERE pg.catalog = :regionCode
-            AND pg.catalog_number = :modificationCode
-            AND pg.id = :groupCode
-            AND pg.lang = 1
-        LIMIT 1
-        ";
-
-        $query = $this->conn->prepare($sqlGroup);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('groupCode', $groupCode);
-        $query->execute();
-
-        $aGroup = $query->fetch();
-
-        $sqlPicture = "
-            SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
-            FROM pictures p
-            WHERE p.cd = :cd
-              AND p.pic_name = :picName
-        ";
-
-        $query = $this->conn->prepare($sqlPicture);
-        $query->bindValue('cd', $aGroup['cd']);
-        $query->bindValue('picName', $aGroup['pic_name']);
-        $query->execute();
-
-        $aPicture = $query->fetchAll();
-
-        $labels = array();
-        foreach ($aPicture as $label){
-            $labels[$label['part_code']] = $label;
-        }*/
-
-        $sqlSubgroups = "
-        SELECT id, desc_en
-        FROM sec_groups
+    	$sqlNumPrigroup = "
+        SELECT num_image
+        FROM pri_groups_full
         WHERE catalog = :regionCode
             AND model_code =:model_code
             AND pri_group = :groupCode
-        ORDER BY id
+        ";
+    	$query = $this->conn->prepare($sqlNumPrigroup);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('model_code', $modelCode);
+        $query->bindValue('groupCode', $groupCode);
+        $query->execute();
+
+        $aNumImage = $query->fetch();
+       
+        $sqlNumModel = "
+        SELECT num_model
+        FROM part_images
+        WHERE catalog = :regionCode
+            AND model_code =:model_code
+        GROUP BY num_model
+        ";
+    	$query = $this->conn->prepare($sqlNumModel);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('model_code', $modelCode);
+        $query->execute();
+
+        $aNumModel = $query->fetch();
+        
+     
+
+        $sqlSubgroups = "
+        SELECT *
+        FROM sec_groups_full
+        WHERE catalog = :regionCode
+            AND model_code =:model_code
+            AND pri_group = :groupCode
+        ORDER BY sec_group
         ";
 
         $query = $this->conn->prepare($sqlSubgroups);
@@ -282,14 +291,17 @@ class SubaruCatalogModel extends CatalogModel{
 
         $subgroups = array();
         foreach($aData as $item){
-            $subgroups[$item['id']] = array(
+            $subgroups[$item['sec_group']] = array(
                 Constants::NAME => $item['desc_en'],
-                Constants::OPTIONS => /*isset($labels[substr($item['sgroup'], 0, 4)]) ? array(
-                    Constants::X1 => $labels[substr($item['sgroup'], 0, 4)]['xs'],
-                    Constants::X2 => $labels[substr($item['sgroup'], 0, 4)]['xe'],
-                    Constants::Y1 => $labels[substr($item['sgroup'], 0, 4)]['ys'],
-                    Constants::Y2 => $labels[substr($item['sgroup'], 0, 4)]['ye']
-                ) : */array()
+                Constants::OPTIONS => array(
+                    Constants::X1 => floor($item['x']/2),
+                    Constants::X2 => $item['x']/2+50,
+                    Constants::Y1 => $item['y']/2-5,
+                    Constants::Y2 => $item['y']/2+20,
+                    Constants::CD => $item['catalog'].$item['sub_dir'].$item['sub_wheel'],
+                    	'num_model' => $aNumModel['num_model'],
+                        'num_image' => $aNumImage['num_image']
+                )
             );
         }
 
@@ -616,8 +628,34 @@ $articuls = array();
         $aDataDescr = $query->fetchAll();
         $aDataDescr = array_combine(array_column($aDataDescr, 'id'), array_column($aDataDescr, 'descr'));
 */
+        $sql = "
+        SELECT *
+        FROM body_desc
+        WHERE catalog = :regionCode 
+        AND model_code = :model_code
+        AND f1 = :f1
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('model_code', $modelCode);
+        $query->bindValue('f1', $complectationCode);
+        $query->execute();
+
+        $aCompl = $query->fetch();
+       
         $articuls = array();
+      
         foreach ($aData as $item) {
+        	 
+        	/*if ((substr_count($item['model_restrictions'], $aCompl['body'])>0) ||
+            (substr_count($item['model_restrictions'], $aCompl['engine1'])>0)||
+            (substr_count($item['model_restrictions'], $aCompl['train'])>0)||
+            (substr_count($item['model_restrictions'], $aCompl['trans'])>0)||
+            (substr_count($item['model_restrictions'], $aCompl['grade'])>0)||
+            (substr_count($item['model_restrictions'], $aCompl['sus'])>0)
+            )*/
+            
             $articuls[$item['part_number']] = array(
                 Constants::NAME =>$item['model_restrictions'],
                 Constants::OPTIONS => array(
