@@ -13,7 +13,7 @@ class MercedesArticulModel extends MercedesCatalogModel{
         FROM alltext_sa_parts_v
         WHERE PARTTYP = :parttype
         AND PARTNUM = :partnum
-        AND ITEMNO != ''
+
         ";
 
         $query = $this->conn->prepare($sqlSanums);
@@ -27,7 +27,7 @@ class MercedesArticulModel extends MercedesCatalogModel{
         return $sanums;
     }
 
-    private function getArticulCatnums($articul)
+    public function getArticulCatnums($articul)
     {
         $catnums = array();
 
@@ -36,7 +36,7 @@ class MercedesArticulModel extends MercedesCatalogModel{
         FROM `alltext_bm_parts2_v`
         WHERE PARTTYPE = :parttype
         AND PARTNUM = :partnum
-        AND CALLOUT != ''
+
         GROUP BY CATNUM
         ";
 
@@ -218,7 +218,7 @@ class MercedesArticulModel extends MercedesCatalogModel{
         WHERE PARTTYPE = :parttype
         AND PARTNUM = :partnum
         AND CATNUM = :complectationCode
-        AND CALLOUT != ''
+
         GROUP BY GROUPNUM
         ";
 
@@ -264,7 +264,7 @@ class MercedesArticulModel extends MercedesCatalogModel{
         AND PARTNUM = :partnum
         AND CATNUM = :complectationCode
         AND GROUPNUM = :groupCode
-        AND CALLOUT != ''
+
         GROUP BY SUBGRP
         ";
 

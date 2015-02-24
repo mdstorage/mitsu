@@ -104,7 +104,13 @@ class ArticulController extends BaseController{
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulSchemas = $this->model()->getArticulSchemas($articul, $complectationCode, $groupCode, $subGroupCode);
-
+        if (!$articulSchemas && $this->model()->getArticulCatnums($articul)) {
+            return $this->render($this->bundle() . ':09_common_articuls.html.twig', array(
+                'oContainer' => Factory::createContainer()->setActiveArticul(
+                        Factory::createArticul($articul)
+                    )
+            ));
+        }
         $this->addFilter('articulSchemasFilter', array(
             'articulSchemas' => $articulSchemas
         ));
@@ -185,7 +191,13 @@ class ArticulController extends BaseController{
         $saSubGroups = $this->model()->getSaSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
 
         $schemas = $this->model()->getArticulSaSchemas($articul, $sanum);
-
+        if (!$schemas && $this->model()->getArticulCatnums($articul)) {
+            return $this->render($this->bundle() . ':09_common_articuls.html.twig', array(
+                'oContainer' => Factory::createContainer()->setActiveArticul(
+                        Factory::createArticul($articul)
+                    )
+            ));
+        }
         if(empty($schemas))
             return $this->error($request, 'Схемы не найдены.');
 

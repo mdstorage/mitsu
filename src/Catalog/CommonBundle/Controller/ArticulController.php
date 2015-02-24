@@ -17,7 +17,7 @@ abstract class ArticulController extends CatalogController{
     public function findByArticulAction(Request $request, $regionCode = null)
     {
         if (!$articul = $request->cookies->get(Constants::ARTICUL)) {
-            if ($articul = $request->get('articul')) {
+            if ($articul = trim($request->get('articul'))) {
                 setcookie(Constants::ARTICUL, $articul);
             } else {
                 return $this->indexAction();
