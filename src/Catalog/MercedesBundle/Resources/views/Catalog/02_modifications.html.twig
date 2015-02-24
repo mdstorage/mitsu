@@ -1,0 +1,7 @@
+{% extends 'CatalogCommonBundle:Catalog:02_modifications.html.twig' %}
+{% use 'CatalogMercedesBundle::mercedes.base.html.twig' %}
+{% block modification %}
+    <a href="{{ path('catalog_mercedes_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
+        {{ modification.getRuname }}
+    </a>
+{% endblock modification %}

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: itm
- * Date: 10.01.15
- * Time: 13:30
- */
 
 namespace Catalog\MazdaBundle\Models;
 

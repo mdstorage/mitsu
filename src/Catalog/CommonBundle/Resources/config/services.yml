@@ -10,3 +10,7 @@ services:
         class: Catalog\CommonBundle\Twig\Extension\Md5Extension
         tags:
             - { name: twig.extension}
+  file_exists.extension:
+        class: Catalog\CommonBundle\Twig\Extension\FileExistsExtension
+        tags:
+            - { name: twig.extension}

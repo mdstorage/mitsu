@@ -13,21 +13,24 @@ use Catalog\MazdaBundle\Components\MazdaConstants;
 
 class MazdaArticulModel extends MazdaCatalogModel{
 
-    public function getArticulRegions($articul){
+    public function getArticulRegions($articulCode){
 
         $sql = "
         SELECT catalog
-        FROM models
+        FROM part_catalog
+        WHERE part_name = :articulCode
         GROUP BY catalog
         ";
 
-        $query = $this->conn->query($sql);
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', $articulCode);
+        $query->execute();
 
         $aData = $query->fetchAll();
 
         $regions = array();
         foreach($aData as $item){
-            $regions[$item['catalog']] = array(Constants::NAME=>$item['catalog'], Constants::OPTIONS=>array());
+            $regions[] = $item['catalog'];
         }
 
         return $regions;
