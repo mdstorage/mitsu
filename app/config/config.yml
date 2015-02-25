@@ -65,8 +65,8 @@ doctrine:
           port:     "%database_port%"
         subaru:
           dbname:   subaru
-          user:     root
-          password: 123456
+          user:     catsmitsuby
+          password: vY6hMc7kfSIOt3O
           charset:  UTF8
           driver:   "%database_driver%"
           host:     "%database_host%"

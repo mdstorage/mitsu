@@ -47,8 +47,6 @@ use SubaruVinFilters;
     public function subaruArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
-    /*    $regionCode = $request->attributes->get('regionCode');
-        $modelCode = $request->attributes->get('modelCode');*/
       
         $articulGroups = $this->model()->getArticulGroups($articul, $regionCode, $modelCode);
 
@@ -61,10 +59,10 @@ use SubaruVinFilters;
 
     public function subaruArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+        $articul = $request->cookies->get(Constants::ARTICUL); 
         $articulSubGroups = $this->model()->getArticulSubGroups($articul, $regionCode, $modelCode, $groupCode);
 
-        $this->addFilter('aticulSubGroupsFilter', array(
+        $this->addFilter('articulSubGroupsFilter', array(
             'articulSubGroups' => $articulSubGroups
         ));
 
@@ -77,7 +75,7 @@ use SubaruVinFilters;
         $articulSchemas = $this->model()->getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
 		
 		
-        $this->addFilter('aticulSchemasFilter', array(
+        $this->addFilter('articulSchemasFilter', array(
             'articulSchemas' => $articulSchemas
         ));
 
@@ -89,7 +87,7 @@ use SubaruVinFilters;
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulPncs = $this->model()->getArticulPncs($articul, $regionCode, $modelCode, $groupCode, $subGroupCode);
 
-        $this->addFilter('aticulPncsFilter', array(
+        $this->addFilter('articulPncsFilter', array(
             'articulPncs' => $articulPncs
         ));
 
