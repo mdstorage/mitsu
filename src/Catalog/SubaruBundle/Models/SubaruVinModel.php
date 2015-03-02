@@ -74,10 +74,13 @@ class SubaruVinModel extends SubaruCatalogModel {
         $query->execute();
 
         $aModif = $query->fetch();
-       
-       $aCompl = array(); 
+ 
+ 		$aCompl = array();
        if ($aModel) {
-       	$sql = "
+       	
+
+       
+        $sql = "
         SELECT *
         FROM body_desc
         WHERE model_code = :model_code
@@ -94,10 +97,13 @@ class SubaruVinModel extends SubaruCatalogModel {
         }
        
 		$ch = array();
+
+		if ($aCompl)
+		{
 		
 		foreach($aCompl as $index =>$value )	
         {	
-        	$sqlAbb = "
+        $sqlAbb = "
         SELECT param_name
         FROM model_desc
         WHERE catalog = :regionCode
@@ -116,9 +122,15 @@ class SubaruVinModel extends SubaruCatalogModel {
          $ch[$index] ='('.$value.') '.$sDesc[$index]['param_name'];
          		
 		}
-		
-   
-$result = array();
+
+		}
+
+
+
+
+
+        $result = array();
+
         if ($aData) {
             $result = array(
                 'region' => $aData['catalog'],
