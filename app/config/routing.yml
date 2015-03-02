@@ -1,3 +1,11 @@
+catalog_subaru:
+    resource: "@CatalogSubaruBundle/Resources/config/routing.yml"
+    prefix:   /
+    
+catalog_mercedes:
+    resource: "@CatalogMercedesBundle/Resources/config/routing.yml"
+    prefix:   /
+
 catalog_common:
     resource: "@CatalogCommonBundle/Resources/config/routing.yml"
     prefix:   /

@@ -1,0 +1,6 @@
+{% extends 'CatalogCommonBundle::base.html.twig' %}
+{% use 'CatalogMercedesBundle::mercedes.base.html.twig' %}
+{% block body %}
+    {% block commonArticulHead %}<h4>Общие запчасти</h4>{% endblock  commonArticulHead%}
+        <a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ oContainer.getActiveArticul.getCode }}" target="_blank">{{ oContainer.getActiveArticul.getCode }}</a>
+{% endblock body %}

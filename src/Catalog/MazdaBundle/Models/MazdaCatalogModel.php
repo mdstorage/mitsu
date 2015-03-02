@@ -163,7 +163,7 @@ class MazdaCatalogModel extends CatalogModel{
         return $groupSchemas;
     }
 
-    public function getSubgroups($regionCode, $modelCode, $modificationCode, $groupCode)
+    public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
         $sqlGroup = "
         SELECT pp.cd, pp.pic_name
@@ -236,7 +236,7 @@ class MazdaCatalogModel extends CatalogModel{
         return $subgroups;
     }
 
-    public function getSchemas($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode)
+    public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode,  $groupCode, $subGroupCode)
     {
         $sqlSchemas = "
         SELECT sp.cd, sp.pic_name, sp.XC26TKT1, sp.descr
@@ -343,8 +343,10 @@ class MazdaCatalogModel extends CatalogModel{
         return $schema;
     }
 
-    public function getPncs($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
+    public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
     {
+        $cd = $options[Constants::CD];
+
         $sqlSchemaLabels = "
         SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
         FROM pictures p
@@ -420,8 +422,10 @@ class MazdaCatalogModel extends CatalogModel{
         return $pncs;
     }
 
-    public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
+    public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
     {
+        $cd = $options[Constants::CD];
+
         $sqlSchemaLabels = "
         SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
         FROM pictures p
@@ -454,8 +458,10 @@ class MazdaCatalogModel extends CatalogModel{
         return $articuls;
     }
 
-    public function getReferGroups($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
+    public function getReferGroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
     {
+        $cd = $options[Constants::CD];
+
         $sqlSubgroups = "
         SELECT sg.sgroup
         FROM sgroup sg
@@ -510,8 +516,11 @@ class MazdaCatalogModel extends CatalogModel{
         return $groups;
     }
 
-    public function getArticuls($regionCode, $cd, $modificationCode, $subGroupCode, $pncCode)
+    public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, $options)
     {
+
+        $cd = $options[Constants::CD];
+
         $sqlArticuls = "
         SELECT pc.part_name, pc.quantity, pc.sdate, pc.edate, pc.desc_id
         FROM part_catalog pc

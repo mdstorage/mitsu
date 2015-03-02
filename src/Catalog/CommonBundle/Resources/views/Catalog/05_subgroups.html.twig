@@ -14,12 +14,15 @@
 {% block body %}
     {% block head %}<h3>Выбрать подгруппу запчастей:</h3>{% endblock head %}
     <div class="row">
+        {% block subgroupImage %}
         <div class="col-lg-8">
             <img src="{% block imagePath %}{% endblock imagePath %}" alt="{{ oContainer.getActiveGroup.getRuname }}" usemap="#{{ oContainer.getActiveGroup.getCode }}" />
         </div>
+        {% endblock subgroupImage %}
         <div class="col-lg-4">
             {% block subgroups %}
                 <div class="subgroups">
+                    {% block subGroupsMap %}
                     <map name="{{ oContainer.getActiveGroup.getCode }}">
                         {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
                             {% block area %}
@@ -50,6 +53,7 @@
                             {% endblock cycleScript %}
                         {% endfor %}
                     </map>
+                    {% endblock subGroupsMap %}
                 </div>
             {% endblock subgroups %}
         </div>
@@ -64,6 +68,5 @@
             });
         </script>
     {% endblock mapsterScript %}
-    {% block pageScript %}
-    {% endblock pageScript %}
+    {% block pageScript %}{% endblock pageScript %}
 {% endblock body %}

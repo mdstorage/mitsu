@@ -19,6 +19,11 @@ class AppKernel extends Kernel
             new Catalog\MitsubishiBundle\CatalogMitsubishiBundle(),
             new Catalog\MazdaBundle\CatalogMazdaBundle(),
             new Catalog\CommonBundle\CatalogCommonBundle(),
+
+            new Catalog\SubaruBundle\CatalogSubaruBundle(),
+
+            new Catalog\MercedesBundle\CatalogMercedesBundle(),
+
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
@@ -34,5 +39,11 @@ class AppKernel extends Kernel
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(__DIR__.'/config/config_'.$this->getEnvironment().'.yml');
+    }
+
+    public function init()
+    {
+    	date_default_timezone_set( 'Europe/Minsk' );
+	parent::init();
     }
 }

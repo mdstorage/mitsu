@@ -1,0 +1,25 @@
+{% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
+{% use 'CatalogMercedesBundle::mercedes.base.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/catalogmercedes/css/mercedes.css') }}" media="all">
+{% endblock %}
+{% block breadcrumbs %}
+    <a href="{{ path('catalog_mercedes') }}">Выбрать регион, модель, модификацию</a> /
+    <a href="{{ path('catalog_mercedes_complectations', parameters) }}">Выбрать комплектацию</a> /
+    Выбрать группу запчастей
+{% endblock breadcrumbs %}
+
+{% block pathToSubgroup %}{{ path('catalog_mercedes_subgroups', parameters|merge({'groupCode': group.getCode})) }}{% endblock pathToSubgroup %}
+{% block picture %}
+    {% for modification in oContainer.getActiveModel.getModifications %}
+        {{ modification.getRuname }}<br/>
+        <table class="table">
+        {% for complectationCode, complectationName in modification.getOption('COMPLECTATIONS') %}
+            <tr>
+                <td><a href="{{ path('catalog_mercedes_groups', parameters|merge({'modificationCode': modification.getCode, 'complectationCode': complectationCode})) }}"><span class="col-lg-3">{{ complectationCode|slice(-7) }}</span><span class="col-lg-9">{{ complectationName }}</span></a></td>
+            </tr>
+        {% endfor %}
+        </table>
+    {% endfor %}
+{% endblock picture %}

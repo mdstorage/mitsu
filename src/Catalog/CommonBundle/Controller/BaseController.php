@@ -4,6 +4,7 @@ namespace Catalog\CommonBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Catalog\CommonBundle\Components\Factory;
+use Symfony\Component\HttpFoundation\Request;
 
 abstract class BaseController extends Controller
 {
@@ -23,9 +24,10 @@ abstract class BaseController extends Controller
     {
         foreach ($this->getFilters() as $filter => $parameters) {
             if (method_exists($this, $filter)) {
-                return $this->$filter($object, $parameters);
+                $object = $this->$filter($object, $parameters);
             }
         }
+        return $object;
     }
 
     abstract function bundle();
@@ -61,4 +63,14 @@ abstract class BaseController extends Controller
 
         return $result;
     }
+
+    protected function error(Request $request, $message)
+    {
+        $headers = $request->server->getHeaders();
+        return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array(
+            'message' => $message,
+            'referer' => $headers['REFERER']
+        ));
+    }
+
 }

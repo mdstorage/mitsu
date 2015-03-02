@@ -59,12 +59,12 @@
                             </div>
                             <div>
                                 {% block model %}
-                                    <b>Модель:</b> {% block modelRuname %}{% endblock modelRuname %}
+                                    <b>{% block modelTitle %}Модель:{% endblock modelTitle %}</b> {% block modelRuname %}{% endblock modelRuname %}
                                 {% endblock model %}
                             </div>
                             <div>
                                 {% block modification %}
-                                    <b>Модификация:</b> {% block modificationRuname %}{% endblock modificationRuname %}
+                                    <b>{% block modificationTitle %}Модификация:{% endblock modificationTitle %}</b> {% block modificationRuname %}{% endblock modificationRuname %}
                                 {% endblock modification %}
                             </div>
                             <div>
