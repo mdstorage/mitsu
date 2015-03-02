@@ -72,7 +72,7 @@ class SubaruVinModel extends SubaruCatalogModel {
         $query->execute();
 
         $aModif = $query->fetch();
-        
+        $aCompl = array();
         $sql = "
         SELECT *
         FROM body_desc
@@ -88,6 +88,10 @@ class SubaruVinModel extends SubaruCatalogModel {
 
         $aCompl = $query->fetch();
 		$ch = array();
+		if ($aCompl)
+		{
+			
+		
 		foreach($aCompl as $index =>$value )	
         {	
         	$sqlAbb = "
@@ -109,7 +113,7 @@ class SubaruVinModel extends SubaruCatalogModel {
          $ch[$index] ='('.$value.') '.$sDesc[$index]['param_name'];
          		
 		}
-
+		}
 
 
 
