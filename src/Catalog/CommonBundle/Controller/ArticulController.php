@@ -17,7 +17,7 @@ abstract class ArticulController extends CatalogController{
     public function findByArticulAction(Request $request, $regionCode = null)
     {
         if (!$articul = $request->cookies->get(Constants::ARTICUL)) {
-            if ($articul = $request->get('articul')) {
+            if ($articul = trim($request->get('articul'))) {
                 setcookie(Constants::ARTICUL, $articul);
             } else {
                 return $this->indexAction();
@@ -37,7 +37,7 @@ abstract class ArticulController extends CatalogController{
 
         $articulModels  = $this->model()->getArticulModels($articul, $regionCode);
 
-        $this->addFilter('aticulRegionModelsFilter', array(
+        $this->addFilter('articulRegionModelsFilter', array(
             'articulRegions' => $articulRegions,
             'articulModels'  => $articulModels,
             'regionCode' => $regionCode
@@ -46,7 +46,7 @@ abstract class ArticulController extends CatalogController{
         return $this->regionsModelsAction($request, $regionCode);
     }
 
-    public function aticulRegionModelsFilter($oContainer, $parameters)
+    public function articulRegionModelsFilter($oContainer, $parameters)
     {
         $articulModels = $parameters['articulModels'];
         $articulRegions = $parameters['articulRegions'];
@@ -150,7 +150,7 @@ abstract class ArticulController extends CatalogController{
         return $oContainer;
     }
 
-    public function aticulSubGroupsFilter($oContainer, $parameters)
+    public function articulSubGroupsFilter($oContainer, $parameters)
     {
         $articulSubGroups = $parameters['articulSubGroups'];
         $ar = array();
@@ -164,7 +164,7 @@ $ar[]=$subgroup->getCode();
         return $oContainer;
     }
 
-    public function aticulSchemasFilter($oContainer, $parameters)
+    public function articulSchemasFilter($oContainer, $parameters)
     {
         $articulSchemas = $parameters['articulSchemas'];
 
@@ -177,7 +177,7 @@ $ar[]=$subgroup->getCode();
         return $oContainer;
     }
 
-    public function aticulPncsFilter($oContainer, $parameters)
+    public function articulPncsFilter($oContainer, $parameters)
     {
         $articulPncs = $parameters['articulPncs'];
 

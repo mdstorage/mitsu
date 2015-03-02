@@ -140,7 +140,7 @@ class SubaruArticulModel extends SubaruCatalogModel{
         $query->execute();
         
         $aArticulDesc = $query->fetchAll();
-    	
+    	$groups = array();
 
         $groups = $this->array_column($aArticulDesc, 'pri_group');
 
@@ -166,7 +166,7 @@ class SubaruArticulModel extends SubaruCatalogModel{
         $query->execute();
         
         $aArticulDesc = $query->fetchAll();
-    	
+    	$subgroups = array();
 
         $subgroups = $this->array_column($aArticulDesc, 'sec_group'); 
 
@@ -306,6 +306,6 @@ class SubaruArticulModel extends SubaruCatalogModel{
 $pncs = array();
         $pncs = $this->array_column($query->fetchAll(), 'part_code');
 
-        return $pncs;
+        return $pncs; 
     }
 } 
