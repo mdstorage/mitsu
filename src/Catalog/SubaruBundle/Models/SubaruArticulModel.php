@@ -155,6 +155,7 @@ class SubaruArticulModel extends SubaruCatalogModel{
         AND catalog = :regionCode
         AND model_code = :modelCode
         AND pri_group = :groupCode
+        GROUP BY sec_group
         ";
 
         $query = $this->conn->prepare($sqlArticul);
@@ -167,7 +168,7 @@ class SubaruArticulModel extends SubaruCatalogModel{
         $aArticulDesc = $query->fetchAll();
     	
 
-        $subgroups = $this->array_column($aArticulDesc, 'sec_group');
+        $subgroups = $this->array_column($aArticulDesc, 'sec_group'); 
 
         return $subgroups;
     }
@@ -273,12 +274,12 @@ class SubaruArticulModel extends SubaruCatalogModel{
         $query->bindValue('subGroupCode', $subGroupCode);
         $query->bindValue('part_code', $item);
         $query->execute();
-                
+         $groups = array();        
         $aData = $query->fetchAll();
         $groups = $this->array_column($aData, 'page');
         }
        
-       return $groups; 
+       return $groups;
 	 }
 	 
     
@@ -302,7 +303,7 @@ class SubaruArticulModel extends SubaruCatalogModel{
         $query->bindValue('groupCode', $groupCode);
         $query->bindValue('subGroupCode', $subGroupCode);
         $query->execute();
-
+$pncs = array();
         $pncs = $this->array_column($query->fetchAll(), 'part_code');
 
         return $pncs;

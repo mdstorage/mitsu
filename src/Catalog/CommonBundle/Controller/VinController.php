@@ -25,7 +25,7 @@ abstract class VinController extends CatalogController{
 
             $vin = $request->get('vin');
 
-            $result = $this->model()->getVinFinderResult($vin);
+            $result = $this->model()->getVinFinderResult($vin); 
             if (!$result) {
                 return $this->render($this->bundle().':empty.html.twig');
             }
