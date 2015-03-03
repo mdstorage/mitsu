@@ -16,6 +16,8 @@ class SubaruVinModel extends SubaruCatalogModel {
 
     public function getVinFinderResult($vin)
     {
+    	
+    	
         $sql = "
         SELECT *
         FROM vin
@@ -72,7 +74,12 @@ class SubaruVinModel extends SubaruCatalogModel {
         $query->execute();
 
         $aModif = $query->fetch();
-        
+ 
+ 		$aCompl = array();
+       if ($aModel) {
+       	
+
+       
         $sql = "
         SELECT *
         FROM body_desc
@@ -87,10 +94,16 @@ class SubaruVinModel extends SubaruCatalogModel {
         $query->execute();
 
         $aCompl = $query->fetch();
+        }
+       
 		$ch = array();
+
+		if ($aCompl)
+		{
+		
 		foreach($aCompl as $index =>$value )	
         {	
-        	$sqlAbb = "
+        $sqlAbb = "
         SELECT param_name
         FROM model_desc
         WHERE catalog = :regionCode
@@ -110,6 +123,7 @@ class SubaruVinModel extends SubaruCatalogModel {
          		
 		}
 
+		}
 
 
 
