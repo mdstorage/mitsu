@@ -23,8 +23,7 @@ class MercedesVinModel extends MercedesCatalogModel
           db.DB_NAME, db.TABLES
         FROM comm_dc_map_v map
         LEFT JOIN special_dcdbinfo_v db ON map.LOCATION = db.LOCATION
-        WHERE map.VINWHC = :vinwhc
-          AND (map.VIN = :vin OR
+        WHERE (map.VINWHC = :vinwhc AND map.VIN = :vin) OR (map.WHC = :vinwhc AND
           map.CHASSBM = :chassbm AND map.CHASS_IDENT = :chassident)
         ";
 

@@ -21,3 +21,7 @@
 .groups{
     margin-left: 60px;
 }
+
+img {
+    -ms-interpolation-mode: bicubic;
+}
