@@ -3,6 +3,7 @@ namespace Catalog\CommonBundle\Controller;
 
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Components\Factory;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -157,7 +158,9 @@ abstract class CatalogController extends BaseController{
             ->setActiveModification($modificationsCollection[$modificationCode])
             ->setGroups(Factory::createCollection($groups, Factory::createGroup()));
 
-        $this->filter($oContainer);
+        if ($this->filter($oContainer) instanceof RedirectResponse) {
+            return $this->filter($oContainer);
+        };
 
         return $this->render($this->bundle() . ':04_groups.html.twig', array(
             'oContainer' => $oContainer,
@@ -199,7 +202,9 @@ abstract class CatalogController extends BaseController{
                 ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup()))
             );
 
-        $this->filter($oContainer);
+        if ($this->filter($oContainer) instanceof RedirectResponse) {
+            return $this->filter($oContainer);
+        };
 
         return $this->render($this->bundle() . ':05_subgroups.html.twig', array(
             'oContainer' => $oContainer,
@@ -241,7 +246,22 @@ abstract class CatalogController extends BaseController{
                 ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup())))
             ->setSchemas(Factory::createCollection($schemas, Factory::createSchema()));
 
-        $this->filter($oContainer);
+        if ($this->filter($oContainer) instanceof RedirectResponse) {
+            return $this->filter($oContainer);
+        };
+
+        $schemaCodes = array_keys($schemas);
+        if (1 == count($schemaCodes)) {
+            return $this->redirect(
+                $this->generateUrl(
+                    str_replace('schemas', 'schema', $this->get('request')->get('_route')),
+                    array_merge($parameters, array(
+                            'schemaCode' => $schemaCodes[0]
+                        )
+                    )
+                ), 301
+            );
+        };
 
         return $this->render($this->bundle() . ':06_schemas.html.twig', array(
             'oContainer' => $oContainer,
