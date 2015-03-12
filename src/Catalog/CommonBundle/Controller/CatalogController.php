@@ -162,6 +162,19 @@ abstract class CatalogController extends BaseController{
             return $this->filter($oContainer);
         };
 
+        $groupsKeys = array_keys($oContainer->getGroups());
+        if (1 == count($groupsKeys)) {
+            return $this->redirect(
+                $this->generateUrl(
+                    str_replace('groups', 'subgroups', $this->get('request')->get('_route')),
+                    array_merge($parameters, array(
+                            'groupCode' => $groupsKeys[0]
+                        )
+                    )
+                ), 301
+            );
+        };
+
         return $this->render($this->bundle() . ':04_groups.html.twig', array(
             'oContainer' => $oContainer,
             'parameters' => $parameters
@@ -204,6 +217,19 @@ abstract class CatalogController extends BaseController{
 
         if ($this->filter($oContainer) instanceof RedirectResponse) {
             return $this->filter($oContainer);
+        };
+
+        $subgroupsKeys = array_keys($oContainer->getActiveGroup()->getSubgroups());
+        if (1 == count($subgroupsKeys)) {
+            return $this->redirect(
+                $this->generateUrl(
+                    str_replace('subgroups', 'schemas', $this->get('request')->get('_route')),
+                    array_merge($parameters, array(
+                            'subGroupCode' => $subgroupsKeys[0]
+                        )
+                    )
+                ), 301
+            );
         };
 
         return $this->render($this->bundle() . ':05_subgroups.html.twig', array(

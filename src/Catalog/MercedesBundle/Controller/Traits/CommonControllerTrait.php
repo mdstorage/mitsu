@@ -72,7 +72,22 @@ trait CommonControllerTrait {
                 ->setSubGroups(Factory::createCollection($saSubGroups, Factory::createGroup())))
             ->setGroups(Factory::createCollection($saFLSubGroups, Factory::createGroup()));
 
-        $this->filter($oContainer);
+        if ($this->filter($oContainer) instanceof RedirectResponse) {
+            return $this->filter($oContainer);
+        };
+
+        $saSubGroupsCodes = array_keys($saSubGroups);
+        if (1 == count($saSubGroupsCodes)) {
+            return $this->redirect(
+                $this->generateUrl(
+                    str_replace('subgroups', 'schemas', $this->get('request')->get('_route')),
+                    array_merge($parameters, array(
+                            'schemaCode' => $saSubGroupsCodes[0]
+                        )
+                    )
+                ), 301
+            );
+        };
 
         return $this->render($this->bundle() . ':051_sa1subgroups.html.twig', array(
             'oContainer' => $oContainer,
@@ -115,7 +130,9 @@ trait CommonControllerTrait {
                 ->setSubGroups(Factory::createCollection($saSubGroups, Factory::createGroup())))
             ->setSchemas(Factory::createCollection($schemas, Factory::createSchema()));
 
-        $this->filter($oContainer);
+        if ($this->filter($oContainer) instanceof RedirectResponse) {
+            return $this->filter($oContainer);
+        };
 
         $saSchemaCodes = array_keys($schemas);
         if (1 == count($saSchemaCodes)) {

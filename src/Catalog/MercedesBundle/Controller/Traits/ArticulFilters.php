@@ -34,6 +34,18 @@ trait ArticulFilters {
     {
         $sanums = $parameters['sanums'];
 
+        if (1 == count($sanums)) {
+            return $this->redirect(
+                $this->generateUrl(
+                    str_replace('subgroups', 'schemas', $this->get('request')->get('_route')),
+                    array_merge($parameters, array(
+                            'subGroupCode' => $sanums[0]
+                        )
+                    )
+                ), 301
+            );
+        };
+
         foreach ($oContainer->getGroups() as $group) {
             if (!in_array($group->getCode(), $sanums)) {
                 $oContainer->removeGroup($group->getCode());

@@ -58,7 +58,13 @@ trait CatalogFilters {
 
         $bm = count($oContainer->getGroups());
         $sa = count($oContainer->getActiveGroup()->getSubGroups());
-        $subGroupCode = 1 == $bm ? array_keys($oContainer->getGroups())[0] : array_keys($oContainer->getActiveGroup()->getSubGroups())[0];
+
+        if (1 == $bm) {
+            $subGroupCode = array_keys($oContainer->getGroups())[0];
+        }
+        if (1 == $sa) {
+            $subGroupCode = array_keys($oContainer->getActiveGroup()->getSubGroups())[0];
+        }
 
         if (
             (1 == $bm && 0 == $sa) ||
