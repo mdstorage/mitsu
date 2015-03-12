@@ -276,7 +276,8 @@ abstract class CatalogController extends BaseController{
             return $this->filter($oContainer);
         };
 
-        $schemaCodes = array_keys($schemas);
+        $schemaCodes = array_keys($oContainer->getSchemas());
+
         if (1 == count($schemaCodes)) {
             return $this->redirect(
                 $this->generateUrl(
