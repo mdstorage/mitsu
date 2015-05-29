@@ -35,4 +35,9 @@ class Collection implements CollectionInterface{
     {
         return $this->collection;
     }
+
+    public function toArray()
+    {
+        return $this->collection;
+    }
 } 

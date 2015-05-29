@@ -34,7 +34,7 @@ abstract class CatalogController extends BaseController{
             $regionsCollection = Factory::createCollection($aRegions, $oActiveRegion);
             $oContainer = Factory::createContainer()
                 ->setRegions($regionsCollection);
-
+            unset($aRegions);
             /**
              * Если пользователь задал регион, то этот регион становится активным
              */
@@ -120,7 +120,7 @@ abstract class CatalogController extends BaseController{
             ->setActiveModel($modelsCollection[$modelCode])
             ->setActiveModification($modificationsCollection[$modificationCode]
                 ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
-
+        unset($complectations);
         $this->filter($oContainer);
 
         return $this->render($this->bundle() . ':03_complectations.html.twig', array(
@@ -158,8 +158,8 @@ abstract class CatalogController extends BaseController{
             ->setActiveModification($modificationsCollection[$modificationCode])
             ->setGroups(Factory::createCollection($groups, Factory::createGroup()));
 
-        if ($this->filter($oContainer) instanceof RedirectResponse) {
-            return $this->filter($oContainer);
+        if (($filterResult = $this->filter($oContainer)) instanceof RedirectResponse) {
+            return $filterResult;
         };
 
         $groupsKeys = array_keys($oContainer->getGroups());
@@ -215,8 +215,8 @@ abstract class CatalogController extends BaseController{
                 ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup()))
             );
 
-        if ($this->filter($oContainer) instanceof RedirectResponse) {
-            return $this->filter($oContainer);
+        if (($filterResult = $this->filter($oContainer)) instanceof RedirectResponse) {
+            return $filterResult;
         };
 
         $subgroupsKeys = array_keys($oContainer->getActiveGroup()->getSubgroups());
@@ -272,8 +272,8 @@ abstract class CatalogController extends BaseController{
                 ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup())))
             ->setSchemas(Factory::createCollection($schemas, Factory::createSchema()));
 
-        if ($this->filter($oContainer) instanceof RedirectResponse) {
-            return $this->filter($oContainer);
+        if (($filterResult = $this->filter($oContainer)) instanceof RedirectResponse) {
+            return $filterResult;
         };
 
         $schemaCodes = array_keys($oContainer->getSchemas());

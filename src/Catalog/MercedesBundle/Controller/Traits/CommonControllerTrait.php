@@ -76,7 +76,7 @@ trait CommonControllerTrait {
             return $this->filter($oContainer);
         };
 
-        $saSubGroupsCodes = array_keys($oContainer->getSubGroups());
+        $saSubGroupsCodes = array_keys($oContainer->getGroups());
         if (1 == count($saSubGroupsCodes)) {
             return $this->redirect(
                 $this->generateUrl(
