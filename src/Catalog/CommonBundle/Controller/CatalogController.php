@@ -3,6 +3,7 @@ namespace Catalog\CommonBundle\Controller;
 
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Components\Factory;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,7 +34,7 @@ abstract class CatalogController extends BaseController{
             $regionsCollection = Factory::createCollection($aRegions, $oActiveRegion);
             $oContainer = Factory::createContainer()
                 ->setRegions($regionsCollection);
-
+            unset($aRegions);
             /**
              * Если пользователь задал регион, то этот регион становится активным
              */
@@ -119,7 +120,7 @@ abstract class CatalogController extends BaseController{
             ->setActiveModel($modelsCollection[$modelCode])
             ->setActiveModification($modificationsCollection[$modificationCode]
                 ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
-
+        unset($complectations);
         $this->filter($oContainer);
 
         return $this->render($this->bundle() . ':03_complectations.html.twig', array(
@@ -157,7 +158,22 @@ abstract class CatalogController extends BaseController{
             ->setActiveModification($modificationsCollection[$modificationCode])
             ->setGroups(Factory::createCollection($groups, Factory::createGroup()));
 
-        $this->filter($oContainer);
+        if (($filterResult = $this->filter($oContainer)) instanceof RedirectResponse) {
+            return $filterResult;
+        };
+
+        $groupsKeys = array_keys($oContainer->getGroups());
+        if (1 == count($groupsKeys)) {
+            return $this->redirect(
+                $this->generateUrl(
+                    str_replace('groups', 'subgroups', $this->get('request')->get('_route')),
+                    array_merge($parameters, array(
+                            'groupCode' => $groupsKeys[0]
+                        )
+                    )
+                ), 301
+            );
+        };
 
         return $this->render($this->bundle() . ':04_groups.html.twig', array(
             'oContainer' => $oContainer,
@@ -199,7 +215,22 @@ abstract class CatalogController extends BaseController{
                 ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup()))
             );
 
-        $this->filter($oContainer);
+        if (($filterResult = $this->filter($oContainer)) instanceof RedirectResponse) {
+            return $filterResult;
+        };
+
+        $subgroupsKeys = array_keys($oContainer->getActiveGroup()->getSubgroups());
+        if (1 == count($subgroupsKeys)) {
+            return $this->redirect(
+                $this->generateUrl(
+                    str_replace('subgroups', 'schemas', $this->get('request')->get('_route')),
+                    array_merge($parameters, array(
+                            'subGroupCode' => $subgroupsKeys[0]
+                        )
+                    )
+                ), 301
+            );
+        };
 
         return $this->render($this->bundle() . ':05_subgroups.html.twig', array(
             'oContainer' => $oContainer,
@@ -241,7 +272,23 @@ abstract class CatalogController extends BaseController{
                 ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup())))
             ->setSchemas(Factory::createCollection($schemas, Factory::createSchema()));
 
-        $this->filter($oContainer);
+        if (($filterResult = $this->filter($oContainer)) instanceof RedirectResponse) {
+            return $filterResult;
+        };
+
+        $schemaCodes = array_keys($oContainer->getSchemas());
+
+        if (1 == count($schemaCodes)) {
+            return $this->redirect(
+                $this->generateUrl(
+                    str_replace('schemas', 'schema', $this->get('request')->get('_route')),
+                    array_merge($parameters, array(
+                            'schemaCode' => $schemaCodes[0]
+                        )
+                    )
+                ), 301
+            );
+        };
 
         return $this->render($this->bundle() . ':06_schemas.html.twig', array(
             'oContainer' => $oContainer,

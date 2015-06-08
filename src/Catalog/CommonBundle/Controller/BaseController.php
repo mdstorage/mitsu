@@ -4,6 +4,7 @@ namespace Catalog\CommonBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Catalog\CommonBundle\Components\Factory;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 abstract class BaseController extends Controller
@@ -26,7 +27,12 @@ abstract class BaseController extends Controller
             if (method_exists($this, $filter)) {
                 $object = $this->$filter($object, $parameters);
             }
+
+            if ($object instanceof RedirectResponse) {
+                return $object;
+            }
         }
+
         return $object;
     }
 

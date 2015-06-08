@@ -25,7 +25,7 @@ abstract class VinController extends CatalogController{
 
             $vin = $request->get('vin');
 
-            $result = $this->model()->getVinFinderResult($vin);
+            $result = $this->model()->getVinFinderResult($vin); 
             if (!$result) {
                 return $this->render($this->bundle().':empty.html.twig');
             }
@@ -35,7 +35,9 @@ abstract class VinController extends CatalogController{
              */
             setcookie(Constants::PROD_DATE, $result[Constants::PROD_DATE]);
 
+
             setcookie(Constants::VIN, $vin);
+
             return $this->render($this->bundle().':02_result.html.twig', array(
                 'result' => $result
             ));

@@ -4,11 +4,15 @@ namespace Catalog\MercedesBundle\Controller;
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Components\Factory;
 use Catalog\CommonBundle\Controller\VinController as BaseController;
+use Catalog\MercedesBundle\Controller\Traits\CatalogFilters;
+use Catalog\MercedesBundle\Controller\Traits\CommonControllerTrait;
 use Catalog\MercedesBundle\Controller\Traits\VinFilters;
 use Symfony\Component\HttpFoundation\Request;
 
 class VinController extends BaseController{
     use VinFilters;
+    use CatalogFilters;
+    use CommonControllerTrait;
 
     public function bundle()
     {

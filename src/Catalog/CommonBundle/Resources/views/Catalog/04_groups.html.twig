@@ -19,7 +19,7 @@
             <div class="groups">
                 {% for group in oContainer.getGroups %}
                     <div>
-                        <a href="{% block pathToSubgroup %}{% endblock pathToSubgroup %}">{{ group.getRuname }}</a>
+                        <a href="{% block pathToSubgroup %}{% endblock pathToSubgroup %}">({{ group.getCode }}) {{ group.getRuname }}</a>
                     </div>
                 {% endfor %}
             </div>

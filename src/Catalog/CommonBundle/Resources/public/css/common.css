@@ -7,6 +7,9 @@
     font-weight: bold;
 }
 
+.complectations{
+    margin-left: 60px;
+}
 .modifications{
     margin-left: 50px;
 }
@@ -17,4 +20,8 @@
 
 .groups{
     margin-left: 60px;
+}
+
+img {
+    -ms-interpolation-mode: bicubic;
 }

@@ -48,7 +48,7 @@ abstract class CommonElement implements CommonInterface{
 
     public function getCode()
     {
-        return $this->code;
+        return (string) $this->code;
     }
 
     public function setOptions(array $options=array())
