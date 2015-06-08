@@ -1,0 +1,362 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: misha
+ * Date: 11.01.15
+ * Time: 16:58
+ */
+
+namespace Catalog\SuzukiBundle\Models;
+
+use Catalog\CommonBundle\Components\Constants;
+use Catalog\SuzukiBundle\Components\SuzukiConstants;
+
+class SuzukiArticulModel extends SuzukiCatalogModel{
+
+    public function getArticulRegions($articulCode){
+
+        $sql = "
+        SELECT *
+        FROM parts
+        WHERE PRTNAME = :articulCode
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', $articulCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+        
+        foreach($aData as $item)
+        {
+		$sqlCatalog = "
+        SELECT CATNAME, ABBREV
+        FROM model_series
+        WHERE CATCODE = :CATCODE
+        ";
+
+        $query = $this->conn->prepare($sqlCatalog);
+        $query->bindValue('CATCODE', $item['CATCODE']);
+        $query->execute();
+
+        $aDataCatalog[] = $query->fetchAll(); 
+		}
+		$regions = array();
+		foreach($aDataCatalog as $item)
+        {
+        	foreach($item as $item1)
+        	{
+				$regions[] = trim($item1['ABBREV']);
+			}
+        		
+        		
+		}
+		
+      
+		
+        return array_unique($regions);
+
+    }
+
+    public function getArticulModels($articul, $regionCode)
+    {
+    	$sql = "
+        SELECT CATCODE
+        FROM parts
+        WHERE PRTNAME = :articulCode
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', $articul);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+        
+        foreach($aData as $item)
+        {
+		$sqlCatalog = "
+        SELECT CATNAME, ABBREV
+        FROM model_series
+        WHERE CATCODE = :CATCODE
+        AND ABBREV = :regionCode
+        
+        ";
+
+        $query = $this->conn->prepare($sqlCatalog);
+        $query->bindValue('CATCODE', $item['CATCODE']);
+        $query->bindValue('regionCode', $regionCode);
+        $query->execute();
+
+        $aDataCatalog[] = $query->fetchAll();
+		}
+		
+		$models = array();
+		
+		foreach($aDataCatalog as $item)
+		{
+			foreach($item as $item1)
+			{
+			$aOrigin[]=$item1['CATNAME'];	
+			}
+			
+		}
+		
+		foreach(array_unique($aOrigin) as $item)
+        {
+		$sqlCatalogRegion = "
+        SELECT MODEL
+        FROM model_cat_name
+        WHERE CATNAME = :CATNAME
+        AND ABBREV = :regionCode
+        ";
+
+        $query = $this->conn->prepare($sqlCatalogRegion);
+        $query->bindValue('CATNAME', $item);
+        $query->bindValue('regionCode', $regionCode);
+        $query->execute();
+
+        $aDataCatalogRegion[] = $query->fetch();	
+        
+		}
+		$models = array();
+		foreach($aDataCatalogRegion as $value)
+		{
+				$models[]=urlencode($value['MODEL']);
+		}
+ 
+        return array_unique($models);
+    }
+    
+    public function getArticulModifications($articul, $regionCode)
+    {
+        $sql = "
+        SELECT CATCODE
+        FROM parts
+        WHERE PRTNAME = :articulCode
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', $articul);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+        
+        foreach($aData as $item)
+        {
+		$sqlCatalog = "
+        SELECT CATNAME
+        FROM model_series
+        WHERE CATCODE = :CATCODE
+        AND ABBREV = :regionCode
+        ";
+
+        $query = $this->conn->prepare($sqlCatalog);
+        $query->bindValue('CATCODE', $item['CATCODE']);
+        $query->bindValue('regionCode', $regionCode);
+        $query->execute();
+
+        $aDataCatalog[] = $query->fetchAll();
+		}
+		
+		$modifications = array();
+		foreach($aDataCatalog as $item)
+		{
+			foreach($item as $item1)
+			{
+			$modifications[]=$item1['CATNAME'];	
+			}
+			
+		}
+
+        return array_unique($modifications);
+    }
+    
+    public function getArticulComplectations($articul, $regionCode)
+    {
+    	$sql = "
+        SELECT CATCODE
+        FROM parts
+        WHERE PRTNAME = :articulCode
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', $articul);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+        
+        foreach($aData as $item)
+        {
+		$sqlCatalog = "
+        SELECT CATSER
+        FROM model_series
+        WHERE CATCODE = :CATCODE
+        AND ABBREV = :regionCode
+        ";
+
+        $query = $this->conn->prepare($sqlCatalog);
+        $query->bindValue('CATCODE', $item['CATCODE']);
+        $query->bindValue('regionCode', $regionCode);
+        $query->execute();
+
+        $aDataCatalog[] = $query->fetchAll();
+		}
+		p
+		
+		$complectations = array();
+		foreach($aDataCatalog as $item)
+		{
+			foreach($item as $item1)
+			{
+			$complectations[]=$item1['CATSER'];	
+			}
+			
+		}
+
+        return array_unique($complectations);
+    }
+    
+    public function getArticulGroups($articul, $regionCode, $modelCode)
+    {
+        $sql = "
+        SELECT CATCODE, sec_group
+        FROM parts
+        WHERE PRTNAME = :articulCode
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', $articul);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+       foreach($aData as $item)
+       {
+	   	 $sqlGroups = "
+        SELECT pri_group
+        FROM sec_groups
+        WHERE CATCODE = :CATCODE
+        AND sec_group = :sec_group
+        ";
+
+        $query = $this->conn->prepare($sqlGroups);
+        $query->bindValue('CATCODE', $item['CATCODE']);
+        $query->bindValue('sec_group', $item['sec_group']);
+        $query->execute();
+
+        $aDataGroups[] = $query->fetchAll();
+	   } 
+    	$groups = array();
+
+        foreach($aDataGroups as $item)
+		{
+			foreach($item as $item1)
+			{
+			$groups[]=$item1['pri_group'];	
+			}
+			
+		}
+        return array_unique($groups);
+    }
+    public function getArticulSubGroups($articul, $regionCode, $modelCode, $groupCode)
+    {
+        $sql = "
+        SELECT CATCODE, sec_group
+        FROM parts
+        WHERE PRTNAME = :articulCode
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', $articul);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+        $subgroups = array();
+        foreach($aData as $item)
+        {
+			 $subgroups[] = $item['sec_group'];
+		}
+    	return array_unique($subgroups);
+    }
+    
+    public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
+    {
+        $sql = "
+        SELECT CATCODE, sec_group
+        FROM parts
+        WHERE PRTNAME = :articulCode
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', $articul);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+        $aSecGroups = array();
+       foreach ($aData as $item)
+       {
+	    $sqlSecGroups = "
+        SELECT *
+        FROM sec_groups
+        WHERE CATCODE = :dataCatcode
+        AND sec_group = :subGroupCode
+        ";
+        
+    	$query = $this->conn->prepare($sqlSecGroups);
+        $query->bindValue('dataCatcode', $item['CATCODE']);
+        $query->bindValue('subGroupCode', $item['sec_group']);
+        $query->execute();
+
+        $aSecGroups[] = $query->fetch();
+	   }
+	   foreach ($aSecGroups as $item)
+	   {
+	   	$sqlSchemas = "
+        SELECT *
+        FROM image_cat
+        WHERE IMAGE_NAME = :image_full 
+        ";
+        
+        $query = $this->conn->prepare($sqlSchemas);
+        $query->bindValue('image_full', 'SW'.$item['CATCODE'].str_pad($item['FIGNUM_LJ']*10, 4, "0", STR_PAD_LEFT));
+        $query->execute();
+
+        $aSchemas[] = $query->fetch();
+	   	
+	   }
+	   
+	   $schemas = array();
+	   
+	    foreach ($aSchemas as $item)
+	    {
+			$schemas[] = $item['CRC'];
+		}   
+
+        return array_unique($schemas);
+    }
+         
+     public function getArticulPncs($articul, $regionCode, $modelCode, $groupCode, $subGroupCode)
+    {
+        $sqlPnc = "
+        SELECT part_code
+        FROM part_catalog
+        WHERE catalog = :regionCode
+        AND part_number = :articul 
+        AND model_code = :modelCode
+        AND pri_group = :groupCode
+        AND sec_group = :subGroupCode
+        GROUP BY part_code
+        ";
+
+        $query = $this->conn->prepare($sqlPnc);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('articul', $articul);
+        $query->bindValue('modelCode', $modelCode);
+        $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->execute();
+$pncs = array();
+        $pncs = $this->array_column($query->fetchAll(), 'part_code');
+
+        return $pncs; 
+    }
+} 

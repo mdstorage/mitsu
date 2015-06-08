@@ -1,0 +1,26 @@
+{% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
+{% use 'CatalogSuzukiBundle::suzuki.base.html.twig' %}
+{% block breadcrumbs %}
+   <a href="{{ path('catalog_suzuki') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
+   {{ oContainer.getActiveModel.getCode }}, {{ oContainer.getActiveModification.getCode }})</a> / Комплектация
+{% endblock breadcrumbs %}
+
+{% block complectationItem %}
+	
+            <div class="col-lg-6">
+           
+                             <a href="{{ path('catalog_suzuki_groups', parameters|merge({'complectationCode': complectation.getCode})) }}">
+        
+    <b>    {{ complectation.getRuname }} </b>
+      </a> <br/>  
+      {{ complectation.getOption('option1') }}<br/><br/>   
+                           
+                </div>
+                
+   
+{% endblock complectationItem %}
+
+
+
+
+

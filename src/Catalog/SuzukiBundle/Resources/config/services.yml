@@ -1,0 +1,20 @@
+services:
+#    catalog_suzuki.example:
+#        class: Catalog\SuzukiBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  suzuki_date_convertor.extension:
+        class: Catalog\SuzukiBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  suzuki.catalog.model:
+    class: Catalog\SuzukiBundle\Models\SuzukiCatalogModel
+    arguments:  ['@doctrine.dbal.suzuki_connection']
+
+  suzuki.vin.model:
+    class: Catalog\SuzukiBundle\Models\SuzukiVinModel
+    arguments:  ['@doctrine.dbal.suzuki_connection']
+
+  suzuki.articul.model:
+    class: Catalog\SuzukiBundle\Models\SuzukiArticulModel
+    arguments:  ['@doctrine.dbal.suzuki_connection']

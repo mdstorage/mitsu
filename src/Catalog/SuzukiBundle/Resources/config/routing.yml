@@ -1,0 +1,120 @@
+catalog_suzuki:
+  path:         /suzuki/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_suzuki_modifications:
+  path:         /suzuki/catalog/1
+  defaults:     {_controller: CatalogSuzukiBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_suzuki_complectations:
+  path:         /suzuki/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Catalog:complectations}
+
+catalog_suzuki_groups:
+  path:         /suzuki/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Catalog:groups}
+
+catalog_suzuki_subgroups:
+  path:         /suzuki/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Catalog:subgroups}
+
+catalog_suzuki_schemas:
+  path:         /suzuki/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Catalog:schemas}
+
+catalog_suzuki_schema:
+  path:         /suzuki/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Catalog:schema}
+
+catalog_suzuki_articuls:
+  path:         /suzuki/catalog/7
+  defaults:     {_controller: CatalogSuzukiBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_suzuki_group:
+  path:         /suzuki/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_suzuki:
+  path:         /suzuki/vin/0
+  defaults:     {_controller: CatalogSuzukiBundle:Vin:index}
+
+vin_suzuki_result:
+  path:         /suzuki/vin/1
+  defaults:     {_controller: CatalogSuzukiBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_suzuki_groups:
+  path:         /suzuki/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Vin:groups}
+
+vin_suzuki_subgroups:
+  path:         /suzuki/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Vin:subgroups}
+
+vin_suzuki_schemas:
+  path:         /suzuki/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Vin:schemas}
+
+vin_suzuki_schema:
+  path:         /suzuki/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Vin:schema}
+
+vin_suzuki_articuls:
+  path:         /suzuki/vin/7
+  defaults:     {_controller: CatalogSuzukiBundle:Vin:articuls}
+  requirements: {_method: POST}
+
+vin_suzuki_group:
+  path:         /suzuki/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_suzuki:
+  path:         /suzuki/articul/0
+  defaults:     {_controller: CatalogSuzukiBundle:Articul:index}
+
+articul_suzuki_find:
+  path:         /suzuki/articul/1/{regionCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Articul:findByArticul, regionCode: null}
+
+articul_suzuki_modifications:
+  path:         /suzuki/articul/3
+  defaults:     {_controller: CatalogSuzukiBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_suzuki_complectations:
+  path:         /suzuki/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Articul:suzukiArticulComplectations}
+
+articul_suzuki_groups:
+  path:         /suzuki/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Articul:suzukiArticulgroups}
+
+articul_suzuki_subgroups:
+  path:         /suzuki/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Articul:suzukiArticulSubgroups}
+
+articul_suzuki_schemas:
+  path:         /suzuki/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Articul:suzukiArticulSchemas}
+
+articul_suzuki_schema:
+  path:         /suzuki/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Articul:suzukiArticulSchema}
+
+articul_suzuki_articuls:
+  path:         /suzuki/articul/9
+  defaults:     {_controller: CatalogSuzukiBundle:Articul:articuls}
+  requirements: {_method: POST}
+
+articul_suzuki_group:
+  path:         /suzuki/articul/10/{regionCode}/{modelCode}/{modificationCode}/complectationCode/{subGroupCode}
+  defaults:     {_controller: CatalogSuzukiBundle:Articul:getGroupBySubgroup}
+catalog_suzuki_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogSuzukiBundle:Default:index }
