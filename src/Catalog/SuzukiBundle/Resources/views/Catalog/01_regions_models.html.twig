@@ -1,0 +1,86 @@
+{% extends 'CatalogCommonBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogSuzukiBundle::suzuki.base.html.twig' %}
+
+
+{% block models %}
+        <h3>Модельный ряд:</h3>
+        <div class="row">
+            <div class="col-lg-6">
+            
+            
+                <div id="result">
+                    {% for model in oContainer.getActiveRegion.getModels %}
+                        {% if loop.index <= (modelsListLenght/2|round + 1) %}
+                            {% block halfList %}
+                                    {% set modelCode = model.getCode|md5 %}
+                                    
+                                    <img src="{{ asset('bundles/catalogsuzuki/images/MODEL_IMAGE/'~model.getOption('option1')~'.psd') }}" href="#" id="{{ modelCode }}{{ modelCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}" alt="{{ model.getRuname }}" style="cursor: pointer">
+                                    
+                                    <div class="model glyphicon-plus" id="{{ modelCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}">
+                                        {{ model.getRuname }} 
+                                    </div>
+                                    <div id="modifications_for_model{{ modelCode }}" class="hidden"></div><br/>
+                                {% block modificationScript %}
+                                    <script>
+                                    
+                                   
+                                        $("#{{ modelCode }}").on("click", function(){
+                                    {% block ModelClick %}
+                                        	
+                                            $("#modifications_for_model{{ modelCode }}").toggleClass("hidden");
+                                            $("#{{ modelCode }}").toggleClass("glyphicon-plus");
+                                            $.ajax({
+                                                type:   'POST',
+                                                async:  false,
+                                                url:    "{% block ajaxUrl %}{{ path('catalog_suzuki_modifications') }}{% endblock ajaxUrl %}",
+                                                data:   { regionCode: $(this).attr('regionCode'), modelCode: "{{ model.getCode }}" },
+                                                success: function(data) {
+                                                    $("#modifications_for_model{{ modelCode }}").html(data);
+                                                }
+                                            });
+                                            $("#{{ modelCode }}").toggleClass("glyphicon-minus");
+                                    {% endblock ModelClick %}   
+                                        });
+                                        $("#{{ modelCode }}").on("mouseover", function(){
+                                            $(this).css("cursor", "pointer");
+                                            $(this).addClass("btn-info");
+                                        });
+                                        $("#{{ modelCode }}").on("mouseout", function(){
+                                            $(this).removeClass("btn-info");
+                                        });
+                                    </script>
+                                {% endblock modificationScript %}
+                                {% block ImgScript %}
+                                    <script>
+                                        $("img#{{ modelCode }}{{ modelCode }}").on("click", function(){
+                                            {{ block('ModelClick') }}
+                                        });
+                                        
+                                        $("img#{{ modelCode }}{{ modelCode }}").on("mouseover", function(){
+                                            $("#{{ modelCode }}").css("cursor", "pointer");
+                                            $("#{{ modelCode }}").addClass("btn-info");
+                                        });
+                                        
+                                        $("img#{{ modelCode }}{{ modelCode }}").on("mouseout", function(){
+                                            $("#{{ modelCode }}").removeClass("btn-info");
+                                        });
+                                    </script>
+                                    
+                                {% endblock ImgScript %}
+                            {% endblock halfList %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div id="result">
+                    {% for model in oContainer.getActiveRegion.getModels %}
+                        {% if loop.index > (modelsListLenght/2|round + 1) %}
+                            {{ block('halfList') }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endblock models %}
+{% block regionPath %}{{ path('catalog_suzuki', {'regionCode': region.getCode}) }}{% endblock regionPath %}

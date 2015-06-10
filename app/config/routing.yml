@@ -1,7 +1,11 @@
+acme_task:
+    resource: "@AcmeTaskBundle/Resources/config/routing.php"
+    prefix:   /
+
 catalog_subaru:
     resource: "@CatalogSubaruBundle/Resources/config/routing.yml"
     prefix:   /
-    
+
 catalog_mercedes:
     resource: "@CatalogMercedesBundle/Resources/config/routing.yml"
     prefix:   /
@@ -17,4 +21,7 @@ catalog_mazda:
 catalog_mitsubishi:
     resource: "@CatalogMitsubishiBundle/Resources/config/routing.yml"
     prefix:   /
-
+    
+catalog_suzuki:
+    resource: "@CatalogSuzukiBundle/Resources/config/routing.yml"
+    prefix:   /
