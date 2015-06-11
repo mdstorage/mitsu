@@ -127,7 +127,7 @@ class SuzukiArticulModel extends SuzukiCatalogModel{
 		$models = array();
 		foreach($aDataCatalogRegion as $value)
 		{
-				$models[]=urlencode($value['MODEL']);
+				$models[]=rawurlencode($value['MODEL']);
 		}
  
         return array_unique($models);
@@ -232,7 +232,8 @@ class SuzukiArticulModel extends SuzukiCatalogModel{
         $sqlParts = "
         SELECT sec_group
         FROM parts
-        WHERE PRTNAME = :articulCode
+        WHERE CATCODE = :CATCODE
+        AND PRTNAME = :articulCode
         OR PARTNUM = :articulCode
         AND CATCODE = :CATCODE
         ";
@@ -280,7 +281,9 @@ class SuzukiArticulModel extends SuzukiCatalogModel{
         $sqlParts = "
         SELECT sec_group
         FROM parts
-        WHERE PRTNAME = :articulCode
+        WHERE 
+        CATCODE = :CATCODE
+        AND PRTNAME = :articulCode
         OR PARTNUM = :articulCode
         AND CATCODE = :CATCODE
         ";
@@ -358,6 +361,8 @@ class SuzukiArticulModel extends SuzukiCatalogModel{
         AND sec_group = :sec_group
         AND PRTNAME = :PRTNAME
         OR PARTNUM = :PRTNAME
+        AND CATCODE = :CATCODE
+        AND sec_group = :sec_group
         ";
 
         $query = $this->conn->prepare($sqlPnc);
