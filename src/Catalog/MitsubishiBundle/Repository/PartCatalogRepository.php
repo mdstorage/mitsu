@@ -9,11 +9,18 @@
 namespace Catalog\MitsubishiBundle\Repository;
 
 
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\ResultSetMapping;
 
 class PartCatalogRepository extends EntityRepository
 {
+    protected $conn;
+    public function setConnection(Connection $connection)
+    {
+        $this->conn = $connection;
+    }
+
     public function getPncsByModel($catalog, $model, $mainGroup, $subGroup, $classification, $prodDate = "")
     {
         if ($prodDate !== ""){
@@ -39,22 +46,15 @@ class PartCatalogRepository extends EntityRepository
               pg.PartNumber as partNumber,
               pg.StartDate as startDate,
               pg.EndDate as endDate,
-              pg.Qty as quantity,
-              d.desc_en as descEn
+              pg.Qty as quantity
             FROM
               `part_catalog` pg
-            LEFT JOIN
-              `pnc` ON pg.PNC = pnc.pnc
-            LEFT JOIN
-              `descriptions` d ON pnc.desc_code = d.TS
             WHERE
               pg.catalog = :catalog
               AND (pg.Model = :model)
               AND pg.MainGroup = :mainGroup
               AND pg.SubGroup = :subGroup
               AND (pg.Classification = :classification OR pg.Classification = "")' . $prodDateString . '
-              AND pnc.catalog = :catalog
-              AND d.catalog = :catalog
               GROUP BY pg.PartNumber, pg.StartDate, pg.EndDate
               ORDER BY pg.PNC, pg.StartDate
         ', $rsm)
@@ -69,7 +69,21 @@ class PartCatalogRepository extends EntityRepository
 
         $pncs = array();
         foreach ($nativeResult as $item){
-            $pncs[$item['pnc']]['descEn'] = $item['descEn'];
+            $sqlPncDescription = "
+                SELECT d.desc_en
+                FROM `pnc`
+                LEFT JOIN
+                  `descriptions` d ON pnc.desc_code = d.TS
+                WHERE pnc.pnc = :pnc
+                LIMIT 1
+                ";
+            $query = $this->conn->prepare($sqlPncDescription);
+            $query->bindValue('pnc', $item['pnc']);
+            $query->execute();
+
+            $sData = $query->fetchColumn();
+
+            $pncs[$item['pnc']]['descEn'] = $sData;
             $pncs[$item['pnc']]['partNumbers'][] = array(
                 'partNumber'=>$item['partNumber'],
                 'startDate'=>$item['startDate'],
