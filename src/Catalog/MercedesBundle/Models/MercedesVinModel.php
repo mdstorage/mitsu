@@ -100,7 +100,8 @@ class MercedesVinModel extends MercedesCatalogModel
             if ($aData) {
                 $result = array(
                     'region' => trim($aVin[0]['MARKET']),
-                    'model' => trim($aData['SALESDES']),
+                    'model' => trim($aData['CLASS']),
+                    'saledes' => trim($aData['SALESDES']),
                     'prod_year' => substr($aInfo['DDATE'], 0, 1) > 6 ? '19' . $aInfo['DDATE'] : '20' . $aInfo['DDATE'],
                     'modification' => $aData['AGGTYPE'],
     //                'country' => $aData['XC26EDST'],
@@ -112,7 +113,6 @@ class MercedesVinModel extends MercedesCatalogModel
             }
         }
 
-//        var_dump($aInfo);die;
         return $result;
     }
 
