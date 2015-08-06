@@ -100,17 +100,19 @@ class MercedesVinModel extends MercedesCatalogModel
             if ($aData) {
                 $result = array(
                     'region' => trim($aVin[0]['MARKET']),
-                    'model' => trim($aData['CLASS']),
-                    'prod_year' => substr($aInfo['DDATE'], 1, 1) > 6 ? '19' . $aInfo['DDATE'] : '20' . $aInfo['DDATE'],
+                    'model' => trim($aData['SALESDES']),
+                    'prod_year' => substr($aInfo['DDATE'], 0, 1) > 6 ? '19' . $aInfo['DDATE'] : '20' . $aInfo['DDATE'],
                     'modification' => $aData['AGGTYPE'],
     //                'country' => $aData['XC26EDST'],
                     'complectation' => $aData['CATNUM'] . '.' . $aData['TYPE'] . '.' .  $aData['SUBBM1'],
     //                'ext_color' => $aData['ext_color'],
     //                'int_color' => $aData['int_color'],
-                    Constants::PROD_DATE => substr($aInfo['RDATE'], 1, 1) > 6 ? '19' . $aInfo['RDATE'] : '20' . $aInfo['RDATE']
+                    Constants::PROD_DATE => substr($aInfo['RDATE'], 0, 1) > 6 ? '19' . $aInfo['RDATE'] : '20' . $aInfo['RDATE']
                 );
             }
         }
+
+//        var_dump($aInfo);die;
         return $result;
     }
 
