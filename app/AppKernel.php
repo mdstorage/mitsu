@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new Catalog\MercedesBundle\CatalogMercedesBundle(),
             new Acme\TaskBundle\AcmeTaskBundle(),
             new Catalog\SuzukiBundle\CatalogSuzukiBundle(),
+            new Catalog\HondaBundle\CatalogHondaBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

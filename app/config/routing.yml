@@ -25,3 +25,7 @@ catalog_mitsubishi:
 catalog_suzuki:
     resource: "@CatalogSuzukiBundle/Resources/config/routing.yml"
     prefix:   /
+    
+catalog_honda:
+    resource: "@CatalogHondaBundle/Resources/config/routing.yml"
+    prefix:   /
