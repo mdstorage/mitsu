@@ -122,6 +122,19 @@ abstract class CatalogController extends BaseController{
                 ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
         unset($complectations);
         $this->filter($oContainer);
+        
+        $complectationsKeys = array_keys($oContainer->getActiveModification()->getComplectations());
+        if (1 == count($complectationsKeys)) {
+            return $this->redirect(
+                $this->generateUrl(
+                    str_replace('complectations', 'groups', $this->get('request')->get('_route')),
+                    array_merge($parameters, array(
+                            'complectationCode' => $complectationsKeys[0]
+                        )
+                    )
+                ), 301
+            );
+        };
 
         return $this->render($this->bundle() . ':03_complectations.html.twig', array(
             'oContainer' => $oContainer,
