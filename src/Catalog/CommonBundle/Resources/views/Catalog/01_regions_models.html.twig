@@ -14,7 +14,8 @@
 {% block subGroup %}{% endblock subGroup %}
 
 {% block body %}
-    {% block regions %}
+
+   {% block regions %}
         {% block head %}<h3>Выбрать регион:</h3>{% endblock head %}
         <ul class="nav nav-pills" role="tablist">
             {% for region in oContainer.getRegions %}
@@ -22,7 +23,7 @@
             {% endfor %}
         </ul>
     {% endblock regions %}
-    {% block models %}
+     {% block models %}
         <h3>Модельный ряд:</h3>
         <div class="row">
             <div class="col-lg-6">

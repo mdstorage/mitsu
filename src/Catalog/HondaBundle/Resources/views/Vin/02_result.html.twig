@@ -1,0 +1,7 @@
+{% use 'CatalogHondaBundle::honda.base.html.twig' %}
+{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')] }}
+{% for region in result.options %}
+                   {{ region }}<br/>
+                    {% endfor %}
+
+
