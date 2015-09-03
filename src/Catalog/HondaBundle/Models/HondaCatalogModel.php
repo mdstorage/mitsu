@@ -296,11 +296,11 @@ class HondaCatalogModel extends CatalogModel{
     	
     	    
         $sqlSecGroups = "
-        SELECT DBA_PBLMTT.NPLBLK, DBA_PBLMTT.NPL, DBA_PBLOKT.NPLBLKEDIT, DBA_pbldst.xplblk
-		FROM (DBA_PBLOKT INNER JOIN DBA_PBLMTT ON (DBA_PBLOKT.NPLBLK = DBA_PBLMTT.NPLBLK) 
-		AND (DBA_PBLOKT.NPL = DBA_PBLMTT.NPL)) INNER JOIN DBA_pbldst ON (DBA_PBLMTT.NPLBLK = DBA_pbldst.nplblk) 
-		AND (DBA_PBLMTT.NPL = DBA_pbldst.npl)
-		WHERE (((DBA_PBLMTT.NPL)=:NPL) AND (dba_pblokt.NPLGRP=:groupCode) AND ((DBA_PBLMTT.HMODTYP)=:hmodtyp ))
+        SELECT dba_pblmtt.NPLBLK, dba_pblmtt.NPL, dba_pblokt.NPLBLKEDIT, dba_pbldst.xplblk
+		FROM (dba_pblokt INNER JOIN dba_pblmtt ON (dba_pblokt.NPLBLK = dba_pblmtt.NPLBLK) 
+		AND (dba_pblokt.NPL = dba_pblmtt.NPL)) INNER JOIN dba_pbldst ON (dba_pblmtt.NPLBLK = dba_pbldst.nplblk) 
+		AND (dba_pblmtt.NPL = dba_pbldst.npl)
+		WHERE (((dba_pblmtt.NPL)=:NPL) AND (dba_pblokt.NPLGRP=:groupCode) AND ((dba_pblmtt.HMODTYP)=:hmodtyp ))
         ";
         
     	$query = $this->conn->prepare($sqlSecGroups);
