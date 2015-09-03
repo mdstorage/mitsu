@@ -277,14 +277,17 @@ class HondaCatalogModel extends CatalogModel{
 
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
+    	$modelCode = rawurldecode($modelCode);
     	$sql = "
         SELECT *
         FROM dba_pmotyt
-        WHERE hmodtyp =:complectationCode 
+        WHERE hmodtyp =:complectationCode
+        AND cmodnamepc = :modelCode 
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('complectationCode',  $complectationCode);
+        $query->bindValue('modelCode',  $modelCode);
         $query->execute();
 
         $aData = $query->fetch();
@@ -307,6 +310,13 @@ class HondaCatalogModel extends CatalogModel{
         $query->execute();
 
         $aSecGroups = $query->fetchAll();
+        foreach($aSecGroups as $index => $value)
+        {
+        	if (($value['xplblk'] == '̨') || ($value['xplblk'] == ''))
+        	{
+				unset ($aSecGroups[$index]);
+			}
+		}
 
         $subgroups = array();
         foreach($aSecGroups as $item){
@@ -321,14 +331,17 @@ class HondaCatalogModel extends CatalogModel{
 
     public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
+        $modelCode = rawurldecode($modelCode);
         $sqlSecGroups = "
         SELECT *
         FROM dba_pmotyt
         WHERE hmodtyp =:complectationCode 
+        AND cmodnamepc = :modelCode
         ";
 
         $query = $this->conn->prepare($sqlSecGroups);
         $query->bindValue('complectationCode',  $complectationCode);
+        $query->bindValue('modelCode',  $modelCode);
         $query->execute();
 
         $aSecGroups = $query->fetch();
@@ -390,14 +403,17 @@ class HondaCatalogModel extends CatalogModel{
 
     public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
+        $modelCode = rawurldecode($modelCode);
         $sql = "
         SELECT *
         FROM dba_pmotyt
-        WHERE hmodtyp =:complectationCode 
+        WHERE hmodtyp =:complectationCode
+        AND cmodnamepc = :modelCode 
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('complectationCode',  $complectationCode);
+        $query->bindValue('modelCode',  $modelCode);
         $query->execute();
 
         $aData = $query->fetch();
@@ -512,14 +528,17 @@ $articuls = array();
 
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode)
     {
+        $modelCode = rawurldecode($modelCode);
         $sql = "
         SELECT *
         FROM dba_pmotyt
-        WHERE hmodtyp =:complectationCode 
+        WHERE hmodtyp =:complectationCode
+        AND cmodnamepc = :modelCode 
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('complectationCode',  $complectationCode);
+        $query->bindValue('modelCode',  $modelCode);
         $query->execute();
 
         $aData = $query->fetch();
