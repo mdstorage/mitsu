@@ -28,12 +28,7 @@ class HondaVinModel extends HondaCatalogModel {
         $query->execute();
 
         $aData = $query->fetchAll();
-        if (!$aData)
-        {
-			print_r('Ничего не найдено');die;
-		}
-       
-        
+               
         $complectations = array();
         
 		
@@ -42,7 +37,7 @@ class HondaVinModel extends HondaCatalogModel {
 			{
 			$complectations[]=$item1['hmodtyp'];	
 			}
-			
+		
         return $aData;
     }
     

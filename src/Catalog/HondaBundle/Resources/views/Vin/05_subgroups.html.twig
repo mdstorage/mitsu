@@ -13,7 +13,8 @@
 {% block subgroupImage %}
         {% endblock subgroupImage %}
 
-
-{% block pathToSchemas %}
-    {{ path('vin_honda_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}
-{% endblock pathToSchemas %}
+{% block subgroupItem %}
+          <div id="subgroup{{ subgroup.getCode }}">
+          <a href="{{ path('vin_honda_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">{{ subgroup.getRuname }}</a>
+          </div>
+{% endblock subgroupItem %}

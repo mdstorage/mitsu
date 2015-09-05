@@ -40,7 +40,7 @@ catalog_honda_group:
 
 vin_honda:
   path:         /honda/vin/0
-  defaults:     {_controller: CatalogHondaBundle:Vin:index}
+  defaults:     {_controller: CatalogHondaBundle:Vin:index1}
 
 vin_honda_complectations:
   path:         /honda/vin/2/{regionCode}/{modelCode}/{modificationCode}

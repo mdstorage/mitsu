@@ -186,6 +186,15 @@ class HondaCatalogModel extends CatalogModel{
          {
 		 	$aOriginOptionDescs[] = $item3['xmnopt'];
 		 }
+		
+		foreach($aOriginOptionDescs as $index => $value)
+        {
+        	if (($value == '') || ($value == ' '))
+        	{
+				unset ($aOriginOptionDescs[$index]);
+			}
+		}
+		 
 		$comma_separated = implode("; ", $aOriginOptionDescs);
 			 	 
         $item['nfrmpf'] = $comma_separated;
@@ -418,15 +427,51 @@ class HondaCatalogModel extends CatalogModel{
 
         $aData = $query->fetch();
     	$hmodtyp = $aData['hmodtyp'];
-    	$NPL = $aData['npl'];  
+    	$NPL = $aData['npl']; 
+    	
+    	$sqlTableNumber = "
+        SELECT disc_no
+		FROM dba_contain
+		WHERE pl_no =:pl_no
+        ";
+
+        $query = $this->conn->prepare($sqlTableNumber);
+        $query->bindValue('pl_no', $NPL);
+        $query->execute();
+
+        $DiscNumber = $query->fetch();
         
-        $sqlPnc = "
+        switch ($DiscNumber['disc_no']){
+            case 1:
+                $sqlPnc = "
         SELECT *
-        FROM dba_vw_blockpartsmodeltypes
+        FROM dba_vw_blockpartsmodeltypes1
         WHERE nplblk = :subGroupCode
         	AND npl = :NPL
             AND hmodtyp = :hmodtyp 
         ";
+                break;
+            case 2:
+                $sqlPnc = "
+        SELECT *
+        FROM dba_vw_blockpartsmodeltypes2
+        WHERE nplblk = :subGroupCode
+        	AND npl = :NPL
+            AND hmodtyp = :hmodtyp 
+        ";
+                break;
+            case 3:
+                $sqlPnc = "
+        SELECT *
+        FROM dba_vw_blockpartsmodeltypes3
+        WHERE nplblk = :subGroupCode
+        	AND npl = :NPL
+            AND hmodtyp = :hmodtyp 
+        ";
+                break;
+        } 
+        
+        
         
     	$query = $this->conn->prepare($sqlPnc);
         $query->bindValue('NPL', $NPL);
@@ -546,14 +591,50 @@ $articuls = array();
     	$NPL = $aData['npl'];  
         
         
-        $sqlPnc = "
+        $sqlTableNumber = "
+        SELECT disc_no
+		FROM dba_contain
+		WHERE pl_no =:pl_no
+        ";
+
+        $query = $this->conn->prepare($sqlTableNumber);
+        $query->bindValue('pl_no', $NPL);
+        $query->execute();
+
+        $DiscNumber = $query->fetch();
+        
+        switch ($DiscNumber['disc_no']){
+            case 1:
+                $sqlPnc = "
         SELECT *
-        FROM dba_vw_blockpartsmodeltypes
+        FROM dba_vw_blockpartsmodeltypes1
         WHERE nplblk = :subGroupCode
         	AND npl = :NPL
             AND hmodtyp = :hmodtyp
-            AND nplpartref= :pncCode
+            AND nplpartref= :pncCode 
         ";
+                break;
+            case 2:
+                $sqlPnc = "
+        SELECT *
+        FROM dba_vw_blockpartsmodeltypes2
+        WHERE nplblk = :subGroupCode
+        	AND npl = :NPL
+            AND hmodtyp = :hmodtyp
+            AND nplpartref= :pncCode 
+        ";
+                break;
+            case 3:
+                $sqlPnc = "
+        SELECT *
+        FROM dba_vw_blockpartsmodeltypes3
+        WHERE nplblk = :subGroupCode
+        	AND npl = :NPL
+            AND hmodtyp = :hmodtyp
+            AND nplpartref= :pncCode 
+        ";
+                break;
+        } 
         
     	$query = $this->conn->prepare($sqlPnc);
         $query->bindValue('NPL', $NPL);
