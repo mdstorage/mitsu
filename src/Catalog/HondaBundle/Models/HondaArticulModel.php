@@ -15,10 +15,13 @@ class HondaArticulModel extends HondaCatalogModel{
 
     public function getArticulRegions($articulCode){
 
+        
         $sql = "
-        SELECT npl, hmodtyp
-        FROM dba_vw_blockpartsmodeltypes
-        WHERE npartgenu = :articulCode
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes1 where npartgenu = :articulCode)
+        UNION
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes2 where npartgenu = :articulCode)
+        UNION
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes3 where npartgenu = :articulCode)
         ";
 
         $query = $this->conn->prepare($sql);
@@ -69,9 +72,11 @@ class HondaArticulModel extends HondaCatalogModel{
     	
     	$aData = array();
     	$sql = "
-        SELECT hmodtyp
-        FROM dba_vw_blockpartsmodeltypes
-        WHERE npartgenu = :articulCode
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes1 where npartgenu = :articulCode)
+        UNION
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes2 where npartgenu = :articulCode)
+        UNION
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes3 where npartgenu = :articulCode)
         ";
 
         $query = $this->conn->prepare($sql);
@@ -93,12 +98,14 @@ class HondaArticulModel extends HondaCatalogModel{
         FROM dba_pmotyt
         WHERE cmftrepc = :regionCode
         AND hmodtyp = :hmodtyp
+        AND npl = :npl
         ";
 
         $query = $this->conn->prepare($sqlCatalog);
         
         $query->bindValue('regionCode', $regionCode);
         $query->bindValue('hmodtyp', $item['hmodtyp']);
+        $query->bindValue('npl', $item['npl']);
         
         $query->execute();
 
@@ -111,7 +118,7 @@ class HondaArticulModel extends HondaCatalogModel{
 		{
 			foreach($item as $item1)
 			{
-			$models[]=$item1['cmodnamepc'];	
+			$models[]=rawurlencode($item1['cmodnamepc']);	
 			}
 			
 		}
@@ -123,10 +130,13 @@ class HondaArticulModel extends HondaCatalogModel{
     
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
+        $modelCode = rawurldecode($modelCode);
         $sql = "
-        SELECT npl, hmodtyp
-        FROM dba_vw_blockpartsmodeltypes
-        WHERE npartgenu = :articulCode
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes1 where npartgenu = :articulCode)
+        UNION
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes2 where npartgenu = :articulCode)
+        UNION
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes3 where npartgenu = :articulCode)
         ";
 
         $query = $this->conn->prepare($sql);
@@ -171,10 +181,13 @@ class HondaArticulModel extends HondaCatalogModel{
     
     public function getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode)
     {
+    	$modelCode = rawurldecode($modelCode);
     	$sql = "
-        SELECT npl, hmodtyp
-        FROM dba_vw_blockpartsmodeltypes
-        WHERE npartgenu = :articulCode
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes1 where npartgenu = :articulCode)
+        UNION
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes2 where npartgenu = :articulCode)
+        UNION
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes3 where npartgenu = :articulCode)
         ";
 
         $query = $this->conn->prepare($sql);
@@ -224,13 +237,18 @@ class HondaArticulModel extends HondaCatalogModel{
     
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
+        $modelCode = rawurldecode($modelCode);
+        
         $sql = "
-        SELECT *
-        FROM dba_pmotyt
-        WHERE hmodtyp =:complectationCode 
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes1 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
+        UNION
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes2 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
+        UNION
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes3 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
         ";
 
         $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', $articul);
         $query->bindValue('complectationCode',  $complectationCode);
         $query->execute();
 
@@ -239,12 +257,19 @@ class HondaArticulModel extends HondaCatalogModel{
     	$NPL = $aData['npl'];
         
         $sql = "
-        SELECT nplblk
-        FROM dba_vw_blockpartsmodeltypes
-        WHERE npl = :npl
+        (select nplblk from dba_vw_blockpartsmodeltypes1 where npl = :npl
         AND hmodtyp = :hmodtyp
-        AND npartgenu = :articulCode 
+        AND npartgenu = :articulCode)
+        UNION
+        (select nplblk from dba_vw_blockpartsmodeltypes2 where npl = :npl
+        AND hmodtyp = :hmodtyp
+        AND npartgenu = :articulCode)
+        UNION
+        (select nplblk from dba_vw_blockpartsmodeltypes3 where npl = :npl
+        AND hmodtyp = :hmodtyp
+        AND npartgenu = :articulCode)
         ";
+        
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
@@ -252,7 +277,7 @@ class HondaArticulModel extends HondaCatalogModel{
         $query->bindValue('hmodtyp', $hmodtyp);
         $query->execute();
 
-        $aDataSecGroups = $query->fetchAll();
+        $aDataSecGroups = $query->fetchAll(); 
        
        $aDataGroups = array();
        foreach($aDataSecGroups as $item)
@@ -286,12 +311,15 @@ class HondaArticulModel extends HondaCatalogModel{
     public function getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
         $sql = "
-        SELECT *
-        FROM dba_pmotyt
-        WHERE hmodtyp =:complectationCode 
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes1 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
+        UNION
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes2 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
+        UNION
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes3 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
         ";
 
         $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', $articul);
         $query->bindValue('complectationCode',  $complectationCode);
         $query->execute();
 
@@ -300,11 +328,17 @@ class HondaArticulModel extends HondaCatalogModel{
     	$NPL = $aData['npl'];
         
         $sql = "
-        SELECT nplblk
-        FROM dba_vw_blockpartsmodeltypes
-        WHERE npl = :npl
+        (select nplblk from dba_vw_blockpartsmodeltypes1 where npl = :npl
         AND hmodtyp = :hmodtyp
-        AND npartgenu = :articulCode 
+        AND npartgenu = :articulCode)
+        UNION
+        (select nplblk from dba_vw_blockpartsmodeltypes2 where npl = :npl
+        AND hmodtyp = :hmodtyp
+        AND npartgenu = :articulCode)
+        UNION
+        (select nplblk from dba_vw_blockpartsmodeltypes3 where npl = :npl
+        AND hmodtyp = :hmodtyp
+        AND npartgenu = :articulCode)
         ";
 
         $query = $this->conn->prepare($sql);
@@ -325,13 +359,16 @@ class HondaArticulModel extends HondaCatalogModel{
     
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
-       $sql = "
-        SELECT *
-        FROM dba_pmotyt
-        WHERE hmodtyp =:complectationCode 
+      $sql = "
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes1 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
+        UNION
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes2 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
+        UNION
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes3 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
         ";
 
         $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', $articul);
         $query->bindValue('complectationCode',  $complectationCode);
         $query->execute();
 
@@ -348,12 +385,15 @@ class HondaArticulModel extends HondaCatalogModel{
      public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
     	$sql = "
-        SELECT *
-        FROM dba_pmotyt
-        WHERE hmodtyp =:complectationCode 
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes1 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
+        UNION
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes2 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
+        UNION
+        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes3 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
         ";
 
         $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', $articul);
         $query->bindValue('complectationCode',  $complectationCode);
         $query->execute();
 
@@ -362,14 +402,22 @@ class HondaArticulModel extends HondaCatalogModel{
         $hmodtyp = $aData['hmodtyp'];
         
         $sqlPnc = "
-        SELECT nplpartref
-        FROM dba_vw_blockpartsmodeltypes
-        WHERE npartgenu = :articul
-        AND npl = :npl
-        AND nplblk  = :nplblk
+        (select nplpartref from dba_vw_blockpartsmodeltypes1 where npl = :npl
         AND hmodtyp = :hmodtyp
+        AND nplblk  = :nplblk
+        AND npartgenu = :articul)
+        UNION
+        (select nplpartref from dba_vw_blockpartsmodeltypes2 where npl = :npl
+        AND hmodtyp = :hmodtyp
+        AND nplblk  = :nplblk
+        AND npartgenu = :articul)
+        UNION
+        (select nplpartref from dba_vw_blockpartsmodeltypes3 where npl = :npl
+        AND hmodtyp = :hmodtyp
+        AND nplblk  = :nplblk
+        AND npartgenu = :articul)
         ";
-
+        
         $query = $this->conn->prepare($sqlPnc);
         $query->bindValue('articul', $articul);
         $query->bindValue('npl', $NPL);

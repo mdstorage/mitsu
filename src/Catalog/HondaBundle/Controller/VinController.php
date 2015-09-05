@@ -37,14 +37,25 @@ class VinController extends BaseController{
            
         }
     }
+    public function index1Action($error_message = null)
+    {
+
+        setcookie(Constants::VIN, '');
+        return $this->render($this->bundle().':01_index.html.twig', array('error_message' => $error_message));
+    }
     
     public function vinComplectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
     {
        $vin = $request->get('vin');
         $vinComplectations = $this->model()->getVinComplectations($vin);
+        if (empty($vinComplectations)) {
+            setcookie(Constants::VIN, "");
+            return $this->index1Action('Автомобиль с таким VIN кодом не найден');
+        }
+        setcookie(Constants::VIN, $vin);
         foreach($vinComplectations as $item)
 			{
-			$regionCode = $item['carea'];
+			$regionCode = $item['cmftrepc'];
 			$modelCode =  rawurlencode($item['cmodnamepc']);
 			$modificationCode = $item['dmodyr'];
 			}
@@ -97,6 +108,7 @@ class VinController extends BaseController{
 
     public function vinSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
+    	print_r(substr($modificationCode, 1, 5));die;
         $this->addFilter('vinSchemasFilter', array(
             'regionCode' => $regionCode,
             'modelCode' => $modelCode,
