@@ -4,9 +4,50 @@
    <a href="{{ path('vin_honda') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }}, 
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / Комплектация
 {% endblock breadcrumbs %}
-{% block head %}<h3>Уточните комплектацию:</h3>{% endblock head %}
-{% block complectationItem %}
-        <div class="col-lg-6">
+{% block body %}
+    {% block head %}<h3>Уточните комплектацию:</h3>{% endblock head %}
+   
+    {% block complectations %}
+    <div class="row">
+    
+        <div class="complectations"><hr />
+        <div class="row">
+        <div class="col-xs-5">
+        
+        <div class="form-group">
+        
+        <div class="col-xs-9">
+               
+        <input name="filter-query" class="form-control" value="" id="filter-query" onclick="if (this.value == 'Введите признак для фильтрации параметров') this.value='';"
+        onblur="if (this.value == '') this.value='Введите признак для фильтрации параметров';" type="text"/>
+        </div>
+                
+        <a href="#" class="btn btn-default" onclick="$('#filter-query').val('');repeatact();return false">Показать все</a>
+        
+        
+        </div>
+        <input name="filter-query1" class="form-control" value="" id="filter-query1" type="text" style="display: none"/>
+        </div>
+        </div>
+        
+       
+                       <div class="row">
+                       <div class="col-lg-3">
+                       <b>Трансмиссия:</b> 
+                      <a href="#" class="btn btn-default" onclick="$('#filter-query').val('AT');repeatact();return false">AT</a>
+                      <a href="#" class="btn btn-default" onclick="$('#filter-query').val('MT');repeatact();return false;">MT</a>
+                      </div> 
+                      <div class="col-lg-3">
+                       <b>Опции:</b> 
+                      <a href="#" class="btn btn-default" onclick="$('#filter-query1').val($('#filter-query').val().concat('+','RIGHT'));repeatact1();return false">RIGHT</a>
+                      <a href="#" class="btn btn-default" onclick="$('#filter-query1').val($('#filter-query').val().concat('+','LEFT'));repeatact1();return false;">LEFT</a>
+                      </div>
+                      </div><hr />
+                      <br/>
+                      
+            {% for complectation in oContainer.getActiveModification.getComplectations %}
+                {% block complectationItem %}
+            <div class="col-lg-6">
            
                              <a href="{{ path('vin_honda_groups', parameters|merge({'complectationCode': complectation.getCode})) }}">
         
@@ -15,7 +56,57 @@
       <b>Количество дверей: </b>{{ complectation.getOption('option1') }}<br/>
       <b>Трансмиссия: </b>{{ complectation.getOption('option2') }}<br/>
       <b>Двигатель и комплектация: </b>{{ complectation.getOption('option3') }}<br/>
-      <b>Опции: </b>{{ complectation.getOption('option4') }}<br/> <hr />
-      
-      	</div>
-{% endblock complectationItem %} 
+      <b>Опции: </b>{{ complectation.getOption('option4') }}<br/>  <hr />
+                           
+                </div>
+                {% endblock complectationItem %}
+            {% endfor %}
+        </div>
+        </div> 
+    {% endblock complectations %}
+
+
+ <script>
+ 
+                $(document).ready(function() {
+	$('#filter-search').show();
+	$('#filter-query').val('Введите признак для фильтрации параметров');
+	$('#filter-query').keyup(function(event){
+		
+		if (event.keyCode == 27 || $(this).val() == '') {
+			$(this).val('');
+			$('.col-lg-6').removeClass('visible').show().addClass('visible');
+		}
+		else {
+			filter('.col-lg-6', $(this).val());
+		}
+	});
+	$('#filter-query1').val('Введите признак для фильтрации параметров');
+	$('#filter-query1').keyup(function(event){
+		
+		if (event.keyCode == 27 || $(this).val() == '') {
+			$(this).val('');
+			$('.col-lg-6').removeClass('visible').show().addClass('visible');
+		}
+		else {
+			filter('.col-lg-6', $(this).val());
+		}
+	});
+});
+function filter(selector, query) {
+	query =	$.trim(query);
+	$(selector).each(function() {
+		(($(this).text().search(new RegExp(query.substr(0,query.indexOf("+")), "i")) < 0) || 
+		($(this).text().search(new RegExp(query.substr(query.indexOf("+")+1,query.length), "i")) < 0)) 
+		? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
+	});
+}
+function repeatact1(){
+	filter('.col-lg-6', $('#filter-query1').val());
+}
+function repeatact(){
+	filter('.col-lg-6', $('#filter-query').val());
+}
+</script>
+  
+{% endblock body %}
