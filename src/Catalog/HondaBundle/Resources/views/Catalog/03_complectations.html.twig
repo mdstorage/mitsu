@@ -19,8 +19,8 @@
         
         <div class="col-xs-9">
                
-        <input name="filter-query" class="form-control" value="" id="filter-query" onclick="if (this.value == 'Введите признак для фильтрации параметров') this.value='';"
-        onblur="if (this.value == '') this.value='Введите признак для фильтрации параметров';" type="text"/>
+        <input name="filter-query" class="form-control" value="" id="filter-query" onclick="this.value='';"
+        type="text" placeholder="Введите признак для фильтрации параметров"/>
         </div>
                 
         <a href="#" class="btn btn-default" onclick="$('#filter-query').val('');repeatact();return false">Показать все</a>
@@ -71,7 +71,7 @@
  
                 $(document).ready(function() {
 	$('#filter-search').show();
-	$('#filter-query').val('Введите признак для фильтрации параметров');
+	
 	$('#filter-query').keyup(function(event){
 		
 		if (event.keyCode == 27 || $(this).val() == '') {
@@ -82,7 +82,7 @@
 			filter('.col-lg-6', $(this).val());
 		}
 	});
-	$('#filter-query1').val('Введите признак для фильтрации параметров');
+	
 	$('#filter-query1').keyup(function(event){
 		
 		if (event.keyCode == 27 || $(this).val() == '') {

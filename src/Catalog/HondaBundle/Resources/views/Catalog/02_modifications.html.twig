@@ -1,12 +1,16 @@
 <div class="modifications">
 <b style=" color: green; ">Год выпуска:</b>
+<div class="row">
     {% for modification in oContainer.getActiveModel.getModifications %}
-        <div>
+         <div>
             {% block modification %}
+            <div class="col-xs-3">
                 <a href="{{ path('catalog_honda_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
                     {{ modification.getRuname }}
                 </a>
+            </div>
             {% endblock modification %}
         </div>
     {% endfor %}
+</div>
 </div>
