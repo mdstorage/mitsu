@@ -12,36 +12,53 @@
     
         <div class="complectations"><hr />
         <div class="row">
-        <div class="col-xs-5">
+        
         
         <div class="form-group">
         
-        <div class="col-xs-9">
+        <div class="col-lg-5">
                
-        <input name="filter-query" class="form-control" value="" id="filter-query" onclick="if (this.value == 'Введите признак для фильтрации параметров') this.value='';"
-        onblur="if (this.value == '') this.value='Введите признак для фильтрации параметров';" type="text"/>
+        <input name="filter-query" class="form-control" value="" id="filter-query" onclick="this.value='';"
+        type="text" placeholder="Введите любой признак для фильтрации параметров"/>
         </div>
                 
-        <a href="#" class="btn btn-default" onclick="$('#filter-query').val('');repeatact();return false">Показать все</a>
-        
+        <a href="#" class="btn btn-default" onclick="$('#filter-query').val(''); $('#filter-query1').val(''); $('#filter-query2').val('');
+        repeatact();return false">Показать все</a>
+        <input name="filter-query1" class="form-control" value="" id="filter-query1" type="text" style="display:none;"/>
+        <input name="filter-query2" class="form-control" value="" id="filter-query2" type="text" style="display:none;"/>
         
         </div>
-        <input name="filter-query1" class="form-control" value="" id="filter-query1" type="text" style="display: none"/>
-        </div>
+        
+        
         </div>
         
        
                        <div class="row">
-                       <div class="col-lg-3">
-                       <b>Трансмиссия:</b> 
-                      <a href="#" class="btn btn-default" onclick="$('#filter-query').val('AT');repeatact();return false">AT</a>
-                      <a href="#" class="btn btn-default" onclick="$('#filter-query').val('MT');repeatact();return false;">MT</a>
-                      </div> 
-                      <div class="col-lg-3">
-                       <b>Опции:</b> 
-                      <a href="#" class="btn btn-default" onclick="$('#filter-query1').val($('#filter-query').val().concat('+','RIGHT'));repeatact1();return false">RIGHT</a>
-                      <a href="#" class="btn btn-default" onclick="$('#filter-query1').val($('#filter-query').val().concat('+','LEFT'));repeatact1();return false;">LEFT</a>
+              {% if oContainer.getActiveModification.getComplectations|first.getOption('option5') %}     
+                       <div class="col-lg-4">
+                       <b>Трансмиссия:</b>
+                  {% for trans in oContainer.getActiveModification.getComplectations|first.getOption('option5') %}
+                                          		
+                      <a href="#" class="btn btn-default" onclick="$('#filter-query').val('{{ trans }}');
+                      $('#filter-query2').val($('#filter-query').val().concat('+',$('#filter-query1').val()));
+                      repeatact();return false">{{ trans }}</a>
+                      
+                  {% endfor %}
                       </div>
+              {% endif %}
+                      
+              {% if oContainer.getActiveModification.getComplectations|first.getOption('option6') %} 
+                      <div class="col-lg-4">
+                       <b>Положение руля:</b>
+                  {% for role in oContainer.getActiveModification.getComplectations|first.getOption('option6') %}
+                   
+                      <a href="#" class="btn btn-default" onclick="$('#filter-query1').val('{{ role }}');
+                      $('#filter-query2').val($('#filter-query').val().concat('+',$('#filter-query1').val()));
+                      repeatact();return false">{{ role }}</a>
+                      
+                  {% endfor %}
+                      </div>
+              {% endif %}
                       </div><hr />
                       <br/>
                       
@@ -56,7 +73,10 @@
       <b>Количество дверей: </b>{{ complectation.getOption('option1') }}<br/>
       <b>Трансмиссия: </b>{{ complectation.getOption('option2') }}<br/>
       <b>Двигатель и комплектация: </b>{{ complectation.getOption('option3') }}<br/>
-      <b>Опции: </b>{{ complectation.getOption('option4') }}<br/>  <hr />
+      {% if complectation.getOption('option4') %} 
+                <b>Опции: </b>{{ complectation.getOption('option4') }}<br/>
+      {% endif %}
+      <hr />
                            
                 </div>
                 {% endblock complectationItem %}
@@ -70,7 +90,7 @@
  
                 $(document).ready(function() {
 	$('#filter-search').show();
-	$('#filter-query').val('Введите признак для фильтрации параметров');
+	
 	$('#filter-query').keyup(function(event){
 		
 		if (event.keyCode == 27 || $(this).val() == '') {
@@ -81,8 +101,7 @@
 			filter('.col-lg-6', $(this).val());
 		}
 	});
-	$('#filter-query1').val('Введите признак для фильтрации параметров');
-	$('#filter-query1').keyup(function(event){
+	$('#filter-query2').keyup(function(event){
 		
 		if (event.keyCode == 27 || $(this).val() == '') {
 			$(this).val('');
@@ -101,12 +120,10 @@ function filter(selector, query) {
 		? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
 	});
 }
-function repeatact1(){
-	filter('.col-lg-6', $('#filter-query1').val());
-}
 function repeatact(){
-	filter('.col-lg-6', $('#filter-query').val());
+	filter('.col-lg-6', $('#filter-query2').val());
 }
+
 </script>
   
 {% endblock body %}

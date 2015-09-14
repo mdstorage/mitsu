@@ -170,7 +170,7 @@ class HondaCatalogModel extends CatalogModel{
 		foreach (array_unique($aOriginOptions) as $item2)
 		{
 		$sqlOptionsDesc = "
-        SELECT xmnopt
+        SELECT xmnopt, cmnopt
 		FROM dba_pmnopt
 		WHERE cmnopt =:item
         ";
@@ -184,12 +184,13 @@ class HondaCatalogModel extends CatalogModel{
 		 $aOriginOptionDescs = array();
 		foreach($aOriginOptionsDesc as $item3)
          {
-		 	$aOriginOptionDescs[] = $item3['xmnopt'];
+		 	$aOriginOptionDescs[] = '('.$item3['cmnopt'].') '.$item3['xmnopt'];
+		 	$aOriginOptionCodes[] = $item3['cmnopt'];
 		 }
 		
 		foreach($aOriginOptionDescs as $index => $value)
         {
-        	if (($value == '') || ($value == ' '))
+        	if (($value == '') || ($value == ' ') || ($value == '() '))
         	{
 				unset ($aOriginOptionDescs[$index]);
 			}
@@ -198,9 +199,30 @@ class HondaCatalogModel extends CatalogModel{
 		$comma_separated = implode("; ", $aOriginOptionDescs);
 			 	 
         $item['nfrmpf'] = $comma_separated;
+       
 		}
-         
+		/**
+		* 
+		* Проверка на наличие в опциях ($aOriginOptionCodes) информации о положении руля для фильтрации при отображении
+		* Массив кодов опций $aOriginOptionCodes уйдет в вид только тогда, когда в нем присутсвуют и LH (левый руль), и RH (правый руль)
+		* То же самое касается информации о трансмиссиях (массив $transmission)
+		* 
+		*/
+		foreach($aOriginOptionCodes as $index => $value)
+		{
+			if (($value != 'RH') & ($value != 'LH'))
+        	{
+				unset ($aOriginOptionCodes[$index]);
+			}
+		}
+        $transmission = array(); 
         
+       
+        foreach($aData as $item)
+        {
+			$transmission[] = $item['ctrsmtyp'];
+			
+		}
         foreach($aData as $item){
         		
             $complectations[$item['hmodtyp']] = array(
@@ -209,6 +231,8 @@ class HondaCatalogModel extends CatalogModel{
                 							 'option2'=> $item['ctrsmtyp'],
                 							 'option3'=> $item['nengnpf'].' '.$item['xgradefulnam'],
                 							 'option4'=> $item['nfrmpf'],
+                							 'option5'=> count(array_unique($transmission))>1?array_unique($transmission):'',
+                							 'option6'=> count(array_unique($aOriginOptionCodes))>1?array_unique($aOriginOptionCodes):'',
                 							 )
             );  
       }
