@@ -9,7 +9,44 @@
     <a href="{{ path('vin_honda_schemas', parameters) }}">Cхема</a> / Запчасти
 {% endblock breadcrumbs %}
 
-
+{% block pncScript %}
+                                <script>
+                                    $("#pnc_{{ pnc.getCode }}").on("click", function(){
+                                    	
+                                    	{% block pncClick %}
+                                    	
+                                    	$("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
+                                        
+                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                                        $.ajax({
+                                            type:   'POST',
+                                            async:  false,
+                                            url:    "{{ path('vin_honda_articuls') }}",
+                                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', complectationCode: '{{ oContainer.getActiveComplectation.getCode }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}'  },
+                                            success: function(data) {
+                                                $("#articul_for_pnc{{ pnc.getCode }}").html(data);
+                                            }
+                                        });
+                                        
+                                        $.scrollTo("#pnc_{{ pnc.getCode }}", {duration:1500});
+                                        
+                                        
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
+                                        
+                                        {% endblock pncClick %}
+                                    });
+                                    $("#pnc_{{ pnc.getCode }}").on("mouseover", function(){
+                                        $(this).css("cursor", "pointer");
+                                        $(this).addClass("btn-info");
+                                    });
+                                    $("#pnc_{{ pnc.getCode }}").on("mouseout", function(){
+                                        $(this).removeClass("btn-info");
+                                    });
+   
+                                </script>
+{% endblock pncScript %}
 
 {% block image %}
  
@@ -17,7 +54,5 @@
 {% endblock image %}
 
 {% block ajaxUrl %}{{ path('vin_honda_articuls') }}{% endblock ajaxUrl %}
-
-{% block ajaxData %} regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', complectationCode: '{{ oContainer.getActiveComplectation.getCode }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}' {% endblock ajaxData %}
 
 {% block subGroupPath %}{{ path('vin_honda_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
