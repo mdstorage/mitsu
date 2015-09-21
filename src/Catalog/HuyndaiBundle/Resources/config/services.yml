@@ -1,0 +1,20 @@
+services:
+#    catalog_huyndai.example:
+#        class: Catalog\HuyndaiBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  huyndai_date_convertor.extension:
+        class: Catalog\HuyndaiBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  huyndai.catalog.model:
+    class: Catalog\HuyndaiBundle\Models\HuyndaiCatalogModel
+    arguments:  ['@doctrine.dbal.huyndai_connection']
+
+  huyndai.vin.model:
+    class: Catalog\HuyndaiBundle\Models\HuyndaiVinModel
+    arguments:  ['@doctrine.dbal.huyndai_connection']
+
+  huyndai.articul.model:
+    class: Catalog\HuyndaiBundle\Models\HuyndaiArticulModel
+    arguments:  ['@doctrine.dbal.huyndai_connection']

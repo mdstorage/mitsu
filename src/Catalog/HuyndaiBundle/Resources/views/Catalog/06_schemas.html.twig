@@ -1,0 +1,24 @@
+{% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
+{% use 'CatalogHuyndaiBundle::huyndai.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('catalog_huyndai') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('catalog_huyndai_complectations', parameters) }}">Выбрать комплектацию</a> / <a href="{{ path('catalog_huyndai_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('catalog_huyndai_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
+{% endblock breadcrumbs %}
+
+{% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
+
+{% block schema %}
+    {% if schema.getCode is not empty %}
+            <div class="col-xs-3">
+        <a href="{{ path('catalog_huyndai_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+
+                    <div class="row">
+                        {{ schema.getRuname }}
+                    </div>
+                    <div class="row">
+                        <img src="{{ asset('bundles/cataloghuyndai/Pictures/'~oContainer.getActiveSchema.getCode~'/IMGE/'~oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getCode~'.TIF') }}"/>
+                    </div>
+
+        </a>
+            </div>
+    {% endif %}
+{% endblock schema %}

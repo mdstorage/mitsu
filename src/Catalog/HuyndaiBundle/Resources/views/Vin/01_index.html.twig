@@ -1,0 +1,43 @@
+{% extends 'CatalogCommonBundle::base.html.twig' %}
+{% use 'CatalogHuyndaiBundle::huyndai.base.html.twig' %}
+{% block breadcrumbs %}
+    Поиск по номеру кузова
+{% endblock breadcrumbs %}
+{% block summary_set %}{% endblock summary_set %}
+{% block body %}
+                             
+    {% block vin %}
+    
+        <div class="alert alert-dismissable" id="vin-frame-group">
+            <div class="row">
+                <div class="col-xs-6">
+                    {% block head %}<h3>Поиск по VIN</h3>{% endblock head %}
+                     <form class="form-horizontal" action="{{ path('vin_huyndai_complectations') }}">
+                        <div class="form-group">
+                            <div class="col-xs-10">
+                                <input type="text" class="form-control" id="vin" name="vin" placeholder="Введите VIN"/>
+                                <div class="label label-danger">{{ error_message }}</div>
+                            </div>
+                            <input type="submit" class="btn btn-info" value="Искать" id="vin-button"/>
+                        </div>
+                    </form>
+                    <div id="vin-result"></div>
+                </div>
+            </div>
+        </div>
+    {% endblock vin %}
+    {% block frame %}{% endblock frame %}
+    {% block vinScript %}
+        <script>
+            $("#vin-button").on('click', function(){
+                if($("#vin").val().length !== 17){
+                    alert("VIN должен состоять из 17 знаков!");
+                    return;
+                }
+                });
+        </script>
+    {% endblock vinScript %}
+    {% block frameScript %}{% endblock frameScript %}
+    
+{% endblock body %}
+        

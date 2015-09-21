@@ -1,0 +1,21 @@
+<table class="table small">
+    <thead>
+        <tr>
+            <th>Артикул</th>
+            <th>Описание</th>
+            <th>Количество</th>
+            <th>Доп.информация</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for articul in oContainer.getActivePnc.getArticuls %}
+        <tr>
+            <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a></td>
+            <td>{{ articul.getRuname }}</td>
+            <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }}</td>
+            <td>{{ articul.getOption('option1')}}</td>
+            
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
