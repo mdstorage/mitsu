@@ -71,6 +71,8 @@
         
     <b>    {{ complectation.getRuname }} </b>
       </a> <br/>
+                ({{ complectation.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|huyndai_date_convertor }} -
+                {{ complectation.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|huyndai_date_convertor }})<br/>
                 {%for opt in complectation.getOption('option1') %}
                 {{ opt }} <br/>
                 {% endfor %}

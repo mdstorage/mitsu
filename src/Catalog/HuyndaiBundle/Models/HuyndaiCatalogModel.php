@@ -210,6 +210,8 @@ class HuyndaiCatalogModel extends CatalogModel{
                 Constants::OPTIONS => array(
 
                     'option1' => $aOptions[$item['model_index']],
+                    Constants::START_DATE   => $item['start_data'],
+                    Constants::END_DATE   => $item['finish_data'],
                 )
             );
         }
@@ -220,17 +222,44 @@ class HuyndaiCatalogModel extends CatalogModel{
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
-        $catCode = substr($modificationCode, strpos($modificationCode, '_'), strlen($modificationCode));
-         $sql2 = "
+        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+         $sql = "
         SELECT *
-        FROM dba_pgrout
+        FROM cats_maj
+        WHERE CATALOG_NAME = :catCode
         ";
 
-        $query = $this->conn->prepare($sql2);
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('catCode', $catCode);
         $query->execute();
         $aData = $query->fetchAll();
 
         $groups = array();
+
+        foreach ($aData as &$item2)
+        {
+            foreach ($item2 as &$item3)
+            {
+
+                $sql = "
+                    SELECT lex_name
+                    FROM hywlex
+                    WHERE lex_code =:item3
+                    AND lang = 'EN'
+                    ";
+
+                $query = $this->conn->prepare($sql);
+                $query->bindValue('item3', $item3);
+                $query->execute();
+                $sData2 = $query->fetch();
+                if ($sData2)
+                {
+                    $item3 = $sData2['lex_name'];
+                }
+
+            }
+
+        }var_dump($aData); die;
         foreach($aData as $item){
             $groups[$item['nplgrp']] = array(
                 Constants::NAME     => $item['xplgrp'],
