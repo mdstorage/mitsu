@@ -94,7 +94,7 @@ class HuyndaiCatalogModel extends CatalogModel{
 
         $modifications = array();
         foreach($aData as $item){
-            $modifications[$item['catalog_code']] = array(
+            $modifications[$item['catalog_code'].'_'.$item['catalog_folder']] = array(
                 Constants::NAME     => $item['catalog_name'],
                 Constants::OPTIONS  => array('option1'=>strtolower($item['catalog_code'])));
 
@@ -105,156 +105,122 @@ class HuyndaiCatalogModel extends CatalogModel{
 
     public function getComplectations($regionCode, $modelCode, $modificationCode)
    
-    {   $modelCode = rawurldecode($modelCode);     
+    {   $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+
+        $modelCode = rawurldecode($modelCode);
        $sql = "
         SELECT *
-        FROM dba_pmotyt
-        WHERE cmftrepc =:regionCode
-        AND cmodnamepc = :modelCode
-        AND dmodyr = :modificationCode 
+        FROM vin_model
+        WHERE model =:modificationCode
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('modelCode',  $modelCode);
         $query->bindValue('modificationCode',  $modificationCode);
         $query->execute();
 
         $aData = $query->fetchAll();
              
-        $complectations = array();
-        
+
+        $aIndexes = array('body_type', 'engine_capacity', 'engine_type', 'fuel_type', 'transaxle', 'field14');
         foreach($aData as &$item)
         {
-        	$sqlTableNumber = "
-        SELECT disc_no
-		FROM dba_contain
-		WHERE pl_no =:pl_no
-        ";
+        foreach($item as $index => $value)
+            {
+        if (in_array($index, $aIndexes))
+                {
+                    $item[str_pad((array_search($index, $aIndexes)+1), 2, "0", STR_PAD_LEFT)] = $value;
 
-        $query = $this->conn->prepare($sqlTableNumber);
-        $query->bindValue('pl_no', $item['npl']);
-        $query->execute();
+                }
 
-        $DiscNumber = $query->fetch();
-        	
-		
-		switch ($DiscNumber['disc_no']){
-            case 1:
-                $sqlOptions = "
-        SELECT CMNOPT
-		FROM dba_pmtmot1
-		WHERE HMODTYP =:hmodtyp
-        ";
-                break;
-            case 2:
-                $sqlOptions = "
-        SELECT CMNOPT
-		FROM dba_pmtmot2
-		WHERE HMODTYP =:hmodtyp
-        ";
-                break;
-            case 3:
-                $sqlOptions = "
-        SELECT CMNOPT
-		FROM dba_pmtmot3
-		WHERE HMODTYP =:hmodtyp
-        ";
-                break;
+		    }
         }
-		
 
-        $query = $this->conn->prepare($sqlOptions);
-        $query->bindValue('hmodtyp', $item['hmodtyp']);
-        $query->execute();
+        $complectations = array();
 
-        $aDataOptions = $query->fetchAll();
-        
-        
-        $aOriginOptions = array();
-        
-        foreach($aDataOptions as $item1)
-         {
-		 	$aOriginOptions[] = $item1['CMNOPT'];
-		 }
-		$aOriginOptionsDesc = array(); 
-		foreach (array_unique($aOriginOptions) as $item2)
-		{
-		$sqlOptionsDesc = "
-        SELECT xmnopt, cmnopt
-		FROM dba_pmnopt
-		WHERE cmnopt =:item
+        foreach ($aData as &$item) {
+            $aData1 = array();
+            $aOptions = array();
+            foreach ($item as $index => $value)
+            {
+                $sql = "
+        SELECT ucc_type, ucc_type_code, ucc_code_short
+        FROM cats_0_ucc
+        WHERE model =:modificationCode
+        AND ucc = :value
+        AND ucc_type = :index
         ";
 
-        $query = $this->conn->prepare($sqlOptionsDesc);
-        $query->bindValue('item', $item2);
-        $query->execute();
-        $aOriginOptionsDesc[] = $query->fetch();
-		 	
-		 }
-		 $aOriginOptionDescs = array();
-		foreach($aOriginOptionsDesc as $item3)
-         {
-		 	$aOriginOptionDescs[] = '('.$item3['cmnopt'].') '.$item3['xmnopt'];
-		 	$aOriginOptionCodes[] = $item3['cmnopt'];
-		 }
-		
-		foreach($aOriginOptionDescs as $index => $value)
-        {
-        	if (($value == '') || ($value == ' ') || ($value == '() '))
-        	{
-				unset ($aOriginOptionDescs[$index]);
-			}
-		}
-		 
-		$comma_separated = implode("; ", $aOriginOptionDescs);
-			 	 
-        $item['nfrmpf'] = $comma_separated;
-       
-		}
-		/**
-		* 
-		* Проверка на наличие в опциях ($aOriginOptionCodes) информации о положении руля для фильтрации при отображении
-		* Массив кодов опций $aOriginOptionCodes уйдет в вид только тогда, когда в нем присутсвуют и LH (левый руль), и RH (правый руль)
-		* То же самое касается информации о трансмиссиях (массив $transmission)
-		* 
-		*/
-		foreach($aOriginOptionCodes as $index => $value)
-		{
-			if (($value != 'RH') & ($value != 'LH'))
-        	{
-				unset ($aOriginOptionCodes[$index]);
-			}
-		}
-        $transmission = array(); 
-        
-       
-        foreach($aData as $item)
-        {
-			$transmission[] = $item['ctrsmtyp'];
-			
-		}
-        foreach($aData as $item){
-        		
-            $complectations[$item['hmodtyp']] = array(
-                Constants::NAME     => $item['cmodtypfrm'],
-                Constants::OPTIONS  => array('option1'=> $item['xcardrs'],
-                							 'option2'=> $item['ctrsmtyp'],
-                							 'option3'=> $item['nengnpf'].' '.$item['xgradefulnam'],
-                							 'option4'=> $item['nfrmpf'],
-                							 'option5'=> count(array_unique($transmission))>1?array_unique($transmission):'',
-                							 'option6'=> count(array_unique($aOriginOptionCodes))>1?array_unique($aOriginOptionCodes):'',
-                							 )
-            );  
-      }
-      
-     return $complectations;
+                $query = $this->conn->prepare($sql);
+                $query->bindValue('modificationCode', $modificationCode);
+                $query->bindValue('index', $index);
+                $query->bindValue('value', $value);
+                $query->execute();
+
+                $aData1[] = $query->fetch();
+            }
+            foreach ($aData1 as $index1 => $value1)
+            {
+                if ($value1 == '')
+                {
+                    unset ($aData1[$index1]);
+                }
+            }
+
+            $aProm = array();
+            foreach ($aData1 as $item1)
+            {
+                $aProm[$item1['ucc_type']] = $item1;
+
+            }
+
+
+            foreach ($aProm as &$item2)
+            {
+                foreach ($item2 as &$item3)
+                {
+
+                    $sql = "
+                    SELECT lex_name
+                    FROM hywlex
+                    WHERE lex_code =:item3
+                    AND lang = 'EN'
+                    ";
+
+                    $query = $this->conn->prepare($sql);
+                    $query->bindValue('item3', $item3);
+                    $query->execute();
+                    $sData2 = $query->fetch();
+                    if ($sData2)
+                    {
+                        $item3 = $sData2['lex_name'];
+                    }
+
+                }
+
+            }
+
+            foreach ($aProm as $item4)
+            {
+                $aOptions[$item['model_index']][] = ($item4['ucc_type_code'].': '.$item4['ucc_code_short']);
+            }
+
+
+            $complectations[$item['model_index']] = array(
+                Constants::NAME => $item['model_code'],
+                Constants::OPTIONS => array(
+
+                    'option1' => $aOptions[$item['model_index']],
+                )
+            );
+        }
+
+         return $complectations;
      
     }
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
-               
+        $catCode = substr($modificationCode, strpos($modificationCode, '_'), strlen($modificationCode));
          $sql2 = "
         SELECT *
         FROM dba_pgrout
