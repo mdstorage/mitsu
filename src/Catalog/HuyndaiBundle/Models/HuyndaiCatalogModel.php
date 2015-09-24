@@ -238,31 +238,12 @@ class HuyndaiCatalogModel extends CatalogModel{
 
         foreach ($aData as &$item2)
         {
-            foreach ($item2 as &$item3)
-            {
+                    $item2['part_index'] = $this->getDesc($item2['part_index'], 'EN');
+        }
 
-                $sql = "
-                    SELECT lex_name
-                    FROM hywlex
-                    WHERE lex_code =:item3
-                    AND lang = 'EN'
-                    ";
-
-                $query = $this->conn->prepare($sql);
-                $query->bindValue('item3', $item3);
-                $query->execute();
-                $sData2 = $query->fetch();
-                if ($sData2)
-                {
-                    $item3 = $sData2['lex_name'];
-                }
-
-            }
-
-        }var_dump($aData); die;
         foreach($aData as $item){
-            $groups[$item['nplgrp']] = array(
-                Constants::NAME     => $item['xplgrp'],
+            $groups[$item['part']] = array(
+                Constants::NAME     => $item ['part_index'],
                 Constants::OPTIONS  => array()
             );
         }
@@ -695,6 +676,29 @@ $articuls = array();
         }
 
         return $articuls;
+    }
+
+    private function getDesc($itemCode, $language)
+    {
+
+                $sql = "
+                    SELECT lex_name
+                    FROM hywlex
+                    WHERE lex_code = :itemCode
+                    AND lang = :language
+                    ";
+
+                $query = $this->conn->prepare($sql);
+                $query->bindValue('itemCode', $itemCode);
+                $query->bindValue('language', $language);
+                $query->execute();
+                $sData = $query->fetch();
+                if ($sData)
+                {
+                    $sDesc = $sData['lex_name'];
+                }
+
+        return $sDesc;
     }
 
     
