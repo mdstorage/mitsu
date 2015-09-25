@@ -297,51 +297,27 @@ class HuyndaiCatalogModel extends CatalogModel{
 
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
-    	$modelCode = rawurldecode($modelCode);
+        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+
+
     	$sql = "
-        SELECT *
-        FROM dba_pmotyt
-        WHERE hmodtyp =:complectationCode
-        AND cmodnamepc = :modelCode 
+        SELECT sector_name, sector_lex_code, sector_id
+        FROM cats_map
+        WHERE catalog_name =:catCode
+        AND part = :groupCode
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('complectationCode',  $complectationCode);
-        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('catCode',  $catCode);
+        $query->bindValue('groupCode',  $groupCode);
         $query->execute();
 
-        $aData = $query->fetch();
-    	$hmodtyp = $aData['hmodtyp'];
-    	$NPL = $aData['npl'];
-    	
-    	    
-        $sqlSecGroups = "
-        SELECT dba_pblmtt.NPLBLK, dba_pblmtt.NPL, dba_pblokt.NPLBLKEDIT, dba_pbldst.xplblk
-		FROM (dba_pblokt INNER JOIN dba_pblmtt ON (dba_pblokt.NPLBLK = dba_pblmtt.NPLBLK) 
-		AND (dba_pblokt.NPL = dba_pblmtt.NPL)) INNER JOIN dba_pbldst ON (dba_pblmtt.NPLBLK = dba_pbldst.nplblk) 
-		AND (dba_pblmtt.NPL = dba_pbldst.npl)
-		WHERE (((dba_pblmtt.NPL)=:NPL) AND (dba_pblokt.NPLGRP=:groupCode) AND ((dba_pblmtt.HMODTYP)=:hmodtyp ))
-        ";
-        
-    	$query = $this->conn->prepare($sqlSecGroups);
-        $query->bindValue('NPL', $NPL);
-        $query->bindValue('groupCode', $groupCode);
-        $query->bindValue('hmodtyp', $hmodtyp);
-        $query->execute();
-
-        $aSecGroups = $query->fetchAll();
-        foreach($aSecGroups as $index => $value)
-        {
-        	if (($value['xplblk'] == '̨') || ($value['xplblk'] == ''))
-        	{
-				unset ($aSecGroups[$index]);
-			}
-		}
+        $aData = $query->fetchAll();
 
         $subgroups = array();
-        foreach($aSecGroups as $item){
-            $subgroups[($item['NPLBLK'])] = array(
-                Constants::NAME => '('.$item['NPLBLKEDIT'].') '.$item['xplblk'],
+        foreach($aData as $item){
+            $subgroups[($item['sector_id'])] = array(
+                Constants::NAME => '('.$item['sector_name'].') '.$this->getDesc($item['sector_lex_code'], 'EN'),
                 Constants::OPTIONS => array()
             );
         }
@@ -351,32 +327,15 @@ class HuyndaiCatalogModel extends CatalogModel{
 
     public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
-        $modelCode = rawurldecode($modelCode);
-        $sqlSecGroups = "
-        SELECT *
-        FROM dba_pmotyt
-        WHERE hmodtyp =:complectationCode 
-        AND cmodnamepc = :modelCode
-        ";
-
-        $query = $this->conn->prepare($sqlSecGroups);
-        $query->bindValue('complectationCode',  $complectationCode);
-        $query->bindValue('modelCode',  $modelCode);
-        $query->execute();
-
-        $aSecGroups = $query->fetch();
-        $NPL = $aSecGroups['npl'];
-            
-        
-
+        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
         $schemas = array();
         		
-		            $schemas[$aSecGroups['npl']] = array(
-                    Constants::NAME => $aSecGroups['npl'],
+		            $schemas[$subGroupCode] = array(
+                    Constants::NAME => $catCode,
                     Constants::OPTIONS => array()
                 );
-                            
-        
+
+
 
         return $schemas;
     }
@@ -423,71 +382,18 @@ class HuyndaiCatalogModel extends CatalogModel{
 
     public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
-        $modelCode = rawurldecode($modelCode);
-        $sql = "
+        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+
+        $sqlPnc = "
         SELECT *
-        FROM dba_pmotyt
-        WHERE hmodtyp =:complectationCode
-        AND cmodnamepc = :modelCode 
+        FROM cats_pnc
+        WHERE catalog_name =:catCode
+        	AND detail = :subGroupCode
         ";
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('complectationCode',  $complectationCode);
-        $query->bindValue('modelCode',  $modelCode);
-        $query->execute();
-
-        $aData = $query->fetch();
-    	$hmodtyp = $aData['hmodtyp'];
-    	$NPL = $aData['npl']; 
-    	
-    	$sqlTableNumber = "
-        SELECT disc_no
-		FROM dba_contain
-		WHERE pl_no =:pl_no
-        ";
-
-        $query = $this->conn->prepare($sqlTableNumber);
-        $query->bindValue('pl_no', $NPL);
-        $query->execute();
-
-        $DiscNumber = $query->fetch();
-        
-        switch ($DiscNumber['disc_no']){
-            case 1:
-                $sqlPnc = "
-        SELECT *
-        FROM dba_vw_blockpartsmodeltypes1
-        WHERE nplblk = :subGroupCode
-        	AND npl = :NPL
-            AND hmodtyp = :hmodtyp 
-        ";
-                break;
-            case 2:
-                $sqlPnc = "
-        SELECT *
-        FROM dba_vw_blockpartsmodeltypes2
-        WHERE nplblk = :subGroupCode
-        	AND npl = :NPL
-            AND hmodtyp = :hmodtyp 
-        ";
-                break;
-            case 3:
-                $sqlPnc = "
-        SELECT *
-        FROM dba_vw_blockpartsmodeltypes3
-        WHERE nplblk = :subGroupCode
-        	AND npl = :NPL
-            AND hmodtyp = :hmodtyp 
-        ";
-                break;
-        } 
-        
-        
-        
     	$query = $this->conn->prepare($sqlPnc);
-        $query->bindValue('NPL', $NPL);
+        $query->bindValue('catCode', $catCode);
         $query->bindValue('subGroupCode', $subGroupCode);
-        $query->bindValue('hmodtyp', $hmodtyp);
         $query->execute();
 
         $aPncs = $query->fetchAll();
@@ -496,32 +402,48 @@ class HuyndaiCatalogModel extends CatalogModel{
     	{
     		
     	$sqlSchemaLabels = "
-        SELECT min_x, min_y, max_x, max_y
-        FROM dba_hotspots
-        WHERE npl = :NPL
-          AND IllustrationNumber =:subGroupCode
-          AND PartReferenceNumber =:PartReferenceNumber
+        SELECT x1, y1, x2, y2
+        FROM cats_coord
+        WHERE catalog_code =:catCode
+          AND compl_name =:subGroupCode
+          AND name =:pnc_code
         ";
 
         $query = $this->conn->prepare($sqlSchemaLabels);
-        $query->bindValue('NPL', $NPL);
-        $query->bindValue('subGroupCode', $subGroupCode);
-        $query->bindValue('PartReferenceNumber', $aPnc['nplpartref']);
+            $query->bindValue('catCode', $catCode);
+            $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('pnc_code', $aPnc['pnc_code']);
         $query->execute();
         
         $aPnc['clangjap'] = $query->fetchAll();
+
+
+            $sqlPncName = "
+        SELECT lex_code
+        FROM pnclex
+        WHERE pnc_code =:pnc_code
+        ";
+
+            $query = $this->conn->prepare($sqlPncName);
+            $query->bindValue('pnc_code', $aPnc['pnc_code']);
+            $query->execute();
+            $aData = $query->fetch();
+
+            $aPnc['name'] = $aData['lex_code'];
+
+
 		}
-	  
+
         $pncs = array();
       foreach ($aPncs as $item) {
             {
             	foreach ($item['clangjap'] as $item1)
             	{
-            	$pncs[$item['nplpartref']][Constants::OPTIONS][Constants::COORDS][$item1['min_x']] = array(
-                    Constants::X1 => floor(($item1['min_x'])),
-                    Constants::Y1 => $item1['min_y'],
-                    Constants::X2 => $item1['max_x'],
-                    Constants::Y2 => $item1['max_y']);	
+            	$pncs[$item['pnc_code']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
+                    Constants::X1 => floor(($item1['x1'])),
+                    Constants::Y1 => $item1['y1'],
+                    Constants::X2 => $item1['x2'],
+                    Constants::Y2 => $item1['y2']);
             	
             	}
             
@@ -529,15 +451,16 @@ class HuyndaiCatalogModel extends CatalogModel{
                 
             }
         }
-        
+
         foreach ($aPncs as $item) {
          	
          	
-				$pncs[$item['nplpartref']][Constants::NAME] = $item['xpartext'];
+				$pncs[$item['pnc_code']][Constants::NAME] = $this->getDesc($item['name'], 'EN');
 			
 			
            
         }
+
          return $pncs;
     }
 
