@@ -2,8 +2,9 @@
     <thead>
         <tr>
             <th>Артикул</th>
-            <th>Описание</th>
-            <th>Количество</th>
+            <th>Наименование</th>
+            <th>Кол-во</th>
+            <th>Период</th>
             <th>Доп.информация</th>
         </tr>
     </thead>
@@ -13,7 +14,8 @@
             <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a></td>
             <td>{{ articul.getRuname }}</td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }}</td>
-            <td>{{ articul.getOption('option1')}}</td>
+            <td>{{ articul.getOption('option1')|huyndai_date_convertor}} - {{ articul.getOption('option2')|huyndai_date_convertor}}</td>
+            <td>{{ articul.getOption('option3')}}</td>
             
         </tr>
     {% endfor %}

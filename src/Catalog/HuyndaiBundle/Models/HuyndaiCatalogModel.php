@@ -120,7 +120,7 @@ class HuyndaiCatalogModel extends CatalogModel{
 
         $aData = $query->fetchAll();
              
-
+        $aForPNC = array();
         $aIndexes = array('body_type', 'engine_capacity', 'engine_type', 'fuel_type', 'transaxle', 'field14');
         foreach($aData as &$item)
         {
@@ -129,7 +129,7 @@ class HuyndaiCatalogModel extends CatalogModel{
         if (in_array($index, $aIndexes))
                 {
                     $item[str_pad((array_search($index, $aIndexes)+1), 2, "0", STR_PAD_LEFT)] = $value;
-
+                    $aForPNC[$item['model_index']][] = $value;
                 }
 
 		    }
@@ -212,6 +212,7 @@ class HuyndaiCatalogModel extends CatalogModel{
                     'option1' => $aOptions[$item['model_index']],
                     Constants::START_DATE   => $item['start_data'],
                     Constants::END_DATE   => $item['finish_data'],
+                    'option2' => $aForPNC[$item['model_index']], /*Добавлена для последующего использования в выборе нужного артикула в методе getArticuls*/
                 )
             );
         }
@@ -386,9 +387,9 @@ class HuyndaiCatalogModel extends CatalogModel{
 
         $sqlPnc = "
         SELECT *
-        FROM cats_pnc
-        WHERE catalog_name =:catCode
-        	AND detail = :subGroupCode
+        FROM cats_table
+        WHERE catalog_code =:catCode
+        	AND compl_name = :subGroupCode
         ";
 
     	$query = $this->conn->prepare($sqlPnc);
@@ -412,7 +413,7 @@ class HuyndaiCatalogModel extends CatalogModel{
         $query = $this->conn->prepare($sqlSchemaLabels);
             $query->bindValue('catCode', $catCode);
             $query->bindValue('subGroupCode', $subGroupCode);
-        $query->bindValue('pnc_code', $aPnc['pnc_code']);
+        $query->bindValue('pnc_code', $aPnc['detail_pnc']);
         $query->execute();
         
         $aPnc['clangjap'] = $query->fetchAll();
@@ -425,7 +426,7 @@ class HuyndaiCatalogModel extends CatalogModel{
         ";
 
             $query = $this->conn->prepare($sqlPncName);
-            $query->bindValue('pnc_code', $aPnc['pnc_code']);
+            $query->bindValue('pnc_code', $aPnc['detail_pnc']);
             $query->execute();
             $aData = $query->fetch();
 
@@ -439,7 +440,7 @@ class HuyndaiCatalogModel extends CatalogModel{
             {
             	foreach ($item['clangjap'] as $item1)
             	{
-            	$pncs[$item['pnc_code']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
+            	$pncs[$item['detail_pnc']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
                     Constants::X1 => floor(($item1['x1'])),
                     Constants::Y1 => $item1['y1'],
                     Constants::X2 => $item1['x2'],
@@ -455,7 +456,7 @@ class HuyndaiCatalogModel extends CatalogModel{
         foreach ($aPncs as $item) {
          	
          	
-				$pncs[$item['pnc_code']][Constants::NAME] = $this->getDesc($item['name'], 'EN');
+				$pncs[$item['detail_pnc']][Constants::NAME] = $this->getDesc($item['name'], 'EN');
 			
 			
            
@@ -507,92 +508,45 @@ $articuls = array();
 
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode)
     {
-        $modelCode = rawurldecode($modelCode);
-        $sql = "
+        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+
+        $ghg = $this->getComplectations($regionCode, $modelCode, $modificationCode);/*print_r($ghg[$complectationCode]['options']['option2']); die;*/
+
+
+        $sqlPnc = "
         SELECT *
-        FROM dba_pmotyt
-        WHERE hmodtyp =:complectationCode
-        AND cmodnamepc = :modelCode 
+        FROM cats_table
+        WHERE catalog_code =:catCode
+            AND detail_pnc = :pncCode
+        	AND compl_name = :subGroupCode
         ";
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('complectationCode',  $complectationCode);
-        $query->bindValue('modelCode',  $modelCode);
-        $query->execute();
-
-        $aData = $query->fetch();
-    	$hmodtyp = $aData['hmodtyp'];
-    	$NPL = $aData['npl'];  
-        
-        
-        $sqlTableNumber = "
-        SELECT disc_no
-		FROM dba_contain
-		WHERE pl_no =:pl_no
-        ";
-
-        $query = $this->conn->prepare($sqlTableNumber);
-        $query->bindValue('pl_no', $NPL);
-        $query->execute();
-
-        $DiscNumber = $query->fetch();
-        
-        switch ($DiscNumber['disc_no']){
-            case 1:
-                $sqlPnc = "
-        SELECT *
-        FROM dba_vw_blockpartsmodeltypes1
-        WHERE nplblk = :subGroupCode
-        	AND npl = :NPL
-            AND hmodtyp = :hmodtyp
-            AND nplpartref= :pncCode 
-        ";
-                break;
-            case 2:
-                $sqlPnc = "
-        SELECT *
-        FROM dba_vw_blockpartsmodeltypes2
-        WHERE nplblk = :subGroupCode
-        	AND npl = :NPL
-            AND hmodtyp = :hmodtyp
-            AND nplpartref= :pncCode 
-        ";
-                break;
-            case 3:
-                $sqlPnc = "
-        SELECT *
-        FROM dba_vw_blockpartsmodeltypes3
-        WHERE nplblk = :subGroupCode
-        	AND npl = :NPL
-            AND hmodtyp = :hmodtyp
-            AND nplpartref= :pncCode 
-        ";
-                break;
-        } 
-        
-    	$query = $this->conn->prepare($sqlPnc);
-        $query->bindValue('NPL', $NPL);
-        $query->bindValue('subGroupCode', $subGroupCode);
-        $query->bindValue('hmodtyp', $hmodtyp);
+        $query = $this->conn->prepare($sqlPnc);
+        $query->bindValue('catCode', $catCode);
         $query->bindValue('pncCode', $pncCode);
-        
+        $query->bindValue('subGroupCode', $subGroupCode);
         $query->execute();
 
-        $aPncs = $query->fetchAll();
-     
-        
-       
+        $aArticuls = $query->fetchAll();
+
+        foreach ($aArticuls as $index => $value)
+        {
+            print_r($ghg[$complectationCode]['options']['option2']); die;
+           /* array_intersect_ukey(explode('|',$value['model_options']), $ghg[$complectationCode]['options']['option2'])*/
+        }
         $articuls = array();
       
-        foreach ($aPncs as $item) {
+        foreach ($aArticuls as $item) {
         	 
             
             
-				$articuls[$item['npartgenu']] = array(
-                Constants::NAME =>$item['xpartext'],
+				$articuls[$item['detail_code']] = array(
+                Constants::NAME => $this->getDesc($item['detail_lex_code'], 'EN'),
                 Constants::OPTIONS => array(
-                    Constants::QUANTITY => $item['xordergun'],
-                    'option1' => ''
+                    Constants::QUANTITY => $item['quantity_details'],
+                    'option1' => $item['start_data'],
+                    'option2' => $item['end_data'],
+                    'option3' => '',
                 )
             );
             
@@ -616,6 +570,7 @@ $articuls = array();
                 $query->bindValue('language', $language);
                 $query->execute();
                 $sData = $query->fetch();
+        $sDesc = $itemCode;
                 if ($sData)
                 {
                     $sDesc = $sData['lex_name'];
