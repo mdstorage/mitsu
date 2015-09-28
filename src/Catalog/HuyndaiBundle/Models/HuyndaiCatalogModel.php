@@ -511,7 +511,7 @@ $articuls = array();
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
         $ghg = $this->getComplectations($regionCode, $modelCode, $modificationCode);/*print_r($ghg[$complectationCode]['options']['option2']); die;*/
-
+        $complectationOptions = $ghg[$complectationCode]['options']['option2'];
 
         $sqlPnc = "
         SELECT *
@@ -529,11 +529,23 @@ $articuls = array();
 
         $aArticuls = $query->fetchAll();
 
-        foreach ($aArticuls as $index => $value)
-        {
-            print_r($ghg[$complectationCode]['options']['option2']); die;
-           /* array_intersect_ukey(explode('|',$value['model_options']), $ghg[$complectationCode]['options']['option2'])*/
+        foreach ($aArticuls as $index => $value) {
+
+            $articulOptions = explode('|', str_replace(';', '', $value['model_options']));
+
+            foreach ($articulOptions as $index1 => $value1) {
+                if ($value1 == '') {
+                    unset ($articulOptions[$index1]);
+                }
+            }
+            if (count($articulOptions) != count(array_intersect_assoc($articulOptions, $complectationOptions)))
+            {
+                unset ($aArticuls[$index]);
+            }
         }
+
+
+
         $articuls = array();
       
         foreach ($aArticuls as $item) {
@@ -546,7 +558,7 @@ $articuls = array();
                     Constants::QUANTITY => $item['quantity_details'],
                     'option1' => $item['start_data'],
                     'option2' => $item['end_data'],
-                    'option3' => '',
+                    'option3' => $item['replace_code'],
                 )
             );
             

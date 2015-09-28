@@ -15,7 +15,7 @@
             <td>{{ articul.getRuname }}</td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }}</td>
             <td>{{ articul.getOption('option1')|huyndai_date_convertor}} - {{ articul.getOption('option2')|huyndai_date_convertor}}</td>
-            <td>{{ articul.getOption('option3')}}</td>
+            <td>{% if articul.getOption('option3') %} Код замены: </br> {{ articul.getOption('option3')}} {% endif %}</td>
             
         </tr>
     {% endfor %}
