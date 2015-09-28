@@ -1,4 +1,5 @@
 <table class="table small">
+    {% if oContainer.getActivePnc.getArticuls %}
     <thead>
         <tr>
             <th>Артикул</th>
@@ -8,6 +9,7 @@
             <th>Доп.информация</th>
         </tr>
     </thead>
+
     <tbody>
     {% for articul in oContainer.getActivePnc.getArticuls %}
         <tr>
@@ -20,4 +22,11 @@
         </tr>
     {% endfor %}
     </tbody>
+    {% endif %}
+    {% if not oContainer.getActivePnc.getArticuls %}
+        <tbody>
+    Запчасть не применяется в выбранной комплектации
+    </tbody>
+    {% endif %}
+
 </table>
