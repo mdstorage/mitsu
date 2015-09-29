@@ -534,10 +534,11 @@ $articuls = array();
             $articulOptions = explode('|', str_replace(';', '', $value['model_options']));
 
             foreach ($articulOptions as $index1 => $value1) {
-                if ($value1 == '') {
+                if (($value1 == '') || ($index1 > (count($complectationOptions)-1))) {
                     unset ($articulOptions[$index1]);
                 }
             }
+
             if (count($articulOptions) != count(array_intersect_assoc($articulOptions, $complectationOptions)))
             {
                 unset ($aArticuls[$index]);
