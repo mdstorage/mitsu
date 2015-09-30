@@ -239,7 +239,7 @@ class HuyndaiCatalogModel extends CatalogModel{
 
         foreach ($aData as &$item2)
         {
-                    $item2['part_index'] = $this->getDesc($item2['part_index'], 'EN');
+                    $item2['part_index'] = $this->getDesc($item2['part_index'], 'RU');
         }
 
         foreach($aData as $item){
@@ -318,7 +318,7 @@ class HuyndaiCatalogModel extends CatalogModel{
         $subgroups = array();
         foreach($aData as $item){
             $subgroups[($item['sector_id'])] = array(
-                Constants::NAME => '('.$item['sector_name'].') '.$this->getDesc($item['sector_lex_code'], 'EN'),
+                Constants::NAME => '('.$item['sector_name'].') '.$this->getDesc($item['sector_lex_code'], 'RU'),
                 Constants::OPTIONS => array()
             );
         }
@@ -456,7 +456,7 @@ class HuyndaiCatalogModel extends CatalogModel{
         foreach ($aPncs as $item) {
          	
          	
-				$pncs[$item['detail_pnc']][Constants::NAME] = $this->getDesc($item['name'], 'EN');
+				$pncs[$item['detail_pnc']][Constants::NAME] = $this->getDesc($item['name'], 'RU');
 			
 			
            
@@ -554,7 +554,7 @@ $articuls = array();
             
             
 				$articuls[$item['detail_code']] = array(
-                Constants::NAME => $this->getDesc($item['detail_lex_code'], 'EN'),
+                Constants::NAME => $this->getDesc($item['detail_lex_code'], 'RU'),
                 Constants::OPTIONS => array(
                     Constants::QUANTITY => $item['quantity_details'],
                     'option1' => $item['start_data'],
@@ -589,7 +589,7 @@ $articuls = array();
                     $sDesc = $sData['lex_name'];
                 }
 
-        return $sDesc;
+        return strtolower($sDesc);
     }
 
     
