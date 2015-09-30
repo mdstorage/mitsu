@@ -14,31 +14,78 @@ use Catalog\HuyndaiBundle\Components\HuyndaiConstants;
 
 class HuyndaiVinModel extends HuyndaiCatalogModel {
 
-    public function getVinComplectations($vin)
+    public function getVinFinderResult($vin)
     {
         
         $sql = "
         SELECT *
-        FROM dba_pmotyt
-        WHERE nfrmpf = :vin
+        FROM vin
+        WHERE vin = :vin
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('vin', substr($vin,0,11));
+        $query->bindValue('vin', $vin);
         $query->execute();
 
-        $aData = $query->fetchAll();
-               
-        $complectations = array();
-        
-		
-		
-			foreach($aData as $item1)
-			{
-			$complectations[]=$item1['hmodtyp'];	
-			}
-		
-        return $aData;
+        $aData = $query->fetch();
+
+        $sqlCompl = "
+        SELECT *
+        FROM vin_model
+        WHERE model_index = :model_index
+        ";
+
+        $query = $this->conn->prepare($sqlCompl);
+        $query->bindValue('model_index', $aData['model_index']);
+        $query->execute();
+        $aDataCompl = $query->fetch();
+
+        $sqlmodif = "
+        SELECT *
+        FROM hywc
+        WHERE catalog_code = :model
+        ORDER BY family
+        ";
+
+        $query = $this->conn->prepare($sqlmodif);
+        $query->bindValue('model', $aDataCompl['model']);
+        $query->execute();
+
+        $aDataModif = $query->fetch();
+
+        $complectations = $this->getComplectations('','',$aDataModif['catalog_code'].'_'.$aDataModif['catalog_folder']);
+
+     /*  print_r($complectations[$aData['model_index']]['options']['option1']); die;*/
+        $sqlDescription = "
+        SELECT *
+        FROM vin_description
+        WHERE vin = :vin
+        ";
+
+        $query = $this->conn->prepare($sqlDescription);
+        $query->bindValue('vin', $vin);
+        $query->execute();
+
+        $aDataDescription = $query->fetch();
+
+
+        $result = array();
+
+        if ($aData) {
+            $result = array(
+                'model' => $aDataModif['family'],
+                'modif' => $aDataModif['catalog_code'].'_'.$aDataModif['catalog_folder'],
+                'compl' => $complectations[$aData['model_index']]['options']['option1'],
+                Constants::PROD_DATE => $aDataDescription['date_output'] ,
+                'region' => $aDataDescription['country'],
+                'ext_color' => $aDataDescription['ext_color'],
+                'int_color' => $aDataDescription['int_color'],
+                'compl_for_groups' => $aData['model_index'],
+                'region_for_groups' => str_replace('|', '', $aDataModif['previous_region']),
+            );
+        }
+
+        return $result;
     }
     
     

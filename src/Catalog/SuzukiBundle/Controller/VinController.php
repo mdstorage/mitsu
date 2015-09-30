@@ -18,7 +18,7 @@ class VinController extends BaseController{
 
     public function model()
     {
-        return $this->get('Suzuki.vin.model');
+        return $this->get('suzuki.vin.model');
     }
 
     public function bundleConstants()

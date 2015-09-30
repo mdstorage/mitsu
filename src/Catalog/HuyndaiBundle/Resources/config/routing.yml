@@ -40,11 +40,12 @@ catalog_huyndai_group:
 
 vin_huyndai:
   path:         /huyndai/vin/0
-  defaults:     {_controller: CatalogHuyndaiBundle:Vin:index1}
+  defaults:     {_controller: CatalogHuyndaiBundle:Vin:index}
 
-vin_huyndai_complectations:
-  path:         /huyndai/vin/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogHuyndaiBundle:Vin:vinComplectations, regionCode: null, modelCode: null, modificationCode: null}
+vin_huyndai_result:
+  path:         /huyndai/vin/1
+  defaults:     {_controller: CatalogHuyndaiBundle:Vin:result}
+  requirements: {_method: POST}
 
 vin_huyndai_groups:
   path:         /huyndai/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}

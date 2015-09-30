@@ -1,9 +1,9 @@
 {% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
-{% use 'CatalogHondaBundle::honda.base.html.twig' %}
+{% use 'CatalogHuyndaiBundle::huyndai.base.html.twig' %}
 {% block breadcrumbs %}
-   <a href="{{ path('vin_honda') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }}, 
+   <a href="{{ path('vin_huyndai') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }}, 
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>
-    / <a href="{{ path('vin_honda_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> / Группа запчастей
+    / Группа запчастей
 {% endblock breadcrumbs %}
 
 
@@ -15,7 +15,7 @@
             <div class="groups">
                 {% for group in oContainer.getGroups %}
                     <div>
-                        <a href="{{ path('vin_honda_subgroups', parameters|merge({'groupCode': group.getCode})) }}">({{ group.getCode }}) {{ group.getRuname }}</a>
+                        <a href="{{ path('vin_huyndai_subgroups', parameters|merge({'groupCode': group.getCode})) }}">({{ group.getCode }}) {{ group.getRuname }}</a>
                     </div>
                 {% endfor %}
             </div>
