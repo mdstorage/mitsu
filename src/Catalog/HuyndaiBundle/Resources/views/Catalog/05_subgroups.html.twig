@@ -12,6 +12,6 @@
 {% block subgroupImage %}{% endblock subgroupImage %}
 {% block subgroupItem %}
           <div id="subgroup{{ subgroup.getCode }}">
-          <a href="{{ path('catalog_huyndai_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">{{ subgroup.getRuname }}</a>
+          <a href="{{ path('catalog_huyndai_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">{{ subgroup.getRuname|lower }}</a>
           </div>
 {% endblock subgroupItem %}
