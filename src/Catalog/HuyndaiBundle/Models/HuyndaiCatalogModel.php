@@ -302,7 +302,7 @@ class HuyndaiCatalogModel extends CatalogModel{
 
 
     	$sql = "
-        SELECT sector_name, sector_lex_code, sector_id
+        SELECT sector_name, sector_lex_code, sector_id, sector_id_code
         FROM cats_map
         WHERE catalog_name =:catCode
         AND part = :groupCode
@@ -317,8 +317,8 @@ class HuyndaiCatalogModel extends CatalogModel{
 
         $subgroups = array();
         foreach($aData as $item){
-            $subgroups[($item['sector_id'])] = array(
-                Constants::NAME => '('.$item['sector_name'].') '.$this->getDesc($item['sector_lex_code'], 'EN'),
+            $subgroups[($item['sector_name'])] = array(
+                Constants::NAME => '('.$item['sector_name'].') '.$this->getDesc($item['sector_lex_code'], 'RU'),
                 Constants::OPTIONS => array()
             );
         }
@@ -329,13 +329,32 @@ class HuyndaiCatalogModel extends CatalogModel{
     public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-        $schemas = array();
-        		
-		            $schemas[$subGroupCode] = array(
-                    Constants::NAME => $catCode,
-                    Constants::OPTIONS => array()
-                );
 
+        $sql = "
+        SELECT sector_id
+        FROM cats_map
+        WHERE catalog_name =:catCode
+        AND sector_name = :subGroupCode
+        AND part = :groupCode
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('catCode',  $catCode);
+        $query->bindValue('subGroupCode',  $subGroupCode);
+        $query->bindValue('groupCode',  $groupCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $schemas = array();
+        foreach($aData as $item)
+        {
+
+		            $schemas[$item['sector_id']] = array(
+                    Constants::NAME => $catCode,
+                    Constants::OPTIONS => array(Constants::CD => $item['sector_id'])
+                );
+        }
 
 
         return $schemas;
@@ -343,58 +362,38 @@ class HuyndaiCatalogModel extends CatalogModel{
 
     public function getSchema($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
-    	 
-    	 
-        $sqlSchema = "
-        SELECT *
-        FROM part_images
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-            AND sec_group = :subGroupCode
-            AND image_file = :schemaCode
-        ";
 
-        $query = $this->conn->prepare($sqlSchema);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('model_code', $modelCode);
-        $query->bindValue('subGroupCode', $subGroupCode);
-        $query->bindValue('schemaCode', $schemaCode);
-        $query->execute();
-
-        $aData = $query->fetchAll();
 
         $schema = array();
-        
-        foreach($aData as $item){
+
 			
-		            $schema[$item['image_file']] = array(
-                    Constants::NAME => $item['desc_en'],
-                    Constants::OPTIONS => array(
-                        Constants::CD => $item['catalog'].$item['sub_dir'].$item['sub_wheel'].$item['num_model'].$item['page'], 
-                        'num_model' => $item['num_model']
-                    )
+		            $schema[$schemaCode] = array(
+                    Constants::NAME => $schemaCode,
+                        Constants::OPTIONS => array(
+                            Constants::CD => $schemaCode
+                        )
                 );
-            
-        }
-        
+
+
 
         return $schema;
     }
 
-    public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
+    public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
     {
+
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
         $sqlPnc = "
         SELECT *
         FROM cats_table
         WHERE catalog_code =:catCode
-        	AND compl_name = :subGroupCode
+        	AND compl_name = :schemaCode
         ";
 
     	$query = $this->conn->prepare($sqlPnc);
         $query->bindValue('catCode', $catCode);
-        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('schemaCode', $schemaCode);
         $query->execute();
 
         $aPncs = $query->fetchAll();
@@ -406,13 +405,13 @@ class HuyndaiCatalogModel extends CatalogModel{
         SELECT x1, y1, x2, y2
         FROM cats_coord
         WHERE catalog_code =:catCode
-          AND compl_name =:subGroupCode
+          AND compl_name =:schemaCode
           AND name =:pnc_code
         ";
 
         $query = $this->conn->prepare($sqlSchemaLabels);
             $query->bindValue('catCode', $catCode);
-            $query->bindValue('subGroupCode', $subGroupCode);
+            $query->bindValue('schemaCode', $schemaCode);
         $query->bindValue('pnc_code', $aPnc['detail_pnc']);
         $query->execute();
         
@@ -436,11 +435,15 @@ class HuyndaiCatalogModel extends CatalogModel{
 		}
 
         $pncs = array();
-      foreach ($aPncs as $item) {
+      foreach ($aPncs as $index=>$value) {
             {
-            	foreach ($item['clangjap'] as $item1)
+                if (!$value['clangjap'])
+                {
+                    unset ($aPncs[$index]);
+                }
+            	foreach ($value['clangjap'] as $item1)
             	{
-            	$pncs[$item['detail_pnc']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
+            	$pncs[$value['detail_pnc']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
                     Constants::X1 => floor(($item1['x1'])),
                     Constants::Y1 => $item1['y1'],
                     Constants::X2 => $item1['x2'],
@@ -456,7 +459,7 @@ class HuyndaiCatalogModel extends CatalogModel{
         foreach ($aPncs as $item) {
          	
          	
-				$pncs[$item['detail_pnc']][Constants::NAME] = $this->getDesc($item['name'], 'EN');
+				$pncs[$item['detail_pnc']][Constants::NAME] = $this->getDesc($item['name'], 'RU');
 			
 			
            
@@ -506,8 +509,9 @@ $articuls = array();
         return $groups;
     }
 
-    public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode)
+    public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, $options)
     {
+
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
         $ghg = $this->getComplectations($regionCode, $modelCode, $modificationCode);/*print_r($ghg[$complectationCode]['options']['option2']); die;*/
@@ -518,13 +522,13 @@ $articuls = array();
         FROM cats_table
         WHERE catalog_code =:catCode
             AND detail_pnc = :pncCode
-        	AND compl_name = :subGroupCode
+        	AND compl_name = :schemaCode
         ";
 
         $query = $this->conn->prepare($sqlPnc);
         $query->bindValue('catCode', $catCode);
         $query->bindValue('pncCode', $pncCode);
-        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('schemaCode', $options['cd']);
         $query->execute();
 
         $aArticuls = $query->fetchAll();
@@ -554,7 +558,7 @@ $articuls = array();
             
             
 				$articuls[$item['detail_code']] = array(
-                Constants::NAME => $this->getDesc($item['detail_lex_code'], 'EN'),
+                Constants::NAME => $this->getDesc($item['detail_lex_code'], 'RU'),
                 Constants::OPTIONS => array(
                     Constants::QUANTITY => $item['quantity_details'],
                     'option1' => $item['start_data'],
@@ -583,13 +587,15 @@ $articuls = array();
                 $query->bindValue('language', $language);
                 $query->execute();
                 $sData = $query->fetch();
+
         $sDesc = $itemCode;
                 if ($sData)
                 {
                     $sDesc = $sData['lex_name'];
                 }
+        if ($sDesc == $itemCode){ $sDesc = $this->getDesc($sDesc, 'EN');}
 
-        return $sDesc;
+        return mb_strtoupper($sDesc, 'UTF-8');
     }
 
     
