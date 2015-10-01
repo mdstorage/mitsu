@@ -573,7 +573,7 @@ $articuls = array();
         return $articuls;
     }
 
-    private function getDesc($itemCode, $language)
+    public function getDesc($itemCode, $language)
     {
 
                 $sql = "

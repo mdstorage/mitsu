@@ -17,11 +17,9 @@ class HuyndaiArticulModel extends HuyndaiCatalogModel{
 
         
         $sql = "
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes1 where npartgenu = :articulCode)
-        UNION
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes2 where npartgenu = :articulCode)
-        UNION
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes3 where npartgenu = :articulCode)
+        select * from cats_table
+        where detail_code = :articulCode
+
         ";
 
         $query = $this->conn->prepare($sql);
@@ -38,31 +36,29 @@ class HuyndaiArticulModel extends HuyndaiCatalogModel{
         foreach($aData as $item)
         {
 		$sqlCatalog = "
-        SELECT cmftrepc
-        FROM dba_pmotyt
-        WHERE npl = :npl
-        AND hmodtyp = :hmodtyp
+        SELECT data_regions
+        FROM hywc
+        WHERE cutup_code = :cutup_code
         ";
 
         $query = $this->conn->prepare($sqlCatalog);
-        $query->bindValue('npl', $item['npl']);
-        $query->bindValue('hmodtyp', $item['hmodtyp']);
+        $query->bindValue('cutup_code', $item['catalog_code']);
         $query->execute();
 
         $aDataCatalog[] = $query->fetchAll();
 		}
-		 
+
 		foreach($aDataCatalog as $item)
         {
         	foreach($item as $item1)
         	{
-				$regions[] = trim($item1['cmftrepc']);
+				$regions[] = explode("|", $item1['data_regions']);
 			}
         		
         		
 		}
 		}
-     
+     print_r(array_unique($regions)); die;
         return array_unique($regions);
 
     }

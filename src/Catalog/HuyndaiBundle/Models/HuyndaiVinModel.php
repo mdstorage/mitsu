@@ -68,20 +68,73 @@ class HuyndaiVinModel extends HuyndaiCatalogModel {
 
         $aDataDescription = $query->fetch();
 
+        $sqlExtColor = "
+        SELECT lex_code_1
+        FROM cats_0_extcolor
+        WHERE ext_color_1 = :ext_color_1
+        ";
+
+        $query = $this->conn->prepare($sqlExtColor);
+        $query->bindValue('ext_color_1', $aDataDescription['ext_color']);
+        $query->execute();
+
+        $aDataExtColor = $query->fetch();
+
+        $sqlIntColor = "
+        SELECT lex_code
+        FROM cats_0_intcolor
+        WHERE int_color = :int_color
+        ";
+
+        $query = $this->conn->prepare($sqlIntColor);
+        $query->bindValue('int_color', $aDataDescription['int_color']);
+        $query->execute();
+
+        $aDataIntColor = $query->fetch();
+
+        $sqlRegion = "
+        SELECT *
+        FROM cats_0_nation
+        WHERE country = :country
+        AND region = :region
+        ";
+
+        $query = $this->conn->prepare($sqlRegion);
+        $query->bindValue('country', $aDataDescription['country']);
+        $query->bindValue('region', $aDataDescription['region']);
+        $query->execute();
+
+        $aDataRegion = $query->fetch();
+
+        if ($aDataModif['previous_region'])
+        {
+            $region_for_groups = str_replace('|', '', $aDataModif['previous_region']);
+        }
+        else
+        {
+            $region_for_groups = substr($aDataModif['data_regions'], 0, 3);
+        }
+
+
+
+
 
         $result = array();
 
         if ($aData) {
             $result = array(
-                'model' => $aDataModif['family'],
+                'model_for_groups' => $aDataModif['family'],
+                'model' => $aDataModif['catalog_name'],
                 'modif' => $aDataModif['catalog_code'].'_'.$aDataModif['catalog_folder'],
                 'compl' => $complectations[$aData['model_index']]['options']['option1'],
                 Constants::PROD_DATE => $aDataDescription['date_output'] ,
-                'region' => $aDataDescription['country'],
-                'ext_color' => $aDataDescription['ext_color'],
-                'int_color' => $aDataDescription['int_color'],
+                'region' => '('.$aDataDescription['region'].') '.$aDataRegion['region_name'],
+                'country' => '('.$aDataDescription['country'].') '.$aDataRegion['country_name'],
+                'wheel' => $aDataRegion['wheel_location'],
+                'ext_color' => '('.$aDataDescription['ext_color'].') '.$this->getDesc($aDataExtColor['lex_code_1'], 'RU'),
+                'int_color' => '('.$aDataDescription['int_color'].') '.$this->getDesc($aDataIntColor['lex_code'], 'RU'),
                 'compl_for_groups' => $aData['model_index'],
-                'region_for_groups' => str_replace('|', '', $aDataModif['previous_region']),
+                'region_for_groups' => $region_for_groups,
             );
         }
 
