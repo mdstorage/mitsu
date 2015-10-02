@@ -536,7 +536,8 @@ $articuls = array();
 
         foreach ($aArticuls as $index => $value) {
 
-            $articulOptions = explode('|', str_replace(';', '', $value['model_options']));
+            $value2 = str_replace(substr($value['model_options'], 0, strpos($value['model_options'], '|')), '', $value['model_options']);
+            $articulOptions = explode('|', str_replace(';', '', $value2));
 
             foreach ($articulOptions as $index1 => $value1) {
                 if (($value1 == '') || ($index1 > (count($complectationOptions)-1))) {

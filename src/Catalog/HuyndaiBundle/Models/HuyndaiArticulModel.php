@@ -48,31 +48,38 @@ class HuyndaiArticulModel extends HuyndaiCatalogModel{
         $aDataCatalog[] = $query->fetchAll();
 		}
 
+
 		foreach($aDataCatalog as $item)
         {
         	foreach($item as $item1)
         	{
-				$regions[] = explode("|", $item1['data_regions']);
+				$regions = explode("|", $item1['data_regions']);
+                foreach($regions as $index => $value)
+                {
+                    if ($value == '')
+                    {
+                        unset($regions[$index]);
+                    }
+                    $reg[] = $value;
+                }
+
 			}
         		
         		
 		}
 		}
-     print_r(array_unique($regions)); die;
-        return array_unique($regions);
+
+        return array_unique($reg);
 
     }
 
     public function getArticulModels($articul, $regionCode)
     {
-    	
-    	$aData = array();
-    	$sql = "
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes1 where npartgenu = :articulCode)
-        UNION
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes2 where npartgenu = :articulCode)
-        UNION
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes3 where npartgenu = :articulCode)
+
+        $sql = "
+        select * from cats_table
+        where detail_code = :articulCode
+
         ";
 
         $query = $this->conn->prepare($sql);
@@ -80,33 +87,27 @@ class HuyndaiArticulModel extends HuyndaiCatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
-      $aDataCatalog = array();
+
+        $aDataCatalog = array();
+
         if ($aData)
         {
-        
-          
-        foreach($aData as $item)
-        {
-        	
-        
-		$sqlCatalog = "
-        SELECT cmodnamepc
-        FROM dba_pmotyt
-        WHERE cmftrepc = :regionCode
-        AND hmodtyp = :hmodtyp
-        AND npl = :npl
+
+            foreach($aData as $item)
+            {
+                $sqlCatalog = "
+        SELECT family
+        FROM hywc
+        WHERE cutup_code = :cutup_code
         ";
 
-        $query = $this->conn->prepare($sqlCatalog);
-        
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('hmodtyp', $item['hmodtyp']);
-        $query->bindValue('npl', $item['npl']);
-        
-        $query->execute();
+                $query = $this->conn->prepare($sqlCatalog);
+                $query->bindValue('cutup_code', $item['catalog_code']);
+                $query->execute();
 
-        $aDataCatalog[] = $query->fetchAll(); 
-		}
+                $aDataCatalog[] = $query->fetchAll();
+            }
+
 		
 		$models = array();
 		
@@ -114,25 +115,21 @@ class HuyndaiArticulModel extends HuyndaiCatalogModel{
 		{
 			foreach($item as $item1)
 			{
-			$models[]=rawurlencode($item1['cmodnamepc']);	
+			$models[]=($item1['family']);
 			}
 			
 		}
-	}
-		
+	    }
  
         return array_unique($models);
     }
     
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
-        $modelCode = rawurldecode($modelCode);
         $sql = "
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes1 where npartgenu = :articulCode)
-        UNION
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes2 where npartgenu = :articulCode)
-        UNION
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes3 where npartgenu = :articulCode)
+        select * from cats_table
+        where detail_code = :articulCode
+
         ";
 
         $query = $this->conn->prepare($sql);
@@ -140,50 +137,46 @@ class HuyndaiArticulModel extends HuyndaiCatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
-        
-        foreach($aData as $item)
+
+        $aDataCatalog = array();
+
+        if ($aData)
         {
-		$sqlCatalog = "
-        SELECT dmodyr
-        FROM dba_pmotyt
-        WHERE npl = :npl
-        AND hmodtyp = :hmodtyp
-        AND cmftrepc = :regionCode
-        AND cmodnamepc = :modelCode
+
+            foreach ($aData as $item) {
+                $sqlCatalog = "
+        SELECT catalog_code, catalog_folder
+        FROM hywc
+        WHERE cutup_code = :cutup_code
         ";
 
-        $query = $this->conn->prepare($sqlCatalog);
-        $query->bindValue('npl', $item['npl']);
-        $query->bindValue('hmodtyp', $item['hmodtyp']);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('modelCode', $modelCode);
-        $query->execute();
+                $query = $this->conn->prepare($sqlCatalog);
+                $query->bindValue('cutup_code', $item['catalog_code']);
+                $query->execute();
 
-        $aDataCatalog[] = $query->fetchAll();
-		}
-		
-		$modifications = array();
-		foreach($aDataCatalog as $item)
-		{
-			foreach($item as $item1)
-			{
-			$modifications[]=$item1['dmodyr'];	
-			}
-			
-		}
+                $aDataCatalog[] = $query->fetchAll();
+            }
+
+            $modifications = array();
+            foreach ($aDataCatalog as $item) {
+                foreach ($item as $item1) {
+                    $modifications[] = $item1['catalog_code'].'_'.$item1['catalog_folder'];
+                }
+
+            }
+        }
 
         return array_unique($modifications);
     }
     
     public function getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode)
     {
-    	$modelCode = rawurldecode($modelCode);
-    	$sql = "
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes1 where npartgenu = :articulCode)
-        UNION
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes2 where npartgenu = :articulCode)
-        UNION
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes3 where npartgenu = :articulCode)
+        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+
+        $sql = "
+        select * from cats_table
+        where detail_code = :articulCode
+
         ";
 
         $query = $this->conn->prepare($sql);
@@ -191,41 +184,36 @@ class HuyndaiArticulModel extends HuyndaiCatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
-        
-        foreach($aData as $item)
+
+        $aDataCatalog = array();
+
+        if ($aData)
         {
-		$sqlCatalog = "
-        SELECT  cmodtypfrm, hmodtyp
-        FROM dba_pmotyt
-        WHERE npl = :npl
-        AND hmodtyp = :hmodtyp
-        AND cmftrepc = :regionCode
-        AND cmodnamepc = :modelCode
-        AND dmodyr = :modificationCode
+
+            foreach ($aData as $item) {
+                $sqlCatalog = "
+        SELECT model_index
+        FROM vin_model
+        WHERE model =:modificationCode
         ";
 
-        $query = $this->conn->prepare($sqlCatalog);
-        $query->bindValue('npl', $item['npl']);
-        $query->bindValue('hmodtyp', $item['hmodtyp']);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('modelCode', $modelCode);
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->execute();
+                $query = $this->conn->prepare($sqlCatalog);
+                $query->bindValue('modificationCode', $modificationCode);
+                $query->execute();
 
-        $aDataCatalog[] = $query->fetchAll();
-		}
-		
-             
-        $complectations = array();
-        
-		foreach($aDataCatalog as $item2)
-		{
-			foreach($item2 as $item1)
-			{
-			$complectations[]=$item1['hmodtyp'];	
-			}
-			
-		}
+                $aDataCatalog[] = $query->fetchAll();
+            }
+
+
+            $complectations = array();
+
+            foreach ($aDataCatalog as $item2) {
+                foreach ($item2 as $item1) {
+                    $complectations[] = $item1['model_index'];
+                }
+
+            }
+        }
 		
 		
         return ($complectations);
@@ -233,72 +221,27 @@ class HuyndaiArticulModel extends HuyndaiCatalogModel{
     
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
-        $modelCode = rawurldecode($modelCode);
-        
+
         $sql = "
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes1 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
-        UNION
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes2 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
-        UNION
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes3 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
+        SELECT main_part
+        FROM cats_table
+        WHERE detail_code = :articul
+
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', $articul);
-        $query->bindValue('complectationCode',  $complectationCode);
+        $query->bindValue('articul', $articul);
         $query->execute();
 
-        $aData = $query->fetch();
-    	$hmodtyp = $aData['hmodtyp'];
-    	$NPL = $aData['npl'];
-        
-        $sql = "
-        (select nplblk from dba_vw_blockpartsmodeltypes1 where npl = :npl
-        AND hmodtyp = :hmodtyp
-        AND npartgenu = :articulCode)
-        UNION
-        (select nplblk from dba_vw_blockpartsmodeltypes2 where npl = :npl
-        AND hmodtyp = :hmodtyp
-        AND npartgenu = :articulCode)
-        UNION
-        (select nplblk from dba_vw_blockpartsmodeltypes3 where npl = :npl
-        AND hmodtyp = :hmodtyp
-        AND npartgenu = :articulCode)
-        ";
-        
+        $aData = $query->fetchAll();
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', $articul);
-        $query->bindValue('npl', $NPL);
-        $query->bindValue('hmodtyp', $hmodtyp);
-        $query->execute();
-
-        $aDataSecGroups = $query->fetchAll(); 
-       
-       $aDataGroups = array();
-       foreach($aDataSecGroups as $item)
-       {
-	   	 $sqlGroups = "
-        SELECT NPLGRP
-        FROM dba_pblokt
-        WHERE NPL = :NPL
-        AND NPLBLK = :NPLBLK
-        ";
-
-        $query = $this->conn->prepare($sqlGroups);
-        $query->bindValue('NPL', $NPL);
-        $query->bindValue('NPLBLK', $item['nplblk']);
-        $query->execute();
-
-        $aDataGroups[] = $query->fetchAll();
-	   } 
     	$groups = array();
 
-        foreach($aDataGroups as $item)
+        foreach($aData as $item)
 		{
 			foreach($item as $item1)
 			{
-			$groups[]=$item1['NPLGRP'];	
+			$groups[]=$item1;
 			}
 			
 		}
@@ -307,122 +250,94 @@ class HuyndaiArticulModel extends HuyndaiCatalogModel{
     public function getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
         $sql = "
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes1 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
-        UNION
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes2 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
-        UNION
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes3 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
+        SELECT compl_name
+        FROM cats_table
+        WHERE detail_code = :articul
+
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', $articul);
-        $query->bindValue('complectationCode',  $complectationCode);
-        $query->execute();
-
-        $aData = $query->fetch();
-    	$hmodtyp = $aData['hmodtyp'];
-    	$NPL = $aData['npl'];
-        
-        $sql = "
-        (select nplblk from dba_vw_blockpartsmodeltypes1 where npl = :npl
-        AND hmodtyp = :hmodtyp
-        AND npartgenu = :articulCode)
-        UNION
-        (select nplblk from dba_vw_blockpartsmodeltypes2 where npl = :npl
-        AND hmodtyp = :hmodtyp
-        AND npartgenu = :articulCode)
-        UNION
-        (select nplblk from dba_vw_blockpartsmodeltypes3 where npl = :npl
-        AND hmodtyp = :hmodtyp
-        AND npartgenu = :articulCode)
-        ";
-
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', $articul);
-        $query->bindValue('npl', $NPL);
-        $query->bindValue('hmodtyp', $hmodtyp);
+        $query->bindValue('articul', $articul);
         $query->execute();
 
         $aDataSecGroups = $query->fetchAll();
-        
+
+        foreach ($aDataSecGroups as $item) {
+            $sqlCatalog = "
+        SELECT sector_name
+        FROM cats_map
+        WHERE sector_id =:compl_name
+        ";
+
+            $query = $this->conn->prepare($sqlCatalog);
+            $query->bindValue('compl_name', $item['compl_name']);
+            $query->execute();
+
+            $aDataCatalog[] = $query->fetchAll();
+        }
+
         $subgroups = array();
-        foreach($aDataSecGroups as $item)
-        {
-			 $subgroups[] = $item['nplblk'];
-		}
-    	return array_unique($subgroups);
+        foreach($aDataCatalog as $item) {
+            foreach ($item as $item1) {
+                $subgroups[] = $item1['sector_name'];
+
+            }
+
+        }
+        return array_unique($subgroups);
     }
     
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
-      $sql = "
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes1 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
-        UNION
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes2 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
-        UNION
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes3 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
+        $sql = "
+        SELECT compl_name
+        FROM cats_table
+        WHERE detail_code = :articul
+
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', $articul);
-        $query->bindValue('complectationCode',  $complectationCode);
+        $query->bindValue('articul', $articul);
         $query->execute();
 
-        $aData = $query->fetch();
-    	$NPL = $aData['npl'];
+        $aData = $query->fetchAll();
 	   
 	   $schemas = array();
-	   
-			$schemas[] = $aData['npl'];
+        foreach($aData as $item) {
+            foreach ($item as $item1) {
+                $schemas[] = $item1;
+
+            }
+
+        }
 		   
         return array_unique($schemas);
     }
          
      public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
-    	$sql = "
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes1 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
-        UNION
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes2 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
-        UNION
-        (select npl, hmodtyp from dba_vw_blockpartsmodeltypes3 where npartgenu = :articulCode AND hmodtyp =:complectationCode)
+        $sql = "
+        SELECT detail_pnc
+        FROM cats_table
+        WHERE detail_code = :articul
+
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', $articul);
-        $query->bindValue('complectationCode',  $complectationCode);
-        $query->execute();
-
-        $aData = $query->fetch();
-        $NPL = $aData['npl'];
-        $hmodtyp = $aData['hmodtyp'];
-        
-        $sqlPnc = "
-        (select nplpartref from dba_vw_blockpartsmodeltypes1 where npl = :npl
-        AND hmodtyp = :hmodtyp
-        AND nplblk  = :nplblk
-        AND npartgenu = :articul)
-        UNION
-        (select nplpartref from dba_vw_blockpartsmodeltypes2 where npl = :npl
-        AND hmodtyp = :hmodtyp
-        AND nplblk  = :nplblk
-        AND npartgenu = :articul)
-        UNION
-        (select nplpartref from dba_vw_blockpartsmodeltypes3 where npl = :npl
-        AND hmodtyp = :hmodtyp
-        AND nplblk  = :nplblk
-        AND npartgenu = :articul)
-        ";
-        
-        $query = $this->conn->prepare($sqlPnc);
         $query->bindValue('articul', $articul);
-        $query->bindValue('npl', $NPL);
-        $query->bindValue('nplblk', $subGroupCode);
-        $query->bindValue('hmodtyp', $hmodtyp);
         $query->execute();
-$pncs = array();
-        $pncs = $this->array_column($query->fetchAll(), 'nplpartref');
 
-        return $pncs; 
+        $aData = $query->fetchAll();
+
+        $pncs = array();
+        foreach($aData as $item) {
+            foreach ($item as $item1) {
+                $pncs[] = $item1;
+
+            }
+
+        }
+        
+        return array_unique($pncs);
     }
 } 
