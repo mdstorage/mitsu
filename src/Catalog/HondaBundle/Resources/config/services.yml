@@ -9,7 +9,7 @@ services:
             - { name: twig.extension}
   honda.catalog.model:
     class: Catalog\HondaBundle\Models\HondaCatalogModel
-    arguments:  ['@doctrine.dbal.honda_connection']
+    arguments:  ['@doctrine.dbal.honda_connection', '@doctrine.dbal.subaru_connection']
 
   honda.vin.model:
     class: Catalog\HondaBundle\Models\HondaVinModel
