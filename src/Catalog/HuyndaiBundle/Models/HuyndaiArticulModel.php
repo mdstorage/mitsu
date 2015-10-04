@@ -171,6 +171,10 @@ class HuyndaiArticulModel extends HuyndaiCatalogModel{
     
     public function getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode)
     {
+        $ghg = $this->getComplectations($regionCode, $modelCode, $modificationCode);
+        $test = array();
+
+
         $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
 
         $sql = "
@@ -214,9 +218,33 @@ class HuyndaiArticulModel extends HuyndaiCatalogModel{
 
             }
         }
-		
-		
-        return ($complectations);
+
+        foreach ($ghg as $indexCompl => $valueCompl)
+        {
+            foreach ($aData as $index => $value)
+            {
+                $value2 = str_replace(substr($value['model_options'], 0, strpos($value['model_options'], '|')), '', $value['model_options']);
+                $articulOptions = explode('|', str_replace(';', '', $value2));
+                $complectationOptions = $valueCompl['options']['option2'];
+
+                foreach ($articulOptions as $index1 => $value1) {
+                    if (($value1 == '') || ($index1 > (count($complectationOptions)-1))) {
+                        unset ($articulOptions[$index1]);
+                    }
+                }
+                $cd = count($articulOptions);
+                $cdc = count(array_intersect_assoc($articulOptions, $complectationOptions));
+
+                if ($cd==$cdc)
+                {
+                  $test[] = $indexCompl;
+                }
+
+            }
+
+        }
+
+        return (array_intersect($complectations, $test));
     }
     
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
@@ -249,15 +277,18 @@ class HuyndaiArticulModel extends HuyndaiCatalogModel{
     }
     public function getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
+         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
         $sql = "
         SELECT compl_name
         FROM cats_table
         WHERE detail_code = :articul
+        AND catalog_code = :catCode
 
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articul', $articul);
+        $query->bindValue('catCode', $catCode);
         $query->execute();
 
         $aDataSecGroups = $query->fetchAll();
@@ -266,10 +297,12 @@ class HuyndaiArticulModel extends HuyndaiCatalogModel{
             $sqlCatalog = "
         SELECT sector_name
         FROM cats_map
-        WHERE sector_id =:compl_name
+        WHERE catalog_name = :catalog_code
+        AND sector_id =:compl_name
         ";
 
             $query = $this->conn->prepare($sqlCatalog);
+            $query->bindValue('catalog_code', $catCode);
             $query->bindValue('compl_name', $item['compl_name']);
             $query->execute();
 

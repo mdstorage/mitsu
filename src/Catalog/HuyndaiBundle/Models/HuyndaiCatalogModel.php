@@ -314,14 +314,15 @@ class HuyndaiCatalogModel extends CatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
-
         $subgroups = array();
         foreach($aData as $item){
 
-            $subgroups[($item['sector_name'])] = array(
-                Constants::NAME => '('.$item['sector_name'].') '.$this->getDesc($item['sector_lex_code'], 'RU'),
+            $subgroups[$item['sector_name']] = array(
+
+                Constants::NAME => '('.$item['sector_name'].') '.mb_strtoupper($this->getDesc($item['sector_lex_code'], 'RU'), 'UTF-8'),
                 Constants::OPTIONS => array()
             );
+
         }
 
         return $subgroups;
@@ -545,6 +546,7 @@ $articuls = array();
                 }
             }
 
+
             if (count($articulOptions) != count(array_intersect_assoc($articulOptions, $complectationOptions)))
             {
                 unset ($aArticuls[$index]);
@@ -563,8 +565,8 @@ $articuls = array();
                 Constants::NAME => $this->getDesc($item['detail_lex_code'], 'RU'),
                 Constants::OPTIONS => array(
                     Constants::QUANTITY => $item['quantity_details'],
-                    'option1' => $item['start_data'],
-                    'option2' => $item['end_data'],
+                    Constants::START_DATE => $item['start_data'],
+                    Constants::END_DATE => $item['end_data'],
                     'option3' => $item['replace_code'],
                 )
             );
@@ -577,14 +579,14 @@ $articuls = array();
     public function getDesc($itemCode, $language)
     {
 
-                $sql = "
+                $sqlRu = "
                     SELECT lex_name
                     FROM hywlex
                     WHERE lex_code = :itemCode
                     AND lang = :language
                     ";
 
-                $query = $this->conn->prepare($sql);
+                $query = $this->conn->prepare($sqlRu);
                 $query->bindValue('itemCode', $itemCode);
                 $query->bindValue('language', $language);
                 $query->execute();
@@ -595,7 +597,28 @@ $articuls = array();
                 {
                     $sDesc = $sData['lex_name'];
                 }
-        if ($sDesc == $itemCode){ $sDesc = $this->getDesc($sDesc, 'EN');}
+        else
+        {
+            $sqlEn = "
+                    SELECT lex_name
+                    FROM hywlex
+                    WHERE lex_code = :itemCode
+                    AND lang = :language
+                    ";
+
+            $query = $this->conn->prepare($sqlEn);
+            $query->bindValue('itemCode', $sDesc);
+            $query->bindValue('language', 'EN');
+            $query->execute();
+            $sData1 = $query->fetch();
+
+            if ($sData1)
+            {
+                $sDesc = $sData1['lex_name'];
+            }
+
+        }
+
 
         return mb_strtoupper($sDesc, 'UTF-8');
 
