@@ -506,8 +506,34 @@ $articuls = array();
 
     public function getReferGroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
-       
+        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+
+
+        $sqlSchemaLabels = "
+        SELECT name, x1, y1, x2, y2
+        FROM cats_coord
+        WHERE catalog_code =:catCode
+          AND compl_name =:schemaCode
+          AND quantity = 5
+          ";
+
+        $query = $this->conn->prepare($sqlSchemaLabels);
+        $query->bindValue('catCode', $catCode);
+        $query->bindValue('schemaCode', $schemaCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
         $groups = array();
+        foreach ($aData as $item)
+        {
+            $groups[$item['name']][Constants::OPTIONS][Constants::COORDS][$item['x1']] = array(
+                Constants::X1 => ($item['x1']),
+                Constants::Y1 => $item['y1'],
+                Constants::X2 => $item['x2'],
+                Constants::Y2 => $item['y2']);
+        }
+
         return $groups;
     }
 
@@ -621,6 +647,28 @@ $articuls = array();
 
 
         return mb_strtoupper($sDesc, 'UTF-8');
+
+    }
+
+    public function getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode)
+    {
+
+        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+        $sqlGroup = "
+        SELECT part
+        FROM cats_map
+        WHERE sector_name = :subGroupCode
+          AND catalog_name = :catCode
+        ";
+
+        $query = $this->conn->prepare($sqlGroup);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('catCode', $catCode);
+        $query->execute();
+
+        $groupCode = $query->fetchColumn(0);
+
+        return $groupCode;
 
     }
 
