@@ -33,7 +33,7 @@ catalog_huyndai_articuls:
   requirements: {_method: POST}
 
 catalog_huyndai_group:
-  path:         /huyndai/catalog/8/{regionCode}/{modelCode}/{complectationCode}/{subGroupCode}
+  path:         /huyndai/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
   defaults:     {_controller: CatalogHuyndaiBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ articul_huyndai_articuls:
   requirements: {_method: POST}
 
 articul_huyndai_group:
-  path:         /huyndai/articul/10/{regionCode}/{modelCode}/{modificationCode}/complectationCode/{subGroupCode}
+  path:         /huyndai/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
   defaults:     {_controller: CatalogHuyndaiBundle:Articul:getGroupBySubgroup}
 catalog_huyndai_homepage:
     path:     /hello/{name}
