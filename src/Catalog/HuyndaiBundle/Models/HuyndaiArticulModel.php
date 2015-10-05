@@ -282,8 +282,8 @@ class HuyndaiArticulModel extends HuyndaiCatalogModel{
     public function getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
         $ghg = $this->getComplectations($regionCode, $modelCode, $modificationCode);
-        $test = array();
-
+        $complectationOptions = $ghg[$complectationCode]['options']['option2'];
+        
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
         $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
 
@@ -302,6 +302,30 @@ class HuyndaiArticulModel extends HuyndaiCatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
+
+
+        foreach ($aData as $index => $value)
+        {
+            $value2 = str_replace(substr($value['model_options'], 0, strpos($value['model_options'], '|')), '', $value['model_options']);
+            $articulOptions = explode('|', str_replace(';', '', $value2));
+
+
+            foreach ($articulOptions as $index1 => $value1) {
+                if (($value1 == '') || ($index1 > (count($complectationOptions)-1))) {
+                    unset ($articulOptions[$index1]);
+                }
+            }
+            $cd = count($articulOptions);
+            $cdc = count(array_intersect_assoc($articulOptions, $complectationOptions));
+
+            if ($cd != $cdc)
+            {
+                unset ($aData[$index]);
+            }
+
+        }
+
+
 
         foreach ($aData as $item) {
             $sqlCatalog = "
@@ -329,30 +353,9 @@ class HuyndaiArticulModel extends HuyndaiCatalogModel{
 
         }
 
-        foreach ($ghg as $indexCompl => $valueCompl)
-        {
-            foreach ($aData as $index => $value)
-            {
-                $value2 = str_replace(substr($value['model_options'], 0, strpos($value['model_options'], '|')), '', $value['model_options']);
-                $articulOptions = explode('|', str_replace(';', '', $value2));
-                $complectationOptions = $valueCompl['options']['option2'];
 
-                foreach ($articulOptions as $index1 => $value1) {
-                    if (($value1 == '') || ($index1 > (count($complectationOptions)-1))) {
-                        unset ($articulOptions[$index1]);
-                    }
-                }
-                $cd = count($articulOptions);
-                $cdc = count(array_intersect_assoc($articulOptions, $complectationOptions));
 
-                if ($cd == $cdc)
-                {
-                    $test[] = $value['compl_name'];
-                }
 
-            }
-
-        }
 
 
       /*  return (array_intersect($subgroups, $test));*/
