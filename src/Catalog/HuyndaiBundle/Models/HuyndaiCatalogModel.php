@@ -364,7 +364,7 @@ class HuyndaiCatalogModel extends CatalogModel{
 
     public function getSchema($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
-
+        print_r($schemaCode); die;
 
         $schema = array();
 
