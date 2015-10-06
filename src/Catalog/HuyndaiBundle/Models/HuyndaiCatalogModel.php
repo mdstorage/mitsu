@@ -653,7 +653,7 @@ $articuls = array();
 
     public function getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
-        print_r($modificationCode); die;
+
 
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
         $sqlGroup = "
