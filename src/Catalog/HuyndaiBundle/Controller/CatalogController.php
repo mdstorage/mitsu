@@ -28,9 +28,11 @@ class CatalogController extends BaseController{
 
     public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode)
     {
+        print_r($modelCode); die;
         $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode);
-       
-        return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
+
+
+
         
     }
 } 

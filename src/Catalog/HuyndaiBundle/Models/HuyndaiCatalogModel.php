@@ -527,7 +527,8 @@ $articuls = array();
         $groups = array();
         foreach ($aData as $item)
         {
-            $groups[$item['name']][Constants::OPTIONS][Constants::COORDS][$item['x1']] = array(
+            $groups[$item['name']][Constants::NAME] = $item['name'];
+            $groups[$item['name']][Constants::OPTIONS][Constants::COORDS][] = array(
                 Constants::X1 => ($item['x1']),
                 Constants::Y1 => $item['y1'],
                 Constants::X2 => $item['x2'],
@@ -652,6 +653,7 @@ $articuls = array();
 
     public function getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
+        print_r($modificationCode); die;
 
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
         $sqlGroup = "
