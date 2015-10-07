@@ -24,6 +24,7 @@ class AppKernel extends Kernel
             new Acme\TaskBundle\AcmeTaskBundle(),
             new Catalog\SuzukiBundle\CatalogSuzukiBundle(),
             new Catalog\HondaBundle\CatalogHondaBundle(),
+            new Catalog\HuyndaiBundle\CatalogHuyndaiBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

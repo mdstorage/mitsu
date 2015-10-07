@@ -27,7 +27,7 @@
 <tbody>
                 {% for item in data.partNumbers %}
                     <tr>
-                        <td><a href="http://v3.ryli.by/search/preload/?article={{ item.partNumber }}" target="_blank">{{ item.partNumber }}</a></td>
+                        <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ item.partNumber }}" target="_blank">{{ item.partNumber }}</a></td>
                         <td>{{ item.startDate|slice(4,2) }}/{{ item.startDate|slice(0,4) }}</td>
 
                         <td>

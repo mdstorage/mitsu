@@ -1,40 +1,40 @@
 <?php
-namespace Catalog\SuzukiBundle\Controller;
+namespace Catalog\HuyndaiBundle\Controller;
 
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Components\Factory;
 use Catalog\CommonBundle\Components\Interfaces\CommonInterface;
 use Catalog\CommonBundle\Controller\VinController as BaseController;
-use Catalog\SuzukiBundle\Controller\Traits\SuzukiVinFilters;
+use Catalog\HuyndaiBundle\Controller\Traits\HuyndaiVinFilters;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 class VinController extends BaseController{
-   use SuzukiVinFilters;
+    use HuyndaiVinFilters;
     public function bundle()
     {
-        return 'CatalogSuzukiBundle:Vin';
+        return 'CatalogHuyndaiBundle:Vin';
     }
 
     public function model()
     {
-        return $this->get('suzuki.vin.model');
+        return $this->get('huyndai.vin.model');
     }
 
     public function bundleConstants()
     {
-        return 'Catalog\SuzukiBundle\Components\SuzukiConstants';
+        return 'Catalog\HuyndaiBundle\Components\HuyndaiConstants';
     }
-    
 
-   public function articulsAction(Request $request)
+
+    public function articulsAction(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
             $prodDate = $request->cookies->get(Constants::PROD_DATE);
-            $this->addFilter('prodDateFilter', array(Constants::PROD_DATE => $prodDate)); 
+            $this->addFilter('prodDateFilter', array(Constants::PROD_DATE => $prodDate));
             $this->addFilter('articulDescFilter', array('regionCode'=>$request->request->get('regionCode'), 'modelCode'=>$request->request->get('modelCode'), 'complectationCode'=>$request->request->get('complectationCode')));
             return parent::articulsAction($request);
-           
+
         }
     }
 
@@ -72,13 +72,13 @@ class VinController extends BaseController{
 
         return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
     }
-    
 
-     public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode)
+
+    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode)
     {
         $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode);
-       
+
         return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
-        
+
     }
 } 

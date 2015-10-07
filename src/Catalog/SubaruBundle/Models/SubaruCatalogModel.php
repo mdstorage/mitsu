@@ -669,7 +669,7 @@ $articuls = array();
         return $articuls;
     }
 
-    public function getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode)
+    public function getGroupBySubgroup($regionCode, $modelCode, $subGroupCode)
     {
         $sqlGroup = "
         SELECT pri_group

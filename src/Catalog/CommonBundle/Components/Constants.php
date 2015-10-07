@@ -23,5 +23,5 @@ class Constants {
 
     const VIN = 'VIN';
 
-    const FIND_PATH = 'http://v3.ryli.by/search/preload/?article=';
+    const FIND_PATH = 'http://autoasia.by/search/number/?article=';
 } 

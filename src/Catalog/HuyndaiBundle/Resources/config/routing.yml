@@ -1,0 +1,120 @@
+catalog_huyndai:
+  path:         /huyndai/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_huyndai_modifications:
+  path:         /huyndai/catalog/1
+  defaults:     {_controller: CatalogHuyndaiBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_huyndai_complectations:
+  path:         /huyndai/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Catalog:complectations}
+
+catalog_huyndai_groups:
+  path:         /huyndai/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Catalog:groups}
+
+catalog_huyndai_subgroups:
+  path:         /huyndai/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Catalog:subgroups}
+
+catalog_huyndai_schemas:
+  path:         /huyndai/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Catalog:schemas}
+
+catalog_huyndai_schema:
+  path:         /huyndai/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Catalog:schema}
+
+catalog_huyndai_articuls:
+  path:         /huyndai/catalog/7
+  defaults:     {_controller: CatalogHuyndaiBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_huyndai_group:
+  path:         /huyndai/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_huyndai:
+  path:         /huyndai/vin/0
+  defaults:     {_controller: CatalogHuyndaiBundle:Vin:index}
+
+vin_huyndai_result:
+  path:         /huyndai/vin/1
+  defaults:     {_controller: CatalogHuyndaiBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_huyndai_groups:
+  path:         /huyndai/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Vin:groups}
+
+vin_huyndai_subgroups:
+  path:         /huyndai/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Vin:subgroups}
+
+vin_huyndai_schemas:
+  path:         /huyndai/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Vin:schemas}
+
+vin_huyndai_schema:
+  path:         /huyndai/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Vin:schema}
+
+vin_huyndai_articuls:
+  path:         /huyndai/vin/7
+  defaults:     {_controller: CatalogHuyndaiBundle:Vin:articuls}
+  requirements: {_method: POST}
+
+vin_huyndai_group:
+  path:         /huyndai/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_huyndai:
+  path:         /huyndai/articul/0
+  defaults:     {_controller: CatalogHuyndaiBundle:Articul:index}
+
+articul_huyndai_find:
+  path:         /huyndai/articul/1/{regionCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Articul:findByArticul, regionCode: null}
+
+articul_huyndai_modifications:
+  path:         /huyndai/articul/3
+  defaults:     {_controller: CatalogHuyndaiBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_huyndai_complectations:
+  path:         /huyndai/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Articul:huyndaiArticulComplectations}
+
+articul_huyndai_groups:
+  path:         /huyndai/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Articul:huyndaiArticulgroups}
+
+articul_huyndai_subgroups:
+  path:         /huyndai/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Articul:huyndaiArticulSubgroups}
+
+articul_huyndai_schemas:
+  path:         /huyndai/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Articul:huyndaiArticulSchemas}
+
+articul_huyndai_schema:
+  path:         /huyndai/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Articul:huyndaiArticulSchema}
+
+articul_huyndai_articuls:
+  path:         /huyndai/articul/9
+  defaults:     {_controller: CatalogHuyndaiBundle:Articul:articuls}
+  requirements: {_method: POST}
+
+articul_huyndai_group:
+  path:         /huyndai/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHuyndaiBundle:Articul:getGroupBySubgroup}
+catalog_huyndai_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogHuyndaiBundle:Default:index }

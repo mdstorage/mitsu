@@ -19,7 +19,7 @@ class HondaCatalogModel extends CatalogModel{
 
         $sql = "
         SELECT *
-        FROM dba_pmotyt
+        FROM honda.dba_pmotyt
         GROUP BY cmftrepc
         ";
 
@@ -524,7 +524,6 @@ class HondaCatalogModel extends CatalogModel{
         
         $aPnc['clangjap'] = $query->fetchAll();
 		}
-	  
         $pncs = array();
       foreach ($aPncs as $item) {
             {
