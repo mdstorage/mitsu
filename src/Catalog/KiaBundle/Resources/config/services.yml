@@ -1,0 +1,20 @@
+services:
+#    catalog_kia.example:
+#        class: Catalog\KiaBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  kia_date_convertor.extension:
+        class: Catalog\KiaBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  kia.catalog.model:
+    class: Catalog\KiaBundle\Models\KiaCatalogModel
+    arguments:  ['@doctrine.dbal.kia_connection']
+
+  kia.vin.model:
+    class: Catalog\KiaBundle\Models\KiaVinModel
+    arguments:  ['@doctrine.dbal.kia_connection']
+
+  kia.articul.model:
+    class: Catalog\KiaBundle\Models\KiaArticulModel
+    arguments:  ['@doctrine.dbal.kia_connection']

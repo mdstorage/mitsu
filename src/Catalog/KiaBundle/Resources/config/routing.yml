@@ -1,0 +1,120 @@
+catalog_kia:
+  path:         /kia/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogKiaBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_kia_modifications:
+  path:         /kia/catalog/1
+  defaults:     {_controller: CatalogKiaBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_kia_complectations:
+  path:         /kia/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogKiaBundle:Catalog:complectations}
+
+catalog_kia_groups:
+  path:         /kia/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogKiaBundle:Catalog:groups}
+
+catalog_kia_subgroups:
+  path:         /kia/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogKiaBundle:Catalog:subgroups}
+
+catalog_kia_schemas:
+  path:         /kia/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogKiaBundle:Catalog:schemas}
+
+catalog_kia_schema:
+  path:         /kia/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogKiaBundle:Catalog:schema}
+
+catalog_kia_articuls:
+  path:         /kia/catalog/7
+  defaults:     {_controller: CatalogKiaBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_kia_group:
+  path:         /kia/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogKiaBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_kia:
+  path:         /kia/vin/0
+  defaults:     {_controller: CatalogKiaBundle:Vin:index}
+
+vin_kia_result:
+  path:         /kia/vin/1
+  defaults:     {_controller: CatalogKiaBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_kia_groups:
+  path:         /kia/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogKiaBundle:Vin:groups}
+
+vin_kia_subgroups:
+  path:         /kia/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogKiaBundle:Vin:subgroups}
+
+vin_kia_schemas:
+  path:         /kia/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogKiaBundle:Vin:schemas}
+
+vin_kia_schema:
+  path:         /kia/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogKiaBundle:Vin:schema}
+
+vin_kia_articuls:
+  path:         /kia/vin/7
+  defaults:     {_controller: CatalogKiaBundle:Vin:articuls}
+  requirements: {_method: POST}
+
+vin_kia_group:
+  path:         /kia/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogKiaBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_kia:
+  path:         /kia/articul/0
+  defaults:     {_controller: CatalogKiaBundle:Articul:index}
+
+articul_kia_find:
+  path:         /kia/articul/1/{regionCode}
+  defaults:     {_controller: CatalogKiaBundle:Articul:findByArticul, regionCode: null}
+
+articul_kia_modifications:
+  path:         /kia/articul/3
+  defaults:     {_controller: CatalogKiaBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_kia_complectations:
+  path:         /kia/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogKiaBundle:Articul:kiaArticulComplectations}
+
+articul_kia_groups:
+  path:         /kia/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogKiaBundle:Articul:kiaArticulgroups}
+
+articul_kia_subgroups:
+  path:         /kia/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogKiaBundle:Articul:kiaArticulSubgroups}
+
+articul_kia_schemas:
+  path:         /kia/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogKiaBundle:Articul:kiaArticulSchemas}
+
+articul_kia_schema:
+  path:         /kia/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogKiaBundle:Articul:kiaArticulSchema}
+
+articul_kia_articuls:
+  path:         /kia/articul/9
+  defaults:     {_controller: CatalogKiaBundle:Articul:articuls}
+  requirements: {_method: POST}
+
+articul_kia_group:
+  path:         /kia/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogKiaBundle:Articul:getGroupBySubgroup}
+catalog_kia_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogKiaBundle:Default:index }
