@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new Catalog\SuzukiBundle\CatalogSuzukiBundle(),
             new Catalog\HondaBundle\CatalogHondaBundle(),
             new Catalog\HuyndaiBundle\CatalogHuyndaiBundle(),
+            new Catalog\KiaBundle\CatalogKiaBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
