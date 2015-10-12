@@ -399,7 +399,7 @@ class KiaArticulModel extends KiaCatalogModel{
      public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
         $sql = "
-        SELECT detail_pnc
+        SELECT scheme_num
         FROM cats_table
         WHERE detail_code = :articul
 
