@@ -616,7 +616,7 @@ $articuls = array();
             }
 
 
-            if (count($articulOptions) != count(array_intersect_assoc($articulOptions, $complectationOptions)))
+            if (count($articulOptions) !== count(array_intersect_assoc($articulOptions, $complectationOptions)))
             {
                 unset ($aArticuls[$index]);
             }

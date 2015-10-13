@@ -53,7 +53,7 @@ vin_kia_groups:
 
 vin_kia_subgroups:
   path:         /kia/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogKiaBundle:Vin:subgroups}
+  defaults:     {_controller: CatalogKiaBundle:Vin:vinSubgroups}
 
 vin_kia_schemas:
   path:         /kia/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}

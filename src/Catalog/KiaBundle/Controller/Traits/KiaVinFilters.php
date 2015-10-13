@@ -40,7 +40,15 @@ trait KiaVinFilters {
 
     public function vinSubgroupFilter($oContainer, $parameters)
     {
-        
+        $prodDate = $parameters[Constants::PROD_DATE];
+
+        $subgroups = $this->model()->getVinSubGroups($parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode'], $parameters['complectationCode'], $parameters['groupCode'], $prodDate);
+
+        foreach ($oContainer->getActiveGroup()->getSubGroups() as $subGroup) {
+            if (!in_array($subGroup->getCode(), $subgroups, true)) {
+                $oContainer->getActiveGroup()->removeSubgroup($subGroup->getCode());
+            }
+        }
 
         return $oContainer;
     }

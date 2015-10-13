@@ -51,11 +51,15 @@ class VinController extends BaseController{
 
     public function vinSubgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
+        $prodDate = $request->cookies->get(Constants::PROD_DATE);
+
         $this->addFilter('vinSubGroupFilter', array(
             'regionCode' => $regionCode,
+            'modelCode' => $modelCode,
             'modificationCode' => $modificationCode,
-            'complectationCode' => substr($complectationCode, 0, 4),
-            'subComplectationCode' => substr($complectationCode, 3, 3)
+            'complectationCode' => $complectationCode,
+            'groupCode' => $groupCode,
+            Constants::PROD_DATE => $prodDate
         ));
 
         return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);

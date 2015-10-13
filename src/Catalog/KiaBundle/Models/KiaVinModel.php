@@ -161,34 +161,94 @@ class KiaVinModel extends KiaCatalogModel {
     }
     
     
-    public function getVinSchemas($regionCode, $modelCode, $modificationCode, $subGroupCode)
+    public function getVinSubGroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $prodDate)
     {
-        $sqlSchemas = "
-        SELECT *
-        FROM part_images
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-            AND sec_group = :subGroupCode
+        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+
+        $sqlSubGroups = "
+        SELECT sector_id
+        FROM cats_map
+        WHERE catalog_name = :catCode
+            AND part =:groupCode
         ";
 
-        $query = $this->conn->prepare($sqlSchemas);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('model_code', $modelCode);
-        $query->bindValue('subGroupCode', $subGroupCode);
+        $query = $this->conn->prepare($sqlSubGroups);
+        $query->bindValue('catCode', $catCode);
+        $query->bindValue('groupCode', $groupCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
-        $schemas = array();
-        
-        foreach($aData as $item){
-		
-		 if ((substr_count($item['desc_en'],'MY')>0)&&(substr_count($item['desc_en'], $modificationCode)!=0)||(substr_count($item['desc_en'],'MY')==0))
-		           
-                $schemas[] = $item['image_file'];
+        foreach($aData as &$item)
+        {
+            $sqlArticuls = "
+            SELECT start_data, end_data
+            FROM cats_table
+            WHERE catalog_code = :catCode
+            AND main_part = :groupCode
+            AND compl_name = :item
+
+        ";
+
+            $query = $this->conn->prepare($sqlArticuls);
+            $query->bindValue('catCode', $catCode);
+            $query->bindValue('groupCode', $groupCode);
+            $query->bindValue('item', $item['sector_id']);
+            $query->execute();
+
+            $item['arts'] = $query->fetchAll();
+
         }
 
-        return $schemas;
+        foreach($aData as $indexId => &$valueId)
+        {
+            foreach($valueId['arts'] as $index => $value) {
+
+                if ($value['start_data'] > $prodDate || $value['end_data'] < $prodDate)
+                {
+                   unset($valueId['arts'][$index]);
+                }
+            }
+            if(!$valueId['arts'])
+            {
+                unset($aData[$indexId]);
+            }
+        }
+
+
+
+
+
+        $aDataSubGroup = array();
+        $subGroups = array();
+        
+        foreach($aData as $item)
+        {
+            $subGroups[] = $item['sector_id'];
+        }
+
+        foreach(array_unique($subGroups) as $item)
+        {
+            $sql = "
+        SELECT sector_name
+        FROM cats_map
+        WHERE catalog_name =:catCode
+        AND sector_id = :item
+        AND part = :groupCode
+        ";
+
+            $query = $this->conn->prepare($sql);
+            $query->bindValue('catCode',  $catCode);
+            $query->bindValue('item',  $item);
+            $query->bindValue('groupCode',  $groupCode);
+            $query->execute();
+
+            $aDataSub = $query->fetch();
+            $aDataSubGroup[] = $aDataSub['sector_name'];
+        }
+
+
+        return $aDataSubGroup;
     }
    
    
