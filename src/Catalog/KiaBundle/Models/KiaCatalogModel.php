@@ -450,13 +450,13 @@ class KiaCatalogModel extends CatalogModel{
         FROM cats_coord
         WHERE catalog_code =:catCode
           AND compl_name =:schemaCode
-          AND name =:pnc_code
+          AND name =:scheme_num
         ";
 
         $query = $this->conn->prepare($sqlSchemaLabels);
             $query->bindValue('catCode', $catCode);
             $query->bindValue('schemaCode', $schemaCode);
-        $query->bindValue('pnc_code', $aPnc['detail_pnc']);
+        $query->bindValue('scheme_num', $aPnc['scheme_num']);
         $query->execute();
         
         $aPnc['clangjap'] = $query->fetchAll();
@@ -487,7 +487,7 @@ class KiaCatalogModel extends CatalogModel{
                 }
             	foreach ($value['clangjap'] as $item1)
             	{
-            	$pncs[$value['detail_pnc']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
+            	$pncs[$value['scheme_num']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
                     Constants::X1 => floor(($item1['x1'])),
                     Constants::Y1 => $item1['y1'],
                     Constants::X2 => $item1['x2'],
@@ -503,7 +503,7 @@ class KiaCatalogModel extends CatalogModel{
         foreach ($aPncs as $item) {
          	
          	
-				$pncs[$item['detail_pnc']][Constants::NAME] = $this->getDesc($item['name'], 'RU');
+				$pncs[$item['scheme_num']][Constants::NAME] = $this->getDesc($item['name'], 'RU');
 			
 			
            
@@ -592,7 +592,7 @@ $articuls = array();
         SELECT *
         FROM cats_table
         WHERE catalog_code =:catCode
-            AND detail_pnc = :pncCode
+            AND scheme_num = :pncCode
         	AND compl_name = :schemaCode
         ";
 
@@ -616,7 +616,7 @@ $articuls = array();
             }
 
 
-            if (count($articulOptions) != count(array_intersect_assoc($articulOptions, $complectationOptions)))
+            if (count($articulOptions) !== count(array_intersect_assoc($articulOptions, $complectationOptions)))
             {
                 unset ($aArticuls[$index]);
             }

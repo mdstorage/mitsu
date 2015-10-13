@@ -371,15 +371,19 @@ class KiaArticulModel extends KiaCatalogModel{
     
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
+        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+
         $sql = "
         SELECT compl_name
         FROM cats_table
         WHERE detail_code = :articul
+        AND catalog_code = :catCode
 
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articul', $articul);
+        $query->bindValue('catCode', $catCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -398,15 +402,19 @@ class KiaArticulModel extends KiaCatalogModel{
          
      public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
+        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+
         $sql = "
-        SELECT detail_pnc
+        SELECT scheme_num
         FROM cats_table
         WHERE detail_code = :articul
+        AND catalog_code = :catCode
 
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articul', $articul);
+        $query->bindValue('catCode', $catCode);
         $query->execute();
 
         $aData = $query->fetchAll();
