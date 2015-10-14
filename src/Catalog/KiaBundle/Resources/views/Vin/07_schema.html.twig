@@ -8,6 +8,8 @@
     <a href="{{ path('vin_kia_schemas', parameters) }}">Cхема</a> / Запчасти
 {% endblock breadcrumbs %}
 
+{% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
+
 {% block pncScript %}
                                 <script>
                                     $("#pnc_{{ pnc.getCode }}").on("click", function(){
