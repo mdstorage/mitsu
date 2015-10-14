@@ -635,7 +635,7 @@ $articuls = array();
                 Constants::OPTIONS => array(
                     Constants::QUANTITY => $item['quantity_details'],
                     Constants::START_DATE => $item['start_data'],
-                    Constants::END_DATE => $item['end_data'],
+                    Constants::END_DATE => ($item['end_data'])?$item['end_data']:99999999,
                     'option3' => $item['replace_code'],
                 )
             );

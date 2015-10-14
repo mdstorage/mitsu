@@ -204,7 +204,7 @@ class KiaVinModel extends KiaCatalogModel {
         {
             foreach($valueId['arts'] as $index => $value) {
 
-                if ($value['start_data'] > $prodDate || $value['end_data'] < $prodDate)
+                if (($value['start_data'] > $prodDate) || (($value['end_data']) && ($value['end_data'] < $prodDate)))
                 {
                    unset($valueId['arts'][$index]);
                 }

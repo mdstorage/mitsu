@@ -299,27 +299,72 @@ class HuyndaiCatalogModel extends CatalogModel{
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+        $ghg = $this->getComplectations($regionCode, $modelCode, $modificationCode);/*;*/
+        $complectationOptions = $ghg[$complectationCode]['options']['option2'];
 
 
-    	$sql = "
-        SELECT sector_name, sector_lex_code, sector_id, sector_id_code
-        FROM cats_map
-        WHERE catalog_name =:catCode
-        AND part = :groupCode
+        $sqlData = "
+        SELECT *
+        FROM cats_table
+        WHERE catalog_code =:catCode
+        AND main_part = :groupCode
         ";
 
-        $query = $this->conn->prepare($sql);
+        $query = $this->conn->prepare($sqlData);
         $query->bindValue('catCode',  $catCode);
         $query->bindValue('groupCode',  $groupCode);
         $query->execute();
 
-        $aData = $query->fetchAll();
+        $aDataCompl = $query->fetchAll();
+
+
+
+        foreach ($aDataCompl as $index => $value) {
+
+            $value2 = str_replace(substr($value['model_options'], 0, strpos($value['model_options'], '|')), '', $value['model_options']);
+            $articulOptions = explode('|', str_replace(';', '', $value2));
+
+            foreach ($articulOptions as $index1 => $value1) {
+                if (($value1 == '') || ($index1 > (count($complectationOptions)-1))) {
+                    unset ($articulOptions[$index1]);
+                }
+            }
+
+
+            if (count($articulOptions) != count(array_intersect_assoc($articulOptions, $complectationOptions)))
+            {
+                unset ($aDataCompl[$index]);
+            }
+        }
+
+        foreach ($aDataCompl as $item)
+        {
+            $aDataU4etCompl [$item['compl_name']] = $item['compl_name'];
+        }
+
         $subgroups = array();
-        foreach($aData as $item){
+        foreach ($aDataU4etCompl as $item)
+        {
 
-            $subgroups[$item['sector_name']] = array(
+            $sql = "
+        SELECT sector_name, sector_lex_code, sector_id, sector_id_code
+        FROM cats_map
+        WHERE catalog_name =:catCode
+        AND part = :groupCode
+        AND sector_id =:item
+        ";
 
-                Constants::NAME => '('.$item['sector_name'].') '.mb_strtoupper($this->getDesc($item['sector_lex_code'], 'RU'), 'UTF-8'),
+            $query = $this->conn->prepare($sql);
+            $query->bindValue('catCode',  $catCode);
+            $query->bindValue('groupCode',  $groupCode);
+            $query->bindValue('item',  $item);
+            $query->execute();
+
+            $aData = $query->fetch();
+
+            $subgroups[$aData['sector_name']] = array(
+
+                Constants::NAME => '('.$aData['sector_name'].') '.mb_strtoupper($this->getDesc($aData['sector_lex_code'], 'RU'), 'UTF-8'),
                 Constants::OPTIONS => array()
             );
 
@@ -364,7 +409,7 @@ class HuyndaiCatalogModel extends CatalogModel{
 
     public function getSchema($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
-
+        print_r($schemaCode); die;
 
         $schema = array();
 
