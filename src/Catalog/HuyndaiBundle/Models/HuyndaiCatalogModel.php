@@ -244,7 +244,7 @@ class HuyndaiCatalogModel extends CatalogModel{
 
         foreach($aData as $item){
             $groups[$item['part']] = array(
-                Constants::NAME     => $item ['part_index'],
+                Constants::NAME     => ($item ['part_index']),
                 Constants::OPTIONS  => array()
             );
         }
@@ -364,7 +364,7 @@ class HuyndaiCatalogModel extends CatalogModel{
 
             $subgroups[$aData['sector_name']] = array(
 
-                Constants::NAME => '('.$aData['sector_name'].') '.mb_strtoupper($this->getDesc($aData['sector_lex_code'], 'RU'), 'UTF-8'),
+                Constants::NAME => '('.$aData['sector_name'].') '.$this->getDesc($aData['sector_lex_code'], 'RU'),
                 Constants::OPTIONS => array()
             );
 
@@ -692,7 +692,7 @@ $articuls = array();
         }
 
 
-        return mb_strtoupper($sDesc, 'UTF-8');
+        return mb_strtoupper(iconv('cp1251', 'utf8', $sDesc), 'utf8');
 
     }
 

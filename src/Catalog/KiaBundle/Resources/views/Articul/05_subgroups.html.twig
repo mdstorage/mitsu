@@ -14,6 +14,8 @@
         {% endblock subgroupImage %}
 
 
-{% block pathToSchemas %}
-    {{ path('articul_kia_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}
-{% endblock pathToSchemas %}
+{% block subgroupItem %}
+    <div id="subgroup{{ subgroup.getCode }}">
+        <a href="{{ path('articul_kia_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">{{ subgroup.getRuname }}</a>
+    </div>
+{% endblock subgroupItem %}

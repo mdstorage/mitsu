@@ -362,7 +362,7 @@ class KiaCatalogModel extends CatalogModel{
 
             $subgroups[$item['sector_name']] = array(
 
-                Constants::NAME => '('.$item['sector_name'].') '.mb_strtoupper($this->getDesc($item['sector_lex_code'], 'RU'), 'UTF-8'),
+                Constants::NAME => '('.$item['sector_name'].') '.$this->getDesc($item['sector_lex_code'], 'RU'),
                 Constants::OPTIONS => array()
             );
 
@@ -689,7 +689,7 @@ $articuls = array();
         }
 
 
-        return mb_strtoupper($sDesc, 'UTF-8');
+        return mb_strtoupper(iconv('cp1251', 'utf8', $sDesc), 'utf8');
 
     }
 
