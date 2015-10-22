@@ -1,1 +1,21 @@
-Hello {{ name }}!
+
+
+<div class="complectations">
+{% for mark in marks %}
+<div class="col-lg-6">
+        <a href="http://vincat.ru/{{ mark|lower }}/catalog/0">{{ mark }}</a>
+</div>
+
+{% endfor %}
+                <div class="col-lg-6">
+        <a href="http://nissan.by.suraman.newsolution.by">Nissan</a>
+                </div>
+                <div class="col-lg-6">
+        <a href="http://cats-toyota.by.suraman.newsolution.by">Toyota</a>
+                </div>
+                        <div class="col-lg-6">
+        <a href="http://cats-mitsu.by.suraman.newsolution.by/app_dev.php/mitsubishi">Mitsubishi</a>
+                        </div>
+
+</div>
+
