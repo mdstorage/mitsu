@@ -74,11 +74,38 @@ class VinController extends BaseController{
 			{
 			$vinComplectations[]=$item['hmodtyp'];	
 			}
+        $trans = array();
         foreach ($oContainer->getActiveModification()->getComplectations() as $complectation) {
+
             if (!in_array($complectation->getCode(), $vinComplectations, true)) {
                 $oContainer->getActiveModification()->removeComplectation($complectation->getCode());
             }
+
         }
+        $side = array ('RH', 'LH');
+        $role = array();
+        foreach ($oContainer->getActiveModification()->getComplectations() as $complectation)
+        {
+                $trans[] = $complectation->getOptions()['option2'];
+            foreach ($side as $index=>$value)
+            {
+                if (strpos($complectation->getOptions()['option4'], $value))
+                {
+                    $role[] = $value;
+                }
+            }
+
+        }
+
+
+        foreach ($oContainer->getActiveModification()->getComplectations() as $complectation)
+        {
+            $complectation->setOptions(array('option5' => count(array_unique($trans))>1?array_unique($trans):''));
+            $complectation->setOptions(array('option6' => count(array_unique($role))>1?array_unique($role):''));
+
+        }
+
+
 
         return $oContainer;
     }

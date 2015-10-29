@@ -1,0 +1,20 @@
+services:
+#    catalog_bmv.example:
+#        class: Catalog\BmvBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  bmv_date_convertor.extension:
+        class: Catalog\BmvBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  bmv.catalog.model:
+    class: Catalog\BmvBundle\Models\BmvCatalogModel
+    arguments:  ['@doctrine.dbal.bmv_connection']
+
+  bmv.vin.model:
+    class: Catalog\BmvBundle\Models\BmvVinModel
+    arguments:  ['@doctrine.dbal.bmv_connection']
+
+  bmv.articul.model:
+    class: Catalog\BmvBundle\Models\BmvArticulModel
+    arguments:  ['@doctrine.dbal.bmv_connection']

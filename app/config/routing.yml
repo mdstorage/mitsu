@@ -37,3 +37,7 @@ catalog_huyndai:
 catalog_kia:
     resource: "@CatalogKiaBundle/Resources/config/routing.yml"
     prefix:   /
+
+catalog_bmw:
+    resource: "@CatalogBmvBundle/Resources/config/routing.yml"
+    prefix:   /
