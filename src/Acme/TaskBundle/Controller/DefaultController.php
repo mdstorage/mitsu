@@ -6,8 +6,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class DefaultController extends Controller
 {
-    public function indexAction($name)
+    public function indexAction()
     {
-        return $this->render('AcmeTaskBundle:Default:index.html.twig', array('name' => $name));
+        $marks = array('Huyndai', 'KIA', 'Honda', 'Suzuki', 'Subaru', 'Mazda', 'Mercedes');
+        return $this->render('AcmeTaskBundle:Default:index.html.twig', array('marks' => $marks));
     }
 }
