@@ -18,30 +18,19 @@ class BmvCatalogModel extends CatalogModel{
     public function getRegions(){
 
         $sql = "
-        SELECT data_regions
-        FROM bmvc
-        GROUP BY data_regions
+        SELECT fztyp_ktlgausf
+        FROM w_fztyp
+        GROUP BY fztyp_ktlgausf
         ";
 
         $query = $this->conn->query($sql);
 
         $aData = $query->fetchAll();
 
+        $regions = array();
         foreach($aData as $item)
         {
-
-            $pieces = explode("|", $item['data_regions']);
-            foreach($pieces as $item1)
-            {
-                if($item1 != ''){$reg[] = $item1;}
-            }
-
-        }
-
-        $regions = array();
-        foreach(array_unique($reg) as $item)
-        {
-            $regions[trim($item)] = array(Constants::NAME=>$item, Constants::OPTIONS=>array());
+            $regions[$item['fztyp_ktlgausf']] = array(Constants::NAME=>$item['fztyp_ktlgausf'], Constants::OPTIONS=>array());
         }
 
         return $regions;
@@ -50,43 +39,27 @@ class BmvCatalogModel extends CatalogModel{
 
     public function getModels($regionCode)
     {
-        $sql = "
-        SELECT *
-        FROM bmvc
-        WHERE data_regions LIKE :regionCode
-        ";
+        $sql  = "select distinct
+fztyp_baureihe Baureihe,
+b.ben_text ExtBaureihe
+from w_fztyp
+inner join w_baureihe on (fztyp_baureihe = baureihe_baureihe)
+inner join w_ben_gk b on (baureihe_textcode = b.ben_textcode and b.ben_iso = 'ru' and b.ben_regiso = '  ')
+WHERE fztyp_ktlgausf = :regionCode AND fztyp_karosserie <> 'ohne' AND baureihe_marke_tps = 'BMW'
+ORDER BY ExtBaureihe";
+
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode', '%'.$regionCode.'%');
+        $query->bindValue('regionCode', $regionCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
-        $aDataRegions = array('AMANTI', 'AVELLA', 'CADENZA', 'CEED', 'CERATO', 'CERATO/FORTE', 'CERATO/SPECTRA', 'CLARUS', 'GEN ED', 'FORTE', 'IH 12', 'MAGENTIS', 'MENTOR', 'MORNING/PICANTO', 'OPIRUS', 'OPTIMA',
-            'OPTIMA/MAGENTIS', 'PICANTO', 'PRIDE', 'PRIDE/FESTIVA', 'QUORIS', 'RIO', 'SEPHIA', 'SEPHIA/SHUMA/MENTOR', 'SMA GEN (1998-2004)', 'SMA MES (19981101-20040228)', 'SPECTRA', 'SPECTRA/SEPHIA II/SHUMA II/MENTOR II', 'TFE 11', 'VENGA',
-            'BORREGO', 'CARENS', 'CARNIVAL', 'CARNIVAL/SEDONA', 'JOICE DS', 'MOHAVE', 'RETONA', 'RONDO', 'RONDO/CARENS', 'SEDONA', 'SORENTO', 'SOUL', 'SPORTAGE', 'AM928 (1998-)', 'BESTA', 'BONGO-3 1TON,1.4TON',
-            'COSMOS', 'GRANBIRD', 'K2500/K2700/K2900/K3000/K3600', 'MIGHTY', 'POWER COMBI', 'PREGIO', 'PREGIO/BESTA', 'RHINO', 'TOWNER', 'SPTR');
-
-
-        foreach($aData as $item)
-        {
-            foreach($aDataRegions as $itemReg)
-            {
-                if (strpos($item['catalog_name'], $itemReg) !== false)
-                {
-                    $modelsReg[] = $itemReg;
-                }
-
-
-            }
-
-        }
-
 
         $models = array();
-        foreach($modelsReg as $item){
+        foreach($aData as $item){
         	 
-            $models[$item] = array(Constants::NAME=>strtoupper($item),
+            $models[$item['Baureihe']] = array(Constants::NAME=>strtoupper($item['ExtBaureihe']),
             Constants::OPTIONS=>array());
       
         }
