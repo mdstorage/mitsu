@@ -111,7 +111,6 @@
 			filter('.col-lg-6', $(this).val());
 		}
 	});
-                    
 });
 function filter(selector, query) {
 	query =	$.trim(query);
@@ -121,7 +120,6 @@ function filter(selector, query) {
 		? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
 	});
 }
-
 function repeatact(){
 	filter('.col-lg-6', $('#filter-query2').val());
 }
