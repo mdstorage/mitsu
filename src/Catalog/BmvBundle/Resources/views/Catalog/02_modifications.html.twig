@@ -5,7 +5,6 @@
             {% block modification %}
 
                 <a href="{{ path('catalog_bmv_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
-                <img src="{{ asset('bundles/catalogbmv/Images/titles/'~modification.getOption('option1')~'.png') }}" alt="{{ modification.getCode }}">
 
                     {{ modification.getRuname }}
                 </a>

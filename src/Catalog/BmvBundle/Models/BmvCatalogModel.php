@@ -20,6 +20,7 @@ class BmvCatalogModel extends CatalogModel{
         $sql = "
         SELECT fztyp_ktlgausf
         FROM w_fztyp
+        WHERE fztyp_karosserie NOT LIKE 'ohne'
         GROUP BY fztyp_ktlgausf
         ";
 
@@ -39,14 +40,16 @@ class BmvCatalogModel extends CatalogModel{
 
     public function getModels($regionCode)
     {
-        $sql  = "select distinct
-fztyp_baureihe Baureihe,
-b.ben_text ExtBaureihe
-from w_fztyp
-inner join w_baureihe on (fztyp_baureihe = baureihe_baureihe)
-inner join w_ben_gk b on (baureihe_textcode = b.ben_textcode and b.ben_iso = 'ru' and b.ben_regiso = '  ')
-WHERE fztyp_ktlgausf = :regionCode AND fztyp_karosserie <> 'ohne' AND baureihe_marke_tps = 'BMW'
-ORDER BY ExtBaureihe";
+        $sql  = "
+        SELECT DISTINCT
+        fztyp_baureihe Baureihe,
+        b.ben_text ExtBaureihe
+        FROM w_fztyp
+        INNER JOIN w_baureihe ON (fztyp_baureihe = baureihe_baureihe)
+        INNER JOIN w_ben_gk b ON (baureihe_textcode = b.ben_textcode AND b.ben_iso = 'ru' AND b.ben_regiso = '')
+        WHERE fztyp_ktlgausf = :regionCode AND baureihe_marke_tps = 'BMW' AND fztyp_karosserie NOT LIKE 'ohne'
+        ORDER BY ExtBaureihe
+        ";
 
 
         $query = $this->conn->prepare($sql);
@@ -54,7 +57,6 @@ ORDER BY ExtBaureihe";
         $query->execute();
 
         $aData = $query->fetchAll();
-
 
         $models = array();
         foreach($aData as $item){
@@ -70,25 +72,25 @@ ORDER BY ExtBaureihe";
     public function getModifications($regionCode, $modelCode)
     {
         $sql = "
-        SELECT *
-        FROM bmvc
-        WHERE data_regions LIKE :regionCode
-        AND catalog_name LIKE :modelCode
-        ORDER BY catalog_name
+        SELECT fztyp_erwvbez
+        FROM w_fztyp
+        WHERE fztyp_ktlgausf = :regionCode
+        AND fztyp_baureihe = :modelCode
+        ORDER BY fztyp_erwvbez
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode', '%'.$regionCode.'%');
-        $query->bindValue('modelCode', '%'.$modelCode.'%');
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modelCode', $modelCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
         $modifications = array();
         foreach($aData as $item){
-            $modifications[$item['catalog_code'].'_'.$item['catalog_folder']] = array(
-                Constants::NAME     => $item['catalog_name'],
-                Constants::OPTIONS  => array('option1'=>strtolower($item['catalog_code'])));
+            $modifications[$item['fztyp_erwvbez']] = array(
+                Constants::NAME     => $item['fztyp_erwvbez'],
+                Constants::OPTIONS  => array());
 
         }
 
