@@ -12,19 +12,19 @@ catalog_bmv_complectations:
   defaults:     {_controller: CatalogBmvBundle:Catalog:complectations}
 
 catalog_bmv_groups:
-  path:         /bmv/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  path:         /bmv/catalog/3/{regionCode}/{modelCode}/{modificationCode}
   defaults:     {_controller: CatalogBmvBundle:Catalog:groups}
 
 catalog_bmv_subgroups:
-  path:         /bmv/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  path:         /bmv/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
   defaults:     {_controller: CatalogBmvBundle:Catalog:subgroups}
 
 catalog_bmv_schemas:
-  path:         /bmv/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  path:         /bmv/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogBmvBundle:Catalog:schemas}
 
 catalog_bmv_schema:
-  path:         /bmv/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  path:         /bmv/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
   defaults:     {_controller: CatalogBmvBundle:Catalog:schema}
 
 catalog_bmv_articuls:
@@ -33,7 +33,7 @@ catalog_bmv_articuls:
   requirements: {_method: POST}
 
 catalog_bmv_group:
-  path:         /bmv/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /bmv/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
   defaults:     {_controller: CatalogBmvBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------
