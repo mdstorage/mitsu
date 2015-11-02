@@ -42,6 +42,7 @@ class BmvCatalogModel extends CatalogModel{
     {
         $sql  = "
         SELECT DISTINCT
+        fztyp_karosserie Kuzov,
         fztyp_baureihe Baureihe,
         b.ben_text ExtBaureihe
         FROM w_fztyp
@@ -61,7 +62,7 @@ class BmvCatalogModel extends CatalogModel{
         $models = array();
         foreach($aData as $item){
         	 
-            $models[$item['Baureihe']] = array(Constants::NAME=>strtoupper($item['ExtBaureihe']),
+            $models[$item['Baureihe']] = array(Constants::NAME=>strtoupper($item['ExtBaureihe']).' '.$item['Kuzov'],
             Constants::OPTIONS=>array());
       
         }
@@ -72,7 +73,7 @@ class BmvCatalogModel extends CatalogModel{
     public function getModifications($regionCode, $modelCode)
     {
         $sql = "
-        SELECT fztyp_erwvbez
+        SELECT fztyp_mospid, fztyp_erwvbez
         FROM w_fztyp
         WHERE fztyp_ktlgausf = :regionCode
         AND fztyp_baureihe = :modelCode
@@ -88,7 +89,7 @@ class BmvCatalogModel extends CatalogModel{
 
         $modifications = array();
         foreach($aData as $item){
-            $modifications[$item['fztyp_erwvbez']] = array(
+            $modifications[$item['fztyp_mospid']] = array(
                 Constants::NAME     => $item['fztyp_erwvbez'],
                 Constants::OPTIONS  => array());
 
@@ -217,32 +218,31 @@ class BmvCatalogModel extends CatalogModel{
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+
          $sql = "
-        SELECT *
-        FROM cats_maj
-        WHERE CATALOG_NAME = :catCode
+        select
+        hgfg_hg Hauptgruppe,
+        ben_text Benennung
+        from w_hgfg_mosp, w_hgfg, w_ben_gk
+        where hgfgm_mospid = :modificationCode and hgfgm_hg = hgfg_hg and hgfg_fg = '00' and hgfgm_produktart = hgfg_produktart
+        and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
+        ORDER BY Benennung
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('catCode', $catCode);
+        $query->bindValue('modificationCode', $modificationCode);
         $query->execute();
         $aData = $query->fetchAll();
 
         $groups = array();
 
-        foreach ($aData as &$item2)
-        {
-                    $item2['part_index'] = $this->getDesc($item2['part_index'], 'RU');
-        }
 
         foreach($aData as $item){
-            $groups[$item['part']] = array(
-                Constants::NAME     => $item ['part_index'],
+            $groups[$item['Hauptgruppe']] = array(
+                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']),'utf8'),
                 Constants::OPTIONS  => array()
             );
         }
-        
 
         return $groups;
     }
@@ -292,52 +292,46 @@ class BmvCatalogModel extends CatalogModel{
 
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-        $ghg = $this->getComplectations($regionCode, $modelCode, $modificationCode);/*print_r($ghg[$complectationCode]['options']['option2']); die;*/
-        $complectationOptions = $ghg[$complectationCode]['options']['option2'];
 
+
+
+      /*  $sql = "
+        SELECT DISTINCT
+      hgfg_hg Hauptgruppe,
+      hgfg_fg Funktionsgruppe,
+      b.ben_text Benennung
+      FROM w_hgfg
+      INNER JOIN w_hgfg_mosp ON (hgfgm_hg = hgfg_hg AND hgfgm_produktart = hgfg_produktart AND hgfgm_hg = hgfg_hg)
+      INNER JOIN w_ben_gk b ON (hgfg_textcode = b.ben_textcode AND b.ben_iso = 'ru' AND b.ben_regiso = '')
+      WHERE hgfgm_mospid = :modificationCode AND hgfgm_hg = :groupCode
+        ";*/
 
         $sql = "
-        SELECT sector_name, sector_lex_code, sector_id, sector_id_code, params
-        FROM cats_map
-        WHERE catalog_name =:catCode
-        AND part = :groupCode
+        select
+hgfg_hg Hauptgruppe,
+hgfg_fg Funktionsgruppe,
+ben_text Benennung
+from w_hgfg_mosp, w_hgfg, w_ben_gk
+where hgfgm_mospid = :modificationCode and hgfg_hg = :groupCode and hgfgm_hg = hgfg_hg and hgfgm_fg = hgfg_fg and hgfgm_produktart = hgfg_produktart
+and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
+ORDER BY Benennung
         ";
 
+
         $query = $this->conn->prepare($sql);
-        $query->bindValue('catCode',  $catCode);
+        $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('groupCode',  $groupCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
-        foreach ($aData as $index => $value) {
-
-            $value2 = str_replace(substr($value['params'], 0, strpos($value['params'], '|')), '', $value['params']);
-            $articulOptions = explode('|', str_replace(';', '', $value2));
-
-            if ($articulOptions)
-            {
-            foreach ($articulOptions as $index1 => $value1) {
-                if (($value1 == '') || ($index1 > (count($complectationOptions)-1))) {
-                    unset ($articulOptions[$index1]);
-                }
-            }
-
-
-            if (count($articulOptions) != count(array_intersect_assoc($articulOptions, $complectationOptions)))
-            {
-                unset ($aData[$index]);
-            }
-            }
-        }
 
         $subgroups = array();
         foreach($aData as $item){
 
-            $subgroups[$item['sector_name']] = array(
+            $subgroups[$item['Funktionsgruppe']] = array(
 
-                Constants::NAME => '('.$item['sector_name'].') '.$this->getDesc($item['sector_lex_code'], 'RU'),
+                Constants::NAME => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']),'utf8'),
                 Constants::OPTIONS => array()
             );
 

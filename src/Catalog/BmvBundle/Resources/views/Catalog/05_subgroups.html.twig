@@ -3,15 +3,15 @@
 {% block breadcrumbs %}
     <a href="{{ path('catalog_bmv') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
-    <a href="{{ path('catalog_bmv_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> /
     <a href="{{ path('catalog_bmv_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> / 
     Подгруппа запчастей
 {% endblock breadcrumbs %}
+{% block complectationRuname %}{% endblock complectationRuname %}
 
 
 {% block subgroupImage %}{% endblock subgroupImage %}
 {% block subgroupItem %}
           <div id="subgroup{{ subgroup.getCode }}">
-          <a href="{{ path('catalog_bmv_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">{{ subgroup.getRuname }}</a>
+          <a href="{{ path('catalog_bmv_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
           </div>
 {% endblock subgroupItem %}
