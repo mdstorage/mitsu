@@ -226,7 +226,7 @@ class BmvCatalogModel extends CatalogModel{
         from w_hgfg_mosp, w_hgfg, w_ben_gk
         where hgfgm_mospid = :modificationCode and hgfgm_hg = hgfg_hg and hgfg_fg = '00' and hgfgm_produktart = hgfg_produktart
         and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
-        ORDER BY Benennung
+        ORDER BY Hauptgruppe
         ";
 
         $query = $this->conn->prepare($sql);
@@ -314,7 +314,7 @@ ben_text Benennung
 from w_hgfg_mosp, w_hgfg, w_ben_gk
 where hgfgm_mospid = :modificationCode and hgfg_hg = :groupCode and hgfgm_hg = hgfg_hg and hgfgm_fg = hgfg_fg and hgfgm_produktart = hgfg_produktart
 and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
-ORDER BY Benennung
+ORDER BY Funktionsgruppe
         ";
 
 
