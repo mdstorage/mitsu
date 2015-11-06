@@ -3,8 +3,9 @@
 {% block breadcrumbs %}
    <a href="{{ path('catalog_bmv') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>
-    / <a href="{{ path('catalog_bmv_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> / Группа запчастей
+     / Группа запчастей
 {% endblock breadcrumbs %}
+{% block complectationRuname %}{% endblock complectationRuname %}
 
 {% block body %}
     {% block head %}<h3>Выбрать группу запчастей:</h3>{% endblock head %}

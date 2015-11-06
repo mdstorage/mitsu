@@ -50,7 +50,7 @@ class VinController extends BaseController{
             'regionCode' => $regionCode,
             'modificationCode' => $modificationCode,
             'complectationCode' => substr($complectationCode, 0, 4),
-            'subComplectationCode' => substr($complectationCode, 3, 3)
+            'subComplectationCode' => substr($complectationCode, 4, 2).substr($complectationCode, 3, 1)
         ));
 
         return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
@@ -62,7 +62,7 @@ class VinController extends BaseController{
             'regionCode' => $regionCode,
             'modificationCode' => $modificationCode,
             'complectationCode' => substr($complectationCode, 0, 4),
-            'subComplectationCode' => substr($complectationCode, 3, 3),
+            'subComplectationCode' => substr($complectationCode, 4, 2).substr($complectationCode, 3, 1),
             'subGroupCode' => $subGroupCode
         ));
 
