@@ -222,6 +222,7 @@ class BmvCatalogModel extends CatalogModel{
          $sql = "
         select
         hgfg_hg Hauptgruppe,
+        hgfg_grafikid Id,
         ben_text Benennung
         from w_hgfg_mosp, w_hgfg, w_ben_gk
         where hgfgm_mospid = :modificationCode and hgfgm_hg = hgfg_hg and hgfg_fg = '00' and hgfgm_produktart = hgfg_produktart
@@ -240,7 +241,7 @@ class BmvCatalogModel extends CatalogModel{
         foreach($aData as $item){
             $groups[$item['Hauptgruppe']] = array(
                 Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']),'utf8'),
-                Constants::OPTIONS  => array()
+                Constants::OPTIONS  => array('Id' => $item ['Id'])
             );
         }
 
@@ -293,19 +294,6 @@ class BmvCatalogModel extends CatalogModel{
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
 
-
-
-      /*  $sql = "
-        SELECT DISTINCT
-      hgfg_hg Hauptgruppe,
-      hgfg_fg Funktionsgruppe,
-      b.ben_text Benennung
-      FROM w_hgfg
-      INNER JOIN w_hgfg_mosp ON (hgfgm_hg = hgfg_hg AND hgfgm_produktart = hgfg_produktart AND hgfgm_hg = hgfg_hg)
-      INNER JOIN w_ben_gk b ON (hgfg_textcode = b.ben_textcode AND b.ben_iso = 'ru' AND b.ben_regiso = '')
-      WHERE hgfgm_mospid = :modificationCode AND hgfgm_hg = :groupCode
-        ";*/
-
         $sql = "
         select
 hgfg_hg Hauptgruppe,
@@ -342,18 +330,26 @@ ORDER BY Funktionsgruppe
 
     public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+
 
         $sql = "
-        SELECT sector_id
-        FROM cats_map
-        WHERE catalog_name =:catCode
-        AND sector_name = :subGroupCode
-        AND part = :groupCode
-        ";
+select distinct
+bildtaf_btnr BildtafelNr,
+bildtaf_bteart BildtafelArt,
+ben_text Benennung,
+bildtaf_kommbt Kommentar,
+bildtaf_vorh_cp CPVorhanden,
+bildtaf_bedkez BedingungKZ,
+bildtaf_pos Pos,
+bildtaf_grafikid Id
+from w_bildtaf_suche, w_ben_gk, w_bildtaf
+where bildtafs_hg = :groupCode and bildtafs_mospid = :modificationCode and bildtafs_btnr = bildtaf_btnr and bildtaf_hg = :groupCode and bildtaf_fg = :subGroupCode
+and bildtaf_sicher = 'N' and bildtaf_textc = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
+order by Pos
+";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('catCode',  $catCode);
+        $query->bindValue('modificationCode',  $modificationCode);
         $query->bindValue('subGroupCode',  $subGroupCode);
         $query->bindValue('groupCode',  $groupCode);
         $query->execute();
@@ -364,9 +360,9 @@ ORDER BY Funktionsgruppe
         foreach($aData as $item)
         {
 
-		            $schemas[$item['sector_id']] = array(
-                    Constants::NAME => $catCode,
-                    Constants::OPTIONS => array(Constants::CD => $item['sector_id'])
+		            $schemas[$item['Id']] = array(
+                    Constants::NAME => '('.$item['BildtafelNr'].') '.mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']),'utf8'),
+                    Constants::OPTIONS => array('GrId' => $item['BildtafelNr'])
                 );
         }
 
@@ -377,17 +373,16 @@ ORDER BY Funktionsgruppe
     public function getSchema($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
 
+
+
+
         $schema = array();
 
 			
 		            $schema[$schemaCode] = array(
                     Constants::NAME => $schemaCode,
-                        Constants::OPTIONS => array(
-                            Constants::CD => $schemaCode
-                        )
+                        Constants::OPTIONS => array()
                 );
-
-
 
         return $schema;
     }
@@ -395,18 +390,63 @@ ORDER BY Funktionsgruppe
     public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
     {
 
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
-        $sqlPnc = "
-        SELECT *
-        FROM cats_table
-        WHERE catalog_code =:catCode
-        	AND compl_name = :schemaCode
-        ";
+        $sqlPnc = "select distinct
+btzeilen_bildposnr Bildnummer,
+teil_hauptgr Teil_HG,
+teil_untergrup Teil_UG,
+teil_sachnr Teil_Sachnummer,
+tben.ben_text Teil_Benennung,
+teil_benennzus Teil_Zusatz,
+teil_entfall_kez Teil_Entfall,
+teil_textcode_kom Teil_Kommentar_Id,
+tkben.ben_text Teil_Kommentar,
+teil_kom_pi Teil_Komm_PI,
+teil_vorhanden_si Teil_SI,
+teil_ist_reach Teil_Reach,
+teil_ist_aspg Teil_Aspg,
+teil_ist_stecker Teil_Stecker,
+teil_ist_diebstahlrelevant Teil_Diebstahlrelevant,
+si_dokart SI_DokArt,
+grpinfo_leitaw_pa GRP_PA,
+grpinfo_leitaw_hg GRP_HG,
+grpinfo_leitaw_ug GRP_UG,
+grpinfo_leitaw_nr GRP_lfdNr,
+btzeilenv_vmenge Menge,
+btzeilen_kat Kat_KZ,
+btzeilen_automatik Getriebe_KZ,
+btzeilen_lenkg Lenkung_KZ,
+btzeilen_eins Einsatz,
+btzeilen_auslf Auslauf,
+btzeilen_kommbt KommBT,
+btzeilen_kommvor KommVor,
+btzeilen_kommnach KommNach,
+ks_sachnr_satz Satz_Sachnummer,
+btzeilen_gruppeid GruppeId,
+btzeilen_blocknr BlockNr,
+bnbben.ben_text BnbBenText,
+btzeilen_pos Pos,
+btzeilenv_alter_kz BtZAlter,
+btzeilen_bedkez_pg Teil_BedkezPG,
+btzeilenv_bed_art BedingungArt,
+btzeilenv_bed_alter BedingungAlter
+from w_btzeilen_verbauung
+inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos)
+inner join w_teil on (btzeilen_sachnr = teil_sachnr)
+inner join w_ben_gk tben on (teil_textcode = tben.ben_textcode and tben.ben_iso = 'ru' and tben.ben_regiso = '  ')
+left join w_kompl_satz on (btzeilen_sachnr = ks_sachnr_satz and ks_marke_tps = 'BMW')
+left join w_tc_performance on (tcp_mospid = :modificationCode and tcp_sachnr = btzeilen_sachnr  and tcp_datum_von <= 20150816 and (tcp_datum_bis is null or tcp_datum_bis >= 20150816))
+left join w_grp_information on (btzeilenv_mospid = grpinfo_mospid and grpinfo_sachnr = btzeilen_sachnr and grpinfo_typ = 'FE81')
+left join w_ben_gk tkben on (teil_textcode_kom = tkben.ben_textcode and tkben.ben_iso = 'ru' and tkben.ben_regiso = '  ')
+left join w_si on (si_sachnr = teil_sachnr)
+left join w_bildtaf_bnbben on (bildtafb_btnr = btzeilenv_btnr and bildtafb_bildposnr = btzeilen_bildposnr)
+left join w_ben_gk bnbben on (bildtafb_textcode = bnbben.ben_textcode and bnbben.ben_iso = 'ru' and bnbben.ben_regiso = '  ')
+where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId order by Bildnummer, Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
+";
 
     	$query = $this->conn->prepare($sqlPnc);
-        $query->bindValue('catCode', $catCode);
-        $query->bindValue('schemaCode', $schemaCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('subGroupId', $options['GrId']);
         $query->execute();
 
         $aPncs = $query->fetchAll();
@@ -415,37 +455,20 @@ ORDER BY Funktionsgruppe
     	{
     		
     	$sqlSchemaLabels = "
-        SELECT x1, y1, x2, y2
-        FROM cats_coord
-        WHERE catalog_code =:catCode
-          AND compl_name =:schemaCode
-          AND name =:scheme_num
+        SELECT grafikhs_topleft_x, grafikhs_topleft_y, grafikhs_bottomright_x, grafikhs_bottomright_y
+        FROM w_grafik_hs
+        WHERE grafikhs_grafikid = :schemaCode
+        AND grafikhs_bildposnr = :position
         ";
 
         $query = $this->conn->prepare($sqlSchemaLabels);
-            $query->bindValue('catCode', $catCode);
             $query->bindValue('schemaCode', $schemaCode);
-        $query->bindValue('scheme_num', $aPnc['scheme_num']);
+        $query->bindValue('position', $aPnc['Bildnummer']);
         $query->execute();
         
         $aPnc['clangjap'] = $query->fetchAll();
-
-
-            $sqlPncName = "
-        SELECT lex_code
-        FROM pnclex
-        WHERE pnc_code =:pnc_code
-        ";
-
-            $query = $this->conn->prepare($sqlPncName);
-            $query->bindValue('pnc_code', $aPnc['detail_pnc']);
-            $query->execute();
-            $aData = $query->fetch();
-
-            $aPnc['name'] = $aData['lex_code'];
-
-
 		}
+
 
         $pncs = array();
       foreach ($aPncs as $index=>$value) {
@@ -456,11 +479,11 @@ ORDER BY Funktionsgruppe
                 }
             	foreach ($value['clangjap'] as $item1)
             	{
-            	$pncs[$value['scheme_num']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
-                    Constants::X1 => floor(($item1['x1'])),
-                    Constants::Y1 => $item1['y1'],
-                    Constants::X2 => $item1['x2'],
-                    Constants::Y2 => $item1['y2']);
+            	$pncs[$value['Bildnummer']][Constants::OPTIONS][Constants::COORDS][$item1['grafikhs_topleft_x']] = array(
+                    Constants::X1 => $item1['grafikhs_topleft_x']/2,
+                    Constants::Y1 => $item1['grafikhs_topleft_y']/2,
+                    Constants::X2 => $item1['grafikhs_bottomright_x']/2,
+                    Constants::Y2 => $item1['grafikhs_bottomright_y']/2);
             	
             	}
             
@@ -472,11 +495,12 @@ ORDER BY Funktionsgruppe
         foreach ($aPncs as $item) {
          	
          	
-				$pncs[$item['scheme_num']][Constants::NAME] = $this->getDesc($item['name'], 'RU');
+				$pncs[$item['Bildnummer']][Constants::NAME] = mb_strtoupper(iconv('cp1251', 'utf8', $item ['Teil_Benennung']), 'utf8');
 			
 			
            
         }
+
 
          return $pncs;
     }
@@ -517,7 +541,7 @@ $articuls = array();
 
     public function getReferGroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+      /*  $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
 
         $sqlSchemaLabels = "
@@ -544,18 +568,14 @@ $articuls = array();
                 Constants::Y1 => $item['y1'],
                 Constants::X2 => $item['x2'],
                 Constants::Y2 => $item['y2']);
-        }
-
+        }*/
+        $groups = array();
         return $groups;
     }
 
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, $options)
     {
 
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-
-        $ghg = $this->getComplectations($regionCode, $modelCode, $modificationCode);/*print_r($ghg[$complectationCode]['options']['option2']); die;*/
-        $complectationOptions = $ghg[$complectationCode]['options']['option2'];
 
         $sqlPnc = "
         SELECT *
