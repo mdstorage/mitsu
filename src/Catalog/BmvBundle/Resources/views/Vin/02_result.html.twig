@@ -4,14 +4,19 @@
         <div class="col-lg-8">
             <table class="table table-bordered">
                 <tr>
+
+                    <td>Регион:</td>
+                    <td>{{ result.region }}</td>
+                </tr>
+                <tr>
                     <td>Модель:</td>
                     <td>{{ result.model }}</td>
                 </tr>
                 <tr>
-                    <td>Комплектация:</td>
-                    <td>{% for compl_pos in result.compl %}
-                            {{ compl_pos }}<br/>
-                        {% endfor %}
+                    <td>Модификация:</td>
+                    <td>
+                        {{ result.modif }}<br/>
+
                     </td>
                 </tr>
                 <tr>
@@ -19,38 +24,27 @@
                     <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|bmv_date_convertor }}</td>
                 </tr>
 
-                    <tr>
-
-                        <td>Регион:</td>
-                        <td>{{ result.region }}</td>
-                    </tr>
-
-                <tr>
-
-                    <td>Страна:</td>
-                    <td>{{ result.country }}</td>
-                </tr>
-
                 <tr>
 
                     <td>Положение руля:</td>
                     <td>{{ result.wheel }}</td>
                 </tr>
-
                 <tr>
-                    <td>Цвет внешней отделки:</td>
-                    <td>{{ result.ext_color }}</td>
+
+                    <td>Двигатель:</td>
+                    <td>{{ result.engine }}</td>
+                </tr>
+                <tr>
+
+                    <td>Коробка передач:</td>
+                    <td>{{ result.korobka }}</td>
                 </tr>
 
-                    <tr>
-                        <td>Цвет внутренней отделки:</td>
-                        <td>{{ result.int_color }}</td>
-                    </tr>
 
             </table>
         </div>
     </div>
 {% endblock specification %}
 {% block catalogPath %}
-    {{ path('vin_bmv_groups',({'regionCode': result.region_for_groups, 'modelCode': result.model_for_groups, 'modificationCode': result.modif, 'complectationCode': result.compl_for_groups})) }}
+    {{ path('vin_bmv_groups',({'regionCode': result.region, 'modelCode': result.modelforGroups, 'modificationCode': result.modifforGroups})) }}
 {% endblock catalogPath %}

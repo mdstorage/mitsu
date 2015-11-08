@@ -5,6 +5,8 @@
     <a href="{{ path('vin_bmv_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
     <a href="{{ path('vin_bmv_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему
 {% endblock breadcrumbs %}
+{% block complectation %}
+{% endblock complectation %}
 
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
 
@@ -14,11 +16,11 @@
             <a href="{{ path('vin_bmv_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
                 <div class="row">
-                    {{ schema.getCode }}
+                    {{ schema.getRuname }}
                 </div>
 
                 <div class="row">
-                    <img src="{{ asset('bundles/catalogbmv/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
+                    <img src="{{ asset('bundles/catalogbmv/grafik/'~schema.getCode~'_t.png') }}" width="300" alt="{{ schema.getRuname }}"/>
                 </div>
 
 

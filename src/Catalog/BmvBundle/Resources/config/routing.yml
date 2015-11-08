@@ -48,19 +48,19 @@ vin_bmv_result:
   requirements: {_method: POST}
 
 vin_bmv_groups:
-  path:         /bmv/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  path:         /bmv/vin/3/{regionCode}/{modelCode}/{modificationCode}
   defaults:     {_controller: CatalogBmvBundle:Vin:groups}
 
 vin_bmv_subgroups:
-  path:         /bmv/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogBmvBundle:Vin:vinSubgroups}
+  path:         /bmv/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogBmvBundle:Vin:subgroups}
 
 vin_bmv_schemas:
-  path:         /bmv/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  path:         /bmv/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogBmvBundle:Vin:schemas}
 
 vin_bmv_schema:
-  path:         /bmv/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  path:         /bmv/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
   defaults:     {_controller: CatalogBmvBundle:Vin:schema}
 
 vin_bmv_articuls:
@@ -69,7 +69,7 @@ vin_bmv_articuls:
   requirements: {_method: POST}
 
 vin_bmv_group:
-  path:         /bmv/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /bmv/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
   defaults:     {_controller: CatalogBmvBundle:Vin:getGroupBySubgroup}
 
 #---------------------------------------------------------------------------------------------

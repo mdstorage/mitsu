@@ -450,40 +450,43 @@ where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId orde
         $query->execute();
 
         $aPncs = $query->fetchAll();
+
+
     	
-    	foreach ($aPncs as &$aPnc)
-    	{
-    		
-    	$sqlSchemaLabels = "
+    	foreach ($aPncs as &$aPnc) {
+            if ($aPnc['Bildnummer'] != '--' || $aPnc['Bildnummer'] != null) {
+
+                $sqlSchemaLabels = "
         SELECT grafikhs_topleft_x, grafikhs_topleft_y, grafikhs_bottomright_x, grafikhs_bottomright_y
         FROM w_grafik_hs
         WHERE grafikhs_grafikid = :schemaCode
         AND grafikhs_bildposnr = :position
         ";
 
-        $query = $this->conn->prepare($sqlSchemaLabels);
-            $query->bindValue('schemaCode', $schemaCode);
-        $query->bindValue('position', $aPnc['Bildnummer']);
-        $query->execute();
-        
-        $aPnc['clangjap'] = $query->fetchAll();
-		}
+                $query = $this->conn->prepare($sqlSchemaLabels);
+                $query->bindValue('schemaCode', $schemaCode);
+                $query->bindValue('position', $aPnc['Bildnummer']);
+                $query->execute();
+
+                $aPnc['coords'] = $query->fetchAll();
+            }
+        }
 
 
         $pncs = array();
       foreach ($aPncs as $index=>$value) {
             {
-                if (!$value['clangjap'])
+                if ($value['Bildnummer'] == '--' || $value['Bildnummer'] == null)
                 {
                     unset ($aPncs[$index]);
                 }
-            	foreach ($value['clangjap'] as $item1)
+            	foreach ($value['coords'] as $item1)
             	{
             	$pncs[$value['Bildnummer']][Constants::OPTIONS][Constants::COORDS][$item1['grafikhs_topleft_x']] = array(
-                    Constants::X1 => $item1['grafikhs_topleft_x']/2,
-                    Constants::Y1 => $item1['grafikhs_topleft_y']/2,
-                    Constants::X2 => $item1['grafikhs_bottomright_x']/2,
-                    Constants::Y2 => $item1['grafikhs_bottomright_y']/2);
+                    Constants::X1 => floor($item1['grafikhs_topleft_x']),
+                    Constants::Y1 => $item1['grafikhs_topleft_y'],
+                    Constants::X2 => $item1['grafikhs_bottomright_x'],
+                    Constants::Y2 => $item1['grafikhs_bottomright_y']);
             	
             	}
             
@@ -500,6 +503,7 @@ where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId orde
 			
            
         }
+
 
 
          return $pncs;
@@ -577,39 +581,66 @@ $articuls = array();
     {
 
 
-        $sqlPnc = "
-        SELECT *
-        FROM cats_table
-        WHERE catalog_code =:catCode
-            AND scheme_num = :pncCode
-        	AND compl_name = :schemaCode
-        ";
+        $sqlPnc = "select distinct
+btzeilen_bildposnr Bildnummer,
+teil_hauptgr Teil_HG,
+teil_untergrup Teil_UG,
+teil_sachnr Teil_Sachnummer,
+tben.ben_text Teil_Benennung,
+teil_benennzus Teil_Zusatz,
+teil_entfall_kez Teil_Entfall,
+teil_textcode_kom Teil_Kommentar_Id,
+tkben.ben_text Teil_Kommentar,
+teil_kom_pi Teil_Komm_PI,
+teil_vorhanden_si Teil_SI,
+teil_ist_reach Teil_Reach,
+teil_ist_aspg Teil_Aspg,
+teil_ist_stecker Teil_Stecker,
+teil_ist_diebstahlrelevant Teil_Diebstahlrelevant,
+si_dokart SI_DokArt,
+grpinfo_leitaw_pa GRP_PA,
+grpinfo_leitaw_hg GRP_HG,
+grpinfo_leitaw_ug GRP_UG,
+grpinfo_leitaw_nr GRP_lfdNr,
+btzeilenv_vmenge Menge,
+btzeilen_kat Kat_KZ,
+btzeilen_automatik Getriebe_KZ,
+btzeilen_lenkg Lenkung_KZ,
+btzeilen_eins Einsatz,
+btzeilen_auslf Auslauf,
+btzeilen_kommbt KommBT,
+btzeilen_kommvor KommVor,
+btzeilen_kommnach KommNach,
+ks_sachnr_satz Satz_Sachnummer,
+btzeilen_gruppeid GruppeId,
+btzeilen_blocknr BlockNr,
+bnbben.ben_text BnbBenText,
+btzeilen_pos Pos,
+btzeilenv_alter_kz BtZAlter,
+btzeilen_bedkez_pg Teil_BedkezPG,
+btzeilenv_bed_art BedingungArt,
+btzeilenv_bed_alter BedingungAlter
+from w_btzeilen_verbauung
+inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos)
+inner join w_teil on (btzeilen_sachnr = teil_sachnr)
+inner join w_ben_gk tben on (teil_textcode = tben.ben_textcode and tben.ben_iso = 'ru' and tben.ben_regiso = '  ')
+left join w_kompl_satz on (btzeilen_sachnr = ks_sachnr_satz and ks_marke_tps = 'BMW')
+left join w_tc_performance on (tcp_mospid = :modificationCode and tcp_sachnr = btzeilen_sachnr  and tcp_datum_von <= 20150816 and (tcp_datum_bis is null or tcp_datum_bis >= 20150816))
+left join w_grp_information on (btzeilenv_mospid = grpinfo_mospid and grpinfo_sachnr = btzeilen_sachnr and grpinfo_typ = 'FE81')
+left join w_ben_gk tkben on (teil_textcode_kom = tkben.ben_textcode and tkben.ben_iso = 'ru' and tkben.ben_regiso = '  ')
+left join w_si on (si_sachnr = teil_sachnr)
+left join w_bildtaf_bnbben on (bildtafb_btnr = btzeilenv_btnr and bildtafb_bildposnr = btzeilen_bildposnr)
+left join w_ben_gk bnbben on (bildtafb_textcode = bnbben.ben_textcode and bnbben.ben_iso = 'ru' and bnbben.ben_regiso = '  ')
+where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId and btzeilen_bildposnr = :pncCode order by Bildnummer, Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
+";
 
         $query = $this->conn->prepare($sqlPnc);
-        $query->bindValue('catCode', $catCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('subGroupId', $options['GrId']);
         $query->bindValue('pncCode', $pncCode);
-        $query->bindValue('schemaCode', $options['cd']);
         $query->execute();
 
         $aArticuls = $query->fetchAll();
-
-        foreach ($aArticuls as $index => $value) {
-
-            $value2 = str_replace(substr($value['model_options'], 0, strpos($value['model_options'], '|')), '', $value['model_options']);
-            $articulOptions = explode('|', str_replace(';', '', $value2));
-
-            foreach ($articulOptions as $index1 => $value1) {
-                if (($value1 == '') || ($index1 > (count($complectationOptions)-1))) {
-                    unset ($articulOptions[$index1]);
-                }
-            }
-
-
-            if (count($articulOptions) !== count(array_intersect_assoc($articulOptions, $complectationOptions)))
-            {
-                unset ($aArticuls[$index]);
-            }
-        }
 
 
 
@@ -619,17 +650,18 @@ $articuls = array();
         	 
             
             
-				$articuls[$item['detail_code']] = array(
-                Constants::NAME => $this->getDesc($item['detail_lex_code'], 'RU'),
+				$articuls[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = array(
+                Constants::NAME => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Teil_Benennung']), 'utf8'),
                 Constants::OPTIONS => array(
-                    Constants::QUANTITY => $item['quantity_details'],
-                    Constants::START_DATE => $item['start_data'],
-                    Constants::END_DATE => ($item['end_data'])?$item['end_data']:99999999,
-                    'option3' => $item['replace_code'],
+                    Constants::QUANTITY => $item['Menge'],
+                    Constants::START_DATE => ($item['Einsatz'] != '(null)')?$item['Einsatz']:99999999,
+                    Constants::END_DATE => ($item['Auslauf'] != '(null)')?$item['Auslauf']:99999999,
+                    'dopinf' => ($item['Teil_Zusatz'] != '(null)')?$item['Teil_Zusatz']:'',
                 )
             );
             
         }
+
 
         return $articuls;
     }

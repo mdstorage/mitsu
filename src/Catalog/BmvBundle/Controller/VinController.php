@@ -30,15 +30,12 @@ class VinController extends BaseController{
     public function articulsAction(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
-            $prodDate = $request->cookies->get(Constants::PROD_DATE);
-            $this->addFilter('prodDateFilter', array(Constants::PROD_DATE => $prodDate));
-            $this->addFilter('articulDescFilter', array('regionCode'=>$request->request->get('regionCode'), 'modelCode'=>$request->request->get('modelCode'), 'complectationCode'=>$request->request->get('complectationCode')));
             return parent::articulsAction($request);
 
         }
     }
 
-    public function vinGroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode)
+    public function vinGroupsAction(Request $request, $regionCode, $modelCode, $modificationCode)
     {
         $this->addFilter('vinGroupFilter', array(
             'regionCode' => $regionCode,
@@ -46,10 +43,10 @@ class VinController extends BaseController{
             'complectationCode' => substr($complectationCode, 0, 4)
         ));
 
-        return $this->groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
+        return $this->groupsAction($request, $regionCode, $modelCode, $modificationCode);
     }
 
-    public function vinSubgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
+    public function vinSubgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $groupCode)
     {
         $prodDate = $request->cookies->get(Constants::PROD_DATE);
 
@@ -57,12 +54,11 @@ class VinController extends BaseController{
             'regionCode' => $regionCode,
             'modelCode' => $modelCode,
             'modificationCode' => $modificationCode,
-            'complectationCode' => $complectationCode,
             'groupCode' => $groupCode,
             Constants::PROD_DATE => $prodDate
         ));
 
-        return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+        return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $groupCode);
     }
 
     public function vinSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
