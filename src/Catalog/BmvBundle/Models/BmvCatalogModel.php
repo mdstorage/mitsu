@@ -666,53 +666,7 @@ where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId and 
         return $articuls;
     }
 
-    public function getDesc($itemCode, $language)
-    {
 
-                $sqlRu = "
-                    SELECT lex_name
-                    FROM bmvlex
-                    WHERE lex_code = :itemCode
-                    AND lang = :language
-                    ";
-
-                $query = $this->conn->prepare($sqlRu);
-                $query->bindValue('itemCode', $itemCode);
-                $query->bindValue('language', $language);
-                $query->execute();
-                $sData = $query->fetch();
-
-        $sDesc = $itemCode;
-                if ($sData)
-                {
-                    $sDesc = $sData['lex_name'];
-                }
-        else
-        {
-            $sqlEn = "
-                    SELECT lex_name
-                    FROM bmvlex
-                    WHERE lex_code = :itemCode
-                    AND lang = :language
-                    ";
-
-            $query = $this->conn->prepare($sqlEn);
-            $query->bindValue('itemCode', $sDesc);
-            $query->bindValue('language', 'EN');
-            $query->execute();
-            $sData1 = $query->fetch();
-
-            if ($sData1)
-            {
-                $sDesc = $sData1['lex_name'];
-            }
-
-        }
-
-
-        return mb_strtoupper(iconv('cp1251', 'utf8', $sDesc), 'utf8');
-
-    }
 
     public function getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode)
     {

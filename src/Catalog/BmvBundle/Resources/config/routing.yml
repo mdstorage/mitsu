@@ -92,19 +92,19 @@ articul_bmv_complectations:
   defaults:     {_controller: CatalogBmvBundle:Articul:bmvArticulComplectations}
 
 articul_bmv_groups:
-  path:         /bmv/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  path:         /bmv/articul/5/{regionCode}/{modelCode}/{modificationCode}
   defaults:     {_controller: CatalogBmvBundle:Articul:bmvArticulgroups}
 
 articul_bmv_subgroups:
-  path:         /bmv/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  path:         /bmv/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
   defaults:     {_controller: CatalogBmvBundle:Articul:bmvArticulSubgroups}
 
 articul_bmv_schemas:
-  path:         /bmv/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  path:         /bmv/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogBmvBundle:Articul:bmvArticulSchemas}
 
 articul_bmv_schema:
-  path:         /bmv/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  path:         /bmv/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
   defaults:     {_controller: CatalogBmvBundle:Articul:bmvArticulSchema}
 
 articul_bmv_articuls:
