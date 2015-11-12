@@ -223,9 +223,10 @@ class BmvCatalogModel extends CatalogModel{
         select
         hgfg_hg Hauptgruppe,
         hgfg_grafikid Id,
+        grafik_blob BlobMod,
         ben_text Benennung
-        from w_hgfg_mosp, w_hgfg, w_ben_gk
-        where hgfgm_mospid = :modificationCode and hgfgm_hg = hgfg_hg and hgfg_fg = '00' and hgfgm_produktart = hgfg_produktart
+        from w_hgfg_mosp, w_hgfg, w_ben_gk, w_grafik
+        where hgfgm_mospid = :modificationCode and hgfgm_hg = hgfg_hg and hgfg_fg = '00' and hgfgm_produktart = hgfg_produktart and hgfg_grafikid = grafik_grafikid
         and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
         ORDER BY Hauptgruppe
         ";
@@ -241,7 +242,7 @@ class BmvCatalogModel extends CatalogModel{
         foreach($aData as $item){
             $groups[$item['Hauptgruppe']] = array(
                 Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']),'utf8'),
-                Constants::OPTIONS  => array('Id' => $item ['Id'])
+                Constants::OPTIONS  => array('Id' => $item ['BlobMod'])
             );
         }
 
@@ -341,10 +342,11 @@ bildtaf_kommbt Kommentar,
 bildtaf_vorh_cp CPVorhanden,
 bildtaf_bedkez BedingungKZ,
 bildtaf_pos Pos,
-bildtaf_grafikid Id
-from w_bildtaf_suche, w_ben_gk, w_bildtaf
+bildtaf_grafikid Id,
+grafik_blob BlobMod
+from w_bildtaf_suche, w_ben_gk, w_bildtaf, w_grafik
 where bildtafs_hg = :groupCode and bildtafs_mospid = :modificationCode and bildtafs_btnr = bildtaf_btnr and bildtaf_hg = :groupCode and bildtaf_fg = :subGroupCode
-and bildtaf_sicher = 'N' and bildtaf_textc = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
+and bildtaf_sicher = 'N' and bildtaf_textc = ben_textcode and ben_iso = 'ru' and ben_regiso = '  ' and bildtaf_grafikid = grafik_grafikid
 order by Pos
 ";
 
@@ -359,11 +361,12 @@ order by Pos
         $schemas = array();
         foreach($aData as $item)
         {
-
-		            $schemas[$item['Id']] = array(
-                    Constants::NAME => '('.$item['BildtafelNr'].') '.mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']),'utf8'),
+            if (strpos($item['BlobMod'], '_z')) {
+                $schemas[$item['BlobMod']] = array(
+                    Constants::NAME => '(' . $item['BildtafelNr'] . ') ' . mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']), 'utf8'),
                     Constants::OPTIONS => array('GrId' => $item['BildtafelNr'])
                 );
+            }
         }
 
 
