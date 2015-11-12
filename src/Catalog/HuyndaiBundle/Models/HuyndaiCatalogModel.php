@@ -67,7 +67,7 @@ class HuyndaiCatalogModel extends CatalogModel{
         $models = array();
         foreach($aData as $item){ 
         	 
-            $models[($item['family'])] = array(Constants::NAME=>strtoupper($item['family']),
+            $models[urlencode($item['family'])] = array(Constants::NAME=>strtoupper($item['family']),
             Constants::OPTIONS=>array());
       
         }
@@ -77,6 +77,7 @@ class HuyndaiCatalogModel extends CatalogModel{
 
     public function getModifications($regionCode, $modelCode)
     {
+        $modelCode = urldecode($modelCode);
         $sql = "
         SELECT *
         FROM hywc

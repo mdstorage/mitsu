@@ -123,7 +123,7 @@ class HuyndaiVinModel extends HuyndaiCatalogModel {
 
         if ($aData) {
             $result = array(
-                'model_for_groups' => $aDataModif['family'],
+                'model_for_groups' => urlencode($aDataModif['family']),
                 'model' => $aDataModif['catalog_name'],
                 'modif' => $aDataModif['catalog_code'].'_'.$aDataModif['catalog_folder'],
                 'compl' => $complectations[$aData['model_index']]['options']['option1'],
@@ -137,6 +137,7 @@ class HuyndaiVinModel extends HuyndaiCatalogModel {
                 'region_for_groups' => $region_for_groups,
             );
         }
+
 
         return $result;
     }
