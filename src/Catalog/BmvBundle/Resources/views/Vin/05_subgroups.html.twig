@@ -6,6 +6,8 @@
     <a href="{{ path('vin_bmv_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> / 
     Подгруппа запчастей
 {% endblock breadcrumbs %}
+{% block complectation %}
+{% endblock complectation %}
 
 
 
@@ -14,6 +16,6 @@
 
 {% block subgroupItem %}
           <div id="subgroup{{ subgroup.getCode }}">
-          <a href="{{ path('vin_bmv_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">{{ subgroup.getRuname }}</a>
+          <a href="{{ path('vin_bmv_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
           </div>
 {% endblock subgroupItem %}

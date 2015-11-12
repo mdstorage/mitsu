@@ -17,7 +17,7 @@
             <td>{{ articul.getRuname }}</td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }}</td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|bmv_date_convertor}} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|bmv_date_convertor}}</td>
-            <td>{% if articul.getOption('option3') %} Код замены: </br> {{ articul.getOption('option3')}} {% endif %}</td>
+            <td>{% if articul.getOption('dopinf') %}{{ articul.getOption('dopinf')}} {% endif %}</td>
             
         </tr>
     {% endfor %}

@@ -99,7 +99,7 @@ use BmvVinFilters;
     public function bmvArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
-        $articulPncs = $this->model()->getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
+        $articulPncs = $this->model()->getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode);
 
         $this->addFilter('articulPncsFilter', array(
             'articulPncs' => $articulPncs

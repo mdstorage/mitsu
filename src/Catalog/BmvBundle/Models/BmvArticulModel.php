@@ -17,59 +17,24 @@ class BmvArticulModel extends BmvCatalogModel{
 
         
         $sql = "
-        select * from cats_table
-        where detail_code = :articulCode
-
+        select fztyp_ktlgausf from w_fztyp, w_btzeilen_verbauung
+        where btzeilenv_sachnr = :articulCode and fztyp_mospid = btzeilenv_mospid and fztyp_karosserie NOT LIKE 'ohne'
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', $articulCode);
+        $query->bindValue('articulCode', substr($articulCode, 4, strlen($articulCode)));
         $query->execute();
 
         $aData = $query->fetchAll();
         $regions = array();
-        $aDataCatalog = array();
-        
-        if ($aData)
-        {
+
                   
         foreach($aData as $item)
         {
-		$sqlCatalog = "
-        SELECT data_regions
-        FROM bmvc
-        WHERE cutup_code = :cutup_code
-        ";
+            $regions[] = $item['fztyp_ktlgausf'];
 
-        $query = $this->conn->prepare($sqlCatalog);
-        $query->bindValue('cutup_code', $item['catalog_code']);
-        $query->execute();
-
-        $aDataCatalog[] = $query->fetchAll();
 		}
-
-
-		foreach($aDataCatalog as $item)
-        {
-        	foreach($item as $item1)
-        	{
-				$regions = explode("|", $item1['data_regions']);
-                foreach($regions as $index => $value)
-                {
-                    if ($value == '')
-                    {
-                        unset($regions[$index]);
-                    }
-                    $reg[] = $value;
-                }
-
-			}
-        		
-        		
-		}
-		}
-
-        return array_unique($reg);
+        return array_unique($regions);
 
     }
 
@@ -77,100 +42,48 @@ class BmvArticulModel extends BmvCatalogModel{
     {
 
         $sql = "
-        select * from cats_table
-        where detail_code = :articulCode
-
+        select fztyp_baureihe from w_fztyp, w_btzeilen_verbauung
+        where btzeilenv_sachnr = :articulCode and fztyp_mospid = btzeilenv_mospid and fztyp_karosserie NOT LIKE 'ohne'
+        and fztyp_ktlgausf = :regionCode
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', $articul);
+        $query->bindValue('articulCode', substr($articul, 4, strlen($articul)));
+        $query->bindValue('regionCode', $regionCode);
         $query->execute();
 
         $aData = $query->fetchAll();
+        $models = array();
 
-        $aDataCatalog = array();
-        $modelsReg = array();
 
-        if ($aData)
+        foreach($aData as $item)
         {
+            $models[] = $item['fztyp_baureihe'];
 
-            foreach($aData as $item)
-            {
-                $sqlCatalog = "
-        SELECT catalog_name
-        FROM bmvc
-        WHERE cutup_code = :cutup_code
-        ";
+        }
 
-                $query = $this->conn->prepare($sqlCatalog);
-                $query->bindValue('cutup_code', $item['catalog_code']);
-                $query->execute();
-
-                $aDataCatalog[] = $query->fetch();
-            }
-
-            $aDataRegions = array('AMANTI', 'AVELLA', 'CADENZA', 'CEED', 'CERATO', 'CERATO/FORTE', 'CERATO/SPECTRA', 'CLARUS', 'ED', 'FORTE', 'IH 12', 'MAGENTIS', 'MENTOR', 'MORNING/PICANTO', 'OPIRUS', 'OPTIMA',
-                'OPTIMA/MAGENTIS', 'PICANTO', 'PRIDE', 'PRIDE/FESTIVA', 'QUORIS', 'RIO', 'SEPHIA', 'SEPHIA/SHUMA/MENTOR', 'SMA GEN (1998-2004)', 'SMA MES (19981101-20040228)', 'SPECTRA', 'SPECTRA/SEPHIA II/SHUMA II/MENTOR II', 'TFE 11', 'VENGA',
-                'BORREGO', 'CARENS', 'CARNIVAL', 'CARNIVAL/SEDONA', 'JOICE DS', 'MOHAVE', 'RETONA', 'RONDO', 'RONDO/CARENS', 'SEDONA', 'SORENTO', 'SOUL', 'SPORTAGE', 'AM928 (1998-)', 'BESTA', 'BONGO-3 1TON,1.4TON',
-                'COSMOS', 'GRANBIRD', 'K2500/K2700/K2900/K3000/K3600', 'MIGHTY', 'POWER COMBI', 'PREGIO', 'PREGIO/BESTA', 'RHINO', 'TOWNER', 'SPTR');
-
-            foreach($aDataCatalog as $item) {
-                foreach ($aDataRegions as $itemReg) {
-                    if (strpos($item['catalog_name'], $itemReg) !== false) {
-                        $modelsReg[] = $itemReg;
-
-                    }
-
-
-                }
-            }
-
-
-	    }
- 
-        return array_unique($modelsReg);
+        return array_unique($models);
     }
     
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
         $sql = "
-        select * from cats_table
-        where detail_code = :articulCode
-
+        select btzeilenv_mospid from w_btzeilen_verbauung
+        where btzeilenv_sachnr = :articulCode
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', $articul);
+        $query->bindValue('articulCode', substr($articul, 4, strlen($articul)));
         $query->execute();
 
         $aData = $query->fetchAll();
+        $modifications = array();
 
-        $aDataCatalog = array();
 
-        if ($aData)
+        foreach($aData as $item)
         {
+            $modifications[] = $item['btzeilenv_mospid'];
 
-            foreach ($aData as $item) {
-                $sqlCatalog = "
-        SELECT catalog_code, catalog_folder
-        FROM bmvc
-        WHERE cutup_code = :cutup_code
-        ";
-
-                $query = $this->conn->prepare($sqlCatalog);
-                $query->bindValue('cutup_code', $item['catalog_code']);
-                $query->execute();
-
-                $aDataCatalog[] = $query->fetchAll();
-            }
-
-            $modifications = array();
-            foreach ($aDataCatalog as $item) {
-                foreach ($item as $item1) {
-                    $modifications[] = $item1['catalog_code'].'_'.$item1['catalog_folder'];
-                }
-
-            }
         }
 
         return array_unique($modifications);
@@ -262,14 +175,16 @@ class BmvArticulModel extends BmvCatalogModel{
     {
 
         $sql = "
-        SELECT main_part
-        FROM cats_table
-        WHERE detail_code = :articul
-
+        SELECT bildtafs_hg
+        FROM w_bildtaf_suche, w_btzeilen_verbauung
+        WHERE btzeilenv_sachnr = :articul
+        and bildtafs_btnr = btzeilenv_btnr
+        and btzeilenv_mospid = :modificationCode
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', $articul);
+        $query->bindValue('articul', substr($articul, 4, strlen($articul)));
+        $query->bindValue('modificationCode', $modificationCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -278,156 +193,103 @@ class BmvArticulModel extends BmvCatalogModel{
 
         foreach($aData as $item)
 		{
-			foreach($item as $item1)
-			{
-			$groups[]=$item1;
-			}
+
+
+			$groups[]=$item['bildtafs_hg'];
+
 			
 		}
+
         return array_unique($groups);
     }
+
+
     public function getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
-        $ghg = $this->getComplectations($regionCode, $modelCode, $modificationCode);
-        $complectationOptions = $ghg[$complectationCode]['options']['option2'];
-        
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
-
-
-
         $sql = "
-        SELECT *
-        FROM cats_table
-        WHERE detail_code = :articul
-        AND catalog_code = :catCode
+        SELECT bildtafs_fg
+        FROM w_bildtaf_suche, w_btzeilen_verbauung
+        WHERE btzeilenv_sachnr = :articul
+        and bildtafs_btnr = btzeilenv_btnr
+        and btzeilenv_mospid = :modificationCode
+        and bildtafs_hg = :groupCode
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', $articul);
-        $query->bindValue('catCode', $catCode);
+        $query->bindValue('articul', substr($articul, 4, strlen($articul)));
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('groupCode', $groupCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
-
-        foreach ($aData as $index => $value)
-        {
-            $value2 = str_replace(substr($value['model_options'], 0, strpos($value['model_options'], '|')), '', $value['model_options']);
-            $articulOptions = explode('|', str_replace(';', '', $value2));
-
-
-            foreach ($articulOptions as $index1 => $value1) {
-                if (($value1 == '') || ($index1 > (count($complectationOptions)-1))) {
-                    unset ($articulOptions[$index1]);
-                }
-            }
-            $cd = count($articulOptions);
-            $cdc = count(array_intersect_assoc($articulOptions, $complectationOptions));
-
-            if ($cd != $cdc)
-            {
-                unset ($aData[$index]);
-            }
-
-        }
-
-
-
-        foreach ($aData as $item) {
-            $sqlCatalog = "
-        SELECT sector_name, sector_id
-        FROM cats_map
-        WHERE catalog_name = :catalog_code
-        AND sector_id =:compl_name
-        ";
-
-            $query = $this->conn->prepare($sqlCatalog);
-            $query->bindValue('catalog_code', $catCode);
-            $query->bindValue('compl_name', $item['compl_name']);
-            $query->execute();
-
-            $aDataCatalog[] = $query->fetchAll();
-        }
-
-
         $subgroups = array();
-        foreach($aDataCatalog as $item) {
-            foreach ($item as $item1) {
-                $subgroups[$item1['sector_id']] = $item1['sector_name'];
 
-            }
-
+        foreach($aData as $item)
+        {
+            $subgroups[]=$item['bildtafs_fg'];
         }
-
-
-
-
-
-
-      /*  return (array_intersect($subgroups, $test));*/
-        return ($subgroups);
+        return array_unique($subgroups);
     }
     
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-
         $sql = "
-        SELECT compl_name
-        FROM cats_table
-        WHERE detail_code = :articul
-        AND catalog_code = :catCode
-
+        SELECT bildtaf_grafikid
+        FROM w_bildtaf, w_btzeilen_verbauung
+        WHERE btzeilenv_sachnr = :articul
+        and bildtaf_btnr = btzeilenv_btnr
+        and btzeilenv_mospid = :modificationCode
+        and bildtaf_hg = :groupCode
+        and bildtaf_fg = :subGroupCode
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', $articul);
-        $query->bindValue('catCode', $catCode);
+        $query->bindValue('articul', substr($articul, 4, strlen($articul)));
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
         $query->execute();
 
         $aData = $query->fetchAll();
-	   
-	   $schemas = array();
-        foreach($aData as $item) {
-            foreach ($item as $item1) {
-                $schemas[] = $item1;
 
-            }
+        $schemas = array();
 
+        foreach($aData as $item)
+        {
+            $schemas[]=$item['bildtaf_grafikid'];
         }
-		   
         return array_unique($schemas);
     }
          
-     public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
+     public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
         $sql = "
-        SELECT scheme_num
-        FROM cats_table
-        WHERE detail_code = :articul
-        AND catalog_code = :catCode
-
+        SELECT btzeilen_bildposnr
+        FROM w_bildtaf, w_btzeilen
+        WHERE btzeilen_sachnr = :articul
+        and bildtaf_btnr = btzeilen_btnr
+        and bildtaf_hg = :groupCode
+        and bildtaf_fg = :subGroupCode
+        and bildtaf_grafikid = :schemaCode
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', $articul);
-        $query->bindValue('catCode', $catCode);
+        $query->bindValue('articul', substr($articul, 4, strlen($articul)));
+        $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('schemaCode', $schemaCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
         $pncs = array();
-        foreach($aData as $item) {
-            foreach ($item as $item1) {
-                $pncs[] = $item1;
 
-            }
-
+        foreach($aData as $item)
+        {
+            $pncs[]=$item['btzeilen_bildposnr'];
         }
-        
         return array_unique($pncs);
     }
 } 

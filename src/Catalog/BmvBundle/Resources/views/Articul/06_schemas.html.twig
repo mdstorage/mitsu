@@ -3,7 +3,8 @@
 {% block breadcrumbs %}
     <a href="{{ path('articul_bmv_find') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_bmv_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('articul_bmv_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
 {% endblock breadcrumbs %}
-
+{% block complectation %}
+{% endblock complectation %}
 
 
 {% block schema %}
@@ -12,10 +13,11 @@
         <a href="{{ path('articul_bmv_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
                     <div class="row">
-                        {{ schema.getCode }}
+                        {{ schema.getRuname }}
                     </div>
+
                     <div class="row">
-                        <img src="{{ asset('bundles/catalogbmv/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
+                        <img src="{{ asset('bundles/catalogbmw/grafik/grafik/w_grafik/'~schema.getCode~'_t.png') }}" width="300" alt="{{ schema.getRuname }}"/>
                     </div>
 
         </a>
