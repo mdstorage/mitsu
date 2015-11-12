@@ -16,7 +16,7 @@
                 {% for group in oContainer.getGroups %}
                     <div>
                         <a href="{{ path('articul_bmv_subgroups', parameters|merge({'groupCode': group.getCode})) }}">
-                            <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~group.getOption('Id')~'_t.jpg') }}" width="100%" alt="{{ group.getRuname }}"/><br/>
+                            <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~group.getOption('Id')) }}" width="100%" alt="{{ group.getRuname }}"/><br/>
                             {{ group.getRuname }}
                         </a>
                     </div>
