@@ -359,9 +359,10 @@ order by Pos
         $aData = $query->fetchAll();
 
         $schemas = array();
-        foreach($aData as $item)
+        foreach($aData as &$item)
         {
             if (strpos($item['BlobMod'], '_z')) {
+                $item['BlobMod'] = str_replace('tif', 'png', $item['BlobMod']);
                 $schemas[$item['BlobMod']] = array(
                     Constants::NAME => '(' . $item['BildtafelNr'] . ') ' . mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']), 'utf8'),
                     Constants::OPTIONS => array('GrId' => $item['BildtafelNr'])
@@ -506,7 +507,6 @@ where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId orde
 			
            
         }
-
 
 
          return $pncs;
