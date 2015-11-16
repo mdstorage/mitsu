@@ -14,14 +14,19 @@
     <div class="col-lg-10">
         {% block groups %}
             <div class="groups">
+
                 {% for group in oContainer.getGroups %}
-                    <div class="col-lg-2">
+
+                    <div class="col-xs-1 col-sm-1">
                         <a href="{{ path('catalog_bmv_subgroups', parameters|merge({'groupCode': group.getCode})) }}">
                             <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~group.getOption('Id')) }}" width="100%" alt="{{ group.getRuname }}"/><br/>
                             {{ group.getRuname }}
                         </a>
                     </div>
+
+
                 {% endfor %}
+
             </div>
         {% endblock groups %}
     </div>
