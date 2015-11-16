@@ -15,10 +15,15 @@
         {% block groups %}
             <div class="groups">
                 {% for group in oContainer.getGroups %}
-                    <div class="col-lg-2">
+                    <div style=" height: 250px; " class="col-sm-2 col-sm-offset-5 col-md-2 col-md-offset-0">
+
                         <a href="{{ path('vin_bmv_subgroups', parameters|merge({'groupCode': group.getCode})) }}">
-                            <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~group.getOption('Id')) }}" width="100%" alt="{{ group.getRuname }}"/><br/>
+
+                            <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~group.getOption('Id')) }}" width="100%" alt="{{ group.getRuname }}"/>
                             {{ group.getRuname }}
+
+                        </a>
+
                     </div>
                 {% endfor %}
             </div>
