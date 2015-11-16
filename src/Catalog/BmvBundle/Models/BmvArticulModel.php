@@ -234,10 +234,12 @@ class BmvArticulModel extends BmvCatalogModel{
     
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
+
         $sql = "
-        SELECT bildtaf_grafikid
-        FROM w_bildtaf, w_btzeilen_verbauung
+        SELECT grafik_blob
+        FROM w_bildtaf, w_btzeilen_verbauung, w_grafik
         WHERE btzeilenv_sachnr = :articul
+        and bildtaf_grafikid = grafik_grafikid
         and bildtaf_btnr = btzeilenv_btnr
         and btzeilenv_mospid = :modificationCode
         and bildtaf_hg = :groupCode
@@ -257,8 +259,9 @@ class BmvArticulModel extends BmvCatalogModel{
 
         foreach($aData as $item)
         {
-            $schemas[]=$item['bildtaf_grafikid'];
+            $schemas[]=$item['grafik_blob'];
         }
+
         return array_unique($schemas);
     }
          
