@@ -259,7 +259,13 @@ class BmvArticulModel extends BmvCatalogModel{
 
         foreach($aData as $item)
         {
-            $schemas[]=$item['grafik_blob'];
+            if (strpos($item['grafik_blob'], '_z'))
+            {
+                $item['grafik_blob'] = str_replace('tif', 'png', $item['grafik_blob']);
+                $schemas[]=$item['grafik_blob'];
+
+            }
+
         }
 
         return array_unique($schemas);

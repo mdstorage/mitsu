@@ -3,8 +3,8 @@
 {% block vinScript %}
     <script>
         $("#vin-button").on('click', function(){
-            if($("#vin").val().length !== 7){
-                alert("VIN должен состоять из 7 знаков!");
+            if($("#vin").val().replace(/\s+/g, '').length !== 17){
+                alert("VIN должен состоять из 17 знаков!");
                 return;
             }
             $("#vin-result").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="20px" />');
@@ -12,7 +12,7 @@
                 type:   'POST',
                 async:  false,
                 url:    "{% block vinAjaxPath %}{{ path('vin_bmv_result') }}{% endblock vinAjaxPath %}",
-                data:   { vin: $("#vin").val() },
+                data:   { vin: $("#vin").val(). replace(/\s+/g, '')},
                 success: function(data) {
                     $("#vin-result").html(data);
                 }

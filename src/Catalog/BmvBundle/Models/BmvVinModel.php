@@ -16,6 +16,8 @@ class BmvVinModel extends BmvCatalogModel {
 
     public function getVinFinderResult($vin)
     {
+        $vin = substr($vin, strlen($vin)-7, 7);
+
         
         $sql = "
        select distinct
@@ -56,19 +58,20 @@ where fgstnr_von <= :vin and fgstnr_bis >= :vin and fgstnr_anf  = :subVin
 
         $aData = $query->fetch();
 
-                $result = array(
-                    'region' => $aData['Region'],
-                    'model' => $aData['ExtBaureihe'],
-                    'modif' => $aData['Modell'],
-                    Constants::PROD_DATE => $aData['Produktionsdatum'],
-                    'wheel' => $aData['Lenkung'],
-                    'modelforGroups' => $aData['Baureihe'],
-                    'modifforGroups' => $aData['Modellspalte'],
-                    'engine' => $aData['Motor'],
-                    'korobka' => $aData['Getriebe'],
-                );
-
-
+        if ($aData) {
+            $result = array(
+                'region' => $aData['Region'],
+                'model' => $aData['ExtBaureihe'],
+                'modif' => $aData['Modell'],
+                Constants::PROD_DATE => $aData['Produktionsdatum'],
+                'wheel' => $aData['Lenkung'],
+                'modelforGroups' => $aData['Baureihe'],
+                'modifforGroups' => $aData['Modellspalte'],
+                'engine' => $aData['Motor'],
+                'korobka' => $aData['Getriebe'],
+            );
+        }
+        else {print_r('Ничего не найдено'); die;}
 
 
 
