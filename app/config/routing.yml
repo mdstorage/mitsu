@@ -41,7 +41,3 @@ catalog_kia:
 catalog_bmw:
     resource: "@CatalogBmvBundle/Resources/config/routing.yml"
     prefix:   /
-
-catalog_mini:
-    resource: "@CatalogMiniBundle/Resources/config/routing.yml"
-    prefix:   /
