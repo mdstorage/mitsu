@@ -6,21 +6,23 @@
  * Time: 12:14
  */
 
-namespace Catalog\BmvBundle\Models;
+namespace Catalog\MiniBundle\Models;
 
 
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Models\CatalogModel;
-use Catalog\BmvBundle\Components\BmvConstants;
+use Catalog\MiniBundle\Components\MiniConstants;
 
-class BmvCatalogModel extends CatalogModel{
+class MiniCatalogModel extends CatalogModel{
 
     public function getRegions(){
 
         $sql = "
         SELECT fztyp_ktlgausf
-        FROM w_fztyp
+        FROM w_fztyp, w_baureihe
         WHERE fztyp_karosserie NOT LIKE 'ohne'
+        AND fztyp_baureihe = baureihe_baureihe
+        AND baureihe_marke_tps = 'Mini'
         GROUP BY fztyp_ktlgausf
         ";
 
@@ -37,7 +39,6 @@ class BmvCatalogModel extends CatalogModel{
         return $regions;
 
     }
-
     public function getModels($regionCode)
     {
         $sql  = "
@@ -48,7 +49,7 @@ class BmvCatalogModel extends CatalogModel{
         b.ben_text ExtBaureihe
         FROM w_fztyp, w_baureihe, w_grafik, w_ben_gk b
         WHERE (baureihe_textcode = b.ben_textcode AND b.ben_iso = 'ru' AND b.ben_regiso = '') AND grafik_grafikid = baureihe_grafikid AND fztyp_baureihe = baureihe_baureihe
-        AND fztyp_ktlgausf = :regionCode AND baureihe_marke_tps = 'BMW' AND fztyp_karosserie NOT LIKE 'ohne'
+        AND fztyp_ktlgausf = :regionCode AND baureihe_marke_tps = 'Mini' AND fztyp_karosserie NOT LIKE 'ohne'
         ORDER BY ExtBaureihe
         ";
 
@@ -176,7 +177,7 @@ class BmvCatalogModel extends CatalogModel{
 
                     $sql = "
                     SELECT lex_name
-                    FROM bmvlex
+                    FROM minilex
                     WHERE lex_code =:item3
                     AND lang = 'EN'
                     ";

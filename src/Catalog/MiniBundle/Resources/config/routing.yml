@@ -1,0 +1,120 @@
+catalog_mini:
+  path:         /mini/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogMiniBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_mini_modifications:
+  path:         /mini/catalog/1
+  defaults:     {_controller: CatalogMiniBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_mini_complectations:
+  path:         /mini/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogMiniBundle:Catalog:complectations}
+
+catalog_mini_groups:
+  path:         /mini/catalog/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogMiniBundle:Catalog:groups}
+
+catalog_mini_subgroups:
+  path:         /mini/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogMiniBundle:Catalog:subgroups}
+
+catalog_mini_schemas:
+  path:         /mini/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogMiniBundle:Catalog:schemas}
+
+catalog_mini_schema:
+  path:         /mini/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogMiniBundle:Catalog:schema}
+
+catalog_mini_articuls:
+  path:         /mini/catalog/7
+  defaults:     {_controller: CatalogMiniBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_mini_group:
+  path:         /mini/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogMiniBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_mini:
+  path:         /mini/vin/0
+  defaults:     {_controller: CatalogMiniBundle:Vin:index}
+
+vin_mini_result:
+  path:         /mini/vin/1
+  defaults:     {_controller: CatalogMiniBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_mini_groups:
+  path:         /mini/vin/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogMiniBundle:Vin:groups}
+
+vin_mini_subgroups:
+  path:         /mini/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogMiniBundle:Vin:subgroups}
+
+vin_mini_schemas:
+  path:         /mini/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogMiniBundle:Vin:schemas}
+
+vin_mini_schema:
+  path:         /mini/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogMiniBundle:Vin:schema}
+
+vin_mini_articuls:
+  path:         /mini/vin/7
+  defaults:     {_controller: CatalogMiniBundle:Vin:articuls}
+  requirements: {_method: POST}
+
+vin_mini_group:
+  path:         /mini/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogMiniBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_mini:
+  path:         /mini/articul/0
+  defaults:     {_controller: CatalogMiniBundle:Articul:index}
+
+articul_mini_find:
+  path:         /mini/articul/1/{regionCode}
+  defaults:     {_controller: CatalogMiniBundle:Articul:findByArticul, regionCode: null}
+
+articul_mini_modifications:
+  path:         /mini/articul/3
+  defaults:     {_controller: CatalogMiniBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_mini_complectations:
+  path:         /mini/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogMiniBundle:Articul:miniArticulComplectations}
+
+articul_mini_groups:
+  path:         /mini/articul/5/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogMiniBundle:Articul:miniArticulgroups}
+
+articul_mini_subgroups:
+  path:         /mini/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogMiniBundle:Articul:miniArticulSubgroups}
+
+articul_mini_schemas:
+  path:         /mini/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogMiniBundle:Articul:miniArticulSchemas}
+
+articul_mini_schema:
+  path:         /mini/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogMiniBundle:Articul:miniArticulSchema}
+
+articul_mini_articuls:
+  path:         /mini/articul/9
+  defaults:     {_controller: CatalogMiniBundle:Articul:articuls}
+  requirements: {_method: POST}
+
+articul_mini_group:
+  path:         /mini/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogMiniBundle:Articul:getGroupBySubgroup}
+catalog_mini_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogMiniBundle:Default:index }
