@@ -1,0 +1,20 @@
+services:
+#    catalog_mini.example:
+#        class: Catalog\MiniBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  mini_date_convertor.extension:
+        class: Catalog\MiniBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  mini.catalog.model:
+    class: Catalog\MiniBundle\Models\MiniCatalogModel
+    arguments:  ['@doctrine.dbal.bmv_connection']
+
+  mini.vin.model:
+    class: Catalog\MiniBundle\Models\MiniVinModel
+    arguments:  ['@doctrine.dbal.bmv_connection']
+
+  mini.articul.model:
+    class: Catalog\MiniBundle\Models\MiniArticulModel
+    arguments:  ['@doctrine.dbal.bmv_connection']
