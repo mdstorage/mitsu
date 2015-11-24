@@ -1,0 +1,20 @@
+services:
+#    catalog_rollsroyce.example:
+#        class: Catalog\RollsRoyceBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  rollsroyce_date_convertor.extension:
+        class: Catalog\RollsRoyceBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  rollsroyce.catalog.model:
+    class: Catalog\RollsRoyceBundle\Models\RollsRoyceCatalogModel
+    arguments:  ['@doctrine.dbal.bmv_connection']
+
+  rollsroyce.vin.model:
+    class: Catalog\RollsRoyceBundle\Models\RollsRoyceVinModel
+    arguments:  ['@doctrine.dbal.bmv_connection']
+
+  rollsroyce.articul.model:
+    class: Catalog\RollsRoyceBundle\Models\RollsRoyceArticulModel
+    arguments:  ['@doctrine.dbal.bmv_connection']
