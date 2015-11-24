@@ -1,0 +1,62 @@
+{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% use 'CatalogRollsRoyceBundle::rollsroyce.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('articul_rollsroyce_find') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
+   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('articul_rollsroyce_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
+    <a href="{{ path('articul_rollsroyce_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
+    <a href="{{ path('articul_rollsroyce_schemas', parameters) }}">Схема</a> / Запчасти
+{% endblock breadcrumbs %}
+
+{% block complectation %}
+{% endblock complectation %}
+
+{% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
+
+
+{% block image %}
+    <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~oContainer.getActiveSchema.getCode) }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+{% endblock image %}
+
+{% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock commonArticulPath %}
+{% block subGroupPath %}{{ path('catalog_rollsroyce_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
+{% block pncScript %}
+    {% if pnc.isActive %}
+        <script>
+            $(document).ready(function(){
+                {% block pncClick %}
+                                    	
+                                    	$("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
+                                        
+                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                                        $.ajax({
+                                            type:   'POST',
+                                            async:  false,
+                                            url:    "{{ path('articul_rollsroyce_articuls') }}",
+                                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', groupCode: '{{ parameters.groupCode }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}', options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'  },
+                                            success: function(data) {
+                                                $("#articul_for_pnc{{ pnc.getCode }}").html(data);
+                                            }
+                                        });
+                                        
+                                        $.scrollTo("#pnc_{{ pnc.getCode }}", {duration:1500});
+                                        
+                                        
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
+                                        
+                                        {% endblock pncClick %}
+            });
+        </script>
+
+    {% endif %}
+    {{ parent() }}
+{% endblock pncScript %}
+{% set a = [] %}
+{% for pnc in oContainer.getActiveSchema.getPncs %}
+    {% if pnc.isActive %}
+        {% set a = a|merge([pnc.getCode]) %}
+    {% endif %}
+{% endfor %}
+{% block activeLabel %}{{ a|join(',') }}{% endblock activeLabel %}

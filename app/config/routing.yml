@@ -45,3 +45,7 @@ catalog_bmw:
 catalog_mini:
     resource: "@CatalogMiniBundle/Resources/config/routing.yml"
     prefix:   /
+
+catalog_rollsroyce:
+    resource: "@CatalogRollsRoyceBundle/Resources/config/routing.yml"
+    prefix:   /

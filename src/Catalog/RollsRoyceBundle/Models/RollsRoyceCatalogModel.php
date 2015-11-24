@@ -6,14 +6,14 @@
  * Time: 12:14
  */
 
-namespace Catalog\MiniBundle\Models;
+namespace Catalog\RollsRoyceBundle\Models;
 
 
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Models\CatalogModel;
-use Catalog\MiniBundle\Components\MiniConstants;
+use Catalog\RollsRoyceBundle\Components\RollsRoyceConstants;
 
-class MiniCatalogModel extends CatalogModel{
+class RollsRoyceCatalogModel extends CatalogModel{
 
     public function getRegions(){
 
@@ -22,7 +22,7 @@ class MiniCatalogModel extends CatalogModel{
         FROM w_fztyp, w_baureihe
         WHERE fztyp_karosserie NOT LIKE 'ohne'
         AND fztyp_baureihe = baureihe_baureihe
-        AND baureihe_marke_tps = 'Mini'
+        AND baureihe_marke_tps = 'Rolls-Royce'
         GROUP BY fztyp_ktlgausf
         ";
 
@@ -49,7 +49,7 @@ class MiniCatalogModel extends CatalogModel{
         b.ben_text ExtBaureihe
         FROM w_fztyp, w_baureihe, w_grafik, w_ben_gk b
         WHERE (baureihe_textcode = b.ben_textcode AND b.ben_iso = 'ru' AND b.ben_regiso = '') AND grafik_grafikid = baureihe_grafikid AND fztyp_baureihe = baureihe_baureihe
-        AND fztyp_ktlgausf = :regionCode AND baureihe_marke_tps = 'Mini' AND fztyp_karosserie NOT LIKE 'ohne'
+        AND fztyp_ktlgausf = :regionCode AND baureihe_marke_tps = 'Rolls-Royce' AND fztyp_karosserie NOT LIKE 'ohne'
         ORDER BY ExtBaureihe
         ";
 
@@ -177,7 +177,7 @@ class MiniCatalogModel extends CatalogModel{
 
                     $sql = "
                     SELECT lex_name
-                    FROM minilex
+                    FROM rollsroycelex
                     WHERE lex_code =:item3
                     AND lang = 'EN'
                     ";
@@ -242,7 +242,7 @@ class MiniCatalogModel extends CatalogModel{
 
         foreach($aData as $item){
             $groups[$item['Hauptgruppe']] = array(
-                Constants::NAME     => ucfirst(iconv('cp1251', 'utf8', $item ['Benennung'])),
+                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']),'utf8'),
                 Constants::OPTIONS  => array('Id' => $item ['BlobMod'])
             );
         }
