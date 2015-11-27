@@ -1,4 +1,30 @@
+<html class="no-js" lang="en"><!--<![endif]-->
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name='yandex-verification' content='7645bb41579c1445' />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/bootstrap.min.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/bootstrap-modal.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/style_n.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/css.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/common.css') }}"/>
 
+    {% endblock %}
+</head>
+
+<body>
+
+
+        <div class="col-sm-12 col-md-8 col-lg-8">
+            {% block content%}{% endblock content %}
+        </div>
+        <div class="col-sm-12 col-md-4 col-lg-4">
+            {{ render(controller('AppBundle:Base:getCallMeForm')) }}
+            {% block side %}{% endblock side %}
+        </div>
 
 <div class="complectations">
 {% for mark in marks %}
@@ -18,4 +44,4 @@
                         </div>
 
 </div>
-
+</body>

@@ -29,6 +29,7 @@ class AppKernel extends Kernel
             new Catalog\BmvBundle\CatalogBmvBundle(),
             new Catalog\MiniBundle\CatalogMiniBundle(),
             new Catalog\RollsRoyceBundle\CatalogRollsRoyceBundle(),
+            new AppBundle\AppBundle(),
 
             // These are the other bundles the SonataAdminBundle relies on
             new Sonata\CoreBundle\SonataCoreBundle(),
