@@ -305,15 +305,15 @@ class HuyndaiCatalogModel extends CatalogModel{
 
 
         $sqlData = "
-        SELECT *
+        SELECT model_options, compl_name
         FROM cats_table
-        WHERE catalog_code =:catCode
+        WHERE catalog_code = :catCode
         AND main_part = :groupCode
         ";
 
         $query = $this->conn->prepare($sqlData);
-        $query->bindValue('catCode',  $catCode);
-        $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('catCode', $catCode);
+        $query->bindValue('groupCode', $groupCode);
         $query->execute();
 
         $aDataCompl = $query->fetchAll();
