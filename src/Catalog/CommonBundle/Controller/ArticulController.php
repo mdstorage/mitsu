@@ -20,10 +20,13 @@ abstract class ArticulController extends CatalogController{
             if ($articul = trim($request->get('articul'))) {
                 setcookie(Constants::ARTICUL, $articul);
             } else {
-                return $this->indexAction();
+                return $this->indexAction('Запчасть с таким артикулом не найдена.');
             }
         }
-
+        if (strlen($articul)<8)
+        {
+            return $this->indexAction('Запчасть с таким артикулом не найдена.');
+        }
         $articulRegions = $this->model()->getArticulRegions($articul);
 
         if (empty($articulRegions)) {

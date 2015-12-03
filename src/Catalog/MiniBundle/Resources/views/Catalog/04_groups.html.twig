@@ -65,4 +65,68 @@
     </div>
 
 
+    <table class="contact-form" width="100%">
+        <tbody>
+        <tr>
+            <th>Ваше имя*</th>
+            <td>     <input name="form[name]" id="form_name" class="form_elements" value="" type="text">
+                <span class="msg-error" id="form_name_err"></span>
+            </td>
+        </tr>
+        <tr>
+            <th>Телефон для связи*</th>
+            <td>     <input name="form[phone]" id="form_phone" class="form_elements" value=" " type="text">
+                <span class="msg-error" id="form_phone_err"></span>
+            </td>
+        </tr>
+        <tr>
+            <th>Ваш e-mail</th>
+            <td>     <input name="form[email]" id="form_email" class="form_elements" value="" type="text">
+                <span class="msg-error" id="form_email_err"></span>
+            </td>
+        </tr>
+        <tr>
+            <th>Тема сообщения*</th>
+            <td>     <input name="form[subject]" id="form_subject" class="form_elements" value="" type="text">
+                <span class="msg-error" id="form_subject_err"></span>
+            </td>
+        </tr>
+        <tr>
+            <th>Сообщение*</th>
+            <td>     <textarea name="form[message]" id="form_message" class="form_elements" rows="" cols=""></textarea>
+                <span class="msg-error" id="form_message_err"></span>
+            </td>
+        </tr>
+        <tr>
+            <th></th>
+            <td>
+                <p><img src="/extensions/captcha/index.php"></p>
+                <input name="form[code]" id="form_code" value="" class="form_elements" type="text">
+                <p class="msg-error" id="form_code_err"></p>
+            </td>
+        </tr>
+        <tr>
+            <th></th>
+            <td><input value="Отправить" class="custom-button" type="submit"></td>
+        </tr>
+        </tbody>
+    </table>
+
+<script>
+    function chkreg() {  var err = "";  $('.form_elements_err').removeClass('form_elements_err').addClass('form_elements');
+    $('.msg-error').html('');  var msg1 = $('#form_name').val();  if (msg1=="") {   err += 'err';
+    $('#form_name_err').html('Необходимо заполнить поле - Ваше имя');
+    $('#form_name').removeClass('form_elements').addClass('form_elements_err');
+    }  var msg1 = $('#form_phone').val();  if (msg1=="") {   err += 'err';   $('#form_phone_err').html('Необходимо заполнить поле - Телефон для связи');
+    $('#form_phone').removeClass('form_elements').addClass('form_elements_err');  }  /*var email = $('#form_email').val();
+    if (email=="" || !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(email)) {   err += 'err';
+    $('#form_email_err').html('Укажите корректно ваш E-mail адрес');   $('#form_email').removeClass('form_elements').addClass('form_elements_err');
+    }*/  var msg1 = $('#form_subject').val();  if (msg1=="") {   err += 'err';   $('#form_subject_err').html('Необходимо заполнить поле - Тема сообщения');
+    $('#form_subject').removeClass('form_elements').addClass('form_elements_err');  }  var msg1 = $('#form_message').val();  if (msg1=="") {   err += 'err';
+    $('#form_message_err').html('Необходимо заполнить поле - Сообщение');   $('#form_message').removeClass('form_elements').addClass('form_elements_err');
+    }  var msg2 = $('#form_code').val();  if (msg2=="") {   err += 'err';   $('#form_code_err').html('Неверный код');
+    $('#form_code').removeClass('form_elements').addClass('form_elements_err');  }  if (err == "") {   return true;  }  else {   return false;  } }
+</script>
+
+
 {% endblock body %}
