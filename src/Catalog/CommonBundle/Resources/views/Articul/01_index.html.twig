@@ -24,7 +24,7 @@
             {% block articulScript %}
                 <script>
                     $("#articul-button").on('click', function(){
-                        if($("#articul").val().length < 8){
+                        if($("#articul").val(). replace(/\s+/g, '').length < 8){
                             alert("Артикул должен содержать не менее 8 знаков!");
                             return;
                         }

@@ -15,7 +15,7 @@ class BmvArticulModel extends BmvCatalogModel{
 
     public function getArticulRegions($articulCode){
 
-        
+
         $sql = "
         select fztyp_ktlgausf from w_fztyp, w_btzeilen_verbauung
         where btzeilenv_sachnr = :articulCode and fztyp_mospid = btzeilenv_mospid and fztyp_karosserie NOT LIKE 'ohne'
@@ -27,7 +27,6 @@ class BmvArticulModel extends BmvCatalogModel{
 
         $aData = $query->fetchAll();
         $regions = array();
-
                   
         foreach($aData as $item)
         {
