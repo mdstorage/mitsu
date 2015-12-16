@@ -14,7 +14,7 @@
 
 {% block schema %}
     {% if schema.getCode is not empty %}
-            <div class="col-xs-3">
+            <div style=" height: 550px; " class="col-xs-3">
         <a href="{{ path('catalog_saab_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
                     <div class="row">
@@ -22,7 +22,7 @@
                     </div>
 
                     <div class="row">
-                        <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~schema.getCode) }}" width="300" alt="{{ schema.getRuname }}"/>
+                        <img src="{{ asset('bundles/catalogsaab/Pictures/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
                     </div>
 
 

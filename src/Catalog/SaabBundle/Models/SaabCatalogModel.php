@@ -17,22 +17,14 @@ class SaabCatalogModel extends CatalogModel{
 
     public function getRegions(){
 
-        $sql = "
-        SELECT fztyp_ktlgausf
-        FROM w_fztyp
-        WHERE fztyp_karosserie NOT LIKE 'ohne'
-        GROUP BY fztyp_ktlgausf
-        ";
 
-        $query = $this->conn->query($sql);
-
-        $aData = $query->fetchAll();
+        $aData = array('EU'=>'EU');
 
         $regions = array();
-        foreach($aData as $item)
-        {
-            $regions[$item['fztyp_ktlgausf']] = array(Constants::NAME=>$item['fztyp_ktlgausf'], Constants::OPTIONS=>array());
-        }
+
+
+            $regions[$aData['EU']] = array(Constants::NAME=>$aData['EU'], Constants::OPTIONS=>array());
+
 
         return $regions;
 
@@ -41,20 +33,14 @@ class SaabCatalogModel extends CatalogModel{
     public function getModels($regionCode)
     {
         $sql  = "
-        SELECT DISTINCT
-        fztyp_karosserie Kuzov,
-        fztyp_baureihe Baureihe,
-        grafik_blob Id,
-        b.ben_text ExtBaureihe
-        FROM w_fztyp, w_baureihe, w_grafik, w_ben_gk b
-        WHERE (baureihe_textcode = b.ben_textcode AND b.ben_iso = 'ru' AND b.ben_regiso = '') AND grafik_grafikid = baureihe_grafikid AND fztyp_baureihe = baureihe_baureihe
-        AND fztyp_ktlgausf = :regionCode AND baureihe_marke_tps = 'BMW' AND fztyp_karosserie NOT LIKE 'ohne'
-        ORDER BY ExtBaureihe
+        SELECT TYPE_OF_CAR, MODEL_NO
+        FROM model
+        WHERE TYPE_OF_CAR NOT LIKE 'EXCH.'
+        ORDER BY TYPE_OF_CAR
         ";
 
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode', $regionCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -62,8 +48,8 @@ class SaabCatalogModel extends CatalogModel{
         $models = array();
         foreach($aData as $item) {
 
-            $models[$item['Baureihe']] = array(Constants::NAME => strtoupper($item['ExtBaureihe']) . ' ' . $item['Kuzov'],
-                Constants::OPTIONS => array('grafik' => $item['Id']));
+            $models[$item['MODEL_NO']] = array(Constants::NAME => ($item['TYPE_OF_CAR']),
+                Constants::OPTIONS => array());
 
         }
 
@@ -73,24 +59,24 @@ class SaabCatalogModel extends CatalogModel{
     public function getModifications($regionCode, $modelCode)
     {
         $sql = "
-        SELECT fztyp_mospid, fztyp_erwvbez
-        FROM w_fztyp
-        WHERE fztyp_ktlgausf = :regionCode
-        AND fztyp_baureihe = :modelCode
-        ORDER BY fztyp_erwvbez
+        SELECT nYear, Code
+        FROM vin_year, model
+        WHERE MODEL_NO = :modelCode
+        AND nYear >= FROM_MODEL_YEAR
+        AND nYear <= TO_MODEL_YEAR
+        ORDER BY nYear
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('modelCode', $modelCode);
+        $query->bindValue('modelCode',  $modelCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
         $modifications = array();
         foreach($aData as $item){
-            $modifications[$item['fztyp_mospid']] = array(
-                Constants::NAME     => $item['fztyp_erwvbez'],
+            $modifications[$item['nYear']] = array(
+                Constants::NAME     => $item['nYear'].' ('.$item['Code'].')',
                 Constants::OPTIONS  => array());
 
         }
@@ -220,19 +206,15 @@ class SaabCatalogModel extends CatalogModel{
     {
 
          $sql = "
-        select
-        hgfg_hg Hauptgruppe,
-        hgfg_grafikid Id,
-        grafik_blob BlobMod,
-        ben_text Benennung
-        from w_hgfg_mosp, w_hgfg, w_ben_gk, w_grafik
-        where hgfgm_mospid = :modificationCode and hgfgm_hg = hgfg_hg and hgfg_fg = '00' and hgfgm_produktart = hgfg_produktart and hgfg_grafikid = grafik_grafikid
-        and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
-        ORDER BY Hauptgruppe
+        SELECT
+        GROUP_NO, DESCRIPTION_TEXT
+        FROM saab.group, descr
+        WHERE CATALOGUE_NO = :modelCode and GROUP_DESC = DESCRIPTION_NO AND LANGUAGE_CODE = 16
+        ORDER BY ABS(GROUP_NO)
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('modelCode',  $modelCode);
         $query->execute();
         $aData = $query->fetchAll();
 
@@ -240,9 +222,9 @@ class SaabCatalogModel extends CatalogModel{
 
 
         foreach($aData as $item){
-            $groups[$item['Hauptgruppe']] = array(
-                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']),'utf8'),
-                Constants::OPTIONS  => array('Id' => $item ['BlobMod'])
+            $groups[$item['GROUP_NO']] = array(
+                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['DESCRIPTION_TEXT']),'utf8'),
+                Constants::OPTIONS  => array()
             );
         }
 
@@ -296,20 +278,18 @@ class SaabCatalogModel extends CatalogModel{
     {
 
         $sql = "
-        select
-hgfg_hg Hauptgruppe,
-hgfg_fg Funktionsgruppe,
-ben_text Benennung
-from w_hgfg_mosp, w_hgfg, w_ben_gk
-where hgfgm_mospid = :modificationCode and hgfg_hg = :groupCode and hgfgm_hg = hgfg_hg and hgfgm_fg = hgfg_fg and hgfgm_produktart = hgfg_produktart
-and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
-ORDER BY Funktionsgruppe
+        SELECT
+DESCRIPTION_TEXT, HEAD_LINE_1, SECTION_NO
+FROM saab.section, descr
+WHERE  :modificationCode BETWEEN FROM_YEAR AND TO_YEAR AND CATALOGUE_NO = :modelCode AND GROUP_NO = :groupCode AND HEAD_LINE_1 = DESCRIPTION_NO AND LANGUAGE_CODE = 16
+ORDER BY ABS (SECTION_NO)
         ";
 
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('modelCode',  $modelCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -318,9 +298,9 @@ ORDER BY Funktionsgruppe
         $subgroups = array();
         foreach($aData as $item){
 
-            $subgroups[$item['Funktionsgruppe']] = array(
+            $subgroups[$item['HEAD_LINE_1']] = array(
 
-                Constants::NAME => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']),'utf8'),
+                Constants::NAME => mb_strtoupper(iconv('cp1251', 'utf8', $item ['DESCRIPTION_TEXT']),'utf8'),
                 Constants::OPTIONS => array()
             );
 
@@ -334,26 +314,19 @@ ORDER BY Funktionsgruppe
 
 
         $sql = "
-select distinct
-bildtaf_btnr BildtafelNr,
-bildtaf_bteart BildtafelArt,
-ben_text Benennung,
-bildtaf_kommbt Kommentar,
-bildtaf_vorh_cp CPVorhanden,
-bildtaf_bedkez BedingungKZ,
-bildtaf_pos Pos,
-bildtaf_grafikid Id,
-grafik_blob BlobMod
-from w_bildtaf_suche, w_ben_gk, w_bildtaf, w_grafik
-where bildtafs_hg = :groupCode and bildtafs_mospid = :modificationCode and bildtafs_btnr = bildtaf_btnr and bildtaf_hg = :groupCode and bildtaf_fg = :subGroupCode
-and bildtaf_sicher = 'N' and bildtaf_textc = ben_textcode and ben_iso = 'ru' and ben_regiso = '  ' and bildtaf_grafikid = grafik_grafikid
-order by Pos
-";
+        SELECT
+DESCRIPTION_TEXT, HEAD_LINE_2, SECTION_NO, IMAGE_NO
+FROM saab.section, descr
+WHERE  :modificationCode BETWEEN FROM_YEAR AND TO_YEAR AND HEAD_LINE_1 = :subGroupCode
+AND CATALOGUE_NO = :modelCode AND GROUP_NO = :groupCode AND HEAD_LINE_2 = DESCRIPTION_NO AND LANGUAGE_CODE = 16
+ORDER BY ABS (SECTION_NO)
+        ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode',  $modificationCode);
         $query->bindValue('subGroupCode',  $subGroupCode);
         $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('modelCode',  $modelCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -361,13 +334,12 @@ order by Pos
         $schemas = array();
         foreach($aData as &$item)
         {
-            if (strpos($item['BlobMod'], '_z')) {
-                $item['BlobMod'] = str_replace('tif', 'png', $item['BlobMod']);
-                $schemas[$item['BlobMod']] = array(
-                    Constants::NAME => '(' . $item['BildtafelNr'] . ') ' . mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']), 'utf8'),
-                    Constants::OPTIONS => array('GrId' => $item['BildtafelNr'])
+
+                $schemas[$item['IMAGE_NO']] = array(
+                    Constants::NAME => '(' . $item['SECTION_NO'] . ') ' . mb_strtoupper(iconv('cp1251', 'utf8', $item ['DESCRIPTION_TEXT']), 'utf8'),
+                    Constants::OPTIONS => array()
                 );
-            }
+
         }
 
 
