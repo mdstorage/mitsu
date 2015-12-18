@@ -51,7 +51,7 @@
                             {% endblock pncScript %}
                             
 {% block image %}
-    <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~oContainer.getActiveSchema.getCode) }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+    <img src="{{ asset('bundles/catalogsaab/Pictures/'~oContainer.getActiveSchema.getCode~'.png') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 
 {% endblock image %}
 

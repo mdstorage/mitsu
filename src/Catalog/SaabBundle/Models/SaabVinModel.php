@@ -16,59 +16,46 @@ class SaabVinModel extends SaabCatalogModel {
 
     public function getVinFinderResult($vin)
     {
-        $vin = substr($vin, strlen($vin)-7, 7);
 
-        
+
         $sql = "
        select distinct
-fgstnr_mospid Modellspalte,
-fgstnr_typschl Typ,
-fgstnr_werk Werk,
-baureihe_marke_tps Marke,
-baureihe_produktart Produktart,
-fztyp_vbereich Katalogumfang,
-fztyp_baureihe Baureihe,
-b.ben_text ExtBaureihe,
-baureihe_bauart Bauart,
-bb.ben_text ExtBauart,
-fztyp_karosserie Karosserie,
-bk.ben_text ExtKarosserie,
-fztyp_motor Motor,
-fztyp_erwvbez Modell,
-fztyp_ktlgausf Region,
-fztyp_lenkung Lenkung,
-fztyp_getriebe Getriebe,
-fgstnr_prod Produktionsdatum,
-fztyp_sichtschutz Sichtschutz
-from w_fgstnr
-inner join w_fztyp on (fgstnr_typschl = fztyp_typschl and fgstnr_mospid = fztyp_mospid)
-inner join w_baureihe on (fztyp_baureihe = baureihe_baureihe)
-inner join w_publben pk on (fztyp_karosserie = pk.publben_bezeichnung and pk.publben_art = 'K')
-inner join w_publben pb on (baureihe_bauart = pb.publben_bezeichnung and pb.publben_art = 'B')
-inner join w_ben_gk b on (baureihe_textcode = b.ben_textcode and b.ben_iso = 'ru' and b.ben_regiso = '  ')
-inner join w_ben_gk bk on (pk.publben_textcode = bk.ben_textcode and bk.ben_iso = 'ru' and bk.ben_regiso = '  ')
-inner join w_ben_gk bb on (pb.publben_textcode = bb.ben_textcode and bb.ben_iso = 'ru' and bb.ben_regiso = '  ')
-where fgstnr_von <= :vin and fgstnr_bis >= :vin and fgstnr_anf  = :subVin
+vin_carline.CarLine carline,
+vin_market.RUS market,
+vin_bodytype.RUS bodytype,
+vin_gearbox.RUS gearbox,
+vin_engine.RUS engine,
+vin_assemblyplant.RUS assemblyplant,
+vin_year.nYear nYear,
+model.MODEL_NO model_no
+from vin_carline, vin_year, vin_market, vin_bodytype, vin_gearbox, vin_engine, vin_assemblyplant, model
+where vin_carline.id = SUBSTRING(:vin,4,1) and vin_year.nYear BETWEEN vin_carline.FROM_YEAR AND vin_carline.TO_YEAR
+and vin_year.Code = SUBSTRING(:vin,10,1)
+and vin_market.ID = SUBSTRING(:vin,5,1) and vin_year.nYear BETWEEN vin_market.From_Year AND vin_market.To_Year
+and vin_bodytype.ID = SUBSTRING(:vin,6,1) and vin_year.nYear BETWEEN vin_bodytype.From_Year AND vin_bodytype.To_Year
+and vin_gearbox.ID = SUBSTRING(:vin,7,1) and vin_year.nYear BETWEEN vin_gearbox.From_Year AND vin_gearbox.To_Year
+and vin_engine.ID = SUBSTRING(:vin,8,1) and vin_year.nYear BETWEEN vin_engine.From_Year AND vin_engine.To_Year
+and vin_assemblyplant.ID = SUBSTRING(:vin,11,1) and vin_year.nYear BETWEEN vin_assemblyplant.From_Year AND vin_assemblyplant.To_Year
+and REPLACE (vin_carline.CarLine , 'Saab ' , '') = model.TYPE_OF_CAR and vin_year.nYear BETWEEN model.FROM_MODEL_YEAR AND model.TO_MODEL_YEAR
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('vin', $vin);
-        $query->bindValue('subVin', substr($vin,0,2));
         $query->execute();
 
         $aData = $query->fetch();
 
         if ($aData) {
             $result = array(
-                'region' => $aData['Region'],
-                'model' => $aData['ExtBaureihe'],
-                'modif' => $aData['Modell'],
-                Constants::PROD_DATE => $aData['Produktionsdatum'],
-                'wheel' => $aData['Lenkung'],
-                'modelforGroups' => $aData['Baureihe'],
-                'modifforGroups' => $aData['Modellspalte'],
-                'engine' => $aData['Motor'],
-                'korobka' => $aData['Getriebe'],
+                'model' => $aData['carline'],
+                'market' => iconv('cp1251', 'utf8', $aData['market']),
+                Constants::PROD_DATE => $aData['nYear'],
+                'bodytype' => iconv('cp1251', 'utf8', $aData['bodytype']),
+                'gearbox' => iconv('cp1251', 'utf8', $aData['gearbox']),
+                'engine' => iconv('cp1251', 'utf8', $aData['engine']),
+                'assemblyplant' => iconv('cp1251', 'utf8', $aData['assemblyplant']),
+                'model_no' => $aData['model_no'],
+                'serial' => substr($vin, strlen($vin)-6, strlen($vin))
             );
         }
         else {print_r('Ничего не найдено'); die;}

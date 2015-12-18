@@ -13,10 +13,13 @@
     <tbody>
     {% for articul in oContainer.getActivePnc.getArticuls %}
         <tr>
-            <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a></td>
+            <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getOption('articul') }}" target="_blank">{% block articulItem %}{{ articul.getOption('articul') }}{% endblock articulItem %}</a>
+            <br/>
+                {% if articul.getOption('replace') %} Замена: {{ articul.getOption('replace')}} {% endif %}
+            </td>
             <td>{{ articul.getRuname }}</td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }}</td>
-            <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|saab_date_convertor}} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|saab_date_convertor}}</td>
+            <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))}} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))}}</td>
             <td>{% if articul.getOption('dopinf') %}{{ articul.getOption('dopinf')}} {% endif %}</td>
             
         </tr>

@@ -3,31 +3,32 @@
     <div class="row">
         <div class="col-lg-8">
             <table class="table table-bordered">
-                <tr>
 
-                    <td>Регион:</td>
-                    <td>{{ result.region }}</td>
-                </tr>
                 <tr>
                     <td>Модель:</td>
                     <td>{{ result.model }}</td>
                 </tr>
                 <tr>
-                    <td>Модификация:</td>
+                    <td>Производственная линия:</td>
                     <td>
-                        {{ result.modif }}<br/>
+                        {{ result.market }}<br/>
 
                     </td>
                 </tr>
                 <tr>
                     <td>Дата выпуска:</td>
-                    <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|saab_date_convertor }}</td>
+                    <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')] }}</td>
                 </tr>
 
                 <tr>
 
-                    <td>Положение руля:</td>
-                    <td>{{ result.wheel }}</td>
+                    <td>Кузов:</td>
+                    <td>{{ result.bodytype }}</td>
+                </tr>
+                <tr>
+
+                    <td>Коробка передач:</td>
+                    <td>{{ result.gearbox }}</td>
                 </tr>
                 <tr>
 
@@ -36,9 +37,15 @@
                 </tr>
                 <tr>
 
-                    <td>Коробка передач:</td>
-                    <td>{{ result.korobka }}</td>
+                    <td>Место сборки:</td>
+                    <td>{{ result.assemblyplant }}</td>
                 </tr>
+                <tr>
+
+                    <td>Серийный номер:</td>
+                    <td>{{ result.serial }}</td>
+                </tr>
+
 
 
             </table>
@@ -46,5 +53,5 @@
     </div>
 {% endblock specification %}
 {% block catalogPath %}
-    {{ path('vin_saab_groups',({'regionCode': result.region, 'modelCode': result.modelforGroups, 'modificationCode': result.modifforGroups})) }}
+    {{ path('vin_saab_groups',({'regionCode': 'EU', 'modelCode': result.model_no, 'modificationCode': result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]})) }}
 {% endblock catalogPath %}
