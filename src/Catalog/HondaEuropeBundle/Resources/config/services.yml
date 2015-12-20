@@ -1,0 +1,20 @@
+services:
+#    catalog_hondaeurope.example:
+#        class: Catalog\HondaEuropeBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  hondaeurope_date_convertor.extension:
+        class: Catalog\HondaEuropeBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  hondaeurope.catalog.model:
+    class: Catalog\HondaEuropeBundle\Models\HondaEuropeCatalogModel
+    arguments:  ['@doctrine.dbal.hondaeurope_connection', '@doctrine.dbal.subaru_connection']
+
+  hondaeurope.vin.model:
+    class: Catalog\HondaEuropeBundle\Models\HondaEuropeVinModel
+    arguments:  ['@doctrine.dbal.hondaeurope_connection']
+
+  hondaeurope.articul.model:
+    class: Catalog\HondaEuropeBundle\Models\HondaEuropeArticulModel
+    arguments:  ['@doctrine.dbal.hondaeurope_connection']

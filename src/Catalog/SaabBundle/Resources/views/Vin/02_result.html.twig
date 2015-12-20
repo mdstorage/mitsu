@@ -1,0 +1,57 @@
+{% extends 'CatalogCommonBundle:Vin:02_result.html.twig' %}
+{% block specification %}
+    <div class="row">
+        <div class="col-lg-8">
+            <table class="table table-bordered">
+
+                <tr>
+                    <td>Модель:</td>
+                    <td>{{ result.model }}</td>
+                </tr>
+                <tr>
+                    <td>Производственная линия:</td>
+                    <td>
+                        {{ result.market }}<br/>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>Дата выпуска:</td>
+                    <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')] }}</td>
+                </tr>
+
+                <tr>
+
+                    <td>Кузов:</td>
+                    <td>{{ result.bodytype }}</td>
+                </tr>
+                <tr>
+
+                    <td>Коробка передач:</td>
+                    <td>{{ result.gearbox }}</td>
+                </tr>
+                <tr>
+
+                    <td>Двигатель:</td>
+                    <td>{{ result.engine }}</td>
+                </tr>
+                <tr>
+
+                    <td>Место сборки:</td>
+                    <td>{{ result.assemblyplant }}</td>
+                </tr>
+                <tr>
+
+                    <td>Серийный номер:</td>
+                    <td>{{ result.serial }}</td>
+                </tr>
+
+
+
+            </table>
+        </div>
+    </div>
+{% endblock specification %}
+{% block catalogPath %}
+    {{ path('vin_saab_groups',({'regionCode': 'EU', 'modelCode': result.model_no, 'modificationCode': result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]})) }}
+{% endblock catalogPath %}

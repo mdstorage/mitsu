@@ -1,3 +1,7 @@
+catalog_saab:
+    resource: "@CatalogSaabBundle/Resources/config/routing.yml"
+    prefix:   /
+
 acme_task:
     resource: "@AcmeTaskBundle/Resources/config/routing.php"
     prefix:   /
@@ -28,6 +32,10 @@ catalog_suzuki:
     
 catalog_honda:
     resource: "@CatalogHondaBundle/Resources/config/routing.yml"
+    prefix:   /
+
+catalog_hondaeurope:
+    resource: "@CatalogHondaEuropeBundle/Resources/config/routing.yml"
     prefix:   /
 
 catalog_huyndai:

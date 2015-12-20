@@ -1,0 +1,20 @@
+services:
+#    catalog_saab.example:
+#        class: Catalog\SaabBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  saab_date_convertor.extension:
+        class: Catalog\SaabBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  saab.catalog.model:
+    class: Catalog\SaabBundle\Models\SaabCatalogModel
+    arguments:  ['@doctrine.dbal.saab_connection']
+
+  saab.vin.model:
+    class: Catalog\SaabBundle\Models\SaabVinModel
+    arguments:  ['@doctrine.dbal.saab_connection']
+
+  saab.articul.model:
+    class: Catalog\SaabBundle\Models\SaabArticulModel
+    arguments:  ['@doctrine.dbal.saab_connection']

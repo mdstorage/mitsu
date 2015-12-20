@@ -1,0 +1,34 @@
+{% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
+{% use 'CatalogSaabBundle::saab.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('vin_saab') }}">Поиск по номеру кузова</a> /
+    <a href="{{ path('vin_saab_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
+    <a href="{{ path('vin_saab_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему
+{% endblock breadcrumbs %}
+{% block complectation %}
+{% endblock complectation %}
+
+{% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
+
+{% block schema %}
+    {% if schema.getCode is not empty %}
+        <div style=" height: 550px; " class="col-xs-3">
+            <a href="{{ path('vin_saab_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+
+                <div class="row">
+                    {{ schema.getRuname }}
+                    </br>
+                    {% if schema.getOption('option1') %}
+                        Дополнительная информация: {{ schema.getOption('option1') }}
+                    {% endif %}
+                </div>
+
+                <div class="row">
+                    <img src="{{ asset('bundles/catalogsaab/Pictures/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
+                </div>
+
+
+            </a>
+        </div>
+    {% endif %}
+{% endblock schema %}

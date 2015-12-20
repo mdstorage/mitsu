@@ -23,7 +23,7 @@ abstract class ArticulController extends CatalogController{
                 return $this->indexAction('Запчасть с таким артикулом не найдена.');
             }
         }
-        if (strlen($articul)<8)
+        if (strlen($articul)<7)
         {
             return $this->indexAction('Запчасть с таким артикулом не найдена.');
         }

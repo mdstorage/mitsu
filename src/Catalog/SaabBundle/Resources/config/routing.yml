@@ -1,0 +1,120 @@
+catalog_saab:
+  path:         /saab/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogSaabBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_saab_modifications:
+  path:         /saab/catalog/1
+  defaults:     {_controller: CatalogSaabBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_saab_complectations:
+  path:         /saab/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogSaabBundle:Catalog:complectations}
+
+catalog_saab_groups:
+  path:         /saab/catalog/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogSaabBundle:Catalog:groups}
+
+catalog_saab_subgroups:
+  path:         /saab/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogSaabBundle:Catalog:subgroups}
+
+catalog_saab_schemas:
+  path:         /saab/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSaabBundle:Catalog:schemas}
+
+catalog_saab_schema:
+  path:         /saab/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogSaabBundle:Catalog:schema}
+
+catalog_saab_articuls:
+  path:         /saab/catalog/7
+  defaults:     {_controller: CatalogSaabBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_saab_group:
+  path:         /saab/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSaabBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_saab:
+  path:         /saab/vin/0
+  defaults:     {_controller: CatalogSaabBundle:Vin:index}
+
+vin_saab_result:
+  path:         /saab/vin/1
+  defaults:     {_controller: CatalogSaabBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_saab_groups:
+  path:         /saab/vin/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogSaabBundle:Vin:groups}
+
+vin_saab_subgroups:
+  path:         /saab/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogSaabBundle:Vin:subgroups}
+
+vin_saab_schemas:
+  path:         /saab/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSaabBundle:Vin:schemas}
+
+vin_saab_schema:
+  path:         /saab/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogSaabBundle:Vin:schema}
+
+vin_saab_articuls:
+  path:         /saab/vin/7
+  defaults:     {_controller: CatalogSaabBundle:Vin:articuls}
+  requirements: {_method: POST}
+
+vin_saab_group:
+  path:         /saab/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSaabBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_saab:
+  path:         /saab/articul/0
+  defaults:     {_controller: CatalogSaabBundle:Articul:index}
+
+articul_saab_find:
+  path:         /saab/articul/1/{regionCode}
+  defaults:     {_controller: CatalogSaabBundle:Articul:findByArticul, regionCode: null}
+
+articul_saab_modifications:
+  path:         /saab/articul/3
+  defaults:     {_controller: CatalogSaabBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_saab_complectations:
+  path:         /saab/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogSaabBundle:Articul:saabArticulComplectations}
+
+articul_saab_groups:
+  path:         /saab/articul/5/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogSaabBundle:Articul:saabArticulgroups}
+
+articul_saab_subgroups:
+  path:         /saab/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogSaabBundle:Articul:saabArticulSubgroups}
+
+articul_saab_schemas:
+  path:         /saab/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSaabBundle:Articul:saabArticulSchemas}
+
+articul_saab_schema:
+  path:         /saab/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogSaabBundle:Articul:saabArticulSchema}
+
+articul_saab_articuls:
+  path:         /saab/articul/9
+  defaults:     {_controller: CatalogSaabBundle:Articul:articuls}
+  requirements: {_method: POST}
+
+articul_saab_group:
+  path:         /saab/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSaabBundle:Articul:getGroupBySubgroup}
+catalog_saab_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogSaabBundle:Default:index }

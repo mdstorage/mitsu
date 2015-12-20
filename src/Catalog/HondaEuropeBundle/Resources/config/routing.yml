@@ -1,0 +1,119 @@
+catalog_hondaeurope:
+  path:         /hondaeurope/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_hondaeurope_modifications:
+  path:         /hondaeurope/catalog/1
+  defaults:     {_controller: CatalogHondaEuropeBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_hondaeurope_complectations:
+  path:         /hondaeurope/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Catalog:complectations}
+
+catalog_hondaeurope_groups:
+  path:         /hondaeurope/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Catalog:groups}
+
+catalog_hondaeurope_subgroups:
+  path:         /hondaeurope/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Catalog:subgroups}
+
+catalog_hondaeurope_schemas:
+  path:         /hondaeurope/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Catalog:schemas}
+
+catalog_hondaeurope_schema:
+  path:         /hondaeurope/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Catalog:schema}
+
+catalog_hondaeurope_articuls:
+  path:         /hondaeurope/catalog/7
+  defaults:     {_controller: CatalogHondaEuropeBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_hondaeurope_group:
+  path:         /hondaeurope/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_hondaeurope:
+  path:         /hondaeurope/vin/0
+  defaults:     {_controller: CatalogHondaEuropeBundle:Vin:index1}
+
+vin_hondaeurope_complectations:
+  path:         /hondaeurope/vin/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Vin:vinComplectations, regionCode: null, modelCode: null, modificationCode: null}
+
+vin_hondaeurope_groups:
+  path:         /hondaeurope/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Vin:groups}
+
+vin_hondaeurope_subgroups:
+  path:         /hondaeurope/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Vin:subgroups}
+
+vin_hondaeurope_schemas:
+  path:         /hondaeurope/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Vin:schemas}
+
+vin_hondaeurope_schema:
+  path:         /hondaeurope/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Vin:schema}
+
+vin_hondaeurope_articuls:
+  path:         /hondaeurope/vin/7
+  defaults:     {_controller: CatalogHondaEuropeBundle:Vin:articuls}
+  requirements: {_method: POST}
+
+vin_hondaeurope_group:
+  path:         /hondaeurope/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_hondaeurope:
+  path:         /hondaeurope/articul/0
+  defaults:     {_controller: CatalogHondaEuropeBundle:Articul:index}
+
+articul_hondaeurope_find:
+  path:         /hondaeurope/articul/1/{regionCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Articul:findByArticul, regionCode: null}
+
+articul_hondaeurope_modifications:
+  path:         /hondaeurope/articul/3
+  defaults:     {_controller: CatalogHondaEuropeBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_hondaeurope_complectations:
+  path:         /hondaeurope/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Articul:hondaeuropeArticulComplectations}
+
+articul_hondaeurope_groups:
+  path:         /hondaeurope/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Articul:hondaeuropeArticulgroups}
+
+articul_hondaeurope_subgroups:
+  path:         /hondaeurope/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Articul:hondaeuropeArticulSubgroups}
+
+articul_hondaeurope_schemas:
+  path:         /hondaeurope/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Articul:hondaeuropeArticulSchemas}
+
+articul_hondaeurope_schema:
+  path:         /hondaeurope/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Articul:hondaeuropeArticulSchema}
+
+articul_hondaeurope_articuls:
+  path:         /hondaeurope/articul/9
+  defaults:     {_controller: CatalogHondaEuropeBundle:Articul:articuls}
+  requirements: {_method: POST}
+
+articul_hondaeurope_group:
+  path:         /hondaeurope/articul/10/{regionCode}/{modelCode}/{modificationCode}/complectationCode/{subGroupCode}
+  defaults:     {_controller: CatalogHondaEuropeBundle:Articul:getGroupBySubgroup}
+catalog_hondaeurope_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogHondaEuropeBundle:Default:index }

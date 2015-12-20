@@ -1,0 +1,11 @@
+{% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
+{% use 'CatalogSaabBundle::saab.base.html.twig' %}
+{% block breadcrumbs %}
+   <a href="{{ path('vin_saab') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }}, 
+   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>
+    / Группа запчастей
+{% endblock breadcrumbs %}
+{% block complectation %}
+{% endblock complectation %}
+
+{% block pathToSubgroup %}{{ path('vin_saab_subgroups', parameters|merge({'groupCode': group.getCode})) }}{% endblock pathToSubgroup %}

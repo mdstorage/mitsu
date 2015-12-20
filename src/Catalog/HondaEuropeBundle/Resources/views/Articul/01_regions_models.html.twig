@@ -1,0 +1,8 @@
+{% extends 'CatalogHondaEuropeBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogHondaEuropeBundle::hondaeurope.base.html.twig' %}
+{% block regionPath %}{{ path('articul_hondaeurope_find', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+{% block ajaxUrl %}{{ path('articul_hondaeurope_modifications') }}{% endblock ajaxUrl %}
+{% block head %}
+    <h3>Запчасть с таким артикулом найдена в следующих моделях:</h3>
+    {{ parent() }}
+{% endblock head %}

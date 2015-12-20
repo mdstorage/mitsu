@@ -24,11 +24,13 @@ class AppKernel extends Kernel
             new Acme\TaskBundle\AcmeTaskBundle(),
             new Catalog\SuzukiBundle\CatalogSuzukiBundle(),
             new Catalog\HondaBundle\CatalogHondaBundle(),
+            new Catalog\HondaEuropeBundle\CatalogHondaEuropeBundle(),
             new Catalog\HuyndaiBundle\CatalogHuyndaiBundle(),
             new Catalog\KiaBundle\CatalogKiaBundle(),
             new Catalog\BmvBundle\CatalogBmvBundle(),
             new Catalog\MiniBundle\CatalogMiniBundle(),
             new Catalog\RollsRoyceBundle\CatalogRollsRoyceBundle(),
+            new Catalog\SaabBundle\CatalogSaabBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
