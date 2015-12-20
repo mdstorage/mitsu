@@ -16,24 +16,14 @@ class SaabArticulModel extends SaabCatalogModel{
     public function getArticulRegions($articulCode){
 
 
-        $sql = "
-        select fztyp_ktlgausf from w_fztyp, w_btzeilen_verbauung
-        where btzeilenv_sachnr = :articulCode and fztyp_mospid = btzeilenv_mospid and fztyp_karosserie NOT LIKE 'ohne'
-        ";
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', substr($articulCode, 4, strlen($articulCode)));
-        $query->execute();
-
-        $aData = $query->fetchAll();
         $regions = array();
                   
-        foreach($aData as $item)
-        {
-            $regions[] = $item['fztyp_ktlgausf'];
 
-		}
-        return array_unique($regions);
+            $regions[] = 'EU';
+
+
+        return $regions;
 
     }
 
@@ -41,14 +31,12 @@ class SaabArticulModel extends SaabCatalogModel{
     {
 
         $sql = "
-        select fztyp_baureihe from w_fztyp, w_btzeilen_verbauung
-        where btzeilenv_sachnr = :articulCode and fztyp_mospid = btzeilenv_mospid and fztyp_karosserie NOT LIKE 'ohne'
-        and fztyp_ktlgausf = :regionCode
+        select MODEL_NO from model, textlines
+        where PART_NO = :articulCode and CATALOGUE_NO = MODEL_NO
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', substr($articul, 4, strlen($articul)));
-        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('articulCode', $articul);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -57,7 +45,7 @@ class SaabArticulModel extends SaabCatalogModel{
 
         foreach($aData as $item)
         {
-            $models[] = $item['fztyp_baureihe'];
+            $models[] = $item['MODEL_NO'];
 
         }
 
@@ -67,12 +55,16 @@ class SaabArticulModel extends SaabCatalogModel{
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
         $sql = "
-        select btzeilenv_mospid from w_btzeilen_verbauung
-        where btzeilenv_sachnr = :articulCode
+        SELECT nYear, Code
+        FROM vin_year, model, textlines
+        WHERE PART_NO = :articulCode AND MODEL_NO = :modelCode
+        AND nYear BETWEEN FROM_MODEL_YEAR AND TO_MODEL_YEAR
+        ORDER BY nYear
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', substr($articul, 4, strlen($articul)));
+        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('articulCode', $articul);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -81,7 +73,7 @@ class SaabArticulModel extends SaabCatalogModel{
 
         foreach($aData as $item)
         {
-            $modifications[] = $item['btzeilenv_mospid'];
+            $modifications[] = $item['nYear'];
 
         }
 
@@ -174,27 +166,24 @@ class SaabArticulModel extends SaabCatalogModel{
     {
 
         $sql = "
-        SELECT bildtafs_hg
-        FROM w_bildtaf_suche, w_btzeilen_verbauung
-        WHERE btzeilenv_sachnr = :articul
-        and bildtafs_btnr = btzeilenv_btnr
-        and btzeilenv_mospid = :modificationCode
+        select GROUP_NO from  textlines
+        where PART_NO = :articulCode and CATALOGUE_NO = :modelCode
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', substr($articul, 4, strlen($articul)));
-        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('articulCode', $articul);
+        $query->bindValue('modelCode', $modelCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
-    	$groups = array();
+            	$groups = array();
 
         foreach($aData as $item)
 		{
 
 
-			$groups[]=$item['bildtafs_hg'];
+			$groups[]=$item['GROUP_NO'];
 
 			
 		}
@@ -206,18 +195,18 @@ class SaabArticulModel extends SaabCatalogModel{
     public function getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
         $sql = "
-        SELECT bildtafs_fg
-        FROM w_bildtaf_suche, w_btzeilen_verbauung
-        WHERE btzeilenv_sachnr = :articul
-        and bildtafs_btnr = btzeilenv_btnr
-        and btzeilenv_mospid = :modificationCode
-        and bildtafs_hg = :groupCode
+        SELECT
+HEAD_LINE_1
+FROM saab.section, textlines
+WHERE PART_NO = :articulCode
+AND saab.section.CATALOGUE_NO = :modelCode AND saab.section.GROUP_NO = :groupCode AND saab.section.SECTION_NO = textlines.SECTION_NO
         ";
 
+
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', substr($articul, 4, strlen($articul)));
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('articulCode', $articul);
+        $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('modelCode',  $modelCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -226,8 +215,9 @@ class SaabArticulModel extends SaabCatalogModel{
 
         foreach($aData as $item)
         {
-            $subgroups[]=$item['bildtafs_fg'];
+            $subgroups[]=$item['HEAD_LINE_1'];
         }
+
         return array_unique($subgroups);
     }
     
@@ -235,21 +225,20 @@ class SaabArticulModel extends SaabCatalogModel{
     {
 
         $sql = "
-        SELECT grafik_blob
-        FROM w_bildtaf, w_btzeilen_verbauung, w_grafik
-        WHERE btzeilenv_sachnr = :articul
-        and bildtaf_grafikid = grafik_grafikid
-        and bildtaf_btnr = btzeilenv_btnr
-        and btzeilenv_mospid = :modificationCode
-        and bildtaf_hg = :groupCode
-        and bildtaf_fg = :subGroupCode
+        SELECT
+IMAGE_NO
+FROM saab.section, textlines
+WHERE PART_NO = :articulCode
+AND saab.section.CATALOGUE_NO = :modelCode AND saab.section.GROUP_NO = :groupCode AND saab.section.SECTION_NO = textlines.SECTION_NO
+AND HEAD_LINE_1 = :subGroupCode
         ";
 
+
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', substr($articul, 4, strlen($articul)));
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('groupCode', $groupCode);
-        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('articulCode', $articul);
+        $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('subGroupCode',  $subGroupCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -258,12 +247,10 @@ class SaabArticulModel extends SaabCatalogModel{
 
         foreach($aData as $item)
         {
-            if (strpos($item['grafik_blob'], '_z'))
-            {
-                $item['grafik_blob'] = str_replace('tif', 'png', $item['grafik_blob']);
-                $schemas[]=$item['grafik_blob'];
 
-            }
+                $schemas[]=$item['IMAGE_NO'];
+
+
 
         }
 
@@ -274,20 +261,18 @@ class SaabArticulModel extends SaabCatalogModel{
     {
 
         $sql = "
-        SELECT btzeilen_bildposnr
-        FROM w_bildtaf, w_btzeilen
-        WHERE btzeilen_sachnr = :articul
-        and bildtaf_btnr = btzeilen_btnr
-        and bildtaf_hg = :groupCode
-        and bildtaf_fg = :subGroupCode
-        and bildtaf_grafikid = :schemaCode
+        SELECT
+textlines.POSITION
+FROM textlines
+WHERE PART_NO = :articulCode
+AND CATALOGUE_NO = :modelCode AND GROUP_NO = :groupCode
         ";
 
+
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', substr($articul, 4, strlen($articul)));
-        $query->bindValue('groupCode', $groupCode);
-        $query->bindValue('subGroupCode', $subGroupCode);
-        $query->bindValue('schemaCode', $schemaCode);
+        $query->bindValue('articulCode', $articul);
+        $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('modelCode',  $modelCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -296,7 +281,7 @@ class SaabArticulModel extends SaabCatalogModel{
 
         foreach($aData as $item)
         {
-            $pncs[]=$item['btzeilen_bildposnr'];
+            $pncs[]=$item['POSITION'];
         }
         return array_unique($pncs);
     }

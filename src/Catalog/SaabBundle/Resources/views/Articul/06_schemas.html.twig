@@ -9,18 +9,23 @@
 
 {% block schema %}
     {% if schema.getCode is not empty %}
-            <div class="col-xs-3">
-        <a href="{{ path('articul_saab_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+        <div style=" height: 550px; " class="col-xs-3">
+            <a href="{{ path('articul_saab_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
-                    <div class="row">
-                        {{ schema.getRuname }}
-                    </div>
+                <div class="row">
+                    {{ schema.getRuname }}
+                    </br>
+                    {% if schema.getOption('option1') %}
+                        Дополнительная информация: {{ schema.getOption('option1') }}
+                    {% endif %}
+                </div>
 
-                    <div class="row">
-                        <img src="{{ asset('bundles/catalogbmw/grafik/grafik/w_grafik/'~schema.getCode) }}" width="300" alt="{{ schema.getRuname }}"/>
-                    </div>
+                <div class="row">
+                    <img src="{{ asset('bundles/catalogsaab/Pictures/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
+                </div>
 
-        </a>
-            </div>
+
+            </a>
+        </div>
     {% endif %}
 {% endblock schema %}

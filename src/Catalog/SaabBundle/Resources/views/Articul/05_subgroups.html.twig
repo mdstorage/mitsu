@@ -15,6 +15,6 @@
 
 {% block subgroupItem %}
     <div id="subgroup{{ subgroup.getCode }}">
-        <a href="{{ path('articul_saab_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">{{ subgroup.getRuname }}</a>
+        <a href="{{ path('articul_saab_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
     </div>
 {% endblock subgroupItem %}

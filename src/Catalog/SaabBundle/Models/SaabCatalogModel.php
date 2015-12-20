@@ -62,8 +62,7 @@ class SaabCatalogModel extends CatalogModel{
         SELECT nYear, Code
         FROM vin_year, model
         WHERE MODEL_NO = :modelCode
-        AND nYear >= FROM_MODEL_YEAR
-        AND nYear <= TO_MODEL_YEAR
+        AND nYear BETWEEN FROM_MODEL_YEAR AND TO_MODEL_YEAR
         ORDER BY nYear
         ";
 
