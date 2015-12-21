@@ -55,11 +55,12 @@ class SaabArticulModel extends SaabCatalogModel{
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
         $sql = "
-        SELECT nYear, Code
-        FROM vin_year, model, textlines
-        WHERE PART_NO = :articulCode AND MODEL_NO = :modelCode
-        AND nYear BETWEEN FROM_MODEL_YEAR AND TO_MODEL_YEAR
-        ORDER BY nYear
+        SELECT nYear
+        FROM vin_year
+        LEFT JOIN saab.section ON (nYear BETWEEN saab.section.FROM_YEAR AND saab.section.TO_YEAR)
+        LEFT JOIN textlines ON (saab.section.CATALOGUE_NO = textlines.CATALOGUE_NO AND saab.section.GROUP_NO = textlines.GROUP_NO AND saab.section.SECTION_NO = textlines.SECTION_NO)
+        WHERE PART_NO = :articulCode
+        AND saab.section.CATALOGUE_NO = :modelCode
         ";
 
         $query = $this->conn->prepare($sql);
@@ -227,10 +228,14 @@ AND saab.section.CATALOGUE_NO = :modelCode AND saab.section.GROUP_NO = :groupCod
         $sql = "
         SELECT
 IMAGE_NO
-FROM saab.section, textlines
-WHERE PART_NO = :articulCode
-AND saab.section.CATALOGUE_NO = :modelCode AND saab.section.GROUP_NO = :groupCode AND saab.section.SECTION_NO = textlines.SECTION_NO
+FROM saab.section
+LEFT JOIN textlines ON (saab.section.CATALOGUE_NO = textlines.CATALOGUE_NO AND saab.section.GROUP_NO = textlines.GROUP_NO AND saab.section.SECTION_NO = textlines.SECTION_NO)
+WHERE textlines.PART_NO = :articulCode
+AND saab.section.CATALOGUE_NO = :modelCode
+AND saab.section.GROUP_NO = :groupCode
+
 AND HEAD_LINE_1 = :subGroupCode
+AND :modificationCode BETWEEN FROM_YEAR AND TO_YEAR
         ";
 
 
@@ -239,6 +244,7 @@ AND HEAD_LINE_1 = :subGroupCode
         $query->bindValue('groupCode',  $groupCode);
         $query->bindValue('modelCode',  $modelCode);
         $query->bindValue('subGroupCode',  $subGroupCode);
+        $query->bindValue('modificationCode',  $modificationCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -264,8 +270,11 @@ AND HEAD_LINE_1 = :subGroupCode
         SELECT
 textlines.POSITION
 FROM textlines
-WHERE PART_NO = :articulCode
-AND CATALOGUE_NO = :modelCode AND GROUP_NO = :groupCode
+LEFT JOIN saab.section ON (textlines.CATALOGUE_NO = saab.section.CATALOGUE_NO AND textlines.GROUP_NO = saab.section.GROUP_NO AND textlines.SECTION_NO = saab.section.SECTION_NO)
+WHERE textlines.PART_NO = :articulCode
+AND textlines.CATALOGUE_NO = :modelCode
+AND textlines.GROUP_NO = :groupCode
+AND saab.section.IMAGE_NO = :schemaCode
         ";
 
 
@@ -273,6 +282,7 @@ AND CATALOGUE_NO = :modelCode AND GROUP_NO = :groupCode
         $query->bindValue('articulCode', $articul);
         $query->bindValue('groupCode',  $groupCode);
         $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('schemaCode',  $schemaCode);
         $query->execute();
 
         $aData = $query->fetchAll();
