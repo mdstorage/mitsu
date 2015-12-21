@@ -6,25 +6,33 @@
  * Time: 12:14
  */
 
-namespace Catalog\SaabBundle\Models;
+namespace Catalog\BmwBundle\Models;
 
 
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Models\CatalogModel;
-use Catalog\SaabBundle\Components\SaabConstants;
+use Catalog\BmwBundle\Components\BmwConstants;
 
-class SaabCatalogModel extends CatalogModel{
+class BmwCatalogModel extends CatalogModel{
 
     public function getRegions(){
 
+        $sql = "
+        SELECT fztyp_ktlgausf
+        FROM w_fztyp
+        WHERE fztyp_karosserie NOT LIKE 'ohne'
+        GROUP BY fztyp_ktlgausf
+        ";
 
-        $aData = array('EU'=>'EU');
+        $query = $this->conn->query($sql);
+
+        $aData = $query->fetchAll();
 
         $regions = array();
-
-
-            $regions[$aData['EU']] = array(Constants::NAME=>$aData['EU'], Constants::OPTIONS=>array());
-
+        foreach($aData as $item)
+        {
+            $regions[$item['fztyp_ktlgausf']] = array(Constants::NAME=>$item['fztyp_ktlgausf'], Constants::OPTIONS=>array());
+        }
 
         return $regions;
 
@@ -33,14 +41,20 @@ class SaabCatalogModel extends CatalogModel{
     public function getModels($regionCode)
     {
         $sql  = "
-        SELECT TYPE_OF_CAR, MODEL_NO
-        FROM model
-        WHERE TYPE_OF_CAR NOT LIKE 'EXCH.'
-        ORDER BY TYPE_OF_CAR
+        SELECT DISTINCT
+        fztyp_karosserie Kuzov,
+        fztyp_baureihe Baureihe,
+        grafik_blob Id,
+        b.ben_text ExtBaureihe
+        FROM w_fztyp, w_baureihe, w_grafik, w_ben_gk b
+        WHERE (baureihe_textcode = b.ben_textcode AND b.ben_iso = 'ru' AND b.ben_regiso = '') AND grafik_grafikid = baureihe_grafikid AND fztyp_baureihe = baureihe_baureihe
+        AND fztyp_ktlgausf = :regionCode AND baureihe_marke_tps = 'BMW' AND fztyp_karosserie NOT LIKE 'ohne'
+        ORDER BY ExtBaureihe
         ";
 
 
         $query = $this->conn->prepare($sql);
+        $query->bindValue('regionCode', $regionCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -48,8 +62,8 @@ class SaabCatalogModel extends CatalogModel{
         $models = array();
         foreach($aData as $item) {
 
-            $models[$item['MODEL_NO']] = array(Constants::NAME => ($item['TYPE_OF_CAR']),
-                Constants::OPTIONS => array());
+            $models[$item['Baureihe']] = array(Constants::NAME => strtoupper($item['ExtBaureihe']) . ' ' . $item['Kuzov'],
+                Constants::OPTIONS => array('grafik' => $item['Id']));
 
         }
 
@@ -59,23 +73,24 @@ class SaabCatalogModel extends CatalogModel{
     public function getModifications($regionCode, $modelCode)
     {
         $sql = "
-        SELECT nYear, Code
-        FROM vin_year, model
-        WHERE MODEL_NO = :modelCode
-        AND nYear BETWEEN FROM_MODEL_YEAR AND TO_MODEL_YEAR
-        ORDER BY nYear
+        SELECT fztyp_mospid, fztyp_erwvbez
+        FROM w_fztyp
+        WHERE fztyp_ktlgausf = :regionCode
+        AND fztyp_baureihe = :modelCode
+        ORDER BY fztyp_erwvbez
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modelCode', $modelCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
         $modifications = array();
         foreach($aData as $item){
-            $modifications[$item['nYear']] = array(
-                Constants::NAME     => $item['nYear'].' ('.$item['Code'].')',
+            $modifications[$item['fztyp_mospid']] = array(
+                Constants::NAME     => $item['fztyp_erwvbez'],
                 Constants::OPTIONS  => array());
 
         }
@@ -161,7 +176,7 @@ class SaabCatalogModel extends CatalogModel{
 
                     $sql = "
                     SELECT lex_name
-                    FROM saablex
+                    FROM bmwlex
                     WHERE lex_code =:item3
                     AND lang = 'EN'
                     ";
@@ -205,15 +220,19 @@ class SaabCatalogModel extends CatalogModel{
     {
 
          $sql = "
-        SELECT
-        GROUP_NO, DESCRIPTION_TEXT
-        FROM saab.group, descr
-        WHERE CATALOGUE_NO = :modelCode and GROUP_DESC = DESCRIPTION_NO AND LANGUAGE_CODE = 16
-        ORDER BY ABS(GROUP_NO)
+        select
+        hgfg_hg Hauptgruppe,
+        hgfg_grafikid Id,
+        grafik_blob BlobMod,
+        ben_text Benennung
+        from w_hgfg_mosp, w_hgfg, w_ben_gk, w_grafik
+        where hgfgm_mospid = :modificationCode and hgfgm_hg = hgfg_hg and hgfg_fg = '00' and hgfgm_produktart = hgfg_produktart and hgfg_grafikid = grafik_grafikid
+        and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
+        ORDER BY Hauptgruppe
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('modificationCode', $modificationCode);
         $query->execute();
         $aData = $query->fetchAll();
 
@@ -221,9 +240,9 @@ class SaabCatalogModel extends CatalogModel{
 
 
         foreach($aData as $item){
-            $groups[$item['GROUP_NO']] = array(
-                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['DESCRIPTION_TEXT']),'utf8'),
-                Constants::OPTIONS  => array()
+            $groups[$item['Hauptgruppe']] = array(
+                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']),'utf8'),
+                Constants::OPTIONS  => array('Id' => $item ['BlobMod'])
             );
         }
 
@@ -277,20 +296,20 @@ class SaabCatalogModel extends CatalogModel{
     {
 
         $sql = "
-        SELECT
-ad.DESCRIPTION_TEXT, ab.DESCRIPTION_TEXT, CASE WHEN HEAD_LINE_1 NOT LIKE '99999' THEN HEAD_LINE_1 ELSE HEAD_LINE_2 END HEAD, SECTION_NO
-FROM saab.section
-LEFT JOIN descr ad ON (HEAD_LINE_1 = ad.DESCRIPTION_NO AND ad.LANGUAGE_CODE = 16)
-LEFT JOIN descr ab ON (HEAD_LINE_2 = ab.DESCRIPTION_NO AND ab.LANGUAGE_CODE = 16)
-WHERE :modificationCode BETWEEN FROM_YEAR AND TO_YEAR AND CATALOGUE_NO = :modelCode AND GROUP_NO = :groupCode
-ORDER BY ABS (SECTION_NO)
+        select
+hgfg_hg Hauptgruppe,
+hgfg_fg Funktionsgruppe,
+ben_text Benennung
+from w_hgfg_mosp, w_hgfg, w_ben_gk
+where hgfgm_mospid = :modificationCode and hgfg_hg = :groupCode and hgfgm_hg = hgfg_hg and hgfgm_fg = hgfg_fg and hgfgm_produktart = hgfg_produktart
+and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
+ORDER BY Funktionsgruppe
         ";
 
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('groupCode',  $groupCode);
-        $query->bindValue('modelCode',  $modelCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -299,14 +318,13 @@ ORDER BY ABS (SECTION_NO)
         $subgroups = array();
         foreach($aData as $item){
 
-            $subgroups[$item['HEAD']] = array(
+            $subgroups[$item['Funktionsgruppe']] = array(
 
-                Constants::NAME => mb_strtoupper(iconv('cp1251', 'utf8', $item ['DESCRIPTION_TEXT']),'utf8'),
+                Constants::NAME => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']),'utf8'),
                 Constants::OPTIONS => array()
             );
 
         }
-
 
         return $subgroups;
     }
@@ -314,36 +332,28 @@ ORDER BY ABS (SECTION_NO)
     public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
 
-        $sql = "
-        SELECT
-        dr.DESCRIPTION_TEXT dr,
-        br.DESCRIPTION_TEXT br,
-        HEAD_LINE_2,
-        saab.section.SECTION_NO Sec,
-        IMAGE_NO,
-        FROM_YEAR,
-        TO_YEAR,
-        FOOTNOTE_TEXT,
-        saab.section.CATALOGUE_NO catsec,
-        saab.section.GROUP_NO groupsec,
-        saab.section_footnote.CATALOGUE_NO catsecfoot,
-        saab.section_footnote.FOOTNOTE_NO footsecfoot
-        FROM saab.section
-        LEFT JOIN descr dr ON (HEAD_LINE_2 = dr.DESCRIPTION_NO AND dr.LANGUAGE_CODE = 16)
-        LEFT JOIN descr br ON (HEAD_LINE_3 = br.DESCRIPTION_NO AND br.LANGUAGE_CODE = 16)
-        LEFT JOIN section_footnote ON (saab.section.CATALOGUE_NO = saab.section_footnote.CATALOGUE_NO
-         AND saab.section.GROUP_NO = section_footnote.GROUP_NO and saab.section.SECTION_NO = section_footnote.SECTION_NO)
-        LEFT JOIN foodnote ON (saab.section_footnote.CATALOGUE_NO = foodnote.CATALOGUE_NO and foodnote.LANGUAGE_CODE = 16 and saab.section_footnote.FOOTNOTE_NO = foodnote.FOOTNOTE_NO)
-        WHERE  :modificationCode BETWEEN FROM_YEAR AND TO_YEAR AND HEAD_LINE_1 = :subGroupCode and saab.section.GROUP_NO = :groupCode and saab.section.CATALOGUE_NO = :modelCode
-        ORDER BY ABS (Sec)
-        ";
 
+        $sql = "
+select distinct
+bildtaf_btnr BildtafelNr,
+bildtaf_bteart BildtafelArt,
+ben_text Benennung,
+bildtaf_kommbt Kommentar,
+bildtaf_vorh_cp CPVorhanden,
+bildtaf_bedkez BedingungKZ,
+bildtaf_pos Pos,
+bildtaf_grafikid Id,
+grafik_blob BlobMod
+from w_bildtaf_suche, w_ben_gk, w_bildtaf, w_grafik
+where bildtafs_hg = :groupCode and bildtafs_mospid = :modificationCode and bildtafs_btnr = bildtaf_btnr and bildtaf_hg = :groupCode and bildtaf_fg = :subGroupCode
+and bildtaf_sicher = 'N' and bildtaf_textc = ben_textcode and ben_iso = 'ru' and ben_regiso = '  ' and bildtaf_grafikid = grafik_grafikid
+order by Pos
+";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode',  $modificationCode);
         $query->bindValue('subGroupCode',  $subGroupCode);
         $query->bindValue('groupCode',  $groupCode);
-        $query->bindValue('modelCode',  $modelCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -351,14 +361,13 @@ ORDER BY ABS (SECTION_NO)
         $schemas = array();
         foreach($aData as &$item)
         {
-
-                $schemas[$item['IMAGE_NO']] = array(
-                    Constants::NAME => $item['Sec'] . '. ' . mb_strtoupper(iconv('cp1251', 'utf8', $item ['dr']), 'utf8').' ('. $item['FROM_YEAR'].'-'.$item['TO_YEAR'].')'.
-                        ($item['br']?'- '.iconv('cp1251', 'utf8', $item ['br']):''),
-                    Constants::OPTIONS => array('option1' => iconv('cp1251', 'utf8', $item['FOOTNOTE_TEXT']),
-                                                'Sec' => $item['Sec'])
+            if (strpos($item['BlobMod'], '_z')) {
+                $item['BlobMod'] = str_replace('tif', 'png', $item['BlobMod']);
+                $schemas[$item['BlobMod']] = array(
+                    Constants::NAME => '(' . $item['BildtafelNr'] . ') ' . mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']), 'utf8'),
+                    Constants::OPTIONS => array('GrId' => $item['BildtafelNr'])
                 );
-
+            }
         }
 
 
@@ -367,23 +376,9 @@ ORDER BY ABS (SECTION_NO)
 
     public function getSchema($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
-        $sql = "
-        SELECT
-        IMAGE_NO
-        FROM saab.section
-        WHERE  :modificationCode BETWEEN FROM_YEAR AND TO_YEAR AND CATALOGUE_NO = :modelCode AND GROUP_NO = :groupCode AND SECTION_NO = :schemaCode
-        ORDER BY ABS (SECTION_NO)
-        ";
 
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('modelCode',  $modelCode);
-        $query->bindValue('groupCode',  $groupCode);
-        $query->bindValue('schemaCode',  $schemaCode);
-        $query->execute();
 
-        $aData = $query->fetchAll(); var_dump($aData); die;
 
         $schema = array();
 
@@ -401,42 +396,114 @@ ORDER BY ABS (SECTION_NO)
 
 
         $sqlPnc = "
-select textlines.POSITION pos, DESCRIPTION_TEXT
-from textlines, descr
-where CATALOGUE_NO = :modelCode
-and GROUP_NO = :groupCode
-and SECTION_NO = :schemaCode
-AND textlines.DESCRIPTION_NO = descr.DESCRIPTION_NO AND descr.LANGUAGE_CODE = 16
-ORDER BY ABS (pos)
+select distinct
+btzeilen_bildposnr Bildnummer,
+teil_hauptgr Teil_HG,
+teil_untergrup Teil_UG,
+teil_sachnr Teil_Sachnummer,
+tben.ben_text Teil_Benennung,
+teil_benennzus Teil_Zusatz,
+teil_entfall_kez Teil_Entfall,
+teil_textcode_kom Teil_Kommentar_Id,
+tkben.ben_text Teil_Kommentar,
+teil_kom_pi Teil_Komm_PI,
+teil_vorhanden_si Teil_SI,
+teil_ist_reach Teil_Reach,
+teil_ist_aspg Teil_Aspg,
+teil_ist_stecker Teil_Stecker,
+teil_ist_diebstahlrelevant Teil_Diebstahlrelevant,
+si_dokart SI_DokArt,
+grpinfo_leitaw_pa GRP_PA,
+grpinfo_leitaw_hg GRP_HG,
+grpinfo_leitaw_ug GRP_UG,
+grpinfo_leitaw_nr GRP_lfdNr,
+btzeilenv_vmenge Menge,
+btzeilen_kat Kat_KZ,
+btzeilen_automatik Getriebe_KZ,
+btzeilen_lenkg Lenkung_KZ,
+btzeilen_eins Einsatz,
+btzeilen_auslf Auslauf,
+btzeilen_kommbt KommBT,
+btzeilen_kommvor KommVor,
+btzeilen_kommnach KommNach,
+ks_sachnr_satz Satz_Sachnummer,
+btzeilen_gruppeid GruppeId,
+btzeilen_blocknr BlockNr,
+bnbben.ben_text BnbBenText,
+btzeilen_pos Pos,
+btzeilenv_alter_kz BtZAlter,
+btzeilen_bedkez_pg Teil_BedkezPG,
+btzeilenv_bed_art BedingungArt,
+btzeilenv_bed_alter BedingungAlter
+from w_btzeilen_verbauung
+inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos)
+inner join w_teil on (btzeilen_sachnr = teil_sachnr)
+inner join w_ben_gk tben on (teil_textcode = tben.ben_textcode and tben.ben_iso = 'ru' and tben.ben_regiso = '')
+left join w_kompl_satz on (btzeilen_sachnr = ks_sachnr_satz and ks_marke_tps = 'BMW')
+left join w_tc_performance on (tcp_mospid = :modificationCode and tcp_sachnr = btzeilen_sachnr)
+left join w_grp_information on (btzeilenv_mospid = grpinfo_mospid and grpinfo_sachnr = btzeilen_sachnr and grpinfo_typ = 'FE81')
+left join w_ben_gk tkben on (teil_textcode_kom = tkben.ben_textcode and tkben.ben_iso = 'ru' and tkben.ben_regiso = '')
+left join w_si on (si_sachnr = teil_sachnr)
+left join w_bildtaf_bnbben on (bildtafb_btnr = btzeilenv_btnr and bildtafb_bildposnr = btzeilen_bildposnr)
+left join w_ben_gk bnbben on (bildtafb_textcode = bnbben.ben_textcode and bnbben.ben_iso = 'ru' and bnbben.ben_regiso = '')
+where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId order by Bildnummer, Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
 ";
 
     	$query = $this->conn->prepare($sqlPnc);
-        $query->bindValue('modelCode',  $modelCode);
-        $query->bindValue('groupCode',  $groupCode);
-        $query->bindValue('schemaCode',  $options['Sec']);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('subGroupId', $options['GrId']);
         $query->execute();
 
         $aPncs = $query->fetchAll();
 
 
-        foreach ($aPncs as &$aPnc)
-        {
-            $aPnc['coords'] = array(0 => 0, 1 => 0, 2 => 0, 3 => 0);
+    	
+    	foreach ($aPncs as &$aPnc) {
+            if ($aPnc['Bildnummer'] != '--' || $aPnc['Bildnummer'] != null) {
+
+                $sqlSchemaLabels = "
+        SELECT grafikhs_topleft_x, grafikhs_topleft_y, grafikhs_bottomright_x, grafikhs_bottomright_y
+        FROM w_grafik_hs
+        WHERE grafikhs_grafikid = :schemaCode
+        AND grafikhs_bildposnr = :position
+        ";
+
+                $query = $this->conn->prepare($sqlSchemaLabels);
+                $query->bindValue('schemaCode', $schemaCode);
+                $query->bindValue('position', $aPnc['Bildnummer']);
+                $query->execute();
+
+                $aPnc['coords'] = $query->fetchAll();
+            }
         }
 
 
         $pncs = array();
-
+      foreach ($aPncs as $index=>$value) {
+            {
+                if ($value['Bildnummer'] == '--' || $value['Bildnummer'] == null)
+                {
+                    unset ($aPncs[$index]);
+                }
+            	foreach ($value['coords'] as $item1)
+            	{
+            	$pncs[$value['Bildnummer']][Constants::OPTIONS][Constants::COORDS][$item1['grafikhs_topleft_x']] = array(
+                    Constants::X1 => floor($item1['grafikhs_topleft_x']),
+                    Constants::Y1 => $item1['grafikhs_topleft_y'],
+                    Constants::X2 => $item1['grafikhs_bottomright_x'],
+                    Constants::Y2 => $item1['grafikhs_bottomright_y']);
+            	
+            	}
+            
+            
+                
+            }
+        }
 
         foreach ($aPncs as $item) {
-
-            $pncs[$item['pos']][Constants::OPTIONS][Constants::COORDS][$item['pos']] = array(
-                Constants::X1 => 0,
-                Constants::Y1 => 0,
-                Constants::X2 => 0,
-                Constants::Y2 => 0);
          	
-				$pncs[$item['pos']][Constants::NAME] = mb_strtoupper(iconv('cp1251', 'utf8', $item['DESCRIPTION_TEXT']), 'utf8');
+         	
+				$pncs[$item['Bildnummer']][Constants::NAME] = mb_strtoupper(iconv('cp1251', 'utf8', $item['Teil_Benennung']), 'utf8');
 			
 			
            
@@ -516,33 +583,69 @@ $articuls = array();
 
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, $options)
     {
-        $sqlPnc = "
-        SELECT textlines.PART_NO art, DESCRIPTION_TEXT, FROM_YEAR, TO_YEAR, MODEL_YEAR, QUANTITY, textlines.LINE_NO li, FOOTNOTE_TEXT, SEQUENCE_NO seq, saab.replace.REPLACE_PART rep
-        FROM textlines
-        LEFT JOIN saab.replace ON (textlines.PART_NO = saab.replace.PART_NO)
-        LEFT JOIN descr ON (textlines.DESCRIPTION_NO = descr.DESCRIPTION_NO AND descr.LANGUAGE_CODE = 16)
-        LEFT JOIN textline_year ON (textlines.CATALOGUE_NO = textline_year.CATALOGUE_NO AND textlines.GROUP_NO = textline_year.GROUP_NO
-        AND textlines.SECTION_NO = textline_year.SECTION_NO AND textlines.LINE_NO = textline_year.LINE_NO)
 
-        LEFT JOIN textline_footnote ON (textlines.CATALOGUE_NO = textline_footnote.CATALOGUE_NO
-        AND textlines.GROUP_NO = textline_footnote.GROUP_NO AND textlines.SECTION_NO = textline_footnote.SECTION_NO AND textlines.LINE_NO = textline_footnote.LINE_NO)
-        LEFT JOIN foodnote ON (textline_footnote.CATALOGUE_NO = foodnote.CATALOGUE_NO AND foodnote.LANGUAGE_CODE = 16 AND textline_footnote.FOOTNOTE_NO = foodnote.FOOTNOTE_NO)
 
-        WHERE textlines.POSITION = :pncCode
-        AND textlines.CATALOGUE_NO = :modelCode
-        AND textlines.GROUP_NO = :groupCode
-        AND textlines.SECTION_NO = :schemaCode
-      ";
-
+        $sqlPnc = "select distinct
+btzeilen_bildposnr Bildnummer,
+teil_hauptgr Teil_HG,
+teil_untergrup Teil_UG,
+teil_sachnr Teil_Sachnummer,
+tben.ben_text Teil_Benennung,
+teil_benennzus Teil_Zusatz,
+teil_entfall_kez Teil_Entfall,
+teil_textcode_kom Teil_Kommentar_Id,
+tkben.ben_text Teil_Kommentar,
+teil_kom_pi Teil_Komm_PI,
+teil_vorhanden_si Teil_SI,
+teil_ist_reach Teil_Reach,
+teil_ist_aspg Teil_Aspg,
+teil_ist_stecker Teil_Stecker,
+teil_ist_diebstahlrelevant Teil_Diebstahlrelevant,
+si_dokart SI_DokArt,
+grpinfo_leitaw_pa GRP_PA,
+grpinfo_leitaw_hg GRP_HG,
+grpinfo_leitaw_ug GRP_UG,
+grpinfo_leitaw_nr GRP_lfdNr,
+btzeilenv_vmenge Menge,
+btzeilen_kat Kat_KZ,
+btzeilen_automatik Getriebe_KZ,
+btzeilen_lenkg Lenkung_KZ,
+btzeilen_eins Einsatz,
+btzeilen_auslf Auslauf,
+btzeilen_kommbt KommBT,
+btzeilen_kommvor KommVor,
+btzeilen_kommnach KommNach,
+ks_sachnr_satz Satz_Sachnummer,
+btzeilen_gruppeid GruppeId,
+btzeilen_blocknr BlockNr,
+bnbben.ben_text BnbBenText,
+btzeilen_pos Pos,
+btzeilenv_alter_kz BtZAlter,
+btzeilen_bedkez_pg Teil_BedkezPG,
+btzeilenv_bed_art BedingungArt,
+btzeilenv_bed_alter BedingungAlter
+from w_btzeilen_verbauung
+inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos)
+inner join w_teil on (btzeilen_sachnr = teil_sachnr)
+inner join w_ben_gk tben on (teil_textcode = tben.ben_textcode and tben.ben_iso = 'ru' and tben.ben_regiso = '  ')
+left join w_kompl_satz on (btzeilen_sachnr = ks_sachnr_satz and ks_marke_tps = 'BMW')
+left join w_tc_performance on (tcp_mospid = :modificationCode and tcp_sachnr = btzeilen_sachnr  and tcp_datum_von <= 20150816 and (tcp_datum_bis is null or tcp_datum_bis >= 20150816))
+left join w_grp_information on (btzeilenv_mospid = grpinfo_mospid and grpinfo_sachnr = btzeilen_sachnr and grpinfo_typ = 'FE81')
+left join w_ben_gk tkben on (teil_textcode_kom = tkben.ben_textcode and tkben.ben_iso = 'ru' and tkben.ben_regiso = '  ')
+left join w_si on (si_sachnr = teil_sachnr)
+left join w_bildtaf_bnbben on (bildtafb_btnr = btzeilenv_btnr and bildtafb_bildposnr = btzeilen_bildposnr)
+left join w_ben_gk bnbben on (bildtafb_textcode = bnbben.ben_textcode and bnbben.ben_iso = 'ru' and bnbben.ben_regiso = '  ')
+where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId and btzeilen_bildposnr = :pncCode order by Bildnummer, Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
+";
 
         $query = $this->conn->prepare($sqlPnc);
-        $query->bindValue('pncCode',  $pncCode);
-        $query->bindValue('modelCode',  $modelCode);
-        $query->bindValue('groupCode',  $groupCode);
-        $query->bindValue('schemaCode',  $options['Sec']);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('subGroupId', $options['GrId']);
+        $query->bindValue('pncCode', $pncCode);
         $query->execute();
 
         $aArticuls = $query->fetchAll();
+
 
 
         $articuls = array();
@@ -551,16 +654,13 @@ $articuls = array();
         	 
             
             
-				$articuls[$item['art'].$item['li'].$item['seq']] = array(
-                Constants::NAME => iconv('cp1251', 'utf8', $item ['DESCRIPTION_TEXT']),
+				$articuls[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = array(
+                Constants::NAME => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Teil_Benennung']), 'utf8'),
                 Constants::OPTIONS => array(
-                    Constants::QUANTITY => $item['QUANTITY'],
-                    Constants::START_DATE => ($item['FROM_YEAR'] != 'NULL')?$item['FROM_YEAR']:$item['MODEL_YEAR'],
-                    Constants::END_DATE => ($item['TO_YEAR'] != 'NULL')?$item['TO_YEAR']:'',
-                    'articul' => $item['art'],
-                    'dopinf' => iconv('cp1251', 'utf8', $item['FOOTNOTE_TEXT']),
-                    'replace' => $item['rep']
-
+                    Constants::QUANTITY => $item['Menge'],
+                    Constants::START_DATE => ($item['Einsatz'] != '(null)')?$item['Einsatz']:99999999,
+                    Constants::END_DATE => ($item['Auslauf'] != '(null)')?$item['Auslauf']:99999999,
+                    'dopinf' => ($item['Teil_Zusatz'] != '(null)')?$item['Teil_Zusatz']:'',
                 )
             );
             

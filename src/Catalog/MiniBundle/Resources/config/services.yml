@@ -9,12 +9,12 @@ services:
             - { name: twig.extension}
   mini.catalog.model:
     class: Catalog\MiniBundle\Models\MiniCatalogModel
-    arguments:  ['@doctrine.dbal.bmv_connection']
+    arguments:  ['@doctrine.dbal.bmw_connection']
 
   mini.vin.model:
     class: Catalog\MiniBundle\Models\MiniVinModel
-    arguments:  ['@doctrine.dbal.bmv_connection']
+    arguments:  ['@doctrine.dbal.bmw_connection']
 
   mini.articul.model:
     class: Catalog\MiniBundle\Models\MiniArticulModel
-    arguments:  ['@doctrine.dbal.bmv_connection']
+    arguments:  ['@doctrine.dbal.bmw_connection']

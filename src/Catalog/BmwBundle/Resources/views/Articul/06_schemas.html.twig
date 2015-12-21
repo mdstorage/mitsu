@@ -1,0 +1,26 @@
+{% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
+{% use 'CatalogBmwBundle::bmw.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('articul_bmw_find') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_bmw_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('articul_bmw_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
+{% endblock breadcrumbs %}
+{% block complectation %}
+{% endblock complectation %}
+
+
+{% block schema %}
+    {% if schema.getCode is not empty %}
+            <div class="col-xs-3">
+        <a href="{{ path('articul_bmw_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+
+                    <div class="row">
+                        {{ schema.getRuname }}
+                    </div>
+
+                    <div class="row">
+                        <img src="{{ asset('bundles/catalogbmw/grafik/grafik/w_grafik/'~schema.getCode) }}" width="300" alt="{{ schema.getRuname }}"/>
+                    </div>
+
+        </a>
+            </div>
+    {% endif %}
+{% endblock schema %}

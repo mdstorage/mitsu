@@ -9,12 +9,12 @@ services:
             - { name: twig.extension}
   rollsroyce.catalog.model:
     class: Catalog\RollsRoyceBundle\Models\RollsRoyceCatalogModel
-    arguments:  ['@doctrine.dbal.bmv_connection']
+    arguments:  ['@doctrine.dbal.bmw_connection']
 
   rollsroyce.vin.model:
     class: Catalog\RollsRoyceBundle\Models\RollsRoyceVinModel
-    arguments:  ['@doctrine.dbal.bmv_connection']
+    arguments:  ['@doctrine.dbal.bmw_connection']
 
   rollsroyce.articul.model:
     class: Catalog\RollsRoyceBundle\Models\RollsRoyceArticulModel
-    arguments:  ['@doctrine.dbal.bmv_connection']
+    arguments:  ['@doctrine.dbal.bmw_connection']

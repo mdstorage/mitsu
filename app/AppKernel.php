@@ -27,7 +27,7 @@ class AppKernel extends Kernel
             new Catalog\HondaEuropeBundle\CatalogHondaEuropeBundle(),
             new Catalog\HuyndaiBundle\CatalogHuyndaiBundle(),
             new Catalog\KiaBundle\CatalogKiaBundle(),
-            new Catalog\BmvBundle\CatalogBmvBundle(),
+            new Catalog\BmwBundle\CatalogBmwBundle(),
             new Catalog\MiniBundle\CatalogMiniBundle(),
             new Catalog\RollsRoyceBundle\CatalogRollsRoyceBundle(),
             new Catalog\SaabBundle\CatalogSaabBundle(),
