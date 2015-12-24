@@ -100,121 +100,104 @@ class BmwCatalogModel extends CatalogModel{
 
     public function getComplectations($regionCode, $modelCode, $modificationCode)
    
-    {   $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
-
-        $modelCode = rawurldecode($modelCode);
-       $sql = "
-        SELECT *
-        FROM vin_model
-        WHERE model =:modificationCode
+    {
+        $sql = "
+        SELECT fgstnr_prod
+        FROM w_fgstnr
+        WHERE fgstnr_mospid = :modificationCode
+        ORDER BY fgstnr_prod
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('modificationCode', $modificationCode);
         $query->execute();
 
-        $aData = $query->fetchAll();
-             
-        $aForPNC = array();
-        $aIndexes = array('body_type', 'engine_capacity', 'engine_type', 'fuel_type', 'transaxle', 'field14');
-        foreach($aData as &$item)
-        {
-        foreach($item as $index => $value)
-            {
-        if (in_array($index, $aIndexes))
-                {
-                    $item[str_pad((array_search($index, $aIndexes)+1), 2, "0", STR_PAD_LEFT)] = $value;
-                    $aForPNC[$item['model_index']][] = $value;
-                }
-
-		    }
-        }
-
         $complectations = array();
+        $aData = $query->fetchAll();
+
 
         foreach ($aData as &$item) {
-            $aData1 = array();
-            $aOptions = array();
-            foreach ($item as $index => $value)
-            {
-                $sql = "
-        SELECT ucc_type, ucc_type_code, ucc_code_short
-        FROM cats_0_ucc
-        WHERE model =:modificationCode
-        AND ucc = :value
-        AND ucc_type = :index
-        ";
-
-                $query = $this->conn->prepare($sql);
-                $query->bindValue('modificationCode', $modificationCode);
-                $query->bindValue('index', $index);
-                $query->bindValue('value', $value);
-                $query->execute();
-
-                $aData1[] = $query->fetch();
-            }
-            foreach ($aData1 as $index1 => $value1)
-            {
-                if ($value1 == '')
-                {
-                    unset ($aData1[$index1]);
-                }
-            }
-
-            $aProm = array();
-            foreach ($aData1 as $item1)
-            {
-                $aProm[$item1['ucc_type']] = $item1;
-
-            }
 
 
-            foreach ($aProm as &$item2)
-            {
-                foreach ($item2 as &$item3)
-                {
-
-                    $sql = "
-                    SELECT lex_name
-                    FROM bmwlex
-                    WHERE lex_code =:item3
-                    AND lang = 'EN'
-                    ";
-
-                    $query = $this->conn->prepare($sql);
-                    $query->bindValue('item3', $item3);
-                    $query->execute();
-                    $sData2 = $query->fetch();
-                    if ($sData2)
-                    {
-                        $item3 = $sData2['lex_name'];
-                    }
-
-                }
-
-            }
-
-            foreach ($aProm as $item4)
-            {
-                $aOptions[$item['model_index']][] = ($item4['ucc_type_code'].': '.$item4['ucc_code_short']);
-            }
-
-
-            $complectations[$item['model_index']] = array(
-                Constants::NAME => $item['model_code'],
-                Constants::OPTIONS => array(
-
-                    'option1' => $aOptions[$item['model_index']],
-                    Constants::START_DATE   => $item['start_data'],
-                    Constants::END_DATE   => $item['finish_data'],
-                    'option2' => $aForPNC[$item['model_index']], /*Добавлена для последующего использования в выборе нужного артикула в методе getArticuls*/
-                )
+            $complectations[$item['fgstnr_prod']] = array(
+                Constants::NAME => $item['fgstnr_prod'],
+                Constants::OPTIONS => array()
             );
         }
 
          return $complectations;
      
     }
+
+    public function getComplectationsData($role, $modificationCode)
+
+    {
+        $sql = "
+        SELECT fgstnr_prod, fgstnr_typschl, fgstnr_mospid
+        FROM w_fgstnr
+        INNER JOIN w_fztyp ON (fztyp_lenkung = :role AND fgstnr_mospid = fztyp_mospid AND fgstnr_typschl = fztyp_typschl)
+        WHERE fgstnr_mospid = :modificationCode
+        ORDER BY fgstnr_prod
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('role', $role);
+        $query->execute();
+
+        $complectations = array();
+        $aData = $query->fetchAll();
+
+
+        foreach ($aData as &$item) {
+
+
+            $complectations[substr($item['fgstnr_prod'], 0, 4)] = array(
+                Constants::NAME => substr($item['fgstnr_prod'], 0, 4),
+                Constants::OPTIONS => array('modificationCode' => $item['fgstnr_mospid'],
+                                            'roleCode' => $item['fgstnr_typschl'])
+            );
+        }
+
+        return $complectations;
+
+    }
+
+    public function getComplectationsCatalogData($role, $modificationCode, $year)
+    {
+        $sql = "
+        SELECT fgstnr_prod
+        FROM w_fgstnr
+        WHERE fgstnr_mospid = :modificationCode
+        AND fgstnr_typschl = :role
+        AND  fgstnr_prod LIKE :years
+        ORDER BY fgstnr_prod
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('role', $role);
+        $query->bindValue('years', '%'.$year.'%');
+        $query->execute();
+
+        $complectations = array();
+        $aData = $query->fetchAll();
+
+
+        foreach ($aData as &$item) {
+
+
+            $complectations[$item['fgstnr_prod']] = array(
+                Constants::NAME => substr($item['fgstnr_prod'],4,2),
+                Constants::OPTIONS => array()
+            );
+        }
+
+        return $complectations;
+
+    }
+
+
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
@@ -465,12 +448,12 @@ where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId orde
         SELECT grafikhs_topleft_x, grafikhs_topleft_y, grafikhs_bottomright_x, grafikhs_bottomright_y
         FROM w_grafik_hs
         WHERE grafikhs_grafikid = :schemaCode
-        AND grafikhs_bildposnr = :position
+        AND grafikhs_bildposnr = :pos
         ";
 
                 $query = $this->conn->prepare($sqlSchemaLabels);
                 $query->bindValue('schemaCode', $schemaCode);
-                $query->bindValue('position', $aPnc['Bildnummer']);
+                $query->bindValue('pos', $aPnc['Bildnummer']);
                 $query->execute();
 
                 $aPnc['coords'] = $query->fetchAll();

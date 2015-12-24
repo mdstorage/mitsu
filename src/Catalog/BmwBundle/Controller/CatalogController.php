@@ -45,4 +45,37 @@ class CatalogController extends BaseController{
 
         
     }
+
+    public function complectation_dataAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+
+            $role = $request->get('role');
+            $modificationCode = $request->get('modificationCode');
+
+
+            $result = $this->model()->getComplectationsData($role, $modificationCode);
+
+            return $this->render($this->bundle().':03_complectations_data.html.twig', array(
+                'result' => $result
+            ));
+        }
+    }
+
+    public function complectation_catalog_dataAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+
+            $role = $request->get('role');
+            $modificationCode = $request->get('modificationCode');
+            $year = $request->get('year');
+
+
+            $result = $this->model()->getComplectationsCatalogData($role, $modificationCode, $year);
+
+            return $this->render($this->bundle().':03_complectation_catalog_data.html.twig', array(
+                'result' => $result
+            ));
+        }
+    }
 } 

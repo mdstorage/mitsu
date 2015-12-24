@@ -4,7 +4,7 @@
          <div>
             {% block modification %}
 
-                <a href="{{ path('catalog_bmw_groups', parameters|merge({'modificationCode': modification.getCode})) }}">
+                <a href="{{ path('catalog_bmw_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
 
                     {{ modification.getRuname }}
                 </a>
