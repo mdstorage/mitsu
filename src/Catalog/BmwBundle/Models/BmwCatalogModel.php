@@ -21,7 +21,17 @@ class BmwCatalogModel extends CatalogModel{
         SELECT fztyp_ktlgausf
         FROM w_fztyp
         WHERE fztyp_karosserie NOT LIKE 'ohne'
-        GROUP BY fztyp_ktlgausf
+        AND (fztyp_ktlgausf = 'ECE'
+        OR fztyp_ktlgausf = 'USA'
+        OR fztyp_ktlgausf = 'RUS')
+        UNION
+        SELECT fztyp_ktlgausf
+        FROM w_fztyp
+        WHERE fztyp_karosserie NOT LIKE 'ohne'
+        AND (fztyp_ktlgausf NOT LIKE 'ECE'
+        OR fztyp_ktlgausf NOT LIKE 'USA'
+        OR fztyp_ktlgausf NOT LIKE 'RUS')
+
         ";
 
         $query = $this->conn->query($sql);
@@ -98,16 +108,17 @@ class BmwCatalogModel extends CatalogModel{
         return $modifications;
     }
 
+    /**
+     Функция getComplectations() учитывает все положения руля и даты производства модификаций. Используется только в каталог_контроллере коммонБандла.
+     */
+
     public function getComplectations($regionCode, $modelCode, $modificationCode)
-   
     {
         $sql = "
-        SELECT fgstnr_prod
-        FROM w_fgstnr
-        WHERE fgstnr_mospid = :modificationCode
-        ORDER BY fgstnr_prod
+        SELECT fztyp_lenkung, fgstnr_prod
+        FROM w_fztyp, w_fgstnr
+        WHERE fztyp_mospid = :modificationCode AND fztyp_mospid = fgstnr_mospid AND fgstnr_typschl = fztyp_typschl
         ";
-
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode', $modificationCode);
         $query->execute();
@@ -115,19 +126,57 @@ class BmwCatalogModel extends CatalogModel{
         $complectations = array();
         $aData = $query->fetchAll();
 
-
         foreach ($aData as &$item) {
 
 
-            $complectations[$item['fgstnr_prod']] = array(
-                Constants::NAME => $item['fgstnr_prod'],
+            $complectations[$item['fztyp_lenkung'].$item['fgstnr_prod']] = array(
+                Constants::NAME => $item['fztyp_lenkung'].$item['fgstnr_prod'],
                 Constants::OPTIONS => array()
             );
         }
 
-         return $complectations;
+        return ($complectations);
+
+    }
+    /**
+    Функция getRole() возвращает только положения руля. Используется только в каталог_контроллере БМВ_Бандла.
+     */
+
+
+    public function getRole($regionCode, $modelCode, $modificationCode)
+   
+    {
+        $sql = "
+        SELECT fztyp_lenkung
+        FROM w_fztyp
+        WHERE fztyp_mospid = :modificationCode
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->execute();
+
+        $role = array();
+        $aData = $query->fetchAll();
+
+
+        foreach ($aData as &$item) {
+
+
+            $role[$item['fztyp_lenkung']] = array(
+                Constants::NAME => ($item['fztyp_lenkung'] == 'L')?'Левый руль':'Правый руль',
+                Constants::OPTIONS => array()
+            );
+        }
+
+
+         return ($role);
      
     }
+
+    /**
+    Функция getComplectationsData() возвращает год производства при изветном положении руля. Используется только в каталог_контроллере БМВ_Бандла.
+     */
 
     public function getComplectationsData($role, $modificationCode)
 
@@ -162,13 +211,19 @@ class BmwCatalogModel extends CatalogModel{
         return $complectations;
 
     }
+    /**
+    Функция getComplectationsCatalogData() возвращает месяц производства при изветных годе производства и положении руля. Используется только в каталог_контроллере БМВ_Бандла.
+     */
+
 
     public function getComplectationsCatalogData($role, $modificationCode, $year)
     {
+
         $sql = "
-        SELECT fgstnr_prod
-        FROM w_fgstnr
+        SELECT fgstnr_prod, fztyp_lenkung
+        FROM w_fgstnr, w_fztyp
         WHERE fgstnr_mospid = :modificationCode
+        AND fztyp_mospid = fgstnr_mospid AND fgstnr_typschl = fztyp_typschl
         AND fgstnr_typschl = :role
         AND  fgstnr_prod LIKE :years
         ORDER BY fgstnr_prod
@@ -187,7 +242,7 @@ class BmwCatalogModel extends CatalogModel{
         foreach ($aData as &$item) {
 
 
-            $complectations[$item['fgstnr_prod']] = array(
+            $complectations[$item['fztyp_lenkung'].$item['fgstnr_prod']] = array(
                 Constants::NAME => substr($item['fgstnr_prod'],4,2),
                 Constants::OPTIONS => array()
             );
@@ -574,6 +629,12 @@ teil_hauptgr Teil_HG,
 teil_untergrup Teil_UG,
 teil_sachnr Teil_Sachnummer,
 tben.ben_text Teil_Benennung,
+nuch.komm_pos Komnach,
+kommnuch.ben_text Komm_Benennung,
+vor.komm_pos Komvor,
+vor.komm_code KomCode,
+vor.komm_vz KomVz,
+kommvor.ben_text Komm_Vor,
 teil_benennzus Teil_Zusatz,
 teil_entfall_kez Teil_Entfall,
 teil_textcode_kom Teil_Kommentar_Id,
@@ -611,6 +672,10 @@ from w_btzeilen_verbauung
 inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos)
 inner join w_teil on (btzeilen_sachnr = teil_sachnr)
 inner join w_ben_gk tben on (teil_textcode = tben.ben_textcode and tben.ben_iso = 'ru' and tben.ben_regiso = '  ')
+left join w_komm nuch on (btzeilen_kommnach = nuch.komm_id)
+left join w_ben_gk kommnuch on (nuch.komm_textcode = kommnuch.ben_textcode and kommnuch.ben_iso = 'ru' and kommnuch.ben_regiso = '  ')
+left join w_komm vor on (btzeilen_kommvor = vor.komm_id)
+left join w_ben_gk kommvor on (vor.komm_textcode = kommvor.ben_textcode and kommvor.ben_iso = 'ru' and kommvor.ben_regiso = '  ')
 left join w_kompl_satz on (btzeilen_sachnr = ks_sachnr_satz and ks_marke_tps = 'BMW')
 left join w_tc_performance on (tcp_mospid = :modificationCode and tcp_sachnr = btzeilen_sachnr  and tcp_datum_von <= 20150816 and (tcp_datum_bis is null or tcp_datum_bis >= 20150816))
 left join w_grp_information on (btzeilenv_mospid = grpinfo_mospid and grpinfo_sachnr = btzeilen_sachnr and grpinfo_typ = 'FE81')
@@ -618,20 +683,116 @@ left join w_ben_gk tkben on (teil_textcode_kom = tkben.ben_textcode and tkben.be
 left join w_si on (si_sachnr = teil_sachnr)
 left join w_bildtaf_bnbben on (bildtafb_btnr = btzeilenv_btnr and bildtafb_bildposnr = btzeilen_bildposnr)
 left join w_ben_gk bnbben on (bildtafb_textcode = bnbben.ben_textcode and bnbben.ben_iso = 'ru' and bnbben.ben_regiso = '  ')
-where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId and btzeilen_bildposnr = :pncCode order by Bildnummer, Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
+where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId and (btzeilen_bildposnr = :pncCode or btzeilen_bildposnr = '--')
+AND (CASE WHEN btzeilen_eins NOT LIKE '0' THEN :complectationCode >= btzeilen_eins ELSE btzeilen_eins <> '1' END)
+AND (CASE WHEN btzeilen_auslf NOT LIKE '0' THEN btzeilen_auslf >= :complectationCode  ELSE btzeilen_auslf <> '1' END)
+AND (CASE WHEN btzeilen_lenkg NOT LIKE '' THEN btzeilen_lenkg = :role  ELSE btzeilen_lenkg <> '1' END)
+
+ order by Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
 ";
 
         $query = $this->conn->prepare($sqlPnc);
         $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('complectationCode', substr($complectationCode,1,strlen($complectationCode)-1));
         $query->bindValue('subGroupId', $options['GrId']);
         $query->bindValue('pncCode', $pncCode);
+        $query->bindValue('role', substr($complectationCode,0,1));
+
         $query->execute();
 
         $aArticuls = $query->fetchAll();
 
+        $nach = array();
+
+
+        foreach ($aArticuls as $index => $value)
+        {
+
+            if (($value['Bildnummer'] != '--') && (iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='только в комбинации с'))
+            {
+                $nach[]=$value['KommNach'];
+            }
+
+        }
+
+        foreach ($aArticuls as $index => $value)
+        {
+
+            if (($value['Bildnummer'] == '--') && (count($nach) == 0))
+            {
+                unset ($aArticuls[$index]);
+            }
+
+        }
+        $aPred = array();
+        $aCurrent = array();
+        $aNext = array();
+
+        foreach ($aArticuls as $index => $value)
+        {
+
+            if (($value['Bildnummer'] != '--') &&  (iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='только в комбинации с'))
+            {
+                $nachIndex=$index;
+                $nachPos=$value['Pos'];
+
+            }
+
+        }
+
+        $aCurrent = ($aArticuls[$nachIndex]);
+        if (($aArticuls[$nachIndex+1]['Bildnummer'] == '--') || ($aArticuls[$nachIndex+1]['Bildnummer'] == '--') &&
+            ($aArticuls[$nachIndex+2]['Bildnummer'] == '--') && ($aArticuls[$nachIndex+2]['Pos']-$aArticuls[$nachIndex+2]['Bildnummer']))
+        {
+
+        }
+
+
+        foreach ($aArticuls as $index => $value)
+        {
+            $aPred = prev($aArticuls);
+
+            $aNext = next($aArticuls[$nachIndex]);
+
+
+            foreach ($nachPos as $nachPosVal) {
+
+                if (($value['Bildnummer'] == '--') && ($index < $nachPosVal)) {
+                    unset ($aArticuls[$index]);
+                }
+            }
+        }
+
+
+
+
+
 
 
         $articuls = array();
+        $kommnach = array();
+        $kommanach = array();
+
+        $kommvor = array();
+        $kommavor = array();
+
+        foreach ($aArticuls as $item)
+        {
+            if ($item ['KomVz']=='+') {$string[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = ' применяется';}
+            else if ($item ['KomVz']=='-') {$string[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = ' не применяется';}
+            else {$string[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = NULL;}
+            $a = $string[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']];
+
+            $kommnach[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']][$item['Komnach']] = iconv('cp1251', 'utf8', $item ['Komm_Benennung']);
+            (ksort($kommnach[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']]));
+            $kommanach[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = implode (' ', $kommnach[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']]);
+
+            $kommvor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']][$item['Komvor']] = iconv('cp1251', 'utf8', $item ['Komm_Vor']).' '.$item ['KomCode'];
+            (ksort($kommvor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']]));
+            $kommavor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = implode (' ', $kommvor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']]);
+
+        }
+
       
         foreach ($aArticuls as $item) {
         	 
@@ -644,6 +805,11 @@ where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId and 
                     Constants::START_DATE => ($item['Einsatz'] != '(null)')?$item['Einsatz']:99999999,
                     Constants::END_DATE => ($item['Auslauf'] != '(null)')?$item['Auslauf']:99999999,
                     'dopinf' => ($item['Teil_Zusatz'] != '(null)')?$item['Teil_Zusatz']:'',
+                    'kommanach' => $kommanach[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']],
+                    'kommavor' => $kommavor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']].($a?$a:NULL)
+
+
+
                 )
             );
             

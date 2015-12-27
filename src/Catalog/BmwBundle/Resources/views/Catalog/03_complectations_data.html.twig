@@ -8,6 +8,8 @@
             {% set res_name = res['name'] %}
             {% set modificationCode = res['options']['modificationCode']%}
             {% set role = res['options']['roleCode']%}
+            {% set modelCode = parameters['modelCode']%}
+            {% set regionCode = parameters['regionCode']%}
 
         <div class="model glyphicon-plus" id="{{ res_name }}">
 
@@ -24,7 +26,9 @@
                         type:   'POST',
                         async:  false,
                         url:    "{% block ajaxUrl %}{{ path('complectation_catalog_data') }}{% endblock ajaxUrl %}",
-                        data:   { modificationCode: "{{ modificationCode }}", year: "{{ res_name }}", role: "{{ role }}" },
+                        data:   { modificationCode: "{{ modificationCode }}", year: "{{ res_name }}", role: "{{ role }}",
+                            modelCode: "{{ modelCode }}",
+                            regionCode: "{{ regionCode }}"},
                         success: function(data) {
                             $("#modifications_for_model{{ res_name }}").html(data);
                         }

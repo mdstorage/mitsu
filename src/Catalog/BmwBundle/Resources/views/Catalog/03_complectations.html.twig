@@ -2,102 +2,71 @@
 {% use 'CatalogBmwBundle::bmw.base.html.twig' %}
 {% block breadcrumbs %}
    <a href="{{ path('catalog_bmw') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
-   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getCode }})</a> / Комплектация                    
+   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / Комплектация
 {% endblock breadcrumbs %}
 
 {% block body %}
-    {% block head %}<h3>Выбрать положение руля:</h3>{% endblock head %}
+    {% block head %}<h3>Положение руля:</h3>{% endblock head %}
     {% block complectations %}
         <div class="row">
 
             <div class="complectations">
 
 
-                <div class="col-lg-2">
 
-                <div class="radio">
+                {% for complectation in oContainer.getActiveModification.getComplectations %}
 
-                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="L" checked = "true">
-                        Левый руль
 
-                </div>
-                </div>
+                    <div class="col-lg-2">
 
-                <div class="col-lg-2">
-                <div class="radio">
+                        <div class="radio">
 
-                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="R">
-                        Правый руль
+                            <input type="radio" name="optionsRadios" id="optionsRadios{{ complectation.getCode }}" value="{{ complectation.getCode }}">
+                            {{ complectation.getRuname }}
 
-                </div>
-                </div>
+                        </div>
+                    </div>
+                 <script>
+                     $("#optionsRadios{{ complectation.getCode }}").on('change', function(){
+                         $.ajax({
+                             type:   'POST',
+                             async:  false,
+                             url:    "{{ path('catalog_bmw_complectation_data') }}",
+                             data:   { role: $("#optionsRadios{{ complectation.getCode }}").val(), modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                                 regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                                 modelCode: '{{ oContainer.getActiveModel.getCode }}'},
+                             success: function(data) {
+                                 $("#vin-result").html(data);
+                             }
+                         });
+                     });
+
+
+                 </script>
+                {% endfor %}
+
             </div>
          </div>
         <div class="row">
                 <div id="vin-result"></div>
         </div>
 
-
-                {% for complectation in oContainer.getActiveModification.getComplectations %}
-                    {% block complectationItem %}
-                        <div class="col-lg-4">
-
-                            <a href="{{ path('catalog_bmw_groups', parameters|merge({'complectationCode': complectation.getCode})) }}">
-
-                                <b>    {{ complectation.getRuname|bmw_date_convertor }} </b>
-                            </a> <br/>
-
-                        </div>
-                    {% endblock complectationItem %}
-                {% endfor %}
+           {% block vinScript %}
+                <script>
 
 
+                    $(document).ready(function(){
+                        $("#optionsRadiosL").prop("checked", true);
+                        $('#optionsRadiosL').trigger('change');
 
-        {% block vinScript %}
-            <script>
-
-                $("#optionsRadios1").on('change', function(){
-                    $.ajax({
-                        type:   'POST',
-                        async:  false,
-                        url:    "{{ path('catalog_bmw_complectation_data') }}",
-                        data:   { role: $("#optionsRadios1").val(), modificationCode: '{{ oContainer.getActiveModification.getCode }}' },
-                        success: function(data) {
-                            $("#vin-result").html(data);
-                        }
                     });
-                });
-
-                $("#optionsRadios2").on('change', function(){
-                    $.ajax({
-                        type:   'POST',
-                        async:  false,
-                        url:    "{{ path('catalog_bmw_complectation_data') }}",
-                        data:   { role: $("#optionsRadios2").val(), modificationCode: '{{ oContainer.getActiveModification.getCode }}' },
-                        success: function(data) {
-                            $("#vin-result").html(data);
-                        }
-                    });
-                });
-
-                $(document).ready(function(){
-                    $.ajax({
-                        type:   'POST',
-                        async:  false,
-                        url:    "{{ path('catalog_bmw_complectation_data') }}",
-                        data:   { role: $("#optionsRadios1").val(), modificationCode: '{{ oContainer.getActiveModification.getCode }}' },
-                        success: function(data) {
-                            $("#vin-result").html(data);
-                        }
-                    });
-                });
-            </script>
-        {% endblock vinScript %}
-
-        {#        <input type="button" class="btn btn-info" value="Удалить статью" id="vin-button{{ post.id }}"/>
-           <div id="vin-result"></div>
+                </script>
+            {% endblock vinScript %}
+        {#
+                            <input type="button" class="btn btn-info" value="Удалить статью" id="vin-button{{ post.id }}"/>
+                       <div id="vin-result"></div>
 
 
-        #}
+                    #}
     {% endblock complectations %}
 {% endblock body %}

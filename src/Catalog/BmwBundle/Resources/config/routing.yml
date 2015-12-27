@@ -9,7 +9,7 @@ catalog_bmw_modifications:
 
 catalog_bmw_complectations:
   path:         /bmw/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogBmwBundle:Catalog:complectations}
+  defaults:     {_controller: CatalogBmwBundle:Catalog:complectations1}
 
 catalog_bmw_complectation_data:
   path:         /bmw/catalog/10

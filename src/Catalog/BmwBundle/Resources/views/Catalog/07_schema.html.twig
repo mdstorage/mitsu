@@ -25,7 +25,7 @@
                                             type:   'POST',
                                             async:  false,
                                             url:    "{{ path('catalog_bmw_articuls') }}",
-                                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', groupCode: '{{ parameters.groupCode }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}', options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'  },
+                                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', complectationCode: '{{ oContainer.getActiveComplectation.getCode }}', groupCode: '{{ parameters.groupCode }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}', options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'  },
                                             success: function(data) {
                                                 $("#articul_for_pnc{{ pnc.getCode }}").html(data);
                                             }
