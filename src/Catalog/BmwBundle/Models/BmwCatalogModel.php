@@ -239,7 +239,7 @@ class BmwCatalogModel extends CatalogModel{
         $aData = $query->fetchAll();
 
 
-        foreach ($aData as &$item) {
+        foreach ($aData as $item) {
 
 
             $complectations[$item['fztyp_lenkung'].$item['fgstnr_prod']] = array(
@@ -407,7 +407,6 @@ order by Pos
                 );
             }
         }
-
 
         return $schemas;
     }
@@ -702,7 +701,9 @@ AND (CASE WHEN btzeilen_lenkg NOT LIKE '' THEN btzeilen_lenkg = :role  ELSE btze
 
         $aArticuls = $query->fetchAll();
 
+
         $nach = array();
+        $nachIndex = array();
 
 
         foreach ($aArticuls as $index => $value)
@@ -733,39 +734,34 @@ AND (CASE WHEN btzeilen_lenkg NOT LIKE '' THEN btzeilen_lenkg = :role  ELSE btze
 
             if (($value['Bildnummer'] != '--') &&  (iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='только в комбинации с'))
             {
-                $nachIndex=$index;
-                $nachPos=$value['Pos'];
+                $nachIndex[] = $index;
+                $nachPos[] = $value['Pos'];
+
 
             }
 
         }
 
-        $aCurrent = ($aArticuls[$nachIndex]);
-        if (($aArticuls[$nachIndex+1]['Bildnummer'] == '--') || ($aArticuls[$nachIndex+1]['Bildnummer'] == '--') &&
-            ($aArticuls[$nachIndex+2]['Bildnummer'] == '--') && ($aArticuls[$nachIndex+2]['Pos']-$aArticuls[$nachIndex+2]['Bildnummer']))
-        {
 
-        }
-
-
+       $min = 10;
         foreach ($aArticuls as $index => $value)
         {
-            $aPred = prev($aArticuls);
+                if (($value['Bildnummer'] == '--') && ($value['Pos'] > $aArticuls[$nachIndex[0]]['Pos'])
+                    && (($value['Pos'] - $aArticuls[$nachIndex[0]]['Pos']) < $min)) {
+                    $min =  $value['Pos'] - $aArticuls[$nachIndex[0]]['Pos'];
+                    $minIndex = $index;
+                    $minPos = $value['Pos'];
 
-            $aNext = next($aArticuls[$nachIndex]);
-
-
-            foreach ($nachPos as $nachPosVal) {
-
-                if (($value['Bildnummer'] == '--') && ($index < $nachPosVal)) {
-                    unset ($aArticuls[$index]);
                 }
-            }
         }
 
-
-
-
+        $bArticuls = array();
+     foreach ($aArticuls as $index => $value)
+        {
+            if (($value['Bildnummer'] == '--') && (($index!=$minIndex) && ($index!=($minIndex+1)))) {
+               unset ($aArticuls[$index]);
+            }
+        }
 
 
 
@@ -806,7 +802,8 @@ AND (CASE WHEN btzeilen_lenkg NOT LIKE '' THEN btzeilen_lenkg = :role  ELSE btze
                     Constants::END_DATE => ($item['Auslauf'] != '(null)')?$item['Auslauf']:99999999,
                     'dopinf' => ($item['Teil_Zusatz'] != '(null)')?$item['Teil_Zusatz']:'',
                     'kommanach' => $kommanach[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']],
-                    'kommavor' => $kommavor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']].($a?$a:NULL)
+                    'kommavor' => ($item['Bildnummer'] != '--')?($kommavor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']].($a?$a:NULL)):' ',
+
 
 
 

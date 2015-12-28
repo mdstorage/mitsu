@@ -67,6 +67,7 @@ where fgstnr_von <= :vin and fgstnr_bis >= :vin and fgstnr_anf  = :subVin
                 'wheel' => $aData['Lenkung'],
                 'modelforGroups' => $aData['Baureihe'],
                 'modifforGroups' => $aData['Modellspalte'],
+                'complectationCode' => $aData['Lenkung'].$aData['Produktionsdatum'],
                 'engine' => $aData['Motor'],
                 'korobka' => $aData['Getriebe'],
             );

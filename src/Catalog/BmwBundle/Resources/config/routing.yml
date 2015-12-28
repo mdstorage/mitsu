@@ -58,19 +58,19 @@ vin_bmw_result:
   requirements: {_method: POST}
 
 vin_bmw_groups:
-  path:         /bmw/vin/3/{regionCode}/{modelCode}/{modificationCode}
+  path:         /bmw/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
   defaults:     {_controller: CatalogBmwBundle:Vin:groups}
 
 vin_bmw_subgroups:
-  path:         /bmw/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  path:         /bmw/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
   defaults:     {_controller: CatalogBmwBundle:Vin:subgroups}
 
 vin_bmw_schemas:
-  path:         /bmw/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  path:         /bmw/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogBmwBundle:Vin:schemas}
 
 vin_bmw_schema:
-  path:         /bmw/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  path:         /bmw/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
   defaults:     {_controller: CatalogBmwBundle:Vin:schema}
 
 vin_bmw_articuls:
