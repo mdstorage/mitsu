@@ -72,27 +72,31 @@ class BmwCatalogModel extends CatalogModel{
         $models = array();
         foreach($aData as $item) {
 
-            $models[$item['Baureihe']] = array(Constants::NAME => strtoupper($item['ExtBaureihe']) . ' ' . $item['Kuzov'],
+            $models[$item['Baureihe'].'_'.$item['Kuzov']] = array(Constants::NAME => strtoupper($item['ExtBaureihe']) . ' ' . $item['Kuzov'],
                 Constants::OPTIONS => array('grafik' => $item['Id']));
 
         }
+
 
         return $models;
     }
 
     public function getModifications($regionCode, $modelCode)
     {
+
         $sql = "
-        SELECT fztyp_mospid, fztyp_erwvbez
+        SELECT fztyp_mospid, fztyp_erwvbez, fztyp_getriebe
         FROM w_fztyp
         WHERE fztyp_ktlgausf = :regionCode
         AND fztyp_baureihe = :modelCode
+        and fztyp_karosserie = :submodelCode
         ORDER BY fztyp_erwvbez
         ";
 
         $query = $this->conn->prepare($sql);
+        $query->bindValue('modelCode', substr($modelCode, 0, strpos($modelCode, '_')));
+        $query->bindValue('submodelCode', substr($modelCode, strpos($modelCode, '_')+1, strlen($modelCode)));
         $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('modelCode', $modelCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -100,7 +104,7 @@ class BmwCatalogModel extends CatalogModel{
         $modifications = array();
         foreach($aData as $item){
             $modifications[$item['fztyp_mospid']] = array(
-                Constants::NAME     => $item['fztyp_erwvbez'],
+                Constants::NAME     => $item['fztyp_erwvbez'].' '.($item['fztyp_getriebe']==='A'?'АКПП':'').($item['fztyp_getriebe']==='M'?'MКПП':''),
                 Constants::OPTIONS  => array());
 
         }
@@ -120,7 +124,7 @@ class BmwCatalogModel extends CatalogModel{
         WHERE fztyp_mospid = :modificationCode AND fztyp_mospid = fgstnr_mospid AND fgstnr_typschl = fztyp_typschl
         ";
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('modificationCode', substr($modificationCode, 0, strpos($modificationCode, '_')));
         $query->execute();
 
         $complectations = array();
@@ -136,6 +140,36 @@ class BmwCatalogModel extends CatalogModel{
         }
 
         return ($complectations);
+
+    }
+
+    public function getComplectationsKorobka($role, $modificationCode)
+    {
+
+        $sql = "
+        SELECT fztyp_getriebe
+        FROM w_fztyp
+        WHERE fztyp_mospid = :modificationCode AND fztyp_lenkung = :role
+        ";
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('role', $role);
+        $query->execute();
+
+        $complectations = array();
+        $aData = $query->fetchAll();
+
+        foreach ($aData as &$item) {
+
+
+            $complectations[$item['fztyp_getriebe']] = array(
+                Constants::NAME => $item['fztyp_getriebe'],
+                Constants::OPTIONS => array()
+            );
+        }
+
+
+        return $complectations;
 
     }
     /**
@@ -178,13 +212,13 @@ class BmwCatalogModel extends CatalogModel{
     Функция getComplectationsData() возвращает год производства при изветном положении руля. Используется только в каталог_контроллере БМВ_Бандла.
      */
 
-    public function getComplectationsData($role, $modificationCode)
+    public function getComplectationsYear($role, $modificationCode, $korobka)
 
     {
         $sql = "
         SELECT fgstnr_prod, fgstnr_typschl, fgstnr_mospid
         FROM w_fgstnr
-        INNER JOIN w_fztyp ON (fztyp_lenkung = :role AND fgstnr_mospid = fztyp_mospid AND fgstnr_typschl = fztyp_typschl)
+        INNER JOIN w_fztyp ON (fztyp_lenkung = :role AND fztyp_getriebe = :korobka AND fgstnr_mospid = fztyp_mospid AND fgstnr_typschl = fztyp_typschl)
         WHERE fgstnr_mospid = :modificationCode
         ORDER BY fgstnr_prod
         ";
@@ -192,6 +226,7 @@ class BmwCatalogModel extends CatalogModel{
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('role', $role);
+        $query->bindValue('korobka', $korobka);
         $query->execute();
 
         $complectations = array();
@@ -216,22 +251,24 @@ class BmwCatalogModel extends CatalogModel{
      */
 
 
-    public function getComplectationsCatalogData($role, $modificationCode, $year)
+    public function getComplectationsMonth($role, $modificationCode, $year, $korobka)
     {
 
         $sql = "
-        SELECT fgstnr_prod, fztyp_lenkung
+        SELECT fgstnr_prod, fztyp_lenkung, fztyp_getriebe
         FROM w_fgstnr, w_fztyp
         WHERE fgstnr_mospid = :modificationCode
         AND fztyp_mospid = fgstnr_mospid AND fgstnr_typschl = fztyp_typschl
         AND fgstnr_typschl = :role
         AND  fgstnr_prod LIKE :years
+        AND fztyp_getriebe = :korobka
         ORDER BY fgstnr_prod
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('role', $role);
+        $query->bindValue('korobka', $korobka);
         $query->bindValue('years', '%'.$year.'%');
         $query->execute();
 
@@ -242,7 +279,7 @@ class BmwCatalogModel extends CatalogModel{
         foreach ($aData as $item) {
 
 
-            $complectations[$item['fztyp_lenkung'].$item['fgstnr_prod']] = array(
+            $complectations[$item['fztyp_lenkung'].$item['fztyp_getriebe'].$item['fgstnr_prod']] = array(
                 Constants::NAME => substr($item['fgstnr_prod'],4,2),
                 Constants::OPTIONS => array()
             );

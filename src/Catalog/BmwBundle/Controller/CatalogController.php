@@ -77,7 +77,7 @@ class CatalogController extends BaseController{
         ));
     }
 
-    public function complectation_dataAction(Request $request)
+    public function complectation_korobkaAction(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
 
@@ -89,40 +89,9 @@ class CatalogController extends BaseController{
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modelCode' => $modelCode,
-                'modificationCode' => $modificationCode
+                'modificationCode' => $modificationCode,
+                'role' => $role
             );
-
-
-
-            $result = $this->model()->getComplectationsData($role, $modificationCode);
-
-            return $this->render($this->bundle().':03_complectations_data.html.twig', array(
-                'result' => $result,
-                'parameters' => $parameters
-            ));
-        }
-    }
-
-    public function complectation_catalog_dataAction(Request $request)
-    {
-        if ($request->isXmlHttpRequest()) {
-
-            $role = $request->get('role');
-            $year = $request->get('year');
-            $modificationCode = $request->get('modificationCode');
-            $regionCode = $request->get('regionCode');
-            $modelCode = $request->get('modelCode');
-
-            $parameters = array(
-                'regionCode' => $regionCode,
-                'modelCode' => $modelCode,
-                'modificationCode' => $modificationCode
-            );
-
-
-
-
-
 
             $regions = $this->model()->getRegions();
             $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
@@ -130,7 +99,7 @@ class CatalogController extends BaseController{
             $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
             $modifications = $this->model()->getModifications($regionCode, $modelCode);
             $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
-            $complectations = $this->model()->getComplectationsCatalogData($role, $modificationCode, $year);
+            $complectations = $this->model()->getComplectationsKorobka($role, $modificationCode);
 
             if(empty($complectations))
                 return $this->error($request, 'Комплектации не найдены.');
@@ -146,10 +115,90 @@ class CatalogController extends BaseController{
 
 
 
-            $result = $this->model()->getComplectationsCatalogData($role, $modificationCode, $year);
+            return $this->render($this->bundle().':03_complectation_korobka.html.twig', array(
+                'oContainer' => $oContainer,
+                'parameters' => $parameters
+            ));
+        }
+    }
+
+    public function complectation_yearAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+
+            $role = $request->get('role');
+            $modificationCode = $request->get('modificationCode');
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+            $korobka= $request->get('korobka');
+
+            $parameters = array(
+                'regionCode' => $regionCode,
+                'modelCode' => $modelCode,
+                'modificationCode' => $modificationCode,
+                'role' => $role,
+                'korobka' => $korobka
+            );
 
 
-            return $this->render($this->bundle().':03_complectation_catalog_data.html.twig', array(
+
+            $result = $this->model()->getComplectationsYear($role, $modificationCode, $korobka);
+
+
+            return $this->render($this->bundle().':03_complectation_year.html.twig', array(
+                'result' => $result,
+                'parameters' => $parameters
+            ));
+        }
+    }
+
+    public function complectation_monthAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+
+            $role = $request->get('role');
+            $year = $request->get('year');
+            $modificationCode = $request->get('modificationCode');
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+            $korobka = $request->get('korobka');
+
+            $parameters = array(
+                'regionCode' => $regionCode,
+                'modelCode' => $modelCode,
+                'modificationCode' => $modificationCode,
+                'korobka' => $korobka
+            );
+
+
+
+
+            $regions = $this->model()->getRegions();
+            $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
+            $models = $this->model()->getModels($regionCode);
+            $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
+            $modifications = $this->model()->getModifications($regionCode, $modelCode);
+            $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
+            $complectations = $this->model()->getComplectationsMonth($role, $modificationCode, $year, $korobka);
+
+            if(empty($complectations))
+                return $this->error($request, 'Комплектации не найдены.');
+
+            $oContainer = Factory::createContainer()
+                ->setActiveRegion($regionsCollection[$regionCode])
+                ->setActiveModel($modelsCollection[$modelCode])
+                ->setActiveModification($modificationsCollection[$modificationCode]
+                    ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
+            unset($complectations);
+            $this->filter($oContainer);
+
+
+
+
+            $result = $this->model()->getComplectationsMonth($role, $modificationCode, $year, $korobka);
+
+
+            return $this->render($this->bundle().':03_complectation_month.html.twig', array(
                 'result' => $result,
                 'oContainer' => $oContainer,
                 'parameters' => $parameters

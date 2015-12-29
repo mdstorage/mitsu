@@ -11,14 +11,19 @@ catalog_bmw_complectations:
   path:         /bmw/catalog/2/{regionCode}/{modelCode}/{modificationCode}
   defaults:     {_controller: CatalogBmwBundle:Catalog:complectations1}
 
-catalog_bmw_complectation_data:
-  path:         /bmw/catalog/10
-  defaults:     {_controller: CatalogBmwBundle:Catalog:complectation_data}
+catalog_bmw_complectation_korobka:
+  path:         /bmw/catalog/12
+  defaults:     {_controller: CatalogBmwBundle:Catalog:complectation_korobka}
   requirements: {_method: POST}
 
-complectation_catalog_data:
+catalog_bmw_complectation_year:
+  path:         /bmw/catalog/10
+  defaults:     {_controller: CatalogBmwBundle:Catalog:complectation_year}
+  requirements: {_method: POST}
+
+catalog_bmw_complectation_month:
   path:         /bmw/catalog/11
-  defaults:     {_controller: CatalogBmwBundle:Catalog:complectation_catalog_data}
+  defaults:     {_controller: CatalogBmwBundle:Catalog:complectation_month}
   requirements: {_method: POST}
 
 catalog_bmw_groups:

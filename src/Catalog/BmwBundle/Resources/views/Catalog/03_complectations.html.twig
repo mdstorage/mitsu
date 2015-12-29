@@ -31,7 +31,7 @@
                          $.ajax({
                              type:   'POST',
                              async:  false,
-                             url:    "{{ path('catalog_bmw_complectation_data') }}",
+                             url:    "{{ path('catalog_bmw_complectation_korobka') }}",
                              data:   { role: $("#optionsRadios{{ complectation.getCode }}").val(), modificationCode: '{{ oContainer.getActiveModification.getCode }}',
                                  regionCode: '{{ oContainer.getActiveRegion.getCode }}',
                                  modelCode: '{{ oContainer.getActiveModel.getCode }}'},
@@ -51,17 +51,23 @@
                 <div id="vin-result"></div>
         </div>
 
-           {% block vinScript %}
+        {% for complectation in oContainer.getActiveModification.getComplectations %}
+        {% block vinScript %}
                 <script>
 
 
                     $(document).ready(function(){
-                        $("#optionsRadiosL").prop("checked", true);
-                        $('#optionsRadiosL').trigger('change');
+                        var count = $('.radio').size();
+                        if (count == 1) {$("#optionsRadios{{ complectation.getCode }}").prop("checked", true);
+                            $("#optionsRadios{{ complectation.getCode }}").trigger('change');
+                        }
+                        {#$('#optionsRadiosM').trigger('change');#}
 
                     });
                 </script>
+
             {% endblock vinScript %}
+        {% endfor %}
         {#
                             <input type="button" class="btn btn-info" value="Удалить статью" id="vin-button{{ post.id }}"/>
                        <div id="vin-result"></div>
