@@ -9,22 +9,37 @@ catalog_bmw_modifications:
 
 catalog_bmw_complectations:
   path:         /bmw/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogBmwBundle:Catalog:complectations}
+  defaults:     {_controller: CatalogBmwBundle:Catalog:complectations1}
+
+catalog_bmw_complectation_korobka:
+  path:         /bmw/catalog/12
+  defaults:     {_controller: CatalogBmwBundle:Catalog:complectation_korobka}
+  requirements: {_method: POST}
+
+catalog_bmw_complectation_year:
+  path:         /bmw/catalog/10
+  defaults:     {_controller: CatalogBmwBundle:Catalog:complectation_year}
+  requirements: {_method: POST}
+
+catalog_bmw_complectation_month:
+  path:         /bmw/catalog/11
+  defaults:     {_controller: CatalogBmwBundle:Catalog:complectation_month}
+  requirements: {_method: POST}
 
 catalog_bmw_groups:
-  path:         /bmw/catalog/3/{regionCode}/{modelCode}/{modificationCode}
+  path:         /bmw/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
   defaults:     {_controller: CatalogBmwBundle:Catalog:groups}
 
 catalog_bmw_subgroups:
-  path:         /bmw/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  path:         /bmw/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
   defaults:     {_controller: CatalogBmwBundle:Catalog:subgroups}
 
 catalog_bmw_schemas:
-  path:         /bmw/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  path:         /bmw/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogBmwBundle:Catalog:schemas}
 
 catalog_bmw_schema:
-  path:         /bmw/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  path:         /bmw/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
   defaults:     {_controller: CatalogBmwBundle:Catalog:schema}
 
 catalog_bmw_articuls:
@@ -48,19 +63,19 @@ vin_bmw_result:
   requirements: {_method: POST}
 
 vin_bmw_groups:
-  path:         /bmw/vin/3/{regionCode}/{modelCode}/{modificationCode}
+  path:         /bmw/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
   defaults:     {_controller: CatalogBmwBundle:Vin:groups}
 
 vin_bmw_subgroups:
-  path:         /bmw/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  path:         /bmw/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
   defaults:     {_controller: CatalogBmwBundle:Vin:subgroups}
 
 vin_bmw_schemas:
-  path:         /bmw/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  path:         /bmw/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogBmwBundle:Vin:schemas}
 
 vin_bmw_schema:
-  path:         /bmw/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  path:         /bmw/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
   defaults:     {_controller: CatalogBmwBundle:Vin:schema}
 
 vin_bmw_articuls:
@@ -92,19 +107,19 @@ articul_bmw_complectations:
   defaults:     {_controller: CatalogBmwBundle:Articul:bmwArticulComplectations}
 
 articul_bmw_groups:
-  path:         /bmw/articul/5/{regionCode}/{modelCode}/{modificationCode}
+  path:         /bmw/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
   defaults:     {_controller: CatalogBmwBundle:Articul:bmwArticulgroups}
 
 articul_bmw_subgroups:
-  path:         /bmw/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  path:         /bmw/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
   defaults:     {_controller: CatalogBmwBundle:Articul:bmwArticulSubgroups}
 
 articul_bmw_schemas:
-  path:         /bmw/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  path:         /bmw/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogBmwBundle:Articul:bmwArticulSchemas}
 
 articul_bmw_schema:
-  path:         /bmw/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  path:         /bmw/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
   defaults:     {_controller: CatalogBmwBundle:Articul:bmwArticulSchema}
 
 articul_bmw_articuls:

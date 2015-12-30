@@ -2,11 +2,10 @@
 {% use 'CatalogBmwBundle::bmw.base.html.twig' %}
 {% block breadcrumbs %}
    <a href="{{ path('vin_bmw') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }}, 
-   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>
+   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }}, {{ oContainer.getActiveComplectation.getRuname}})</a>
     / Группа запчастей
 {% endblock breadcrumbs %}
-{% block complectation %}
-{% endblock complectation %}
+
 
 {% block body %}
     {% block head %}<h3>Выбрать группу запчастей:</h3>{% endblock head %}

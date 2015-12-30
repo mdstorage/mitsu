@@ -1,0 +1,69 @@
+{% block body %}
+    {% block head %}<h3>Коробка передач:</h3>{% endblock head %}
+    {% block complectations %}
+        <div class="row">
+
+            <div class="complectations">
+                {% set role = parameters['role']%}
+
+
+                {% for complectation in oContainer.getActiveModification.getComplectations %}
+
+
+                    <div class="col-lg-2">   
+
+                        <div class="radio">
+
+                            <input type="radio" name="optionsRadiosKor" id="optionsRadios{{ complectation.getCode }}" value="{{ complectation.getCode }}">
+                            {{ complectation.getRuname }}
+
+                        </div>
+                    </div>
+                 <script>
+                     $("#optionsRadios{{ complectation.getCode }}").on('change', function(){
+                         $.ajax({
+                             type:   'POST',
+                             async:  false,
+                             url:    "{{ path('catalog_bmw_complectation_year') }}",
+                             data:   { korobka: $("#optionsRadios{{ complectation.getCode }}").val(),
+                                 modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                                 regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                                 modelCode: '{{ oContainer.getActiveModel.getCode }}',
+                                 role: '{{ role }}'},
+                             success: function(data) {
+                                 $("#korobka").html(data);
+                             }
+                         });
+                     });
+
+
+                 </script>
+                {% endfor %}
+
+            </div>
+         </div>
+        <div class="row">
+                <div id="korobka"></div>
+        </div>
+
+           {% block vinScript %}
+                <script>
+
+
+                    $(document).ready(function(){
+                        $("#optionsRadiosM").prop("checked", true);
+                        $('#optionsRadiosM').trigger('change');
+                        $("#optionsRadiosN").prop("checked", true);
+                        $('#optionsRadiosN').trigger('change');
+
+                    });
+                </script>
+            {% endblock vinScript %}
+        {#
+                            <input type="button" class="btn btn-info" value="Удалить статью" id="vin-button{{ post.id }}"/>
+                       <div id="vin-result"></div>
+
+
+                    #}
+    {% endblock complectations %}
+{% endblock body %}
