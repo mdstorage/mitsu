@@ -104,7 +104,7 @@ class BmwCatalogModel extends CatalogModel{
         $modifications = array();
         foreach($aData as $item){
             $modifications[$item['fztyp_mospid']] = array(
-                Constants::NAME     => $item['fztyp_erwvbez'].' '.($item['fztyp_getriebe']==='A'?'АКПП':'').($item['fztyp_getriebe']==='M'?'MКПП':''),
+                Constants::NAME     => $item['fztyp_erwvbez'],
                 Constants::OPTIONS  => array());
 
         }
@@ -119,12 +119,12 @@ class BmwCatalogModel extends CatalogModel{
     public function getComplectations($regionCode, $modelCode, $modificationCode)
     {
         $sql = "
-        SELECT fztyp_lenkung, fgstnr_prod
+        SELECT fztyp_lenkung, fgstnr_prod, fztyp_getriebe
         FROM w_fztyp, w_fgstnr
         WHERE fztyp_mospid = :modificationCode AND fztyp_mospid = fgstnr_mospid AND fgstnr_typschl = fztyp_typschl
         ";
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode', substr($modificationCode, 0, strpos($modificationCode, '_')));
+        $query->bindValue('modificationCode', $modificationCode);
         $query->execute();
 
         $complectations = array();
@@ -133,13 +133,13 @@ class BmwCatalogModel extends CatalogModel{
         foreach ($aData as &$item) {
 
 
-            $complectations[$item['fztyp_lenkung'].$item['fgstnr_prod']] = array(
-                Constants::NAME => $item['fztyp_lenkung'].$item['fgstnr_prod'],
+            $complectations[$item['fztyp_lenkung'].$item['fztyp_getriebe'].$item['fgstnr_prod']] = array(
+                Constants::NAME => $item['fztyp_lenkung'].$item['fztyp_getriebe'].$item['fgstnr_prod'],
                 Constants::OPTIONS => array()
             );
         }
 
-        return ($complectations);
+        return $complectations;
 
     }
 
@@ -421,6 +421,8 @@ bildtaf_grafikid Id,
 grafik_blob BlobMod
 from w_bildtaf_suche, w_ben_gk, w_bildtaf, w_grafik
 where bildtafs_hg = :groupCode and bildtafs_mospid = :modificationCode and bildtafs_btnr = bildtaf_btnr and bildtaf_hg = :groupCode and bildtaf_fg = :subGroupCode
+and (bildtafs_lenkg ='' OR bildtafs_lenkg = :role) and (bildtafs_automatik ='' OR bildtafs_automatik = :korobka) and
+(bildtafs_eins ='' OR bildtafs_eins <= :dataCar) and (bildtafs_auslf ='' OR :dataCar <= bildtafs_auslf)
 and bildtaf_sicher = 'N' and bildtaf_textc = ben_textcode and ben_iso = 'ru' and ben_regiso = '  ' and bildtaf_grafikid = grafik_grafikid
 order by Pos
 ";
@@ -429,6 +431,9 @@ order by Pos
         $query->bindValue('modificationCode',  $modificationCode);
         $query->bindValue('subGroupCode',  $subGroupCode);
         $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('role',  substr($complectationCode, 0, 1));
+        $query->bindValue('korobka',  substr($complectationCode, 1, 1));
+        $query->bindValue('dataCar',  substr($complectationCode, 2, 8));
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -510,7 +515,10 @@ btzeilen_bedkez_pg Teil_BedkezPG,
 btzeilenv_bed_art BedingungArt,
 btzeilenv_bed_alter BedingungAlter
 from w_btzeilen_verbauung
-inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos)
+inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos
+and (btzeilen_lenkg ='' OR btzeilen_lenkg = :role) and (btzeilen_automatik ='' OR btzeilen_automatik = :korobka) and
+(btzeilen_eins ='0' OR btzeilen_eins <= :dataCar) and (btzeilen_auslf ='0' OR :dataCar <= btzeilen_auslf)
+)
 inner join w_teil on (btzeilen_sachnr = teil_sachnr)
 inner join w_ben_gk tben on (teil_textcode = tben.ben_textcode and tben.ben_iso = 'ru' and tben.ben_regiso = '')
 left join w_kompl_satz on (btzeilen_sachnr = ks_sachnr_satz and ks_marke_tps = 'BMW')
@@ -526,6 +534,9 @@ where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId orde
     	$query = $this->conn->prepare($sqlPnc);
         $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('subGroupId', $options['GrId']);
+        $query->bindValue('role',  substr($complectationCode, 0, 1));
+        $query->bindValue('korobka',  substr($complectationCode, 1, 1));
+        $query->bindValue('dataCar',  substr($complectationCode, 2, 8));
         $query->execute();
 
         $aPncs = $query->fetchAll();
@@ -705,7 +716,10 @@ btzeilen_bedkez_pg Teil_BedkezPG,
 btzeilenv_bed_art BedingungArt,
 btzeilenv_bed_alter BedingungAlter
 from w_btzeilen_verbauung
-inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos)
+inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos
+and (btzeilen_lenkg ='' OR btzeilen_lenkg = :role) and (btzeilen_automatik ='' OR btzeilen_automatik = :korobka) and
+(btzeilen_eins ='0' OR btzeilen_eins <= :dataCar) and (btzeilen_auslf ='0' OR :dataCar <= btzeilen_auslf)
+)
 inner join w_teil on (btzeilen_sachnr = teil_sachnr)
 inner join w_ben_gk tben on (teil_textcode = tben.ben_textcode and tben.ben_iso = 'ru' and tben.ben_regiso = '  ')
 left join w_komm nuch on (btzeilen_kommnach = nuch.komm_id)
@@ -720,11 +734,7 @@ left join w_si on (si_sachnr = teil_sachnr)
 left join w_bildtaf_bnbben on (bildtafb_btnr = btzeilenv_btnr and bildtafb_bildposnr = btzeilen_bildposnr)
 left join w_ben_gk bnbben on (bildtafb_textcode = bnbben.ben_textcode and bnbben.ben_iso = 'ru' and bnbben.ben_regiso = '  ')
 where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId and (btzeilen_bildposnr = :pncCode or btzeilen_bildposnr = '--')
-AND (CASE WHEN btzeilen_eins NOT LIKE '0' THEN :complectationCode >= btzeilen_eins ELSE btzeilen_eins <> '1' END)
-AND (CASE WHEN btzeilen_auslf NOT LIKE '0' THEN btzeilen_auslf >= :complectationCode  ELSE btzeilen_auslf <> '1' END)
-AND (CASE WHEN btzeilen_lenkg NOT LIKE '' THEN btzeilen_lenkg = :role  ELSE btzeilen_lenkg <> '1' END)
-
- order by Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
+order by Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
 ";
 
         $query = $this->conn->prepare($sqlPnc);
@@ -732,7 +742,9 @@ AND (CASE WHEN btzeilen_lenkg NOT LIKE '' THEN btzeilen_lenkg = :role  ELSE btze
         $query->bindValue('complectationCode', substr($complectationCode,1,strlen($complectationCode)-1));
         $query->bindValue('subGroupId', $options['GrId']);
         $query->bindValue('pncCode', $pncCode);
-        $query->bindValue('role', substr($complectationCode,0,1));
+        $query->bindValue('role',  substr($complectationCode, 0, 1));
+        $query->bindValue('korobka',  substr($complectationCode, 1, 1));
+        $query->bindValue('dataCar',  substr($complectationCode, 2, 8));
 
         $query->execute();
 
