@@ -41,7 +41,8 @@ class BmwArticulModel extends BmwCatalogModel{
     {
 
         $sql = "
-        select fztyp_baureihe from w_fztyp, w_btzeilen_verbauung
+        select fztyp_karosserie Kuzov, fztyp_baureihe Baureihe
+        from w_fztyp, w_btzeilen_verbauung
         where btzeilenv_sachnr = :articulCode and fztyp_mospid = btzeilenv_mospid and fztyp_karosserie NOT LIKE 'ohne'
         and fztyp_ktlgausf = :regionCode
         ";
@@ -57,7 +58,7 @@ class BmwArticulModel extends BmwCatalogModel{
 
         foreach($aData as $item)
         {
-            $models[] = $item['fztyp_baureihe'];
+            $models[] = $item['Baureihe'].'_'.$item['Kuzov'];
 
         }
 
@@ -67,7 +68,8 @@ class BmwArticulModel extends BmwCatalogModel{
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
         $sql = "
-        select btzeilenv_mospid from w_btzeilen_verbauung
+        select btzeilenv_mospid
+        from w_btzeilen_verbauung
         where btzeilenv_sachnr = :articulCode
         ";
 
@@ -86,88 +88,28 @@ class BmwArticulModel extends BmwCatalogModel{
         }
 
         return array_unique($modifications);
+
     }
     
     public function getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode)
     {
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-        $ghg = $this->getComplectations($regionCode, $modelCode, $modificationCode);
-        $test = array();
-
-
-        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
-
         $sql = "
-        select * from cats_table
-        where detail_code = :articulCode
-        AND catalog_code = :catCode
-
+        select *
+        from w_btzeilen_verbauung
+        inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos)
+        where btzeilenv_sachnr = :articulCode and btzeilenv_mospid = :modificationCode
         ";
-
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', $articul);
-        $query->bindValue('catCode', $catCode);
+        $query->bindValue('articulCode', substr($articul, 4, strlen($articul)));
+        $query->bindValue('modificationCode', $modificationCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
-        $aDataCatalog = array();
 
-        if ($aData)
-        {
+var_dump($aData); die;
 
-            foreach ($aData as $item) {
-                $sqlCatalog = "
-        SELECT model_index
-        FROM vin_model
-        WHERE model =:modificationCode
-        ";
-
-                $query = $this->conn->prepare($sqlCatalog);
-                $query->bindValue('modificationCode', $modificationCode);
-                $query->execute();
-
-                $aDataCatalog[] = $query->fetchAll();
-            }
-
-
-            $complectations = array();
-
-            foreach ($aDataCatalog as $item2) {
-                foreach ($item2 as $item1) {
-                    $complectations[] = $item1['model_index'];
-                }
-
-            }
-        }
-
-        foreach ($ghg as $indexCompl => $valueCompl)
-        {
-            foreach ($aData as $index => $value)
-            {
-                $value2 = str_replace(substr($value['model_options'], 0, strpos($value['model_options'], '|')), '', $value['model_options']);
-                $articulOptions = explode('|', str_replace(';', '', $value2));
-            /*  $complectationOptions = $ghg['37454']['options']['option2'];*/
-                $complectationOptions = $valueCompl['options']['option2'];
-
-                foreach ($articulOptions as $index1 => $value1) {
-                    if (($value1 == '') || ($index1 > (count($complectationOptions)-1))) {
-                        unset ($articulOptions[$index1]);
-                    }
-                }
-                $cd = count($articulOptions);
-                $cdc = count(array_intersect_assoc($articulOptions, $complectationOptions));
-
-                if ($cd == $cdc)
-                {
-                  $test[] = $indexCompl;
-                }
-
-            }
-
-        }
-
-        return (array_intersect(array_unique($complectations), array_unique($test)));
+        return array();
     }
     
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)

@@ -751,19 +751,22 @@ order by Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
         $aArticuls = $query->fetchAll();
 
 
+
         $nach = array();
-        $nachIndex = array();
+
 
 
         foreach ($aArticuls as $index => $value)
         {
 
-            if (($value['Bildnummer'] != '--') && (iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='только в комбинации с'))
+            if (($value['Bildnummer'] != '--') && ((iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='только в комбинации с') ||
+                    (iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='подходит только при')))
             {
                 $nach[]=$value['KommNach'];
             }
 
         }
+
 
         foreach ($aArticuls as $index => $value)
         {
@@ -777,37 +780,49 @@ order by Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
         $aPred = array();
         $aCurrent = array();
         $aNext = array();
+        $nachIndex = 0;
+
 
         foreach ($aArticuls as $index => $value)
         {
 
-            if (($value['Bildnummer'] != '--') &&  (iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='только в комбинации с'))
+            if (($value['Bildnummer'] != '--') && ((iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='только в комбинации с') ||
+            (iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='подходит только при')))
             {
-                $nachIndex[] = $index;
-                $nachPos[] = $value['Pos'];
+                $nachIndex = $index;
+                $nachPos = $value['Pos'];
 
 
             }
 
         }
 
-
        $min = 10;
         foreach ($aArticuls as $index => $value)
         {
-                if (($value['Bildnummer'] == '--') && ($value['Pos'] > $aArticuls[$nachIndex[0]]['Pos'])
-                    && (($value['Pos'] - $aArticuls[$nachIndex[0]]['Pos']) < $min)) {
-                    $min =  $value['Pos'] - $aArticuls[$nachIndex[0]]['Pos'];
+                if (($value['Bildnummer'] == '--') && ($value['Pos'] > $aArticuls[$nachIndex]['Pos'])
+                    && (($value['Pos'] - $aArticuls[$nachIndex]['Pos']) < $min)) {
+                    $min =  $value['Pos'] - $aArticuls[$nachIndex]['Pos'];
                     $minIndex = $index;
                     $minPos = $value['Pos'];
 
                 }
         }
 
-        $bArticuls = array();
+
+        foreach ($aArticuls as $index => $value)
+        {
+            if (($value['Bildnummer'] == '--') && (($index==$minIndex)))
+            {
+                $pos = $value['Pos'];
+
+            }
+        }
+
      foreach ($aArticuls as $index => $value)
         {
-            if (($value['Bildnummer'] == '--') && (($index!=$minIndex) && ($index!=($minIndex+1)))) {
+
+            if (($value['Bildnummer'] == '--') && ((($value['Pos']-$pos) > 2) || ($value['Pos']-$pos) < 0)) {
                unset ($aArticuls[$index]);
             }
         }
