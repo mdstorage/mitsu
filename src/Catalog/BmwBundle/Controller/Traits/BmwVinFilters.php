@@ -31,6 +31,8 @@ trait BmwVinFilters {
         return $oContainer; 
     }
 
+
+
     public function vinGroupFilter($oContainer, $parameters)
     {
         

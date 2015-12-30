@@ -94,10 +94,13 @@ class BmwArticulModel extends BmwCatalogModel{
     public function getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode)
     {
         $sql = "
-        select *
+        select fztyp_lenkung, fztyp_getriebe, fgstnr_prod
         from w_btzeilen_verbauung
         inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos)
-        where btzeilenv_sachnr = :articulCode and btzeilenv_mospid = :modificationCode
+        left join w_fztyp on (fztyp_mospid = btzeilenv_mospid)
+        left join w_fgstnr on (fgstnr_mospid = fztyp_mospid)
+        where btzeilenv_sachnr = :articulCode and btzeilenv_mospid = :modificationCode and (fgstnr_prod <= btzeilen_auslf
+        or fgstnr_prod >= btzeilen_eins)
         ";
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', substr($articul, 4, strlen($articul)));
@@ -105,12 +108,159 @@ class BmwArticulModel extends BmwCatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
+        $complectations = array();
+
+        foreach($aData as $item)
+        {
+            $complectations[] = $item['fztyp_lenkung'].$item['fztyp_getriebe'].$item['fgstnr_prod'];
+        }
 
 
-var_dump($aData); die;
-
-        return array();
+        return array_unique($complectations);
     }
+
+    public function getArticulRole($articul, $regionCode, $modelCode, $modificationCode)
+    {
+        $sql = "
+        select fztyp_lenkung, fztyp_getriebe, fgstnr_prod
+        from w_btzeilen_verbauung
+        inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos)
+        left join w_fztyp on (fztyp_mospid = btzeilenv_mospid)
+        left join w_fgstnr on (fgstnr_mospid = fztyp_mospid)
+        where btzeilenv_sachnr = :articulCode and btzeilenv_mospid = :modificationCode and (fgstnr_prod <= btzeilen_auslf
+        or fgstnr_prod >= btzeilen_eins)
+        ";
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', substr($articul, 4, strlen($articul)));
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->execute();
+
+        $role = array();
+        $aData = $query->fetchAll();
+
+
+        foreach ($aData as &$item) {
+
+
+            $role[$item['fztyp_lenkung']] = array(
+                Constants::NAME => ($item['fztyp_lenkung'] == 'L')?'Левый руль':'Правый руль',
+                Constants::OPTIONS => array()
+            );
+        }
+
+
+        return ($role);
+    }
+
+    public function getArticulComplectationsKorobka($articul, $role, $modificationCode)
+    {
+
+        $sql = "
+        select fztyp_getriebe
+        from w_btzeilen_verbauung
+        inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos)
+        left join w_fztyp on (fztyp_mospid = btzeilenv_mospid)
+        left join w_fgstnr on (fgstnr_mospid = fztyp_mospid)
+        where btzeilenv_sachnr = :articulCode and btzeilenv_mospid = :modificationCode and (fgstnr_prod <= btzeilen_auslf
+        or fgstnr_prod >= btzeilen_eins) and fztyp_lenkung = :role
+        ";
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', substr($articul, 4, strlen($articul)));
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('role', $role);
+        $query->execute();
+
+        $complectations = array();
+        $aData = $query->fetchAll();
+
+        foreach ($aData as $item) {
+
+
+            $complectations[$item['fztyp_getriebe']] = array(
+                Constants::NAME => $item['fztyp_getriebe'],
+                Constants::OPTIONS => array()
+            );
+        }
+
+
+        return $complectations;
+
+    }
+    public function getArticulComplectationsYear($articul, $role, $modificationCode, $korobka)
+    {
+
+        $sql = "
+        select fgstnr_prod,  fgstnr_typschl, fgstnr_mospid
+        from w_btzeilen_verbauung
+        inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos)
+        left join w_fztyp on (fztyp_mospid = btzeilenv_mospid)
+        left join w_fgstnr on (fgstnr_mospid = fztyp_mospid)
+        where btzeilenv_sachnr = :articulCode and btzeilenv_mospid = :modificationCode and (fgstnr_prod <= btzeilen_auslf
+        or fgstnr_prod >= btzeilen_eins) and fztyp_lenkung = :role and fztyp_getriebe = :korobka
+        ";
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', substr($articul, 4, strlen($articul)));
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('role', $role);
+        $query->bindValue('korobka', $korobka);
+        $query->execute();
+
+
+        $complectations = array();
+        $aData = $query->fetchAll();
+
+
+        foreach ($aData as &$item) {
+
+
+            $complectations[substr($item['fgstnr_prod'], 0, 4)] = array(
+                Constants::NAME => substr($item['fgstnr_prod'], 0, 4),
+                Constants::OPTIONS => array('modificationCode' => $item['fgstnr_mospid'],
+                    'roleCode' => $item['fgstnr_typschl'])
+            );
+        }
+
+        return $complectations;
+    }
+
+    public function getArticulComplectationsMonth($articul, $role, $modificationCode, $year, $korobka)
+    {
+        $sql = "
+        select fgstnr_prod,  fztyp_lenkung, fztyp_getriebe
+        from w_btzeilen_verbauung
+        inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos)
+        left join w_fztyp on (fztyp_mospid = btzeilenv_mospid)
+        left join w_fgstnr on (fgstnr_mospid = fztyp_mospid)
+        where btzeilenv_sachnr = :articulCode and btzeilenv_mospid = :modificationCode and (fgstnr_prod <= btzeilen_auslf
+        or fgstnr_prod >= btzeilen_eins) and fztyp_lenkung = :role and fztyp_getriebe = :korobka AND fgstnr_prod LIKE :years
+        ";
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', substr($articul, 4, strlen($articul)));
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('role', $role);
+        $query->bindValue('korobka', $korobka);
+        $query->bindValue('years', '%'.$year.'%');
+        $query->execute();
+
+
+        $complectations = array();
+        $aData = $query->fetchAll();
+
+
+        foreach ($aData as $item) {
+
+
+            $complectations[$item['fztyp_lenkung'].$item['fztyp_getriebe'].$item['fgstnr_prod']] = array(
+                Constants::NAME => substr($item['fgstnr_prod'],4,2),
+                Constants::OPTIONS => array()
+            );
+        }
+
+        return $complectations;
+
+    }
+
+
     
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {

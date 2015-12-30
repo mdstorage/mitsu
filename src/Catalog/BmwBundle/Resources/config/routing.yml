@@ -104,7 +104,23 @@ articul_bmw_modifications:
 
 articul_bmw_complectations:
   path:         /bmw/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogBmwBundle:Articul:bmwArticulComplectations}
+  defaults:     {_controller: CatalogBmwBundle:Articul:bmwArticulcomplectations1}
+
+articul_bmw_complectation_korobka:
+  path:         /bmw/articul/12
+  defaults:     {_controller: CatalogBmwBundle:Articul:bmwArticulcomplectation_korobka}
+  requirements: {_method: POST}
+
+articul_bmw_complectation_year:
+  path:         /bmw/articul/10
+  defaults:     {_controller: CatalogBmwBundle:Articul:bmwArticulcomplectation_year}
+  requirements: {_method: POST}
+
+articul_bmw_complectation_month:
+  path:         /bmw/articul/11
+  defaults:     {_controller: CatalogBmwBundle:Articul:bmwArticulcomplectation_month}
+  requirements: {_method: POST}
+
 
 articul_bmw_groups:
   path:         /bmw/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}

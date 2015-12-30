@@ -1,0 +1,16 @@
+<div class="modifications">
+    <div class="row">
+
+        {% for complectation in oContainer.getActiveModification.getComplectations %}
+
+
+    <a href="{{ path('articul_bmw_groups', parameters|merge({'complectationCode': complectation.getCode})) }}">
+
+        <b>    {{ complectation.getRuname|bmw_date_month_convertor }} </b>
+    </a> <br/>
+
+
+
+{% endfor %}
+    </div>
+</div>
