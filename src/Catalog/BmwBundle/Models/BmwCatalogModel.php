@@ -756,11 +756,12 @@ order by Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
 
 
 
+
         foreach ($aArticuls as $index => $value)
         {
 
             if (($value['Bildnummer'] != '--') && ((iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='только в комбинации с') ||
-                    (iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='подходит только при')))
+                    (iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='подходит только при') || $value['KommNach']!='0'))
             {
                 $nach[]=$value['KommNach'];
             }
@@ -777,6 +778,7 @@ order by Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
             }
 
         }
+
         $aPred = array();
         $aCurrent = array();
         $aNext = array();
@@ -787,11 +789,11 @@ order by Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
         {
 
             if (($value['Bildnummer'] != '--') && ((iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='только в комбинации с') ||
-            (iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='подходит только при')))
+            (iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='подходит только при') || $value['KommNach']!='0'))
             {
+
                 $nachIndex = $index;
                 $nachPos = $value['Pos'];
-
 
             }
 
@@ -809,23 +811,27 @@ order by Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
                 }
         }
 
-
+        $ba = array();
         foreach ($aArticuls as $index => $value)
         {
             if (($value['Bildnummer'] == '--') && (($index==$minIndex)))
             {
+
                 $pos = $value['Pos'];
 
             }
         }
 
+
      foreach ($aArticuls as $index => $value)
         {
 
             if (($value['Bildnummer'] == '--') && ((($value['Pos']-$pos) > 2) || ($value['Pos']-$pos) < 0)) {
-               unset ($aArticuls[$index]);
+
+                unset ($aArticuls[$index]);
             }
         }
+
 
 
 

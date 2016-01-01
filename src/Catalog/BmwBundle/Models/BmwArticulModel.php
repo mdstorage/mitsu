@@ -10,6 +10,7 @@ namespace Catalog\BmwBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\BmwBundle\Components\BmwConstants;
+use Symfony\Component\HttpFoundation\Request;
 
 class BmwArticulModel extends BmwCatalogModel{
 
@@ -326,6 +327,7 @@ class BmwArticulModel extends BmwCatalogModel{
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
 
+
         $sql = "
         SELECT grafik_blob
         FROM w_bildtaf, w_btzeilen_verbauung, w_grafik
@@ -365,31 +367,54 @@ class BmwArticulModel extends BmwCatalogModel{
      public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
 
+        $articulCode = substr($articul, 4, strlen($articul));
         $sql = "
-        SELECT btzeilen_bildposnr
-        FROM w_bildtaf, w_btzeilen
-        WHERE btzeilen_sachnr = :articul
-        and bildtaf_btnr = btzeilen_btnr
-        and bildtaf_hg = :groupCode
-        and bildtaf_fg = :subGroupCode
-        and bildtaf_grafikid = :schemaCode
+        SELECT btzeilenv_mospid, btzeilenv_btnr, btzeilenv_pos Pos, btzeilen_bildposnr Bildnummer, btzeilenv_sachnr, bildtafs_hg, bildtafs_fg, btzeilen_automatik, btzeilen_lenkg,
+        btzeilen_eins, btzeilen_auslf
+        FROM w_btzeilen_verbauung
+        left JOIN w_bildtaf_suche ON (bildtafs_mospid = :modificationCode and bildtafs_fg = :subGroupCode and bildtafs_hg = :groupCode)
+        INNER JOIN w_btzeilen ON (btzeilenv_btnr = btzeilen_btnr AND btzeilenv_pos = btzeilen_pos)
+        WHERE btzeilenv_mospid = :modificationCode
+        AND btzeilenv_btnr = bildtafs_btnr and (btzeilen_lenkg ='' OR btzeilen_lenkg = :role) and (btzeilen_automatik ='' OR btzeilen_automatik = :korobka) and
+(btzeilen_eins ='0' OR btzeilen_eins <= :dataCar) and (btzeilen_auslf ='0' OR :dataCar <= btzeilen_auslf)
         ";
 
+
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', substr($articul, 4, strlen($articul)));
         $query->bindValue('groupCode', $groupCode);
         $query->bindValue('subGroupCode', $subGroupCode);
-        $query->bindValue('schemaCode', $schemaCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('role',  substr($complectationCode, 0, 1));
+        $query->bindValue('korobka',  substr($complectationCode, 1, 1));
+        $query->bindValue('dataCar',  substr($complectationCode, 2, 8));
         $query->execute();
 
         $aData = $query->fetchAll();
 
-        $pncs = array();
 
-        foreach($aData as $item)
+
+        foreach ($aData as $index => $value)
         {
-            $pncs[]=$item['btzeilen_bildposnr'];
+            if (($value['Bildnummer'] == '--') && ($value['btzeilenv_sachnr'] == $articulCode))
+            {
+              $Pos = $value ['Pos'];
+            }
         }
+        $minPos = array();
+        $min = 10;
+        $pncs = array();
+        foreach ($aData as $index => $value)
+        {
+            if (($value['Bildnummer'] != '--') && ($value['Pos'] < $Pos)
+                && (($Pos - $value['Pos']) < $min)) {
+                $min =  $Pos - $value['Pos'];
+                $minIndex = $index;
+                $minPos[] = $value['Pos'];
+                $pncs[] = $value['Bildnummer'];
+
+            }
+        }
+
         return array_unique($pncs);
     }
 } 
