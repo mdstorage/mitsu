@@ -21,6 +21,7 @@
 {% block subGroupPath %}{{ path('catalog_bmw_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
 {% block pncScript %}
     {% if pnc.isActive %}
+
         <script>
             $(document).ready(function(){
                 {% block pncClick %}

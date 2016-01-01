@@ -390,9 +390,16 @@ class BmwArticulModel extends BmwCatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
+        $pncs = array();
+
+        foreach ($aData as $index => $value) {
+            if (($value['Bildnummer'] != '--') && ($value['btzeilenv_sachnr'] == $articulCode)) {
+                $pncs[] = $value['Bildnummer'];
+            }
+        }
 
 
-
+        $Pos = NULL;
         foreach ($aData as $index => $value)
         {
             if (($value['Bildnummer'] == '--') && ($value['btzeilenv_sachnr'] == $articulCode))
@@ -400,18 +407,21 @@ class BmwArticulModel extends BmwCatalogModel{
               $Pos = $value ['Pos'];
             }
         }
-        $minPos = array();
-        $min = 10;
-        $pncs = array();
-        foreach ($aData as $index => $value)
-        {
-            if (($value['Bildnummer'] != '--') && ($value['Pos'] < $Pos)
-                && (($Pos - $value['Pos']) < $min)) {
-                $min =  $Pos - $value['Pos'];
-                $minIndex = $index;
-                $minPos[] = $value['Pos'];
-                $pncs[] = $value['Bildnummer'];
 
+        if ($Pos) {
+            $minPos = array();
+            $min = 10;
+
+            foreach ($aData as $index => $value) {
+                if (($value['Bildnummer'] != '--') && ($value['Pos'] < $Pos)
+                    && (($Pos - $value['Pos']) < $min)
+                ) {
+                    $min = $Pos - $value['Pos'];
+                    $minIndex = $index;
+                    $minPos[] = $value['Pos'];
+                    $pncs[] = $value['Bildnummer'];
+
+                }
             }
         }
 
