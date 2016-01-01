@@ -5,10 +5,11 @@ namespace Catalog\BmwBundle\Controller;
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Controller\ArticulController as BaseController;
 use Symfony\Component\HttpFoundation\Request;
-use Catalog\BmwBundle\Controller\Traits\BmwVinFilters;
+use Catalog\BmwBundle\Controller\Traits\BmwArticulFilters;
+use Catalog\CommonBundle\Components\Factory;
 
 class ArticulController extends BaseController{
-use BmwVinFilters;
+use BmwArticulFilters;
     public function bundle()
     {
         return 'CatalogBmwBundle:Articul';
@@ -45,17 +46,173 @@ use BmwVinFilters;
     }
     
        
-    public function bmwArticulComplectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
+    public function bmwArticulcomplectations1Action(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
     {
-       $articul = $request->cookies->get(Constants::ARTICUL);
-        $articulComplectations = $this->model()->getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode);
+        $articul = $request->cookies->get(Constants::ARTICUL);
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
-        $this->addFilter('articulComplectationsFilter', array(
-            'articulComplectations' => $articulComplectations
+        $regions = $this->model()->getRegions();
+        $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
+        $models = $this->model()->getModels($regionCode);
+        $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
+        $modifications = $this->model()->getModifications($regionCode, $modelCode);
+        $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
+        $complectations = $this->model()->getArticulRole($articul, $regionCode, $modelCode, $modificationCode);
+
+
+        if(empty($complectations))
+            return $this->error($request, 'Комплектации не найдены.');
+
+        $oContainer = Factory::createContainer()
+            ->setActiveRegion($regionsCollection[$regionCode])
+            ->setActiveModel($modelsCollection[$modelCode])
+            ->setActiveModification($modificationsCollection[$modificationCode]
+                ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
+        unset($complectations);
+        $this->filter($oContainer);
+
+
+        return $this->render($this->bundle() . ':03_complectations.html.twig', array(
+            'oContainer' => $oContainer,
+            'parameters' => $parameters
         ));
-
-        return parent::complectationsAction($request, $regionCode, $modelCode, $modificationCode);
     }
+
+
+    public function bmwArticulcomplectation_korobkaAction(Request $request)
+    {
+        $articul = $request->cookies->get(Constants::ARTICUL);
+        if ($request->isXmlHttpRequest()) {
+
+            $role = $request->get('role');
+            $modificationCode = $request->get('modificationCode');
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+
+            $parameters = array(
+                'regionCode' => $regionCode,
+                'modelCode' => $modelCode,
+                'modificationCode' => $modificationCode,
+                'role' => $role
+            );
+
+            $regions = $this->model()->getRegions();
+            $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
+            $models = $this->model()->getModels($regionCode);
+            $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
+            $modifications = $this->model()->getModifications($regionCode, $modelCode);
+            $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
+            $complectations = $this->model()->getArticulComplectationsKorobka($articul, $role, $modificationCode);
+
+            if(empty($complectations))
+                return $this->error($request, 'Комплектации не найдены.');
+
+            $oContainer = Factory::createContainer()
+                ->setActiveRegion($regionsCollection[$regionCode])
+                ->setActiveModel($modelsCollection[$modelCode])
+                ->setActiveModification($modificationsCollection[$modificationCode]
+                    ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
+            unset($complectations);
+            $this->filter($oContainer);
+
+
+
+
+            return $this->render($this->bundle().':03_complectation_korobka.html.twig', array(
+                'oContainer' => $oContainer,
+                'parameters' => $parameters
+            ));
+        }
+
+    }
+
+    public function bmwArticulcomplectation_yearAction(Request $request)
+    {
+        $articul = $request->cookies->get(Constants::ARTICUL);
+        if ($request->isXmlHttpRequest()) {
+
+            $role = $request->get('role');
+            $modificationCode = $request->get('modificationCode');
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+            $korobka= $request->get('korobka');
+
+            $parameters = array(
+                'regionCode' => $regionCode,
+                'modelCode' => $modelCode,
+                'modificationCode' => $modificationCode,
+                'role' => $role,
+                'korobka' => $korobka
+            );
+
+
+
+            $result = $this->model()->getArticulComplectationsYear($articul, $role, $modificationCode, $korobka);
+
+
+            return $this->render($this->bundle().':03_complectation_year.html.twig', array(
+                'result' => $result,
+                'parameters' => $parameters
+            ));
+        }
+    }
+
+    public function bmwArticulcomplectation_monthAction(Request $request)
+    {
+        $articul = $request->cookies->get(Constants::ARTICUL);
+        if ($request->isXmlHttpRequest()) {
+
+            $role = $request->get('role');
+            $year = $request->get('year');
+            $modificationCode = $request->get('modificationCode');
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+            $korobka = $request->get('korobka');
+
+            $parameters = array(
+                'regionCode' => $regionCode,
+                'modelCode' => $modelCode,
+                'modificationCode' => $modificationCode,
+                'korobka' => $korobka
+            );
+
+
+
+
+            $regions = $this->model()->getRegions();
+            $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
+            $models = $this->model()->getModels($regionCode);
+            $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
+            $modifications = $this->model()->getModifications($regionCode, $modelCode);
+            $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
+            $complectations = $this->model()->getArticulComplectationsMonth($articul, $role, $modificationCode, $year, $korobka);
+
+            if(empty($complectations))
+                return $this->error($request, 'Комплектации не найдены.');
+
+            $oContainer = Factory::createContainer()
+                ->setActiveRegion($regionsCollection[$regionCode])
+                ->setActiveModel($modelsCollection[$modelCode])
+                ->setActiveModification($modificationsCollection[$modificationCode]
+                    ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
+            unset($complectations);
+            $this->filter($oContainer);
+
+
+
+
+            $result = $this->model()->getComplectationsMonth($role, $modificationCode, $year, $korobka);
+
+
+            return $this->render($this->bundle().':03_complectation_month.html.twig', array(
+                'result' => $result,
+                'oContainer' => $oContainer,
+                'parameters' => $parameters
+            ));
+        }
+    }
+
+
 
     public function bmwArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
     {

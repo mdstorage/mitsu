@@ -26,6 +26,13 @@ trait BmwArticulFilters {
         return $oContainer; 
     }
 
+    public function articulComplectationsFilter($oContainer, $parameters)
+    {
+
+        return $oContainer;
+    }
+
+
 
     public function vinSubgroupFilter($oContainer, $parameters)
     {
