@@ -4,13 +4,15 @@
         <div class="row">
 
             <div class="complectations">
+                <div class="col-lg-4">
+
                 {% set role = parameters['role']%}
 
 
                 {% for complectation in oContainer.getActiveModification.getComplectations %}
 
 
-                    <div class="col-lg-2">   
+                    <div class="col-lg-6">
 
                         <div class="radio">
 
@@ -39,6 +41,7 @@
 
                  </script>
                 {% endfor %}
+                </div>
 
             </div>
          </div>
@@ -46,19 +49,27 @@
                 <div id="korobka"></div>
         </div>
 
-           {% block vinScript %}
-                <script>
+        {% for complectation in oContainer.getActiveModification.getComplectations %}
+
+            <script>
 
 
-                    $(document).ready(function(){
-                        $("#optionsRadiosM").prop("checked", true);
-                        $('#optionsRadiosM').trigger('change');
-                        $("#optionsRadiosN").prop("checked", true);
-                        $('#optionsRadiosN').trigger('change');
+                $(document).ready(function(){
 
-                    });
-                </script>
-            {% endblock vinScript %}
+                    var count = $('input[name="optionsRadiosKor"]').size();
+                    if (count == 1) {$("#optionsRadios{{ complectation.getCode }}").prop("checked", true);
+                        $("#optionsRadios{{ complectation.getCode }}").trigger('change');
+                    }
+                    else
+                    {
+                        $('input[name="optionsRadiosKor"]').eq(0).prop("checked", true);
+                        $('input[name="optionsRadiosKor"]').eq(0).trigger('change');
+                    }
+
+                });
+            </script>
+
+        {% endfor %}
         {#
                             <input type="button" class="btn btn-info" value="Удалить статью" id="vin-button{{ post.id }}"/>
                        <div id="vin-result"></div>
