@@ -1,16 +1,18 @@
 {% block body %}
+<div class="row">
     {% block head %}<h3>Коробка передач:</h3>{% endblock head %}
     {% block complectations %}
         <div class="row">
 
             <div class="complectations">
+                <div class="col-lg-4">
                 {% set role = parameters['role']%}
 
 
                 {% for complectation in oContainer.getActiveModification.getComplectations %}
 
 
-                    <div class="col-lg-2">   
+                    <div class="col-lg-6">
 
                         <div class="radio">
 
@@ -40,25 +42,36 @@
                  </script>
                 {% endfor %}
 
+                </div>
             </div>
          </div>
         <div class="row">
                 <div id="korobka"></div>
         </div>
 
-           {% block vinScript %}
+
+        {% for complectation in oContainer.getActiveModification.getComplectations %}
+
                 <script>
 
 
                     $(document).ready(function(){
-                        $("#optionsRadiosM").prop("checked", true);
-                        $('#optionsRadiosM').trigger('change');
-                        $("#optionsRadiosN").prop("checked", true);
-                        $('#optionsRadiosN').trigger('change');
+
+                        var count = $('input[name="optionsRadiosKor"]').size();
+                        if (count == 1) {$("#optionsRadios{{ complectation.getCode }}").prop("checked", true);
+                            $("#optionsRadios{{ complectation.getCode }}").trigger('change');
+                        }
+                        else
+                        {
+                            $('input[name="optionsRadiosKor"]').eq(0).prop("checked", true);
+                            $('input[name="optionsRadiosKor"]').eq(0).trigger('change');
+                        }
 
                     });
                 </script>
-            {% endblock vinScript %}
+
+        {% endfor %}
+
         {#
                             <input type="button" class="btn btn-info" value="Удалить статью" id="vin-button{{ post.id }}"/>
                        <div id="vin-result"></div>
@@ -66,4 +79,5 @@
 
                     #}
     {% endblock complectations %}
-{% endblock body %}
+</div>
+    {% endblock body %}

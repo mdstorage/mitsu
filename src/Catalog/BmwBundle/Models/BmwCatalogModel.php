@@ -157,13 +157,26 @@ class BmwCatalogModel extends CatalogModel{
         $query->execute();
 
         $complectations = array();
+        $name = array();
         $aData = $query->fetchAll();
 
-        foreach ($aData as &$item) {
+        foreach ($aData as $item)
+        {
+            switch ($item['fztyp_getriebe'])
+           {
+               case 'A': $name[$item['fztyp_getriebe']] = 'АКПП'; break;
+               case 'M': $name[$item['fztyp_getriebe']] = 'MКПП'; break;
+                default: $name[$item['fztyp_getriebe']] = 'Neutral';
+           }
+
+
+        }
+
+        foreach ($aData as $item) {
 
 
             $complectations[$item['fztyp_getriebe']] = array(
-                Constants::NAME => $item['fztyp_getriebe'],
+                Constants::NAME => $name[$item['fztyp_getriebe']],
                 Constants::OPTIONS => array()
             );
         }
@@ -181,9 +194,10 @@ class BmwCatalogModel extends CatalogModel{
    
     {
         $sql = "
-        SELECT fztyp_lenkung
-        FROM w_fztyp
+        SELECT fztyp_lenkung, grafik_blob Id
+        FROM w_fztyp, w_baureihe, w_grafik
         WHERE fztyp_mospid = :modificationCode
+        AND grafik_grafikid = baureihe_grafikid AND fztyp_baureihe = baureihe_baureihe
         ";
 
         $query = $this->conn->prepare($sql);
@@ -199,7 +213,7 @@ class BmwCatalogModel extends CatalogModel{
 
             $role[$item['fztyp_lenkung']] = array(
                 Constants::NAME => ($item['fztyp_lenkung'] == 'L')?'Левый руль':'Правый руль',
-                Constants::OPTIONS => array()
+                Constants::OPTIONS => array('grafik' => $item['Id'])
             );
         }
 

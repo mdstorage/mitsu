@@ -123,10 +123,12 @@ class BmwArticulModel extends BmwCatalogModel{
     public function getArticulRole($articul, $regionCode, $modelCode, $modificationCode)
     {
         $sql = "
-        select fztyp_lenkung, fztyp_getriebe, fgstnr_prod
+        select fztyp_lenkung, fztyp_getriebe, fgstnr_prod, grafik_blob Id
         from w_btzeilen_verbauung
         inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos)
         left join w_fztyp on (fztyp_mospid = btzeilenv_mospid)
+        left join w_baureihe on (fztyp_baureihe = baureihe_baureihe)
+        left join w_grafik on (grafik_grafikid = baureihe_grafikid)
         left join w_fgstnr on (fgstnr_mospid = fztyp_mospid)
         where btzeilenv_sachnr = :articulCode and btzeilenv_mospid = :modificationCode and (fgstnr_prod <= btzeilen_auslf
         or fgstnr_prod >= btzeilen_eins)
@@ -145,7 +147,7 @@ class BmwArticulModel extends BmwCatalogModel{
 
             $role[$item['fztyp_lenkung']] = array(
                 Constants::NAME => ($item['fztyp_lenkung'] == 'L')?'Левый руль':'Правый руль',
-                Constants::OPTIONS => array()
+                Constants::OPTIONS => array('grafik' => $item['Id'])
             );
         }
 

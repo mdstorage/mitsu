@@ -12,12 +12,12 @@
 
             <div class="complectations">
 
-
+                <div class="col-lg-4">
 
                 {% for complectation in oContainer.getActiveModification.getComplectations %}
 
 
-                    <div class="col-lg-2">
+                    <div class="col-lg-6">
 
                         <div class="radio">
 
@@ -43,10 +43,14 @@
 
 
                  </script>
-                {% endfor %}
 
+                {% endfor %}
+                </div>
+                <div class="col-lg-8">
+                <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~oContainer.getActiveModification.getComplectations|first.getOption('grafik')) }}"
+                </div>
             </div>
-         </div>
+        </div>
         <div class="row">
                 <div id="vin-result"></div>
         </div>
