@@ -3,11 +3,11 @@
 {% block breadcrumbs %}
     <a href="{{ path('articul_mini_find') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('articul_mini_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> /
     <a href="{{ path('articul_mini_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> / 
     Подгруппа запчастей
 {% endblock breadcrumbs %}
-{% block complectation %}
-{% endblock complectation %}
+
 
 {% block subgroupImage %}
         {% endblock subgroupImage %}
@@ -15,6 +15,6 @@
 
 {% block subgroupItem %}
     <div id="subgroup{{ subgroup.getCode }}">
-        <a href="{{ path('articul_mini_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">{{ subgroup.getRuname }}</a>
+        <a href="{{ path('articul_mini_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
     </div>
 {% endblock subgroupItem %}

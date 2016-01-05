@@ -5,12 +5,12 @@
 {% block models %}
     <h3>Модельный ряд:</h3>
 
-    <div class="col-lg-6">
+    <div class="col-lg-3">
 
 
         <div id="result">
             {% for model in oContainer.getActiveRegion.getModels %}
-                {% if loop.index <= (modelsListLenght/2|round + 1) %}
+                {% if loop.index <= (modelsListLenght/4|round + 1) %}
                     {% block halfList %}
                         {% set modelCode = model.getCode|md5 %}
 
@@ -72,10 +72,28 @@
             {% endfor %}
         </div>
     </div>
-    <div class="col-lg-6">
+    <div class="col-lg-3">
         <div id="result">
             {% for model in oContainer.getActiveRegion.getModels %}
-                {% if loop.index > (modelsListLenght/2|round + 1) %}
+                {% if (loop.index <= (2*modelsListLenght/4|round + 1) and loop.index > (modelsListLenght/4|round + 1) ) %}
+                    {{ block('halfList') }}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div id="result">
+            {% for model in oContainer.getActiveRegion.getModels %}
+                {% if (loop.index <= (3*modelsListLenght/4|round + 1) and loop.index > (2*modelsListLenght/4|round + 1) ) %}
+                    {{ block('halfList') }}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div id="result">
+            {% for model in oContainer.getActiveRegion.getModels %}
+                {% if (loop.index <= (4*modelsListLenght/4|round + 1) and loop.index > (3*modelsListLenght/4|round + 1) ) %}
                     {{ block('halfList') }}
                 {% endif %}
             {% endfor %}

@@ -1,0 +1,20 @@
+services:
+#    catalog_ford.example:
+#        class: Catalog\FordBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  ford_date_convertor.extension:
+        class: Catalog\FordBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  ford.catalog.model:
+    class: Catalog\FordBundle\Models\FordCatalogModel
+    arguments:  ['@doctrine.dbal.ford_connection']
+
+  ford.vin.model:
+    class: Catalog\FordBundle\Models\FordVinModel
+    arguments:  ['@doctrine.dbal.ford_connection']
+
+  ford.articul.model:
+    class: Catalog\FordBundle\Models\FordArticulModel
+    arguments:  ['@doctrine.dbal.ford_connection']

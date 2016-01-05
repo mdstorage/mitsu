@@ -1,0 +1,4 @@
+{% extends 'CatalogCommonBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogFordBundle::ford.base.html.twig' %}
+{% block regionPath %}{{ path('catalog_ford', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+{% block ajaxUrl %}{{ path('catalog_ford_modifications') }}{% endblock ajaxUrl %}

@@ -4,7 +4,7 @@
             <div>
                 {% block modification %}
 
-                    <a href="{{ path('articul_mini_groups', parameters|merge({'modificationCode': modification.getCode})) }}">
+                    <a href="{{ path('articul_mini_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
 
                         {{ modification.getRuname }}
                     </a>
