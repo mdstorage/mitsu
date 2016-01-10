@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
-{% use 'CatalogHuyndaiBundle::huyndai.base.html.twig' %}
+{% use 'CatalogFordBundle::ford.base.html.twig' %}
 {% block breadcrumbs %}
-   <a href="{{ path('catalog_huyndai') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
+    <a href="{{ path('catalog_ford') }}" xmlns="http://www.w3.org/1999/html">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getCode }})</a> / Комплектация                    
 {% endblock breadcrumbs %}
 
@@ -12,119 +12,56 @@
     <div class="row">
     
         <div class="complectations"><hr />
-        <div class="row">
-        
-        
-        <div class="form-group">
-        
-        <div class="col-lg-5">
-               
-        <input name="filter-query" class="form-control" value="" id="filter-query" onclick="this.value='';"
-        type="text" placeholder="Введите любой признак для фильтрации параметров"/>
-        </div>
-                
-        <a href="#" class="btn btn-default" onclick="$('#filter-query').val(''); $('#filter-query1').val(''); $('#filter-query2').val('');
-        repeatact();return false">Показать все</a>
-        <input name="filter-query1" class="form-control" value="" id="filter-query1" type="text" style="display:none;"/>
-        <input name="filter-query2" class="form-control" value="" id="filter-query2" type="text" style="display:none;"/>
-        
-        </div>
-        
-        
-        </div>
-        
-       
-                       <div class="row">
-             {# {% if oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
-                       <div class="col-lg-4">
-                            <b>Трансмиссия:</b>
-                  {% for trans in oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
-                                          		
-                      <a href="#" class="btn btn-default" onclick="$('#filter-query').val('{{ trans }}');
-                      $('#filter-query2').val($('#filter-query').val().concat('+',$('#filter-query1').val()));
-                      repeatact();return false">{{ trans }}</a>
-                      
-                  {% endfor %}
-                      </div>
-              {% endif %}
-                      
-              {% if oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
-                      <div class="col-lg-4">
-                       <b>Положение руля:</b>
-                  {% for role in oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
-                   
-                      <a href="#" class="btn btn-default" onclick="$('#filter-query1').val('{{ role }}');
-                      $('#filter-query2').val($('#filter-query').val().concat('+',$('#filter-query1').val()));
-                      repeatact();return false">{{ role }}</a>
-                      
-                  {% endfor %}
-                      </div>
-              {% endif %}#}
-                      </div><hr />
-                      <br/>
-                      
-            {% for complectation in oContainer.getActiveModification.getComplectations %}
-                {% block complectationItem %}
-            <div class="col-lg-4">
-           
-                             <a href="{{ path('catalog_huyndai_groups', parameters|merge({'complectationCode': complectation.getCode})) }}">
-        
-    <b>    {{ complectation.getRuname }} </b>
-      </a> <br/>
-                ({{ complectation.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|huyndai_date_convertor }} -
-                {{ complectation.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|huyndai_date_convertor }})<br/>
-                {%for opt in complectation.getOption('option1') %}
-                {{ opt }} <br/>
-                {% endfor %}
 
-      <hr />
-                           
+
+            <div class="col-lg-8">
+                <div class="form-group">
+                    <div class="row">
+
+                    <form action="{{ path('catalog_ford_groups', parameters|merge({'complectationCode': oContainer.getActiveModification.getComplectations|first.getCode})) }}" name="form1">
+
+            {% for complectation in oContainer.getActiveModification.getComplectations %}
+
+            <div class="col-lg-6">
+
+        
+    <b>    {{ complectation.getCode }}: </b>
+
+                {#         <form action="{{ path("post_delete") }}" method="post">
+                    <input name="filter" class="form-control" value="{{ post.id }}" type="text" style="display:none;"/>
+
+                    <input type="submit" class="symfony-button-grey" value="Удалить запись"/>
+                </form>
+                #}
+
+                <select class="form-control" name="filter['{{ complectation.getCode }}']">
+
+
+                {%for opt in complectation.getOption('option1') %}
+                <option> {{ opt }} </option>
+                {% endfor %}
+                </select>
+
+
+
                 </div>
-                {% endblock complectationItem %}
+
             {% endfor %}
+                    </div> </br>
+
+                        <div class="row">
+                <input type="submit" class="btn btn-default" value="Далее"/>
+                        </div>
+
+                    </form>
+
+
+                </div>
+            </div>
+
         </div>
-        </div> 
+    </div>
     {% endblock complectations %}
 
-
- <script>
- 
-                $(document).ready(function() {
-	$('#filter-search').show();
-	
-	$('#filter-query').keyup(function(event){
-		
-		if (event.keyCode == 27 || $(this).val() == '') {
-			$(this).val('');
-			$('.col-lg-4').removeClass('visible').show().addClass('visible');
-		}
-		else {
-			filter('.col-lg-4', $(this).val());
-		}
-	});
-	$('#filter-query2').keyup(function(event){
-		
-		if (event.keyCode == 27 || $(this).val() == '') {
-			$(this).val('');
-			$('.col-lg-4').removeClass('visible').show().addClass('visible');
-		}
-		else {
-			filter('.col-lg-4', $(this).val());
-		}
-	});
-});
-function filter(selector, query) {
-	query =	$.trim(query);
-	$(selector).each(function() {
-		(($(this).text().search(new RegExp(query.substr(0,query.indexOf("+")), "i")) < 0) || 
-		($(this).text().search(new RegExp(query.substr(query.indexOf("+")+1,query.length), "i")) < 0)) 
-		? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
-	});
-}
-function repeatact(){
-	filter('.col-lg-4', $('#filter-query2').val());
-}
-
-</script>
   
 {% endblock body %}

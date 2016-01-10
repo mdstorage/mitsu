@@ -20,7 +20,7 @@ class FordCatalogModel extends CatalogModel{
 
 
         $regions = array();
-        $regions['EU'] = array(Constants::NAME => '',
+        $regions['EU'] = array(Constants::NAME => 'Европа',
             Constants::OPTIONS => array());
 
         return $regions;
@@ -60,7 +60,7 @@ class FordCatalogModel extends CatalogModel{
 
         $sql  = "
         SELECT
-        URL, MIME, Description, AttributeId, vincodes_models.CatalogueCode
+        URL, MIME, Description, AttributeId, vincodes_models.CatalogueCode, catalogue.CatalogueId Id
         FROM vincodes_models, attachmentdata, componentattachment, cataloguecomponent, catalogue
         WHERE vincodes_models.CatalogueCode = catalogue.CatalogueCode and cataloguecomponent.CatalogueId = catalogue.CatalogueId and
         cataloguecomponent.ComponentId = componentattachment.ComponentId AND
@@ -79,12 +79,13 @@ class FordCatalogModel extends CatalogModel{
 
         $modifications = array();
         foreach($aData as $item){
-            $modifications[$item['AttributeId']] = array(
+            $modifications[$item['Id']] = array(
                 Constants::NAME     => $item['Description']. '('.$item['CatalogueCode'].')',
                 Constants::OPTIONS  => array('grafik' =>
                     substr($item['URL'], strpos($item['URL'], 'png')+4, strlen($item['URL'])).'.'.$item['MIME']));
 
         }
+
 
         return $modifications;
     }
@@ -96,65 +97,58 @@ class FordCatalogModel extends CatalogModel{
     public function getComplectations($regionCode, $modelCode, $modificationCode)
     {
         $sql = "
-        SELECT fztyp_lenkung, fgstnr_prod, fztyp_getriebe
-        FROM w_fztyp, w_fgstnr
-        WHERE fztyp_mospid = :modificationCode AND fztyp_mospid = fgstnr_mospid AND fgstnr_typschl = fztyp_typschl
+        SELECT familyLex.Description famDesc,
+        attributeLex.Description attrDesc,
+        attribute.FamilyId famId
+        FROM catalogueattribute
+        INNER JOIN attribute ON (attribute.AttributeId = catalogueattribute.AttributeId)
+        INNER JOIN lexicon attributeLex ON (attribute.DescriptionId = attributeLex.DescriptionId and attributeLex.LanguageId IN ('1') AND attributeLex.SourceId = '18')
+        INNER JOIN attributefamily ON (attributefamily.FamilyId = attribute.FamilyId)
+        INNER JOIN lexicon familyLex ON (attributefamily.DescriptionId = familyLex.DescriptionId and familyLex.LanguageId IN ('1') AND familyLex.SourceId = '19')
+        WHERE catalogueattribute.CatalogueId = :modificationCode
         ";
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode', $modificationCode);
         $query->execute();
 
         $complectations = array();
-        $aData = $query->fetchAll();
-
-        foreach ($aData as &$item) {
-
-
-            $complectations[$item['fztyp_lenkung'].$item['fztyp_getriebe'].$item['fgstnr_prod']] = array(
-                Constants::NAME => $item['fztyp_lenkung'].$item['fztyp_getriebe'].$item['fgstnr_prod'],
-                Constants::OPTIONS => array()
-            );
-        }
-
-        return $complectations;
-
-    }
-
-    public function getComplectationsKorobka($role, $modificationCode)
-    {
-
-        $sql = "
-        SELECT fztyp_getriebe
-        FROM w_fztyp
-        WHERE fztyp_mospid = :modificationCode AND fztyp_lenkung = :role
-        ";
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('role', $role);
-        $query->execute();
-
-        $complectations = array();
-        $name = array();
+        $complectationsPartIndexNoUnique = array();
+        $complectationsPartIndex = array();
+        $result = array();
         $aData = $query->fetchAll();
 
         foreach ($aData as $item)
         {
-            switch ($item['fztyp_getriebe'])
-           {
-               case 'A': $name[$item['fztyp_getriebe']] = 'АКПП'; break;
-               case 'M': $name[$item['fztyp_getriebe']] = 'MКПП'; break;
-                default: $name[$item['fztyp_getriebe']] = 'Neutral';
-           }
 
+            $complectationsPartIndexNoUnique[] = $item ['famId'];
+        }
+        $complectationsPartIndex = array_unique($complectationsPartIndexNoUnique);
+
+
+        foreach ($aData as $item)
+        {
+            foreach ($complectationsPartIndex as $itemPartIndex)
+            {
+
+                if ($item['famId'] === $itemPartIndex)
+                {
+
+                    $result[base64_encode($item['famDesc'])][] = $item['attrDesc'];
+
+                }
+            }
 
         }
 
-        foreach ($aData as $item) {
 
 
-            $complectations[$item['fztyp_getriebe']] = array(
-                Constants::NAME => $name[$item['fztyp_getriebe']],
-                Constants::OPTIONS => array()
+        foreach ($result as $index => $value) {
+
+
+
+            $complectations[base64_decode($index)] = array(
+                Constants::NAME => $value,
+                Constants::OPTIONS => array('option1'=>$value)
             );
         }
 
@@ -162,139 +156,16 @@ class FordCatalogModel extends CatalogModel{
         return $complectations;
 
     }
-    /**
-    Функция getRole() возвращает только положения руля. Используется только в каталог_контроллере БМВ_Бандла.
-     */
-
-
-    public function getRole($regionCode, $modelCode, $modificationCode)
-   
-    {
-        $sql = "
-        SELECT fztyp_lenkung, grafik_blob Id
-        FROM w_fztyp, w_baureihe, w_grafik
-        WHERE fztyp_mospid = :modificationCode
-        AND grafik_grafikid = baureihe_grafikid AND fztyp_baureihe = baureihe_baureihe
-        ";
-
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->execute();
-
-        $role = array();
-        $aData = $query->fetchAll();
-
-
-        foreach ($aData as &$item) {
-
-
-            $role[$item['fztyp_lenkung']] = array(
-                Constants::NAME => ($item['fztyp_lenkung'] == 'L')?'Левый руль':'Правый руль',
-                Constants::OPTIONS => array('grafik' => $item['Id'])
-            );
-        }
-
-
-         return ($role);
-     
-    }
-
-    /**
-    Функция getComplectationsData() возвращает год производства при изветном положении руля. Используется только в каталог_контроллере БМВ_Бандла.
-     */
-
-    public function getComplectationsYear($role, $modificationCode, $korobka)
-
-    {
-        $sql = "
-        SELECT fgstnr_prod, fgstnr_typschl, fgstnr_mospid
-        FROM w_fgstnr
-        INNER JOIN w_fztyp ON (fztyp_lenkung = :role AND fztyp_getriebe = :korobka AND fgstnr_mospid = fztyp_mospid AND fgstnr_typschl = fztyp_typschl)
-        WHERE fgstnr_mospid = :modificationCode
-        ORDER BY fgstnr_prod
-        ";
-
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('role', $role);
-        $query->bindValue('korobka', $korobka);
-        $query->execute();
-
-        $complectations = array();
-        $aData = $query->fetchAll();
-
-
-        foreach ($aData as &$item) {
-
-
-            $complectations[substr($item['fgstnr_prod'], 0, 4)] = array(
-                Constants::NAME => substr($item['fgstnr_prod'], 0, 4),
-                Constants::OPTIONS => array('modificationCode' => $item['fgstnr_mospid'],
-                                            'roleCode' => $item['fgstnr_typschl'])
-            );
-        }
-
-        return $complectations;
-
-    }
-    /**
-    Функция getComplectationsCatalogData() возвращает месяц производства при изветных годе производства и положении руля. Используется только в каталог_контроллере БМВ_Бандла.
-     */
-
-
-    public function getComplectationsMonth($role, $modificationCode, $year, $korobka)
-    {
-
-        $sql = "
-        SELECT fgstnr_prod, fztyp_lenkung, fztyp_getriebe
-        FROM w_fgstnr, w_fztyp
-        WHERE fgstnr_mospid = :modificationCode
-        AND fztyp_mospid = fgstnr_mospid AND fgstnr_typschl = fztyp_typschl
-        AND fgstnr_typschl = :role
-        AND  fgstnr_prod LIKE :years
-        AND fztyp_getriebe = :korobka
-        ORDER BY fgstnr_prod
-        ";
-
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('role', $role);
-        $query->bindValue('korobka', $korobka);
-        $query->bindValue('years', '%'.$year.'%');
-        $query->execute();
-
-        $complectations = array();
-        $aData = $query->fetchAll();
-
-
-        foreach ($aData as $item) {
-
-
-            $complectations[$item['fztyp_lenkung'].$item['fztyp_getriebe'].$item['fgstnr_prod']] = array(
-                Constants::NAME => substr($item['fgstnr_prod'],4,2),
-                Constants::OPTIONS => array()
-            );
-        }
-
-        return $complectations;
-
-    }
-
 
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
 
          $sql = "
-        select
-        hgfg_hg Hauptgruppe,
-        hgfg_grafikid Id,
-        grafik_blob BlobMod,
-        ben_text Benennung
-        from w_hgfg_mosp, w_hgfg, w_ben_gk, w_grafik
-        where hgfgm_mospid = :modificationCode and hgfgm_hg = hgfg_hg and hgfg_fg = '00' and hgfgm_produktart = hgfg_produktart and hgfg_grafikid = grafik_grafikid
-        and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
-        ORDER BY Hauptgruppe
+        SELECT attributeLex.Description famDesc, Code
+        FROM cataloguecomponent
+        INNER JOIN lexicon attributeLex ON (cataloguecomponent.DescriptionId = attributeLex.DescriptionId and attributeLex.LanguageId IN ('15'))
+        WHERE AssemblyLevel = '2' and CatalogueId = :modificationCode
         ";
 
         $query = $this->conn->prepare($sql);
@@ -306,9 +177,9 @@ class FordCatalogModel extends CatalogModel{
 
 
         foreach($aData as $item){
-            $groups[$item['Hauptgruppe']] = array(
-                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']),'utf8'),
-                Constants::OPTIONS  => array('Id' => $item ['BlobMod'])
+            $groups[$item['Code']] = array(
+                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['famDesc']),'utf8'),
+                Constants::OPTIONS  => array()
             );
         }
 
@@ -362,35 +233,28 @@ class FordCatalogModel extends CatalogModel{
     {
 
         $sql = "
-        select
-hgfg_hg Hauptgruppe,
-hgfg_fg Funktionsgruppe,
-ben_text Benennung
-from w_hgfg_mosp, w_hgfg, w_ben_gk
-where hgfgm_mospid = :modificationCode and hgfg_hg = :groupCode and hgfgm_hg = hgfg_hg and hgfgm_fg = hgfg_fg and hgfgm_produktart = hgfg_produktart
-and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
-ORDER BY Funktionsgruppe
+        SELECT attributeLex.Description famDesc, Code
+        FROM cataloguecomponent
+        INNER JOIN lexicon attributeLex ON (cataloguecomponent.DescriptionId = attributeLex.DescriptionId and attributeLex.LanguageId IN ('15') AND attributeLex.SourceId = '4')
+        WHERE AssemblyLevel = '3' and CatalogueId = :modificationCode and Code LIKE :groupCode
         ";
-
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('groupCode', '%'.$groupCode.'%');
         $query->execute();
-
         $aData = $query->fetchAll();
 
-
         $subgroups = array();
+
+
         foreach($aData as $item){
-
-            $subgroups[$item['Funktionsgruppe']] = array(
-
-                Constants::NAME => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']),'utf8'),
-                Constants::OPTIONS => array()
+            $subgroups[$item['Code']] = array(
+                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['famDesc']),'utf8'),
+                Constants::OPTIONS  => array()
             );
-
         }
+
 
         return $subgroups;
     }

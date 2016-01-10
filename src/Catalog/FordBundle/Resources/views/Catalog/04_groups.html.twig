@@ -1,10 +1,11 @@
 {% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
-{% use 'CatalogHuyndaiBundle::huyndai.base.html.twig' %}
+{% use 'CatalogFordBundle::ford.base.html.twig' %}
 {% block breadcrumbs %}
-   <a href="{{ path('catalog_huyndai') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
+   <a href="{{ path('catalog_ford') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>
-    / <a href="{{ path('catalog_huyndai_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> / Группа запчастей
+    / <a href="{{ path('catalog_ford_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getCode}})</a> / Группа запчастей
 {% endblock breadcrumbs %}
+{% block complectationRuname %}{{ oContainer.getActiveComplectation.getCode }}{% endblock complectationRuname %}
 
 {% block body %}
     {% block head %}<h3>Выбрать группу запчастей:</h3>{% endblock head %}
@@ -14,7 +15,7 @@
             <div class="groups">
                 {% for group in oContainer.getGroups %}
                     <div>
-                        <a href="{{ path('catalog_huyndai_subgroups', parameters|merge({'groupCode': group.getCode})) }}">({{ group.getCode }}) {{ group.getRuname }}</a>
+                        <a href="{{ path('catalog_ford_subgroups', parameters|merge({'groupCode': group.getCode})) }}">({{ group.getCode }}) {{ group.getRuname }}</a>
                     </div>
                 {% endfor %}
             </div>
