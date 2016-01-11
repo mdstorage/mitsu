@@ -99,7 +99,8 @@ class FordCatalogModel extends CatalogModel{
         $sql = "
         SELECT familyLex.Description famDesc,
         attributeLex.Description attrDesc,
-        attribute.FamilyId famId
+        attribute.FamilyId famId,
+        attribute.AttributeId Id
         FROM catalogueattribute
         INNER JOIN attribute ON (attribute.AttributeId = catalogueattribute.AttributeId)
         INNER JOIN lexicon attributeLex ON (attribute.DescriptionId = attributeLex.DescriptionId and attributeLex.LanguageId IN ('1') AND attributeLex.SourceId = '18')
@@ -117,10 +118,11 @@ class FordCatalogModel extends CatalogModel{
         $result = array();
         $aData = $query->fetchAll();
 
-        foreach ($aData as $item)
+        foreach ($aData as &$item)
         {
-
+            $item['famDesc'] = str_replace(' ', '_', $item['famDesc']);
             $complectationsPartIndexNoUnique[] = $item ['famId'];
+
         }
         $complectationsPartIndex = array_unique($complectationsPartIndexNoUnique);
 
@@ -133,7 +135,7 @@ class FordCatalogModel extends CatalogModel{
                 if ($item['famId'] === $itemPartIndex)
                 {
 
-                    $result[base64_encode($item['famDesc'])][] = $item['attrDesc'];
+                    $result[base64_encode($item['famDesc'])][$item['attrDesc']] = $item['attrDesc'];
 
                 }
             }
