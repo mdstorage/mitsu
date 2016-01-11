@@ -21,7 +21,6 @@ class ComplectationType extends AbstractType{
                 'attr' => array(
                     'class' => 'form-control',
 
-
                 )
             ));
 

@@ -159,9 +159,21 @@ class FordCatalogModel extends CatalogModel{
 
     }
 
+    public function getComplectation ($complectationCode)
+    {
+        $complectation = array();
+        $complectation[$complectationCode]= array(
+            Constants::NAME => $complectationCode,
+            Constants::OPTIONS => array()
+        );
+
+       return  $complectation;
+    }
+
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
+
 
          $sql = "
         SELECT attributeLex.Description famDesc, Code
