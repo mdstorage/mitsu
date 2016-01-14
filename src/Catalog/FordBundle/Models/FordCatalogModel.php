@@ -60,7 +60,7 @@ class FordCatalogModel extends CatalogModel{
 
         $sql  = "
         SELECT
-        URL, MIME, Description, AttributeId, vincodes_models.CatalogueCode, catalogue.CatalogueId Id
+        URL, MIME, Description, AttributeId, vincodes_models.CatalogueCode, catalogue.CatalogueId Id, avs
         FROM vincodes_models, attachmentdata, componentattachment, cataloguecomponent, catalogue
         WHERE vincodes_models.CatalogueCode = catalogue.CatalogueCode and cataloguecomponent.CatalogueId = catalogue.CatalogueId and
         cataloguecomponent.ComponentId = componentattachment.ComponentId AND
@@ -79,7 +79,7 @@ class FordCatalogModel extends CatalogModel{
 
         $modifications = array();
         foreach($aData as $item){
-            $modifications[$item['Id']] = array(
+            $modifications[$item['Id'].'_'.$item['avs']] = array(
                 Constants::NAME     => $item['Description']. '('.$item['CatalogueCode'].')',
                 Constants::OPTIONS  => array('grafik' =>
                     substr($item['URL'], strpos($item['URL'], 'png')+4, strlen($item['URL'])).'.'.$item['MIME']));
@@ -95,7 +95,8 @@ class FordCatalogModel extends CatalogModel{
      */
 
     public function getComplectations($regionCode, $modelCode, $modificationCode)
-    {
+    {$modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+
         $sql = "
         SELECT familyLex.Description famDesc,
         attributeLex.Description attrDesc,
@@ -173,17 +174,23 @@ class FordCatalogModel extends CatalogModel{
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
+        $submodificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
 
 
          $sql = "
         SELECT attributeLex.Description famDesc, Code
-        FROM cataloguecomponent
-        INNER JOIN lexicon attributeLex ON (cataloguecomponent.DescriptionId = attributeLex.DescriptionId and attributeLex.LanguageId IN ('15'))
-        WHERE AssemblyLevel = '2' and CatalogueId = :modificationCode
+        FROM cataloguecomponent, lexicon attributeLex
+       where attributeLex.DescriptionId = cataloguecomponent.DescriptionId and attributeLex.LanguageId IN ('15') AND attributeLex.SourceId = '4'
+        and AssemblyLevel = '2' and CatalogueId = :modificationCode
+
+
+
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode', $modificationCode);
+
         $query->execute();
         $aData = $query->fetchAll();
 
@@ -247,10 +254,13 @@ class FordCatalogModel extends CatalogModel{
     {
 
         $sql = "
-        SELECT attributeLex.Description famDesc, Code
+        SELECT attributeLex.Description famDesc, Code, attachmentdata.URL URL
         FROM cataloguecomponent
         INNER JOIN lexicon attributeLex ON (cataloguecomponent.DescriptionId = attributeLex.DescriptionId and attributeLex.LanguageId IN ('15') AND attributeLex.SourceId = '4')
-        WHERE AssemblyLevel = '3' and CatalogueId = :modificationCode and Code LIKE :groupCode
+        LEFT JOIN  catalogueshortcuttocomponent ON (cataloguecomponent.ComponentId = catalogueshortcuttocomponent.ComponentId)
+        LEFT JOIN  catalogueshortcut ON (catalogueshortcuttocomponent.ShortcutId = catalogueshortcut.ShortcutId)
+        LEFT JOIN attachmentdata ON (catalogueshortcut.AttachmentId = attachmentdata.AttachmentId)
+        WHERE AssemblyLevel = '3' and cataloguecomponent.CatalogueId = :modificationCode and Code LIKE :groupCode
         ";
 
         $query = $this->conn->prepare($sql);
@@ -278,45 +288,28 @@ class FordCatalogModel extends CatalogModel{
 
 
         $sql = "
-select distinct
-bildtaf_btnr BildtafelNr,
-bildtaf_bteart BildtafelArt,
-ben_text Benennung,
-bildtaf_kommbt Kommentar,
-bildtaf_vorh_cp CPVorhanden,
-bildtaf_bedkez BedingungKZ,
-bildtaf_pos Pos,
-bildtaf_grafikid Id,
-grafik_blob BlobMod
-from w_bildtaf_suche, w_ben_gk, w_bildtaf, w_grafik
-where bildtafs_hg = :groupCode and bildtafs_mospid = :modificationCode and bildtafs_btnr = bildtaf_btnr and bildtaf_hg = :groupCode and bildtaf_fg = :subGroupCode
-and (bildtafs_lenkg ='' OR bildtafs_lenkg = :role) and (bildtafs_automatik ='' OR bildtafs_automatik = :korobka) and
-(bildtafs_eins ='' OR bildtafs_eins <= :dataCar) and (bildtafs_auslf ='' OR :dataCar <= bildtafs_auslf)
-and bildtaf_sicher = 'N' and bildtaf_textc = ben_textcode and ben_iso = 'ru' and ben_regiso = '  ' and bildtaf_grafikid = grafik_grafikid
-order by Pos
-";
+        SELECT attributeLex.Description famDesc, Code, attachmentdata.URL URL, attachmentdata.MIME MIME
+        FROM cataloguecomponent
+        INNER JOIN lexicon attributeLex ON (cataloguecomponent.DescriptionId = attributeLex.DescriptionId and attributeLex.LanguageId IN ('15') AND attributeLex.SourceId = '4')
+        LEFT JOIN  catalogueshortcuttocomponent ON (cataloguecomponent.ComponentId = catalogueshortcuttocomponent.ComponentId)
+        LEFT JOIN  catalogueshortcut ON (catalogueshortcuttocomponent.ShortcutId = catalogueshortcut.ShortcutId)
+        LEFT JOIN attachmentdata ON (catalogueshortcut.AttachmentId = attachmentdata.AttachmentId)
+        WHERE AssemblyLevel = '4' and cataloguecomponent.CatalogueId = :modificationCode and Code LIKE :subGroupCode
+        ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode',  $modificationCode);
-        $query->bindValue('subGroupCode',  $subGroupCode);
-        $query->bindValue('groupCode',  $groupCode);
-        $query->bindValue('role',  substr($complectationCode, 0, 1));
-        $query->bindValue('korobka',  substr($complectationCode, 1, 1));
-        $query->bindValue('dataCar',  substr($complectationCode, 2, 8));
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('subGroupCode', '%'.$subGroupCode.'%');
         $query->execute();
-
         $aData = $query->fetchAll();
 
         $schemas = array();
-        foreach($aData as &$item)
-        {
-            if (strpos($item['BlobMod'], '_z')) {
-                $item['BlobMod'] = str_replace('tif', 'png', $item['BlobMod']);
-                $schemas[$item['BlobMod']] = array(
-                    Constants::NAME => '(' . $item['BildtafelNr'] . ') ' . mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']), 'utf8'),
-                    Constants::OPTIONS => array('GrId' => $item['BildtafelNr'])
-                );
-            }
+        foreach($aData as $item){
+            $schemas[$item['Code']] = array(
+                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['famDesc']),'utf8'),
+                Constants::OPTIONS  => array('grafik' =>
+                    substr($item['URL'], strpos($item['URL'], 'png')+4, strlen($item['URL'])).'.'.$item['MIME'])
+            );
         }
 
         return $schemas;

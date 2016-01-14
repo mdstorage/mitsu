@@ -215,4 +215,61 @@ class CatalogController extends BaseController{
         ));
     }
 
+    public function schemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null)
+    {
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+
+        $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);
+        $groupsCollection = Factory::createCollection($groups, Factory::createGroup())->getCollection();
+
+        $subgroups = $this->model()->getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+        $schemas = $this->model()->getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
+
+        if(empty($schemas))
+            return $this->error($request, 'Схемы не найдены.');
+
+        $oContainer = Factory::createContainer();
+        $regions = $this->model()->getRegions();
+        $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
+        $models = $this->model()->getModels($regionCode);
+        $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
+        $modifications = $this->model()->getModifications($regionCode, $modelCode);
+        $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
+        if ($complectationCode) {
+            $complectations = $this->model()->getComplectation($complectationCode);
+            $complectationsCollection = Factory::createCollection($complectations, Factory::createComplectation())->getCollection();
+            $oContainer->setActiveComplectation($complectationsCollection[$complectationCode]);
+        }
+
+        $oContainer
+            ->setActiveRegion($regionsCollection[$regionCode])
+            ->setActiveModel($modelsCollection[$modelCode])
+            ->setActiveModification($modificationsCollection[$modificationCode])
+            ->setActiveGroup($groupsCollection[$groupCode]
+                ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup())))
+            ->setSchemas(Factory::createCollection($schemas, Factory::createSchema()));
+
+        if (($filterResult = $this->filter($oContainer)) instanceof RedirectResponse) {
+            return $filterResult;
+        };
+
+        $schemaCodes = array_keys($oContainer->getSchemas());
+        if (1 == count($schemaCodes)) {
+            return $this->redirect(
+                $this->generateUrl(
+                    str_replace('schemas', 'schema', $this->get('request')->get('_route')),
+                    array_merge($parameters, array(
+                            'schemaCode' => $schemaCodes[0]
+                        )
+                    )
+                ), 301
+            );
+        };
+
+        return $this->render($this->bundle() . ':06_schemas.html.twig', array(
+            'oContainer' => $oContainer,
+            'parameters' => $parameters
+        ));
+    }
+
 } 
