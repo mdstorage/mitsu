@@ -288,13 +288,13 @@ class FordCatalogModel extends CatalogModel{
 
 
         $sql = "
-        SELECT attributeLex.Description famDesc, Code, attachmentdata.URL URL, attachmentdata.MIME MIME
-        FROM cataloguecomponent
-        INNER JOIN lexicon attributeLex ON (cataloguecomponent.DescriptionId = attributeLex.DescriptionId and attributeLex.LanguageId IN ('15') AND attributeLex.SourceId = '4')
-        LEFT JOIN  catalogueshortcuttocomponent ON (cataloguecomponent.ComponentId = catalogueshortcuttocomponent.ComponentId)
-        LEFT JOIN  catalogueshortcut ON (catalogueshortcuttocomponent.ShortcutId = catalogueshortcut.ShortcutId)
-        LEFT JOIN attachmentdata ON (catalogueshortcut.AttachmentId = attachmentdata.AttachmentId)
-        WHERE AssemblyLevel = '4' and cataloguecomponent.CatalogueId = :modificationCode and Code LIKE :subGroupCode
+        SELECT attributeLex.Description famDesc, Code1.Code schemaCode, Code2.Code pncCode, attachmentdata.URL URL, attachmentdata.MIME MIME
+        FROM cataloguecomponent Code1
+        INNER JOIN lexicon attributeLex ON (Code1.DescriptionId = attributeLex.DescriptionId and attributeLex.LanguageId IN ('15') AND attributeLex.SourceId = '4')
+        INNER JOIN  cataloguecomponent Code2 ON (Code1.ComponentId = Code2.ParentComponentId and Code2.AssemblyLevel = 5)
+        INNER JOIN  hotspot ON (Code2.HotspotKey = hotspot.HotspotKey and Code2.ParentComponentId = hotspot.ComponentId)
+        INNER JOIN attachmentdata ON (hotspot.AttachmentId = attachmentdata.AttachmentId)
+        WHERE Code1.AssemblyLevel = '4' and Code1.CatalogueId = :modificationCode and Code1.Code LIKE :subGroupCode
         ";
 
         $query = $this->conn->prepare($sql);
@@ -305,10 +305,10 @@ class FordCatalogModel extends CatalogModel{
 
         $schemas = array();
         foreach($aData as $item){
-            $schemas[$item['Code']] = array(
+            $schemas[$item['schemaCode']] = array(
                 Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['famDesc']),'utf8'),
                 Constants::OPTIONS  => array('grafik' =>
-                    substr($item['URL'], strpos($item['URL'], 'png')+4, strlen($item['URL'])).'.'.$item['MIME'])
+                    substr($item['URL'], strpos($item['URL'], 'cgm')+4, strlen($item['URL'])).'.'.str_replace('cgm', 'jpg',$item['MIME']))
             );
         }
 
