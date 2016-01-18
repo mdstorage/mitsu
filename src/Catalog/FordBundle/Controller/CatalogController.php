@@ -272,4 +272,55 @@ class CatalogController extends BaseController{
         ));
     }
 
+    public function schemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null)
+    {
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+
+        $oContainer = Factory::createContainer();
+        $regions = $this->model()->getRegions();
+        $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
+        $models = $this->model()->getModels($regionCode);
+        $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
+        $modifications = $this->model()->getModifications($regionCode, $modelCode);
+        $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
+        if ($complectationCode) {
+            $complectations = $this->model()->getComplectation($complectationCode);
+            $complectationsCollection = Factory::createCollection($complectations, Factory::createComplectation())->getCollection();
+            $oContainer->setActiveComplectation($complectationsCollection[$complectationCode]);
+        }
+
+        $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);
+        $groupsCollection = Factory::createCollection($groups, Factory::createGroup())->getCollection();
+
+        $subgroups = $this->model()->getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+
+        $schemas = $this->model()->getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
+        $schemaCollection = Factory::createCollection($schemas, Factory::createSchema())->getCollection();
+        $oActiveSchema = $schemaCollection[$schemaCode];
+
+        $pncs = $this->model()->getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $oActiveSchema->getOptions());
+        $commonArticuls = $this->model()->getCommonArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $oActiveSchema->getOptions());
+        $refGroups = $this->model()->getReferGroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $oActiveSchema->getOptions());
+
+        $oActiveSchema
+            ->setPncs(Factory::createCollection($pncs, Factory::createPnc()))
+            ->setCommonArticuls(Factory::createCollection($commonArticuls, Factory::createArticul()))
+            ->setRefGroups(Factory::createCollection($refGroups, Factory::createGroup()));
+
+        $oContainer
+            ->setActiveRegion($regionsCollection[$regionCode])
+            ->setActiveModel($modelsCollection[$modelCode])
+            ->setActiveModification($modificationsCollection[$modificationCode])
+            ->setActiveGroup($groupsCollection[$groupCode]
+                ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup())))
+            ->setActiveSchema($oActiveSchema);
+
+        $this->filter($oContainer);
+
+        return $this->render($this->bundle() . ':07_schema.html.twig', array(
+            'oContainer' => $oContainer,
+            'parameters' => $parameters
+        ));
+    }
+
 } 

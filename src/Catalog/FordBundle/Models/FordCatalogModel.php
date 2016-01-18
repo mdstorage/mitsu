@@ -136,7 +136,7 @@ class FordCatalogModel extends CatalogModel{
                 if ($item['famId'] === $itemPartIndex)
                 {
 
-                    $result[base64_encode($item['famDesc'])][$item['attrDesc']] = $item['attrDesc'];
+                    $result[($item['famDesc'])][$item['attrDesc']] = $item['attrDesc'];
 
                 }
             }
@@ -149,7 +149,7 @@ class FordCatalogModel extends CatalogModel{
 
 
 
-            $complectations[base64_decode($index)] = array(
+            $complectations[($index)] = array(
                 Constants::NAME => $value,
                 Constants::OPTIONS => array('option1'=>$value)
             );
@@ -193,6 +193,37 @@ class FordCatalogModel extends CatalogModel{
 
         $query->execute();
         $aData = $query->fetchAll();
+
+
+        $aDataExplodeDesc = explode('|', base64_decode($complectationCode));
+        $aDataExplodeCode = $this->getCodeByDescription($aDataExplodeDesc);
+        $aDataExplodeConditions = $this->getConditions($aDataExplodeCode);
+        var_dump($aDataExplodeConditions); die;
+        $aDataGroup = array();
+
+        foreach($aDataExplodeCode as $item)
+        {
+
+            $sqlLex = "
+        SELECT attributeLexGroup.Description famDesc, cataloguecomponent.Code
+        FROM lexicon attributeLex
+        LEFT JOIN attribute on (attribute.DescriptionId = attributeLex.DescriptionId)
+        LEFT JOIN condition_ on (condition_.FilterCondition = attribute.AttributeId)
+        LEFT JOIN componentcp on (componentcp.ConditionId = condition_.ConditionId)
+        LEFT JOIN cataloguecomponent on (componentcp.ComponentId = cataloguecomponent.ComponentId and cataloguecomponent.AssemblyLevel = 1)
+        INNER JOIN lexicon attributeLexGroup on (attributeLexGroup.DescriptionId = cataloguecomponent.DescriptionId and attributeLexGroup.LanguageId IN ('1') and attributeLexGroup.SourceId = '4')
+        where attributeLex.DescriptionId = :item AND attributeLex.SourceId = '18'
+        ";
+
+            $query = $this->conn->prepare($sqlLex);
+            $query->bindValue('item', $item);
+
+            $query->execute();
+            $aDataGroup[] = $query->fetchAll();
+
+        }
+
+var_dump($aDataGroup); die;
 
         $groups = array();
 
@@ -253,6 +284,7 @@ class FordCatalogModel extends CatalogModel{
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
 
+        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
         $sql = "
         SELECT attributeLex.Description famDesc, Code, attachmentdata.URL URL
         FROM cataloguecomponent
@@ -286,6 +318,7 @@ class FordCatalogModel extends CatalogModel{
     public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
 
+        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
 
         $sql = "
         SELECT attributeLex.Description famDesc, Code1.Code schemaCode, Code2.Code pncCode, attachmentdata.URL URL, attachmentdata.MIME MIME
@@ -324,7 +357,7 @@ class FordCatalogModel extends CatalogModel{
         $schema = array();
 
 			
-		            $schema[$schemaCode] = array(
+		            $schema[urldecode($schemaCode)] = array(
                     Constants::NAME => $schemaCode,
                         Constants::OPTIONS => array()
                 );
@@ -334,126 +367,46 @@ class FordCatalogModel extends CatalogModel{
 
     public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
     {
+        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
 
 
         $sqlPnc = "
-select distinct
-btzeilen_bildposnr Bildnummer,
-teil_hauptgr Teil_HG,
-teil_untergrup Teil_UG,
-teil_sachnr Teil_Sachnummer,
-tben.ben_text Teil_Benennung,
-teil_benennzus Teil_Zusatz,
-teil_entfall_kez Teil_Entfall,
-teil_textcode_kom Teil_Kommentar_Id,
-tkben.ben_text Teil_Kommentar,
-teil_kom_pi Teil_Komm_PI,
-teil_vorhanden_si Teil_SI,
-teil_ist_reach Teil_Reach,
-teil_ist_aspg Teil_Aspg,
-teil_ist_stecker Teil_Stecker,
-teil_ist_diebstahlrelevant Teil_Diebstahlrelevant,
-si_dokart SI_DokArt,
-grpinfo_leitaw_pa GRP_PA,
-grpinfo_leitaw_hg GRP_HG,
-grpinfo_leitaw_ug GRP_UG,
-grpinfo_leitaw_nr GRP_lfdNr,
-btzeilenv_vmenge Menge,
-btzeilen_kat Kat_KZ,
-btzeilen_automatik Getriebe_KZ,
-btzeilen_lenkg Lenkung_KZ,
-btzeilen_eins Einsatz,
-btzeilen_auslf Auslauf,
-btzeilen_kommbt KommBT,
-btzeilen_kommvor KommVor,
-btzeilen_kommnach KommNach,
-ks_sachnr_satz Satz_Sachnummer,
-btzeilen_gruppeid GruppeId,
-btzeilen_blocknr BlockNr,
-bnbben.ben_text BnbBenText,
-btzeilen_pos Pos,
-btzeilenv_alter_kz BtZAlter,
-btzeilen_bedkez_pg Teil_BedkezPG,
-btzeilenv_bed_art BedingungArt,
-btzeilenv_bed_alter BedingungAlter
-from w_btzeilen_verbauung
-inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos
-and (btzeilen_lenkg ='' OR btzeilen_lenkg = :role) and (btzeilen_automatik ='' OR btzeilen_automatik = :korobka) and
-(btzeilen_eins ='0' OR btzeilen_eins <= :dataCar) and (btzeilen_auslf ='0' OR :dataCar <= btzeilen_auslf)
-)
-inner join w_teil on (btzeilen_sachnr = teil_sachnr)
-inner join w_ben_gk tben on (teil_textcode = tben.ben_textcode and tben.ben_iso = 'ru' and tben.ben_regiso = '')
-left join w_kompl_satz on (btzeilen_sachnr = ks_sachnr_satz and ks_marke_tps = 'BMW')
-left join w_tc_performance on (tcp_mospid = :modificationCode and tcp_sachnr = btzeilen_sachnr)
-left join w_grp_information on (btzeilenv_mospid = grpinfo_mospid and grpinfo_sachnr = btzeilen_sachnr and grpinfo_typ = 'FE81')
-left join w_ben_gk tkben on (teil_textcode_kom = tkben.ben_textcode and tkben.ben_iso = 'ru' and tkben.ben_regiso = '')
-left join w_si on (si_sachnr = teil_sachnr)
-left join w_bildtaf_bnbben on (bildtafb_btnr = btzeilenv_btnr and bildtafb_bildposnr = btzeilen_bildposnr)
-left join w_ben_gk bnbben on (bildtafb_textcode = bnbben.ben_textcode and bnbben.ben_iso = 'ru' and bnbben.ben_regiso = '')
-where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId order by Bildnummer, Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
-";
+        SELECT attributeLex.Description famDesc, cataloguecomponent.Code pncCode, HotspotKey
+        FROM cataloguecomponent
+        INNER JOIN lexicon attributeLex ON (cataloguecomponent.DescriptionId = attributeLex.DescriptionId and attributeLex.LanguageId IN ('15') AND attributeLex.SourceId = '4')
+        WHERE cataloguecomponent.AssemblyLevel = 5 and cataloguecomponent.CatalogueId = :modificationCode and cataloguecomponent.Code LIKE :schemaCode
+        ";
 
     	$query = $this->conn->prepare($sqlPnc);
         $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('subGroupId', $options['GrId']);
-        $query->bindValue('role',  substr($complectationCode, 0, 1));
-        $query->bindValue('korobka',  substr($complectationCode, 1, 1));
-        $query->bindValue('dataCar',  substr($complectationCode, 2, 8));
+        $query->bindValue('schemaCode', '%'.$schemaCode.'%');
         $query->execute();
 
         $aPncs = $query->fetchAll();
 
 
-    	
-    	foreach ($aPncs as &$aPnc) {
-            if ($aPnc['Bildnummer'] != '--' || $aPnc['Bildnummer'] != null) {
 
-                $sqlSchemaLabels = "
-        SELECT grafikhs_topleft_x, grafikhs_topleft_y, grafikhs_bottomright_x, grafikhs_bottomright_y
-        FROM w_grafik_hs
-        WHERE grafikhs_grafikid = :schemaCode
-        AND grafikhs_bildposnr = :pos
-        ";
-
-                $query = $this->conn->prepare($sqlSchemaLabels);
-                $query->bindValue('schemaCode', $schemaCode);
-                $query->bindValue('pos', $aPnc['Bildnummer']);
-                $query->execute();
-
-                $aPnc['coords'] = $query->fetchAll();
-            }
+        foreach ($aPncs as &$aPnc)
+        {
+            $aPnc['coords'] = array(0 => 0, 1 => 0, 2 => 0, 3 => 0);
         }
 
 
         $pncs = array();
-      foreach ($aPncs as $index=>$value) {
-            {
-                if ($value['Bildnummer'] == '--' || $value['Bildnummer'] == null)
-                {
-                    unset ($aPncs[$index]);
-                }
-            	foreach ($value['coords'] as $item1)
-            	{
-            	$pncs[$value['Bildnummer']][Constants::OPTIONS][Constants::COORDS][$item1['grafikhs_topleft_x']] = array(
-                    Constants::X1 => floor($item1['grafikhs_topleft_x']),
-                    Constants::Y1 => $item1['grafikhs_topleft_y'],
-                    Constants::X2 => $item1['grafikhs_bottomright_x'],
-                    Constants::Y2 => $item1['grafikhs_bottomright_y']);
-            	
-            	}
-            
-            
-                
-            }
-        }
+
 
         foreach ($aPncs as $item) {
-         	
-         	
-				$pncs[$item['Bildnummer']][Constants::NAME] = mb_strtoupper(iconv('cp1251', 'utf8', $item['Teil_Benennung']), 'utf8');
-			
-			
-           
+
+            $pncs[$item['HotspotKey']][Constants::OPTIONS][Constants::COORDS][$item['HotspotKey']] = array(
+                Constants::X1 => 0,
+                Constants::Y1 => 0,
+                Constants::X2 => 0,
+                Constants::Y2 => 0);
+
+            $pncs[$item['HotspotKey']][Constants::NAME] = mb_strtoupper(iconv('cp1251', 'utf8', $item['famDesc']), 'utf8');
+
+
+
         }
 
 
@@ -532,71 +485,7 @@ $articuls = array();
     {
 
 
-        $sqlPnc = "select distinct
-btzeilen_bildposnr Bildnummer,
-teil_hauptgr Teil_HG,
-teil_untergrup Teil_UG,
-teil_sachnr Teil_Sachnummer,
-tben.ben_text Teil_Benennung,
-nuch.komm_pos Komnach,
-kommnuch.ben_text Komm_Benennung,
-vor.komm_pos Komvor,
-vor.komm_code KomCode,
-vor.komm_vz KomVz,
-kommvor.ben_text Komm_Vor,
-teil_benennzus Teil_Zusatz,
-teil_entfall_kez Teil_Entfall,
-teil_textcode_kom Teil_Kommentar_Id,
-tkben.ben_text Teil_Kommentar,
-teil_kom_pi Teil_Komm_PI,
-teil_vorhanden_si Teil_SI,
-teil_ist_reach Teil_Reach,
-teil_ist_aspg Teil_Aspg,
-teil_ist_stecker Teil_Stecker,
-teil_ist_diebstahlrelevant Teil_Diebstahlrelevant,
-si_dokart SI_DokArt,
-grpinfo_leitaw_pa GRP_PA,
-grpinfo_leitaw_hg GRP_HG,
-grpinfo_leitaw_ug GRP_UG,
-grpinfo_leitaw_nr GRP_lfdNr,
-btzeilenv_vmenge Menge,
-btzeilen_kat Kat_KZ,
-btzeilen_automatik Getriebe_KZ,
-btzeilen_lenkg Lenkung_KZ,
-btzeilen_eins Einsatz,
-btzeilen_auslf Auslauf,
-btzeilen_kommbt KommBT,
-btzeilen_kommvor KommVor,
-btzeilen_kommnach KommNach,
-ks_sachnr_satz Satz_Sachnummer,
-btzeilen_gruppeid GruppeId,
-btzeilen_blocknr BlockNr,
-bnbben.ben_text BnbBenText,
-btzeilen_pos Pos,
-btzeilenv_alter_kz BtZAlter,
-btzeilen_bedkez_pg Teil_BedkezPG,
-btzeilenv_bed_art BedingungArt,
-btzeilenv_bed_alter BedingungAlter
-from w_btzeilen_verbauung
-inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos
-and (btzeilen_lenkg ='' OR btzeilen_lenkg = :role) and (btzeilen_automatik ='' OR btzeilen_automatik = :korobka) and
-(btzeilen_eins ='0' OR btzeilen_eins <= :dataCar) and (btzeilen_auslf ='0' OR :dataCar <= btzeilen_auslf)
-)
-inner join w_teil on (btzeilen_sachnr = teil_sachnr)
-inner join w_ben_gk tben on (teil_textcode = tben.ben_textcode and tben.ben_iso = 'ru' and tben.ben_regiso = '  ')
-left join w_komm nuch on (btzeilen_kommnach = nuch.komm_id)
-left join w_ben_gk kommnuch on (nuch.komm_textcode = kommnuch.ben_textcode and kommnuch.ben_iso = 'ru' and kommnuch.ben_regiso = '  ')
-left join w_komm vor on (btzeilen_kommvor = vor.komm_id)
-left join w_ben_gk kommvor on (vor.komm_textcode = kommvor.ben_textcode and kommvor.ben_iso = 'ru' and kommvor.ben_regiso = '  ')
-left join w_kompl_satz on (btzeilen_sachnr = ks_sachnr_satz and ks_marke_tps = 'BMW')
-left join w_tc_performance on (tcp_mospid = :modificationCode and tcp_sachnr = btzeilen_sachnr  and tcp_datum_von <= 20150816 and (tcp_datum_bis is null or tcp_datum_bis >= 20150816))
-left join w_grp_information on (btzeilenv_mospid = grpinfo_mospid and grpinfo_sachnr = btzeilen_sachnr and grpinfo_typ = 'FE81')
-left join w_ben_gk tkben on (teil_textcode_kom = tkben.ben_textcode and tkben.ben_iso = 'ru' and tkben.ben_regiso = '  ')
-left join w_si on (si_sachnr = teil_sachnr)
-left join w_bildtaf_bnbben on (bildtafb_btnr = btzeilenv_btnr and bildtafb_bildposnr = btzeilen_bildposnr)
-left join w_ben_gk bnbben on (bildtafb_textcode = bnbben.ben_textcode and bnbben.ben_iso = 'ru' and bnbben.ben_regiso = '  ')
-where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId and (btzeilen_bildposnr = :pncCode or btzeilen_bildposnr = '--')
-order by Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
+        $sqlPnc = "
 ";
 
         $query = $this->conn->prepare($sqlPnc);
@@ -770,6 +659,56 @@ order by Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
         $groupCode = $query->fetchColumn(0);
 
         return $groupCode;
+
+    }
+
+    public function getCodeByDescription($Description)
+    {
+        $Code = array();
+
+        foreach ($Description as $item)
+        {
+            $sqlCode = "
+        SELECT DescriptionId
+        FROM lexicon
+        where lexicon.Description = :item
+        ";
+
+            $query = $this->conn->prepare($sqlCode);
+            $query->bindValue('item', $item);
+            $query->execute();
+
+            $Code[] = $query->fetchColumn(0);
+
+        }
+
+
+        return $Code;
+
+    }
+
+    public function getConditions($Description)
+    {
+        $Code = array();
+
+        foreach ($Description as $item)
+        {
+            $sqlCode = "
+        SELECT AttributeId
+        FROM attribute
+        where DescriptionId = :item
+        ";
+
+            $query = $this->conn->prepare($sqlCode);
+            $query->bindValue('item', $item);
+            $query->execute();
+
+            $Code[] = $query->fetchColumn(0);
+
+        }
+
+
+        return $Code;
 
     }
 
