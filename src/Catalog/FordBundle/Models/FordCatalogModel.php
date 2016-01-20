@@ -198,32 +198,75 @@ class FordCatalogModel extends CatalogModel{
         $aDataExplodeDesc = explode('|', base64_decode($complectationCode));
         $aDataExplodeCode = $this->getCodeByDescription($aDataExplodeDesc);
         $aDataExplodeConditions = $this->getConditions($aDataExplodeCode);
-        var_dump($aDataExplodeConditions); die;
-        $aDataGroup = array();
 
-        foreach($aDataExplodeCode as $item)
-        {
+        $aDataGroup = array();
+        $aDataLex = array();
+        $aDataSourse = array();
+
+
 
             $sqlLex = "
-        SELECT attributeLexGroup.Description famDesc, cataloguecomponent.Code
-        FROM lexicon attributeLex
-        LEFT JOIN attribute on (attribute.DescriptionId = attributeLex.DescriptionId)
-        LEFT JOIN condition_ on (condition_.FilterCondition = attribute.AttributeId)
-        LEFT JOIN componentcp on (componentcp.ConditionId = condition_.ConditionId)
-        LEFT JOIN cataloguecomponent on (componentcp.ComponentId = cataloguecomponent.ComponentId and cataloguecomponent.AssemblyLevel = 1)
-        INNER JOIN lexicon attributeLexGroup on (attributeLexGroup.DescriptionId = cataloguecomponent.DescriptionId and attributeLexGroup.LanguageId IN ('1') and attributeLexGroup.SourceId = '4')
-        where attributeLex.DescriptionId = :item AND attributeLex.SourceId = '18'
+        SELECT attribute.DescriptionId Id, cataloguecomponent.ComponentId
+        FROM cataloguecomponent
+        LEFT JOIN componentcp on (componentcp.ComponentId = cataloguecomponent.ComponentId)
+        LEFT JOIN condition_ on (condition_.ConditionId = componentcp.ConditionId)
+        LEFT JOIN attribute on (attribute.AttributeId = condition_.FilterCondition)
+        where cataloguecomponent.AssemblyLevel = '1' and cataloguecomponent.CatalogueId IS NULL
         ";
 
             $query = $this->conn->prepare($sqlLex);
-            $query->bindValue('item', $item);
-
             $query->execute();
-            $aDataGroup[] = $query->fetchAll();
+            $aDataLex = $query->fetchAll();
 
+
+        foreach($aDataLex as $item)
+        {
+            $aDataGroup[$item['ComponentId']] = $item['ComponentId'];
         }
 
-var_dump($aDataGroup); die;
+        foreach($aDataLex as $item)
+        {
+            foreach($aDataGroup as $value)
+            {
+               if  ($value == $item['ComponentId'])
+               {
+                   $aDataSourse[$item['ComponentId']][] = $item['Id'];
+               }
+            }
+        }
+
+
+  /*      $number = array(4,5,6);
+
+        foreach($aDataExplodeCode as $index=>$value)
+        {
+            if (!in_array($index, $number))
+            {
+                unset ($aDataExplodeCode[$index]);
+            }
+        }*/
+
+
+        foreach($aDataSourse as $index=>$value)
+        {
+            $n = 0;
+            foreach($aDataExplodeCode as $item)
+
+                {
+                    if (in_array($item, $value))
+                    {
+                       $n ++;
+                    }
+                }
+                if ($n == 0)
+                {
+                    unset ($aDataSourse[$index]);
+                }
+
+            }
+
+
+
 
         $groups = array();
 

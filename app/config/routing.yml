@@ -1,3 +1,7 @@
+catalog_audi:
+    resource: "@CatalogAudiBundle/Resources/config/routing.yml"
+    prefix:   /
+
 catalog_ford:
     resource: "@CatalogFordBundle/Resources/config/routing.yml"
     prefix:   /

@@ -1,0 +1,120 @@
+catalog_audi:
+  path:         /audi/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogAudiBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_audi_modifications:
+  path:         /audi/catalog/1
+  defaults:     {_controller: CatalogAudiBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_audi_complectations:
+  path:         /audi/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogAudiBundle:Catalog:complectations}
+
+catalog_audi_groups:
+  path:         /audi/catalog/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogAudiBundle:Catalog:groups}
+
+catalog_audi_subgroups:
+  path:         /audi/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogAudiBundle:Catalog:subgroups}
+
+catalog_audi_schemas:
+  path:         /audi/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogAudiBundle:Catalog:schemas}
+
+catalog_audi_schema:
+  path:         /audi/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogAudiBundle:Catalog:schema}
+
+catalog_audi_articuls:
+  path:         /audi/catalog/7
+  defaults:     {_controller: CatalogAudiBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_audi_group:
+  path:         /audi/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogAudiBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_audi:
+  path:         /audi/vin/0
+  defaults:     {_controller: CatalogAudiBundle:Vin:index}
+
+vin_audi_result:
+  path:         /audi/vin/1
+  defaults:     {_controller: CatalogAudiBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_audi_groups:
+  path:         /audi/vin/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogAudiBundle:Vin:groups}
+
+vin_audi_subgroups:
+  path:         /audi/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogAudiBundle:Vin:subgroups}
+
+vin_audi_schemas:
+  path:         /audi/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogAudiBundle:Vin:schemas}
+
+vin_audi_schema:
+  path:         /audi/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogAudiBundle:Vin:schema}
+
+vin_audi_articuls:
+  path:         /audi/vin/7
+  defaults:     {_controller: CatalogAudiBundle:Vin:articuls}
+  requirements: {_method: POST}
+
+vin_audi_group:
+  path:         /audi/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogAudiBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_audi:
+  path:         /audi/articul/0
+  defaults:     {_controller: CatalogAudiBundle:Articul:index}
+
+articul_audi_find:
+  path:         /audi/articul/1/{regionCode}
+  defaults:     {_controller: CatalogAudiBundle:Articul:findByArticul, regionCode: null}
+
+articul_audi_modifications:
+  path:         /audi/articul/3
+  defaults:     {_controller: CatalogAudiBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_audi_complectations:
+  path:         /audi/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogAudiBundle:Articul:audiArticulComplectations}
+
+articul_audi_groups:
+  path:         /audi/articul/5/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogAudiBundle:Articul:audiArticulgroups}
+
+articul_audi_subgroups:
+  path:         /audi/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogAudiBundle:Articul:audiArticulSubgroups}
+
+articul_audi_schemas:
+  path:         /audi/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogAudiBundle:Articul:audiArticulSchemas}
+
+articul_audi_schema:
+  path:         /audi/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogAudiBundle:Articul:audiArticulSchema}
+
+articul_audi_articuls:
+  path:         /audi/articul/9
+  defaults:     {_controller: CatalogAudiBundle:Articul:articuls}
+  requirements: {_method: POST}
+
+articul_audi_group:
+  path:         /audi/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogAudiBundle:Articul:getGroupBySubgroup}
+catalog_audi_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogAudiBundle:Default:index }
