@@ -10,8 +10,40 @@
 {% endblock complectation %}
 
 {% block subgroupImage %}{% endblock subgroupImage %}
+
+ {% block subGroupsMap %}
+
+
 {% block subgroupItem %}
-          <div id="subgroup{{ subgroup.getCode }}">
-          <a href="{{ path('catalog_audi_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">{{ subgroup.getRuname }}</a>
-          </div>
+
+              <table class="table small">
+                  <thead>
+                  <tr>
+                      <th>Подгруппа</th>
+                      <th>Код</th>
+                      <th>Описание</th>
+                      <th>Примечание</th>
+                      <th>Изображение</th>
+
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
+                      <tr>
+                          <td>{{ subgroup.getOption('podgr') }}</td>
+                          <td>{{ subgroup.getCode }}</td>
+                          <td> <a href="{{ path('catalog_audi_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}"> {{ subgroup.getRuname }}</a></td>
+                          <td>{{ subgroup.getOption('prime4')|replace({';':' '}) }}</td>
+                          <td>
+                          <div class="row">
+                              <a href="{{ path('catalog_audi_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">
+                              <img src="{{ asset('bundles/catalogaudi/Images/Minis/'~subgroup.getOption('grafik')~'.zgd.png') }}" width="100" alt="{{ subgroup.getRuname }}"/>
+                              </a>
+                          </div>
+                          </td>
+                      </tr>
+                  {% endfor %}
+                  </tbody>
+              </table>
 {% endblock subgroupItem %}
+ {% endblock subGroupsMap %}

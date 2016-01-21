@@ -318,18 +318,25 @@ class AudiCatalogModel extends CatalogModel{
 
         $groupCode = (($groupCode == '10')?'0':$groupCode);
 
-
-
-
         $sql = "
-        SELECT all_katalog.hg_ug, all_duden.text
+        SELECT all_katalog.id, all_katalog.bildtafel, all_katalog.grafik, all_katalog.bildtafel2
         FROM all_katalog
-        LEFT JOIN all_duden ON (all_duden.catalog = all_katalog.catalog and all_duden.ts = all_katalog.tsben and all_duden.lang = 'R')
         WHERE all_katalog.catalog = 'au'
         and all_katalog.epis_typ = :modificationCode
         and  LEFT(hg_ug, 1) = :groupCode
-
+        and all_katalog.bildtafel <> ''
+        and dir_name = 'R'
         ";
+
+
+/*
+        $sql = "
+        SELECT all_katalog.hg_ug, all_katalog.tsben, all_katalog.bildtafel2, all_katalog.modellangabe, ou
+        FROM all_katalog
+        WHERE all_katalog.catalog = 'au'
+        and all_katalog.epis_typ = :modificationCode
+        and  LEFT(hg_ug, 1) = :groupCode
+        ";*/
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode',  $modificationCode);
@@ -338,18 +345,39 @@ class AudiCatalogModel extends CatalogModel{
 
         $aData = $query->fetchAll();
 
-        $subgroups = array();
+
         foreach($aData as $item)
+
+        {
+            $sqlSub = "
+        SELECT all_katalog.hg_ug, all_katalog.tsben, all_katalog.bildtafel2, all_katalog.modellangabe, ou
+        FROM all_katalog
+        WHERE all_katalog.id = :item +1
+        ";
+
+            $query = $this->conn->prepare($sqlSub);
+            $query->bindValue('item',  $item['id']);
+            $query->execute();
+
+            $aDataSub[$item['bildtafel2']] = $query->fetch();
+            $aDataSub[$item['bildtafel2']]['grafik'] = $item['grafik'];
+        }
+
+
+        $subgroups = array();
+
+        foreach($aDataSub as $item)
         {
 
-            $subgroups[$item['hg_ug']] = array(
+            $subgroups[$item['bildtafel2']] = array(
 
-                Constants::NAME => '('.$item['hg_ug'].') '.mb_strtoupper(iconv('cp1251', 'utf8', $item ['text']),'utf8'),
-                Constants::OPTIONS => array()
+                Constants::NAME => $this->getDesc($item['tsben'], 'R'),
+                Constants::OPTIONS => array('prime4'=>$item['modellangabe'],
+                                            'podgr'=>$item['hg_ug'],
+                                            'grafik'=>substr($item['grafik'],strlen($item['grafik'])-3,3).'/'.substr($item['grafik'],strlen($item['grafik'])-3,3).substr($item['grafik'],1,5).substr($item['grafik'],0,1))
             );
 
         }
-
 
         return $subgroups;
     }
@@ -629,51 +657,42 @@ $articuls = array();
         return $articuls;
     }
 
-    public function getDesc($itemCode, $language)
+    public function getDesc($sitemCode, $language)
     {
+        $aitemCode = array();
+        $aGroup = array();
 
-                $sqlRu = "
-                    SELECT lex_name
-                    FROM hywlex
-                    WHERE lex_code = :itemCode
-                    AND lang = :language
-                    ";
 
-                $query = $this->conn->prepare($sqlRu);
-                $query->bindValue('itemCode', $itemCode);
-                $query->bindValue('language', $language);
-                $query->execute();
-                $sData = $query->fetch();
+        $aitemCode = explode(';',$sitemCode);
 
-        $sDesc = $itemCode;
-                if ($sData)
-                {
-                    $sDesc = $sData['lex_name'];
-                }
-        else
+        foreach ($aitemCode as $index=>$value)
         {
-            $sqlEn = "
-                    SELECT lex_name
-                    FROM hywlex
-                    WHERE lex_code = :itemCode
-                    AND lang = :language
-                    ";
-
-            $query = $this->conn->prepare($sqlEn);
-            $query->bindValue('itemCode', $sDesc);
-            $query->bindValue('language', 'EN');
-            $query->execute();
-            $sData1 = $query->fetch();
-
-            if ($sData1)
+            if ($value == '')
             {
-                $sDesc = $sData1['lex_name'];
+               unset ($aitemCode[$index]);
             }
 
         }
 
+        foreach ($aitemCode as $item)
+        {
+            $sqlLex = "
+        SELECT text
+        FROM all_duden
+        WHERE :item = all_duden.ts and all_duden.catalog = 'au' and all_duden.lang = 'R'
+        ";
 
-        return mb_strtoupper(iconv('cp1251', 'utf8', $sDesc), 'utf8');
+            $query = $this->conn->prepare($sqlLex);
+            $query->bindValue('item',  $item);
+            $query->execute();
+            $aGroup[] = $query->fetchColumn(0);
+
+        }
+
+        $sGroup = implode('; ', array_unique($aGroup));
+
+
+        return mb_strtoupper(iconv('cp1251', 'utf8', $sGroup), 'utf8');
 
     }
 
