@@ -23,6 +23,7 @@
                       <th>Код</th>
                       <th>Описание</th>
                       <th>Примечание</th>
+                      <th>Данные по модели</th>
                       <th>Изображение</th>
 
                   </tr>
@@ -33,7 +34,8 @@
                           <td>{{ subgroup.getOption('podgr') }}</td>
                           <td>{{ subgroup.getCode }}</td>
                           <td> <a href="{{ path('catalog_audi_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}"> {{ subgroup.getRuname }}</a></td>
-                          <td>{{ subgroup.getOption('prime4')|replace({';':' '}) }}</td>
+                          <td>{{ subgroup.getOption('prime4') }}</td>
+                          <td>{{ subgroup.getOption('dannye')|replace({';':' '}) }}</td>
                           <td>
                           <div class="row">
                               <a href="{{ path('catalog_audi_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">
