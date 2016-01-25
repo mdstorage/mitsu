@@ -450,7 +450,7 @@ class AudiCatalogModel extends CatalogModel{
         $groupCode = (($groupCode == '10')?'0':$groupCode);
 
         $sqlPnc = "
-        SELECT all_katalog.btpos, all_katalog.tsben
+        SELECT all_katalog.btpos, all_katalog.tsben, all_katalog.bemerkung
         FROM all_katalog
         WHERE all_katalog.catalog = 'au'
         and all_katalog.epis_typ = :modificationCode
@@ -504,6 +504,7 @@ class AudiCatalogModel extends CatalogModel{
 
 
         $pncs = array();
+        $str = array();
       foreach ($aPncs as $index=>$value) {
             {
                 if (!$value['clangjap'])
@@ -520,8 +521,15 @@ class AudiCatalogModel extends CatalogModel{
                     Constants::Y1 => $item1['cHeight'] + $item1['cTop']);
             	
             	}
-            
-            
+
+                if (strpos($value['tsben'],'16529'))
+                {
+                    $str[$value['btpos']] = str_replace(';',' ',$value['bemerkung']);
+                }
+                else {
+                    $str[$value['btpos']] = '';
+                }
+
                 
             }
         }
@@ -529,8 +537,8 @@ class AudiCatalogModel extends CatalogModel{
         foreach ($aPncs as $item) {
          	
          	
-				$pncs[$item['btpos']][Constants::NAME] = $this->getDesc($item['tsben'], 'R');
-			
+				$pncs[$item['btpos']][Constants::NAME] = $this->getDesc($item['tsben'], 'R').$str[$item['btpos']];
+
 			
            
         }
@@ -618,7 +626,7 @@ $articuls = array();
         SELECT all_katalog.teilenummer, all_katalog.tsben, all_katalog.tsbem, all_katalog.modellangabe, all_katalog.stuck, einsatz, auslauf, mv_data, all_stamm.gruppen_data newArt,
         all_stamm.entfalldatum dataOtmeny
         FROM all_katalog
-        inner join all_stamm on (all_stamm.catalog = all_katalog.catalog and all_stamm.markt = :regionCode and all_stamm.teilenummer = all_katalog.teilenummer)
+        left join all_stamm on (all_stamm.catalog = all_katalog.catalog and all_stamm.markt = :regionCode and all_stamm.teilenummer = all_katalog.teilenummer)
         WHERE all_katalog.catalog = 'au'
         and all_katalog.epis_typ = :modificationCode
         and  LEFT(hg_ug, 1) = :groupCode
@@ -657,6 +665,10 @@ $articuls = array();
                     'prime4' => $this->getDesc($item['tsbem'], 'R'),
                     'dannye' => $item['modellangabe'],
                     'with' => $item['mv_data'],
+                    'zamena' => substr($item['newArt'], 0, strpos($item['newArt'], '~')),
+                    'zamenakoli4' => substr($item['newArt'], strpos($item['newArt'], '~'), strlen($item['newArt'])),
+                    'dataOtmeny' => $item['dataOtmeny']
+
 
                 )
             );

@@ -14,7 +14,9 @@
     <tbody>
     {% for articul in oContainer.getActivePnc.getArticuls %}
         <tr>
-            <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a></td>
+            <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a>
+                {% if articul.getOption('zamena') %} <br>C {{ articul.getOption('dataOtmeny')|audi_date_convertor  }} замена: {{ articul.getOption('zamena') }} <br>({{ articul.getOption('zamenakoli4')|replace({'~':' '}) }} шт.){% endif %}
+            </td>
             <td>{{ articul.getRuname }}</td>
             <td>{% if articul.getOption('prime4') %} {{ articul.getOption('prime4')}} <br/> <br/>{{ articul.getOption('with')|replace({'~':'', 'X':''})}}{% endif %}</td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY'))|replace({';':' '}) }}</td>
@@ -27,7 +29,7 @@
     {% endif %}
     {% if not oContainer.getActivePnc.getArticuls %}
         <tbody>
-    Запчасть не применяется в выбранной комплектации
+    Запчасть не применяется в выбранной модели
     </tbody>
     {% endif %}
 
