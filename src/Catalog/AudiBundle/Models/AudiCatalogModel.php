@@ -686,12 +686,13 @@ $articuls = array();
 
         $aitemCode = explode(';',$sitemCode);
 
-        foreach ($aitemCode as $index=>$value)
+        foreach ($aitemCode as $index=>&$value)
         {
             if ($value == '')
             {
                unset ($aitemCode[$index]);
             }
+            $value = str_replace('~', '', $value);
 
         }
 

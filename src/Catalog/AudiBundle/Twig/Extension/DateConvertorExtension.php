@@ -15,6 +15,8 @@ class DateConvertorExtension extends Twig_Extension{
     public function getFilters() {
         return array(
             'audi_date_convertor'   => new \Twig_Filter_Method($this, 'dateAudiConvertor'),
+            'audi_vin_date_convertor'   => new \Twig_Filter_Method($this, 'dateConvertorVinDate'),
+
         );
     }
 
@@ -31,5 +33,13 @@ class DateConvertorExtension extends Twig_Extension{
             return (substr($str, 0, 1)."/".substr($str, 1, 2));
         }
 
+
+
+    }
+    public function dateConvertorVinDate($str) {
+        if ($str == "" || $str == "00000000" || $str == "99999999") {
+            return "...";
+        }
+        return (substr( $str, 0, 2)."/".substr($str, 2, 2)."/".substr($str, 4, 4));
     }
 } 
