@@ -48,7 +48,7 @@ class AudiVinModel extends AudiCatalogModel {
                 'kry6acolor' => substr($aData['int_roof_ext'], 2, 2),
                 'modif' => $aData['einsatz'].'_'.$aData['epis_typ'],
                 'model_for_groups' => $aData['modell'],
-                'region' => $aData['markt']
+                'region' => $aData['katalogmarkt']
             );
         }
 

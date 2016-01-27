@@ -17,9 +17,9 @@ class AudiArticulModel extends AudiCatalogModel{
 
         
         $sql = "
-        select * from cats_table
-        where detail_code = :articulCode
-
+        select markt from all_overview, all_katalog
+        where teilenummer = :articulCode and all_katalog.epis_typ = all_overview.epis_typ and all_katalog.catalog = all_overview.catalog
+        and all_overview.catalog = 'au'
         ";
 
         $query = $this->conn->prepare($sql);
@@ -28,48 +28,13 @@ class AudiArticulModel extends AudiCatalogModel{
 
         $aData = $query->fetchAll();
         $regions = array();
-        $aDataCatalog = array();
-        
-        if ($aData)
-        {
-                  
+
         foreach($aData as $item)
         {
-		$sqlCatalog = "
-        SELECT data_regions
-        FROM hywc
-        WHERE cutup_code = :cutup_code
-        ";
+            $regions[] = $item['markt'];
 
-        $query = $this->conn->prepare($sqlCatalog);
-        $query->bindValue('cutup_code', $item['catalog_code']);
-        $query->execute();
-
-        $aDataCatalog[] = $query->fetchAll();
-		}
-
-
-		foreach($aDataCatalog as $item)
-        {
-        	foreach($item as $item1)
-        	{
-				$regions = explode("|", $item1['data_regions']);
-                foreach($regions as $index => $value)
-                {
-                    if ($value == '')
-                    {
-                        unset($regions[$index]);
-                    }
-                    $reg[] = $value;
-                }
-
-			}
-        		
-        		
-		}
-		}
-
-        return array_unique($reg);
+        }
+        return array_unique($regions);
 
     }
 
@@ -77,96 +42,57 @@ class AudiArticulModel extends AudiCatalogModel{
     {
 
         $sql = "
-        select * from cats_table
-        where detail_code = :articulCode
-
+        select modell from all_overview, all_katalog
+        where teilenummer = :articulCode and all_katalog.epis_typ = all_overview.epis_typ and all_katalog.catalog = all_overview.catalog
+        and all_overview.catalog = 'au' and all_overview.markt = :regionCode
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
+        $query->bindValue('regionCode', $regionCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
-        $aDataCatalog = array();
-
-        if ($aData)
-        {
-
-            foreach($aData as $item)
-            {
-                $sqlCatalog = "
-        SELECT family
-        FROM hywc
-        WHERE cutup_code = :cutup_code
-        ";
-
-                $query = $this->conn->prepare($sqlCatalog);
-                $query->bindValue('cutup_code', $item['catalog_code']);
-                $query->execute();
-
-                $aDataCatalog[] = $query->fetchAll();
-            }
-
 		
 		$models = array();
-		
-		foreach($aDataCatalog as $item)
-		{
-			foreach($item as $item1)
-			{
-			$models[]=($item1['family']);
-			}
-			
-		}
-	    }
- 
+
+        foreach($aData as $item)
+        {
+            $models[] = $item['modell'];
+
+        }
+
         return array_unique($models);
     }
     
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
-        $sql = "
-        select * from cats_table
-        where detail_code = :articulCode
+        $modelCode = urldecode($modelCode);
 
+        $sql = "
+        select all_katalog.epis_typ, all_overview.einsatz from all_overview, all_katalog
+        where teilenummer = :articulCode and all_katalog.epis_typ = all_overview.epis_typ and all_katalog.catalog = all_overview.catalog
+        and all_overview.catalog = 'au' and all_overview.markt = :regionCode and all_overview.modell = :modelCode
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modelCode', $modelCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
-        $aDataCatalog = array();
-
-        if ($aData)
+        foreach($aData as $item)
         {
+            $modifications[] = $item['einsatz'].'_'.$item['epis_typ'];
 
-            foreach ($aData as $item) {
-                $sqlCatalog = "
-        SELECT catalog_code, catalog_folder
-        FROM hywc
-        WHERE cutup_code = :cutup_code
-        ";
-
-                $query = $this->conn->prepare($sqlCatalog);
-                $query->bindValue('cutup_code', $item['catalog_code']);
-                $query->execute();
-
-                $aDataCatalog[] = $query->fetchAll();
-            }
-
-            $modifications = array();
-            foreach ($aDataCatalog as $item) {
-                foreach ($item as $item1) {
-                    $modifications[] = $item1['catalog_code'].'_'.$item1['catalog_folder'];
-                }
-
-            }
         }
 
         return array_unique($modifications);
+
+
     }
     
     public function getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode)
@@ -254,15 +180,18 @@ class AudiArticulModel extends AudiCatalogModel{
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
 
-        $sql = "
-        SELECT main_part
-        FROM cats_table
-        WHERE detail_code = :articul
+        $modelCode = urldecode($modelCode);
+        $modificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
+        $sql = "
+        select hg_ug from all_katalog
+        where teilenummer = :articulCode and epis_typ = :modificationCode
+        and catalog = 'au'
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', $articul);
+        $query->bindValue('articulCode', $articul);
+        $query->bindValue('modificationCode', $modificationCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -271,118 +200,75 @@ class AudiArticulModel extends AudiCatalogModel{
 
         foreach($aData as $item)
 		{
-			foreach($item as $item1)
-			{
-			$groups[]=$item1;
-			}
+
+			$groups[]= (substr($item['hg_ug'],0,1)=='0')?'10':substr($item['hg_ug'],0,1);
+
 			
 		}
+
         return array_unique($groups);
     }
+
+
     public function getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
-        $ghg = $this->getComplectations($regionCode, $modelCode, $modificationCode);
-        $complectationOptions = $ghg[$complectationCode]['options']['option2'];
-        
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
-
-
+        $modelCode = urldecode($modelCode);
+        $modificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+        $groupCode = (($groupCode == '10')?'0':$groupCode);
 
         $sql = "
-        SELECT *
-        FROM cats_table
-        WHERE detail_code = :articul
-        AND catalog_code = :catCode
+        select bildtafel2 from all_katalog
+        where teilenummer = :articulCode and epis_typ = :modificationCode
+        and catalog = 'au' and  LEFT(hg_ug, 1) = :groupCode
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', $articul);
-        $query->bindValue('catCode', $catCode);
+        $query->bindValue('articulCode', $articul);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('groupCode', $groupCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
+    	$subgroups = array();
 
-        foreach ($aData as $index => $value)
+        foreach($aData as $item)
         {
-            $value2 = str_replace(substr($value['model_options'], 0, strpos($value['model_options'], '|')), '', $value['model_options']);
-            $articulOptions = explode('|', str_replace(';', '', $value2));
 
+            $subgroups[]= $item['bildtafel2'];
 
-            foreach ($articulOptions as $index1 => $value1) {
-                if (($value1 == '') || ($index1 > (count($complectationOptions)-1))) {
-                    unset ($articulOptions[$index1]);
-                }
-            }
-            $cd = count($articulOptions);
-            $cdc = count(array_intersect_assoc($articulOptions, $complectationOptions));
-
-            if ($cd != $cdc)
-            {
-                unset ($aData[$index]);
-            }
 
         }
 
+        return array_unique($subgroups);
 
-
-        foreach ($aData as $item) {
-            $sqlCatalog = "
-        SELECT sector_name, sector_id
-        FROM cats_map
-        WHERE catalog_name = :catalog_code
-        AND sector_id =:compl_name
-        ";
-
-            $query = $this->conn->prepare($sqlCatalog);
-            $query->bindValue('catalog_code', $catCode);
-            $query->bindValue('compl_name', $item['compl_name']);
-            $query->execute();
-
-            $aDataCatalog[] = $query->fetchAll();
-        }
-
-
-        $subgroups = array();
-        foreach($aDataCatalog as $item) {
-            foreach ($item as $item1) {
-                $subgroups[$item1['sector_id']] = $item1['sector_name'];
-
-            }
-
-        }
-
-
-
-
-
-
-      /*  return (array_intersect($subgroups, $test));*/
-        return ($subgroups);
     }
     
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
-        $sql = "
-        SELECT compl_name
-        FROM cats_table
-        WHERE detail_code = :articul
+        $modelCode = urldecode($modelCode);
+        $modificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+        $groupCode = (($groupCode == '10')?'0':$groupCode);
 
+        $sql = "
+        select grafik from all_katalog
+        where epis_typ = :modificationCode and all_katalog.bildtafel <> '' and bildtafel2 = :subGroupCode
+        and catalog = 'au' and  LEFT(hg_ug, 1) = :groupCode
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', $articul);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 	   
 	   $schemas = array();
         foreach($aData as $item) {
-            foreach ($item as $item1) {
-                $schemas[] = $item1;
 
-            }
+                $schemas[] = substr($item['grafik'],strlen($item['grafik'])-3,3).substr($item['grafik'],1,5).substr($item['grafik'],0,1);
+
 
         }
 		   
@@ -391,25 +277,31 @@ class AudiArticulModel extends AudiCatalogModel{
          
      public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
-        $sql = "
-        SELECT detail_pnc
-        FROM cats_table
-        WHERE detail_code = :articul
+        $modelCode = urldecode($modelCode);
+        $modificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+        $groupCode = (($groupCode == '10')?'0':$groupCode);
 
+        $sql = "
+        select btpos from all_katalog
+        where teilenummer = :articulCode and epis_typ = :modificationCode
+        and catalog = 'au' and  LEFT(hg_ug, 1) = :groupCode and bildtafel2 = :subGroupCode
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', $articul);
+        $query->bindValue('articulCode', $articul);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+
         $query->execute();
 
         $aData = $query->fetchAll();
 
         $pncs = array();
         foreach($aData as $item) {
-            foreach ($item as $item1) {
-                $pncs[] = $item1;
 
-            }
+                $pncs[] = str_replace(array('(', ')'),'',$item['btpos']);
+
 
         }
         

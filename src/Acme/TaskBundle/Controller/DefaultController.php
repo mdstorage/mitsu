@@ -8,7 +8,7 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        $marks = array('Huyndai', 'KIA', 'Honda', 'Suzuki', 'Subaru', 'Mazda', 'Mercedes', 'BMW', 'Mini', 'RollsRoyce', 'Saab');
+        $marks = array('Huyndai', 'KIA', 'Honda', 'Suzuki', 'Subaru', 'Mazda', 'Mercedes', 'BMW', 'Mini', 'RollsRoyce', 'Saab', 'Audi');
         return $this->render('AcmeTaskBundle:Default:index.html.twig', array('marks' => $marks));
     }
 }
