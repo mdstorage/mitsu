@@ -1,0 +1,51 @@
+{% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
+{% use 'CatalogAudiBundle::audi.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('catalog_audi') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
+   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('catalog_audi_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> / 
+    Подгруппа запчастей
+{% endblock breadcrumbs %}
+{% block complectation %}
+{% endblock complectation %}
+
+{% block subgroupImage %}{% endblock subgroupImage %}
+
+ {% block subGroupsMap %}
+
+
+{% block subgroupItem %}
+
+              <table class="table">
+                  <thead>
+                  <tr>
+                      <th>Подгруппа</th>
+                      <th>Код</th>
+                      <th>Описание</th>
+                      <th>Примечание</th>
+                      <th>Данные по модели</th>
+                      <th>Изображение</th>
+
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
+                      <tr>
+                          <td>{{ subgroup.getOption('podgr') }}</td>
+                          <td>{{ subgroup.getCode }}</td>
+                          <td> <a href="{{ path('catalog_audi_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}"> {{ subgroup.getRuname }}</a></td>
+                          <td>{{ subgroup.getOption('prime4') }}</td>
+                          <td>{{ subgroup.getOption('dannye')|replace({';':' '}) }}</td>
+                          <td>
+                          <div class="row">
+                              <a href="{{ path('catalog_audi_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">
+                              <img src="{{ asset('bundles/catalogaudi/Images/Minis/'~subgroup.getOption('grafik')~'.zgd.png') }}" width="100" alt="{{ subgroup.getRuname }}"/>
+                              </a>
+                          </div>
+                          </td>
+                      </tr>
+                  {% endfor %}
+                  </tbody>
+              </table>
+{% endblock subgroupItem %}
+ {% endblock subGroupsMap %}

@@ -1,0 +1,55 @@
+{% block head %}<h3>Выбрать год и месяц производства:</h3>{% endblock head %}
+<div class="modifications">
+    <div class="row">
+        {% for res in result %}
+
+
+
+            {% set res_name = res['name'] %}
+            {% set modificationCode = res['options']['modificationCode']%}
+            {% set role = parameters['role']%}
+            {% set modelCode = parameters['modelCode']%}
+            {% set regionCode = parameters['regionCode']%}
+            {% set korobka = parameters['korobka']%}
+
+        <div class="model glyphicon-plus" id="{{ res_name }}">
+
+                        {{ res_name }}
+        </div>
+            <div id="modifications_for_model{{ res_name }}" class="hidden"></div>
+
+            {% block modificationScript %}
+            <script>
+                $("#{{ res_name }}").on("click", function(){
+                    $("#modifications_for_model{{ res_name }}").toggleClass("hidden");
+                    $(this).toggleClass("glyphicon-plus");
+                    $.ajax({
+                        type:   'POST',
+                        async:  false,
+                        url:    "{% block ajaxUrl %}{{ path('articul_mini_complectation_month') }}{% endblock ajaxUrl %}",
+                        data:   { modificationCode: "{{ modificationCode }}", year: "{{ res_name }}", role: "{{ role }}",
+                            modelCode: "{{ modelCode }}",
+                            regionCode: "{{ regionCode }}",
+                            korobka: "{{ korobka }}",
+                        },
+
+                        success: function(data) {
+                            $("#modifications_for_model{{ res_name }}").html(data);
+                        }
+                    });
+                    $(this).toggleClass("glyphicon-minus");
+                });
+                $("#{{ res_name }}").on("mouseover", function(){
+                    $(this).css("cursor", "pointer");
+                    $(this).addClass("btn-info");
+                });
+                $("#{{ res_name }}").on("mouseout", function(){
+                    $(this).removeClass("btn-info");
+                });
+            </script>
+            {% endblock modificationScript %}
+
+
+        {% endfor %}
+    </div>
+</div>

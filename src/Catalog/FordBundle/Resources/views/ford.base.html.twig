@@ -1,0 +1,7 @@
+{% block brand %}Ford{% endblock brand %}
+{% block catalogPath %}{{ path('catalog_ford') }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_ford') }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_ford') }}{% endblock articulPath %}
+{% block userStylesheets %}
+        <link rel="stylesheet" href="{{ asset('bundles/catalogford/css/common.css') }}" media="all">
+    {% endblock userStylesheets %}

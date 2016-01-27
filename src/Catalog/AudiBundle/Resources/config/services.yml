@@ -1,0 +1,20 @@
+services:
+#    catalog_audi.example:
+#        class: Catalog\AudiBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  audi_date_convertor.extension:
+        class: Catalog\AudiBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  audi.catalog.model:
+    class: Catalog\AudiBundle\Models\AudiCatalogModel
+    arguments:  ['@doctrine.dbal.audi_connection']
+
+  audi.vin.model:
+    class: Catalog\AudiBundle\Models\AudiVinModel
+    arguments:  ['@doctrine.dbal.audi_connection']
+
+  audi.articul.model:
+    class: Catalog\AudiBundle\Models\AudiArticulModel
+    arguments:  ['@doctrine.dbal.audi_connection']

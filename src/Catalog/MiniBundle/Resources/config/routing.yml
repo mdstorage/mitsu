@@ -9,22 +9,37 @@ catalog_mini_modifications:
 
 catalog_mini_complectations:
   path:         /mini/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogMiniBundle:Catalog:complectations}
+  defaults:     {_controller: CatalogMiniBundle:Catalog:complectations1}
+
+catalog_mini_complectation_korobka:
+  path:         /mini/catalog/12
+  defaults:     {_controller: CatalogMiniBundle:Catalog:complectation_korobka}
+  requirements: {_method: POST}
+
+catalog_mini_complectation_year:
+  path:         /mini/catalog/10
+  defaults:     {_controller: CatalogMiniBundle:Catalog:complectation_year}
+  requirements: {_method: POST}
+
+catalog_mini_complectation_month:
+  path:         /mini/catalog/11
+  defaults:     {_controller: CatalogMiniBundle:Catalog:complectation_month}
+  requirements: {_method: POST}
 
 catalog_mini_groups:
-  path:         /mini/catalog/3/{regionCode}/{modelCode}/{modificationCode}
+  path:         /mini/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
   defaults:     {_controller: CatalogMiniBundle:Catalog:groups}
 
 catalog_mini_subgroups:
-  path:         /mini/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  path:         /mini/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
   defaults:     {_controller: CatalogMiniBundle:Catalog:subgroups}
 
 catalog_mini_schemas:
-  path:         /mini/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  path:         /mini/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogMiniBundle:Catalog:schemas}
 
 catalog_mini_schema:
-  path:         /mini/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  path:         /mini/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
   defaults:     {_controller: CatalogMiniBundle:Catalog:schema}
 
 catalog_mini_articuls:
@@ -48,19 +63,19 @@ vin_mini_result:
   requirements: {_method: POST}
 
 vin_mini_groups:
-  path:         /mini/vin/3/{regionCode}/{modelCode}/{modificationCode}
+  path:         /mini/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
   defaults:     {_controller: CatalogMiniBundle:Vin:groups}
 
 vin_mini_subgroups:
-  path:         /mini/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  path:         /mini/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
   defaults:     {_controller: CatalogMiniBundle:Vin:subgroups}
 
 vin_mini_schemas:
-  path:         /mini/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  path:         /mini/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogMiniBundle:Vin:schemas}
 
 vin_mini_schema:
-  path:         /mini/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  path:         /mini/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
   defaults:     {_controller: CatalogMiniBundle:Vin:schema}
 
 vin_mini_articuls:
@@ -89,22 +104,38 @@ articul_mini_modifications:
 
 articul_mini_complectations:
   path:         /mini/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogMiniBundle:Articul:miniArticulComplectations}
+  defaults:     {_controller: CatalogMiniBundle:Articul:miniArticulcomplectations1}
+
+articul_mini_complectation_korobka:
+  path:         /mini/articul/12
+  defaults:     {_controller: CatalogMiniBundle:Articul:miniArticulcomplectation_korobka}
+  requirements: {_method: POST}
+
+articul_mini_complectation_year:
+  path:         /mini/articul/10
+  defaults:     {_controller: CatalogMiniBundle:Articul:miniArticulcomplectation_year}
+  requirements: {_method: POST}
+
+articul_mini_complectation_month:
+  path:         /mini/articul/11
+  defaults:     {_controller: CatalogMiniBundle:Articul:miniArticulcomplectation_month}
+  requirements: {_method: POST}
+
 
 articul_mini_groups:
-  path:         /mini/articul/5/{regionCode}/{modelCode}/{modificationCode}
+  path:         /mini/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
   defaults:     {_controller: CatalogMiniBundle:Articul:miniArticulgroups}
 
 articul_mini_subgroups:
-  path:         /mini/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  path:         /mini/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
   defaults:     {_controller: CatalogMiniBundle:Articul:miniArticulSubgroups}
 
 articul_mini_schemas:
-  path:         /mini/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  path:         /mini/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogMiniBundle:Articul:miniArticulSchemas}
 
 articul_mini_schema:
-  path:         /mini/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  path:         /mini/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
   defaults:     {_controller: CatalogMiniBundle:Articul:miniArticulSchema}
 
 articul_mini_articuls:

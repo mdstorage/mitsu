@@ -1,0 +1,18 @@
+<div id="b_u">
+    <p style="color:#ececec;font-size:20px;font-weight:700;border-bottom:1px solid #494949;height: 40px;">Войти:</p>
+    <div id="callme_results"></div>
+    {{ form_start(callMeForm, {'attr': {'novalidate': 'novalidate'}}) }}
+    <div class="form-group">
+        {{ form_label(callMeForm.name) }}
+        {{ form_errors(callMeForm.name) }}
+        {{ form_widget(callMeForm.name) }}
+    </div>
+    <div class="form-group">
+        {{ form_label(callMeForm.phone) }}
+        {{ form_errors(callMeForm.phone) }}
+        {{ form_widget(callMeForm.phone) }}
+    </div>
+
+    {{ form_widget(callMeForm) }}
+    {{ form_end(callMeForm) }}
+</div>

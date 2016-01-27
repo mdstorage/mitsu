@@ -17,15 +17,25 @@ class MiniCatalogModel extends CatalogModel{
 
     public function getRegions(){
 
+
         $sql = "
         SELECT fztyp_ktlgausf
         FROM w_fztyp, w_baureihe
         WHERE fztyp_karosserie NOT LIKE 'ohne'
         AND fztyp_baureihe = baureihe_baureihe
         AND baureihe_marke_tps = 'Mini'
-        GROUP BY fztyp_ktlgausf
-        ";
+        AND (fztyp_ktlgausf = 'ECE'
+        OR fztyp_ktlgausf = 'USA')
+        UNION
+        SELECT fztyp_ktlgausf
+        FROM w_fztyp, w_baureihe
+        WHERE fztyp_karosserie NOT LIKE 'ohne'
+        AND fztyp_baureihe = baureihe_baureihe
+        AND baureihe_marke_tps = 'Mini'
+        AND (fztyp_ktlgausf NOT LIKE 'ECE'
+        OR fztyp_ktlgausf NOT LIKE 'USA')
 
+        ";
         $query = $this->conn->query($sql);
 
         $aData = $query->fetchAll();
@@ -63,27 +73,31 @@ class MiniCatalogModel extends CatalogModel{
         $models = array();
         foreach($aData as $item) {
 
-            $models[$item['Baureihe']] = array(Constants::NAME => strtoupper($item['ExtBaureihe']) . ' ' . $item['Kuzov'],
+            $models[$item['Baureihe'].'_'.$item['Kuzov']] = array(Constants::NAME => strtoupper($item['ExtBaureihe']) . ' ' . $item['Kuzov'],
                 Constants::OPTIONS => array('grafik' => $item['Id']));
 
         }
+
 
         return $models;
     }
 
     public function getModifications($regionCode, $modelCode)
     {
+
         $sql = "
-        SELECT fztyp_mospid, fztyp_erwvbez
+        SELECT fztyp_mospid, fztyp_erwvbez, fztyp_getriebe
         FROM w_fztyp
         WHERE fztyp_ktlgausf = :regionCode
         AND fztyp_baureihe = :modelCode
+        and fztyp_karosserie = :submodelCode
         ORDER BY fztyp_erwvbez
         ";
 
         $query = $this->conn->prepare($sql);
+        $query->bindValue('modelCode', substr($modelCode, 0, strpos($modelCode, '_')));
+        $query->bindValue('submodelCode', substr($modelCode, strpos($modelCode, '_')+1, strlen($modelCode)));
         $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('modelCode', $modelCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -99,128 +113,203 @@ class MiniCatalogModel extends CatalogModel{
         return $modifications;
     }
 
+    /**
+    Функция getComplectations() учитывает все положения руля и даты производства модификаций. Используется только в каталог_контроллере коммонБандла.
+     */
+
     public function getComplectations($regionCode, $modelCode, $modificationCode)
-   
-    {   $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
-
-        $modelCode = rawurldecode($modelCode);
-       $sql = "
-        SELECT *
-        FROM vin_model
-        WHERE model =:modificationCode
+    {
+        $sql = "
+        SELECT fztyp_lenkung, fgstnr_prod, fztyp_getriebe
+        FROM w_fztyp, w_fgstnr
+        WHERE fztyp_mospid = :modificationCode AND fztyp_mospid = fgstnr_mospid AND fgstnr_typschl = fztyp_typschl
         ";
-
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('modificationCode', $modificationCode);
         $query->execute();
 
-        $aData = $query->fetchAll();
-             
-        $aForPNC = array();
-        $aIndexes = array('body_type', 'engine_capacity', 'engine_type', 'fuel_type', 'transaxle', 'field14');
-        foreach($aData as &$item)
-        {
-        foreach($item as $index => $value)
-            {
-        if (in_array($index, $aIndexes))
-                {
-                    $item[str_pad((array_search($index, $aIndexes)+1), 2, "0", STR_PAD_LEFT)] = $value;
-                    $aForPNC[$item['model_index']][] = $value;
-                }
-
-		    }
-        }
-
         $complectations = array();
+        $aData = $query->fetchAll();
 
         foreach ($aData as &$item) {
-            $aData1 = array();
-            $aOptions = array();
-            foreach ($item as $index => $value)
-            {
-                $sql = "
-        SELECT ucc_type, ucc_type_code, ucc_code_short
-        FROM cats_0_ucc
-        WHERE model =:modificationCode
-        AND ucc = :value
-        AND ucc_type = :index
-        ";
-
-                $query = $this->conn->prepare($sql);
-                $query->bindValue('modificationCode', $modificationCode);
-                $query->bindValue('index', $index);
-                $query->bindValue('value', $value);
-                $query->execute();
-
-                $aData1[] = $query->fetch();
-            }
-            foreach ($aData1 as $index1 => $value1)
-            {
-                if ($value1 == '')
-                {
-                    unset ($aData1[$index1]);
-                }
-            }
-
-            $aProm = array();
-            foreach ($aData1 as $item1)
-            {
-                $aProm[$item1['ucc_type']] = $item1;
-
-            }
 
 
-            foreach ($aProm as &$item2)
-            {
-                foreach ($item2 as &$item3)
-                {
-
-                    $sql = "
-                    SELECT lex_name
-                    FROM minilex
-                    WHERE lex_code =:item3
-                    AND lang = 'EN'
-                    ";
-
-                    $query = $this->conn->prepare($sql);
-                    $query->bindValue('item3', $item3);
-                    $query->execute();
-                    $sData2 = $query->fetch();
-                    if ($sData2)
-                    {
-                        $item3 = $sData2['lex_name'];
-                    }
-
-                }
-
-            }
-
-            foreach ($aProm as $item4)
-            {
-                $aOptions[$item['model_index']][] = ($item4['ucc_type_code'].': '.$item4['ucc_code_short']);
-            }
-
-
-            $complectations[$item['model_index']] = array(
-                Constants::NAME => $item['model_code'],
-                Constants::OPTIONS => array(
-
-                    'option1' => $aOptions[$item['model_index']],
-                    Constants::START_DATE   => $item['start_data'],
-                    Constants::END_DATE   => $item['finish_data'],
-                    'option2' => $aForPNC[$item['model_index']], /*Добавлена для последующего использования в выборе нужного артикула в методе getArticuls*/
-                )
+            $complectations[$item['fztyp_lenkung'].$item['fztyp_getriebe'].$item['fgstnr_prod']] = array(
+                Constants::NAME => $item['fztyp_lenkung'].$item['fztyp_getriebe'].$item['fgstnr_prod'],
+                Constants::OPTIONS => array()
             );
         }
 
-         return $complectations;
-     
+        return $complectations;
+
     }
+
+    public function getComplectationsKorobka($role, $modificationCode)
+    {
+
+        $sql = "
+        SELECT fztyp_getriebe
+        FROM w_fztyp
+        WHERE fztyp_mospid = :modificationCode AND fztyp_lenkung = :role
+        ";
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('role', $role);
+        $query->execute();
+
+        $complectations = array();
+        $name = array();
+        $aData = $query->fetchAll();
+
+        foreach ($aData as $item)
+        {
+            switch ($item['fztyp_getriebe'])
+            {
+                case 'A': $name[$item['fztyp_getriebe']] = 'АКПП'; break;
+                case 'M': $name[$item['fztyp_getriebe']] = 'MКПП'; break;
+                default: $name[$item['fztyp_getriebe']] = 'Neutral';
+            }
+
+
+        }
+
+        foreach ($aData as $item) {
+
+
+            $complectations[$item['fztyp_getriebe']] = array(
+                Constants::NAME => $name[$item['fztyp_getriebe']],
+                Constants::OPTIONS => array()
+            );
+        }
+
+
+        return $complectations;
+
+    }
+    /**
+    Функция getRole() возвращает только положения руля. Используется только в каталог_контроллере БМВ_Бандла.
+     */
+
+
+    public function getRole($regionCode, $modelCode, $modificationCode)
+
+    {
+        $sql = "
+        SELECT fztyp_lenkung, grafik_blob Id
+        FROM w_fztyp, w_baureihe, w_grafik
+        WHERE fztyp_mospid = :modificationCode
+        AND grafik_grafikid = baureihe_grafikid AND fztyp_baureihe = baureihe_baureihe
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->execute();
+
+        $role = array();
+        $aData = $query->fetchAll();
+
+
+        foreach ($aData as &$item) {
+
+
+            $role[$item['fztyp_lenkung']] = array(
+                Constants::NAME => ($item['fztyp_lenkung'] == 'L')?'Левый руль':'Правый руль',
+                Constants::OPTIONS => array('grafik' => $item['Id'])
+            );
+        }
+
+
+        return ($role);
+
+    }
+
+    /**
+    Функция getComplectationsData() возвращает год производства при изветном положении руля. Используется только в каталог_контроллере БМВ_Бандла.
+     */
+
+    public function getComplectationsYear($role, $modificationCode, $korobka)
+
+    {
+        $sql = "
+        SELECT fgstnr_prod, fgstnr_typschl, fgstnr_mospid
+        FROM w_fgstnr
+        INNER JOIN w_fztyp ON (fztyp_lenkung = :role AND fztyp_getriebe = :korobka AND fgstnr_mospid = fztyp_mospid AND fgstnr_typschl = fztyp_typschl)
+        WHERE fgstnr_mospid = :modificationCode
+        ORDER BY fgstnr_prod
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('role', $role);
+        $query->bindValue('korobka', $korobka);
+        $query->execute();
+
+        $complectations = array();
+        $aData = $query->fetchAll();
+
+
+        foreach ($aData as &$item) {
+
+
+            $complectations[substr($item['fgstnr_prod'], 0, 4)] = array(
+                Constants::NAME => substr($item['fgstnr_prod'], 0, 4),
+                Constants::OPTIONS => array('modificationCode' => $item['fgstnr_mospid'],
+                    'roleCode' => $item['fgstnr_typschl'])
+            );
+        }
+
+        return $complectations;
+
+    }
+    /**
+    Функция getComplectationsCatalogData() возвращает месяц производства при изветных годе производства и положении руля. Используется только в каталог_контроллере БМВ_Бандла.
+     */
+
+
+    public function getComplectationsMonth($role, $modificationCode, $year, $korobka)
+    {
+
+        $sql = "
+        SELECT fgstnr_prod, fztyp_lenkung, fztyp_getriebe
+        FROM w_fgstnr, w_fztyp
+        WHERE fgstnr_mospid = :modificationCode
+        AND fztyp_mospid = fgstnr_mospid AND fgstnr_typschl = fztyp_typschl
+        AND fgstnr_typschl = :role
+        AND  fgstnr_prod LIKE :years
+        AND fztyp_getriebe = :korobka
+        ORDER BY fgstnr_prod
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('role', $role);
+        $query->bindValue('korobka', $korobka);
+        $query->bindValue('years', '%'.$year.'%');
+        $query->execute();
+
+        $complectations = array();
+        $aData = $query->fetchAll();
+
+
+        foreach ($aData as $item) {
+
+
+            $complectations[$item['fztyp_lenkung'].$item['fztyp_getriebe'].$item['fgstnr_prod']] = array(
+                Constants::NAME => substr($item['fgstnr_prod'],4,2),
+                Constants::OPTIONS => array()
+            );
+        }
+
+        return $complectations;
+
+    }
+
+
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
 
-         $sql = "
+        $sql = "
         select
         hgfg_hg Hauptgruppe,
         hgfg_grafikid Id,
@@ -242,7 +331,7 @@ class MiniCatalogModel extends CatalogModel{
 
         foreach($aData as $item){
             $groups[$item['Hauptgruppe']] = array(
-                Constants::NAME     => ucfirst(iconv('cp1251', 'utf8', $item ['Benennung'])),
+                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']),'utf8'),
                 Constants::OPTIONS  => array('Id' => $item ['BlobMod'])
             );
         }
@@ -252,44 +341,44 @@ class MiniCatalogModel extends CatalogModel{
 
     public function getGroupSchemas($regionCode, $modelCode, $modificationCode, $groupCode)
     {
-  /*      $sqlNumPrigroup = "
-        SELECT *
-        FROM pri_groups_full
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-            AND pri_group = :groupCode
-        ";
-    	$query = $this->conn->prepare($sqlNumPrigroup);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('model_code', $modelCode);
-        $query->bindValue('groupCode', $groupCode);
-        $query->execute();
+        /*      $sqlNumPrigroup = "
+              SELECT *
+              FROM pri_groups_full
+              WHERE catalog = :regionCode
+                  AND model_code =:model_code
+                  AND pri_group = :groupCode
+              ";
+              $query = $this->conn->prepare($sqlNumPrigroup);
+              $query->bindValue('regionCode', $regionCode);
+              $query->bindValue('model_code', $modelCode);
+              $query->bindValue('groupCode', $groupCode);
+              $query->execute();
 
-        $aData = $query->fetch();  
-       
-        $sqlNumModel = "
-        SELECT num_model
-        FROM part_images
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-        GROUP BY num_model
-        ";
-    	$query = $this->conn->prepare($sqlNumModel);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('model_code', $modelCode);
-        $query->execute();
+              $aData = $query->fetch();
 
-        $aNumModel = $query->fetch();
+              $sqlNumModel = "
+              SELECT num_model
+              FROM part_images
+              WHERE catalog = :regionCode
+                  AND model_code =:model_code
+              GROUP BY num_model
+              ";
+              $query = $this->conn->prepare($sqlNumModel);
+              $query->bindValue('regionCode', $regionCode);
+              $query->bindValue('model_code', $modelCode);
+              $query->execute();
 
-        $groupSchemas = array();
-    /*    foreach ($aData as $item)*//* {
+              $aNumModel = $query->fetch();
+
+              $groupSchemas = array();
+          /*    foreach ($aData as $item)*//* {
             $groupSchemas[$aData['num_image']] = array(Constants::NAME => $aData['num_image'], Constants::OPTIONS => array(
               Constants::CD => $aData['catalog'].$aData['sub_dir'].$aData['sub_wheel'],
                     	'num_model' => $aNumModel['num_model'],
                         'num_image' => $aData['num_image']
                 ));
         }*/
-		$groupSchemas = array();
+        $groupSchemas = array();
         return $groupSchemas;
     }
 
@@ -347,6 +436,8 @@ bildtaf_grafikid Id,
 grafik_blob BlobMod
 from w_bildtaf_suche, w_ben_gk, w_bildtaf, w_grafik
 where bildtafs_hg = :groupCode and bildtafs_mospid = :modificationCode and bildtafs_btnr = bildtaf_btnr and bildtaf_hg = :groupCode and bildtaf_fg = :subGroupCode
+and (bildtafs_lenkg ='' OR bildtafs_lenkg = :role) and (bildtafs_automatik ='' OR bildtafs_automatik = :korobka) and
+(bildtafs_eins ='' OR bildtafs_eins <= :dataCar) and (bildtafs_auslf ='' OR :dataCar <= bildtafs_auslf)
 and bildtaf_sicher = 'N' and bildtaf_textc = ben_textcode and ben_iso = 'ru' and ben_regiso = '  ' and bildtaf_grafikid = grafik_grafikid
 order by Pos
 ";
@@ -355,6 +446,9 @@ order by Pos
         $query->bindValue('modificationCode',  $modificationCode);
         $query->bindValue('subGroupCode',  $subGroupCode);
         $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('role',  substr($complectationCode, 0, 1));
+        $query->bindValue('korobka',  substr($complectationCode, 1, 1));
+        $query->bindValue('dataCar',  substr($complectationCode, 2, 8));
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -371,7 +465,6 @@ order by Pos
             }
         }
 
-
         return $schemas;
     }
 
@@ -383,11 +476,11 @@ order by Pos
 
         $schema = array();
 
-			
-		            $schema[$schemaCode] = array(
-                    Constants::NAME => $schemaCode,
-                        Constants::OPTIONS => array()
-                );
+
+        $schema[$schemaCode] = array(
+            Constants::NAME => $schemaCode,
+            Constants::OPTIONS => array()
+        );
 
         return $schema;
     }
@@ -437,7 +530,10 @@ btzeilen_bedkez_pg Teil_BedkezPG,
 btzeilenv_bed_art BedingungArt,
 btzeilenv_bed_alter BedingungAlter
 from w_btzeilen_verbauung
-inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos)
+inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos
+and (btzeilen_lenkg ='' OR btzeilen_lenkg = :role) and (btzeilen_automatik ='' OR btzeilen_automatik = :korobka) and
+(btzeilen_eins ='0' OR btzeilen_eins <= :dataCar) and (btzeilen_auslf ='0' OR :dataCar <= btzeilen_auslf)
+)
 inner join w_teil on (btzeilen_sachnr = teil_sachnr)
 inner join w_ben_gk tben on (teil_textcode = tben.ben_textcode and tben.ben_iso = 'ru' and tben.ben_regiso = '')
 left join w_kompl_satz on (btzeilen_sachnr = ks_sachnr_satz and ks_marke_tps = 'BMW')
@@ -450,28 +546,31 @@ left join w_ben_gk bnbben on (bildtafb_textcode = bnbben.ben_textcode and bnbben
 where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId order by Bildnummer, Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
 ";
 
-    	$query = $this->conn->prepare($sqlPnc);
+        $query = $this->conn->prepare($sqlPnc);
         $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('subGroupId', $options['GrId']);
+        $query->bindValue('role',  substr($complectationCode, 0, 1));
+        $query->bindValue('korobka',  substr($complectationCode, 1, 1));
+        $query->bindValue('dataCar',  substr($complectationCode, 2, 8));
         $query->execute();
 
         $aPncs = $query->fetchAll();
 
 
-    	
-    	foreach ($aPncs as &$aPnc) {
+
+        foreach ($aPncs as &$aPnc) {
             if ($aPnc['Bildnummer'] != '--' || $aPnc['Bildnummer'] != null) {
 
                 $sqlSchemaLabels = "
         SELECT grafikhs_topleft_x, grafikhs_topleft_y, grafikhs_bottomright_x, grafikhs_bottomright_y
         FROM w_grafik_hs
         WHERE grafikhs_grafikid = :schemaCode
-        AND grafikhs_bildposnr = :position
+        AND grafikhs_bildposnr = :pos
         ";
 
                 $query = $this->conn->prepare($sqlSchemaLabels);
                 $query->bindValue('schemaCode', $schemaCode);
-                $query->bindValue('position', $aPnc['Bildnummer']);
+                $query->bindValue('pos', $aPnc['Bildnummer']);
                 $query->execute();
 
                 $aPnc['coords'] = $query->fetchAll();
@@ -480,104 +579,104 @@ where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId orde
 
 
         $pncs = array();
-      foreach ($aPncs as $index=>$value) {
+        foreach ($aPncs as $index=>$value) {
             {
                 if ($value['Bildnummer'] == '--' || $value['Bildnummer'] == null)
                 {
                     unset ($aPncs[$index]);
                 }
-            	foreach ($value['coords'] as $item1)
-            	{
-            	$pncs[$value['Bildnummer']][Constants::OPTIONS][Constants::COORDS][$item1['grafikhs_topleft_x']] = array(
-                    Constants::X1 => floor($item1['grafikhs_topleft_x']),
-                    Constants::Y1 => $item1['grafikhs_topleft_y'],
-                    Constants::X2 => $item1['grafikhs_bottomright_x'],
-                    Constants::Y2 => $item1['grafikhs_bottomright_y']);
-            	
-            	}
-            
-            
-                
+                foreach ($value['coords'] as $item1)
+                {
+                    $pncs[$value['Bildnummer']][Constants::OPTIONS][Constants::COORDS][$item1['grafikhs_topleft_x']] = array(
+                        Constants::X1 => floor($item1['grafikhs_topleft_x']),
+                        Constants::Y1 => $item1['grafikhs_topleft_y'],
+                        Constants::X2 => $item1['grafikhs_bottomright_x'],
+                        Constants::Y2 => $item1['grafikhs_bottomright_y']);
+
+                }
+
+
+
             }
         }
 
         foreach ($aPncs as $item) {
-         	
-         	
-				$pncs[$item['Bildnummer']][Constants::NAME] = mb_strtoupper(iconv('cp1251', 'utf8', $item['Teil_Benennung']), 'utf8');
-			
-			
-           
+
+
+            $pncs[$item['Bildnummer']][Constants::NAME] = mb_strtoupper(iconv('cp1251', 'utf8', $item['Teil_Benennung']), 'utf8');
+
+
+
         }
 
 
-         return $pncs;
+        return $pncs;
     }
 
     public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
-     /*   $sqlSchemaLabels = "
-        SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
-        FROM pictures p
-        WHERE p.catalog = :regionCode
-          AND p.cd = :cd
-          AND p.pic_name = :schemaCode
-          AND p.XC26ECHK = 2
-        ";
+        /*   $sqlSchemaLabels = "
+           SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
+           FROM pictures p
+           WHERE p.catalog = :regionCode
+             AND p.cd = :cd
+             AND p.pic_name = :schemaCode
+             AND p.XC26ECHK = 2
+           ";
 
-        $query = $this->conn->prepare($sqlSchemaLabels);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('cd', $cd);
-        $query->bindValue('schemaCode', $schemaCode);
-        $query->execute();
+           $query = $this->conn->prepare($sqlSchemaLabels);
+           $query->bindValue('regionCode', $regionCode);
+           $query->bindValue('cd', $cd);
+           $query->bindValue('schemaCode', $schemaCode);
+           $query->execute();
 
-        $aDataLabels = $query->fetchAll();
+           $aDataLabels = $query->fetchAll();
 
+           $articuls = array();
+           foreach ($aDataLabels as $item) {
+               $articuls[$item['part_code']][Constants::NAME] = $item['part_code'];
+
+               $articuls[$item['part_code']][Constants::OPTIONS][Constants::COORDS][] = array(
+                   Constants::X1 => $item['xs'],
+                   Constants::Y1 => $item['ys'],
+                   Constants::X2 => $item['xe'],
+                   Constants::Y2 => $item['ye'],
+               );
+           }*/
         $articuls = array();
-        foreach ($aDataLabels as $item) {
-            $articuls[$item['part_code']][Constants::NAME] = $item['part_code'];
-
-            $articuls[$item['part_code']][Constants::OPTIONS][Constants::COORDS][] = array(
-                Constants::X1 => $item['xs'],
-                Constants::Y1 => $item['ys'],
-                Constants::X2 => $item['xe'],
-                Constants::Y2 => $item['ye'],
-            );
-        }*/
-$articuls = array();
         return $articuls;
     }
 
     public function getReferGroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
-      /*  $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+        /*  $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
 
-        $sqlSchemaLabels = "
-        SELECT name, x1, y1, x2, y2
-        FROM cats_coord
-        WHERE catalog_code =:catCode
-          AND compl_name =:schemaCode
-          AND quantity = 5
-          ";
+          $sqlSchemaLabels = "
+          SELECT name, x1, y1, x2, y2
+          FROM cats_coord
+          WHERE catalog_code =:catCode
+            AND compl_name =:schemaCode
+            AND quantity = 5
+            ";
 
-        $query = $this->conn->prepare($sqlSchemaLabels);
-        $query->bindValue('catCode', $catCode);
-        $query->bindValue('schemaCode', $schemaCode);
-        $query->execute();
+          $query = $this->conn->prepare($sqlSchemaLabels);
+          $query->bindValue('catCode', $catCode);
+          $query->bindValue('schemaCode', $schemaCode);
+          $query->execute();
 
-        $aData = $query->fetchAll();
+          $aData = $query->fetchAll();
 
-        $groups = array();
-        foreach ($aData as $item)
-        {
-            $groups[$item['name']][Constants::NAME] = $item['name'];
-            $groups[$item['name']][Constants::OPTIONS][Constants::COORDS][] = array(
-                Constants::X1 => ($item['x1']),
-                Constants::Y1 => $item['y1'],
-                Constants::X2 => $item['x2'],
-                Constants::Y2 => $item['y2']);
-        }*/
+          $groups = array();
+          foreach ($aData as $item)
+          {
+              $groups[$item['name']][Constants::NAME] = $item['name'];
+              $groups[$item['name']][Constants::OPTIONS][Constants::COORDS][] = array(
+                  Constants::X1 => ($item['x1']),
+                  Constants::Y1 => $item['y1'],
+                  Constants::X2 => $item['x2'],
+                  Constants::Y2 => $item['y2']);
+          }*/
         $groups = array();
         return $groups;
     }
@@ -592,6 +691,12 @@ teil_hauptgr Teil_HG,
 teil_untergrup Teil_UG,
 teil_sachnr Teil_Sachnummer,
 tben.ben_text Teil_Benennung,
+nuch.komm_pos Komnach,
+kommnuch.ben_text Komm_Benennung,
+vor.komm_pos Komvor,
+vor.komm_code KomCode,
+vor.komm_vz KomVz,
+kommvor.ben_text Komm_Vor,
 teil_benennzus Teil_Zusatz,
 teil_entfall_kez Teil_Entfall,
 teil_textcode_kom Teil_Kommentar_Id,
@@ -626,9 +731,16 @@ btzeilen_bedkez_pg Teil_BedkezPG,
 btzeilenv_bed_art BedingungArt,
 btzeilenv_bed_alter BedingungAlter
 from w_btzeilen_verbauung
-inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos)
+inner join w_btzeilen on (btzeilenv_btnr = btzeilen_btnr and btzeilenv_pos = btzeilen_pos
+and (btzeilen_lenkg ='' OR btzeilen_lenkg = :role) and (btzeilen_automatik ='' OR btzeilen_automatik = :korobka) and
+(btzeilen_eins ='0' OR btzeilen_eins <= :dataCar) and (btzeilen_auslf ='0' OR :dataCar <= btzeilen_auslf)
+)
 inner join w_teil on (btzeilen_sachnr = teil_sachnr)
 inner join w_ben_gk tben on (teil_textcode = tben.ben_textcode and tben.ben_iso = 'ru' and tben.ben_regiso = '  ')
+left join w_komm nuch on (btzeilen_kommnach = nuch.komm_id)
+left join w_ben_gk kommnuch on (nuch.komm_textcode = kommnuch.ben_textcode and kommnuch.ben_iso = 'ru' and kommnuch.ben_regiso = '  ')
+left join w_komm vor on (btzeilen_kommvor = vor.komm_id)
+left join w_ben_gk kommvor on (vor.komm_textcode = kommvor.ben_textcode and kommvor.ben_iso = 'ru' and kommvor.ben_regiso = '  ')
 left join w_kompl_satz on (btzeilen_sachnr = ks_sachnr_satz and ks_marke_tps = 'BMW')
 left join w_tc_performance on (tcp_mospid = :modificationCode and tcp_sachnr = btzeilen_sachnr  and tcp_datum_von <= 20150816 and (tcp_datum_bis is null or tcp_datum_bis >= 20150816))
 left join w_grp_information on (btzeilenv_mospid = grpinfo_mospid and grpinfo_sachnr = btzeilen_sachnr and grpinfo_typ = 'FE81')
@@ -636,35 +748,153 @@ left join w_ben_gk tkben on (teil_textcode_kom = tkben.ben_textcode and tkben.be
 left join w_si on (si_sachnr = teil_sachnr)
 left join w_bildtaf_bnbben on (bildtafb_btnr = btzeilenv_btnr and bildtafb_bildposnr = btzeilen_bildposnr)
 left join w_ben_gk bnbben on (bildtafb_textcode = bnbben.ben_textcode and bnbben.ben_iso = 'ru' and bnbben.ben_regiso = '  ')
-where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId and btzeilen_bildposnr = :pncCode order by Bildnummer, Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
+where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId and (btzeilen_bildposnr = :pncCode or btzeilen_bildposnr = '--')
+order by Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
 ";
 
         $query = $this->conn->prepare($sqlPnc);
         $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('complectationCode', substr($complectationCode,1,strlen($complectationCode)-1));
         $query->bindValue('subGroupId', $options['GrId']);
         $query->bindValue('pncCode', $pncCode);
+        $query->bindValue('role',  substr($complectationCode, 0, 1));
+        $query->bindValue('korobka',  substr($complectationCode, 1, 1));
+        $query->bindValue('dataCar',  substr($complectationCode, 2, 8));
+
         $query->execute();
 
         $aArticuls = $query->fetchAll();
 
 
 
+        $nach = array();
+
+
+
+
+        foreach ($aArticuls as $index => $value)
+        {
+
+            if (($value['Bildnummer'] != '--') && ((iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='только в комбинации с') ||
+                    (iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='подходит только при') || $value['KommNach']!='0'))
+            {
+                $nach[]=$value['KommNach'];
+            }
+
+        }
+
+
+        foreach ($aArticuls as $index => $value)
+        {
+
+            if (($value['Bildnummer'] == '--') && (count($nach) == 0))
+            {
+                unset ($aArticuls[$index]);
+            }
+
+        }
+
+        $aPred = array();
+        $aCurrent = array();
+        $aNext = array();
+        $nachIndex = 0;
+
+
+        foreach ($aArticuls as $index => $value)
+        {
+
+            if (($value['Bildnummer'] != '--') && ((iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='только в комбинации с') ||
+                    (iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='подходит только при') || $value['KommNach']!='0'))
+            {
+
+                $nachIndex = $index;
+                $nachPos = $value['Pos'];
+
+            }
+
+        }
+
+        $min = 10;
+        foreach ($aArticuls as $index => $value)
+        {
+            if (($value['Bildnummer'] == '--') && ($value['Pos'] > $aArticuls[$nachIndex]['Pos'])
+                && (($value['Pos'] - $aArticuls[$nachIndex]['Pos']) < $min)) {
+                $min =  $value['Pos'] - $aArticuls[$nachIndex]['Pos'];
+                $minIndex = $index;
+                $minPos = $value['Pos'];
+
+            }
+        }
+
+        $ba = array();
+        foreach ($aArticuls as $index => $value)
+        {
+            if (($value['Bildnummer'] == '--') && (($index==$minIndex)))
+            {
+
+                $pos = $value['Pos'];
+
+            }
+        }
+
+
+        foreach ($aArticuls as $index => $value)
+        {
+
+            if (($value['Bildnummer'] == '--') && ((($value['Pos']-$pos) > 2) || ($value['Pos']-$pos) < 0)) {
+
+                unset ($aArticuls[$index]);
+            }
+        }
+
+
+
+
         $articuls = array();
-      
+        $kommnach = array();
+        $kommanach = array();
+
+        $kommvor = array();
+        $kommavor = array();
+
+        foreach ($aArticuls as $item)
+        {
+            if ($item ['KomVz']=='+') {$string[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = ' применяется';}
+            else if ($item ['KomVz']=='-') {$string[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = ' не применяется';}
+            else {$string[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = NULL;}
+            $a = $string[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']];
+
+            $kommnach[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']][$item['Komnach']] = iconv('cp1251', 'utf8', $item ['Komm_Benennung']);
+            (ksort($kommnach[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']]));
+            $kommanach[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = implode (' ', $kommnach[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']]);
+
+            $kommvor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']][$item['Komvor']] = iconv('cp1251', 'utf8', $item ['Komm_Vor']).' '.$item ['KomCode'];
+            (ksort($kommvor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']]));
+            $kommavor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = implode (' ', $kommvor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']]);
+
+        }
+
+
         foreach ($aArticuls as $item) {
-        	 
-            
-            
-				$articuls[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = array(
+
+
+
+            $articuls[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = array(
                 Constants::NAME => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Teil_Benennung']), 'utf8'),
                 Constants::OPTIONS => array(
                     Constants::QUANTITY => $item['Menge'],
                     Constants::START_DATE => ($item['Einsatz'] != '(null)')?$item['Einsatz']:99999999,
                     Constants::END_DATE => ($item['Auslauf'] != '(null)')?$item['Auslauf']:99999999,
                     'dopinf' => ($item['Teil_Zusatz'] != '(null)')?$item['Teil_Zusatz']:'',
+                    'kommanach' => $kommanach[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']],
+                    'kommavor' => ($item['Bildnummer'] != '--')?($kommavor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']].($a?$a:NULL)):' ',
+
+
+
+
                 )
             );
-            
+
         }
 
 
@@ -696,5 +926,5 @@ where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId and 
 
     }
 
-    
+
 } 
