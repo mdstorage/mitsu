@@ -344,6 +344,7 @@ class AudiCatalogModel extends CatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
+        $ObDvig = array();
 
 
         foreach($aData as $item)
@@ -361,221 +362,259 @@ class AudiCatalogModel extends CatalogModel{
 
             $aDataSub[$item['bildtafel2']] = $query->fetch();
             $aDataSub[$item['bildtafel2']]['grafik'] = $item['grafik'];
+
+           $ObDvig[]=$this->getDesc($aDataSub[$item['bildtafel2']]['tsbem'], 'R');
+
+            /*    $ObDvig[] = $aDataSub[$item['bildtafel2']]['tsbem'];*/
+           }
+        $sDataLitr = array();
+
+
+
+        $array = array('0','1','2','3','4','5','6','7','8','9',',','/','-');
+        foreach($ObDvig as $index=>&$value)
+                    {
+                        preg_match_all("/\d{1}\,\d{1}/x",
+                            $value, $sDataLitr);
+
+                         foreach($sDataLitr as $item)
+                        {
+                            foreach($item as $item1)
+                            {
+                                $sDataLitr0[] = $item1;
+                            }
+
+                        }
+
+
         }
 
 
-        $subgroups = array();
+           $subgroups = array();
 
-        foreach($aDataSub as $item)
-        {
+           foreach($aDataSub as $item)
+           {
 
-            $subgroups[$item['bildtafel2']] = array(
+               $subgroups[$item['bildtafel2']] = array(
 
-                Constants::NAME => $this->getDesc($item['tsben'], 'R'),
-                Constants::OPTIONS => array('dannye'=>$item['modellangabe'],
-                                            'podgr'=>$item['hg_ug'],
-                                            'prime4'=>$this->getDesc($item['tsbem'], 'R'),
-                                            'grafik'=>substr($item['grafik'],strlen($item['grafik'])-3,3).'/'.substr($item['grafik'],strlen($item['grafik'])-3,3).substr($item['grafik'],1,5).substr($item['grafik'],0,1))
-            );
+                   Constants::NAME => $this->getDesc($item['tsben'], 'R'),
+                   Constants::OPTIONS => array('dannye'=>$item['modellangabe'],
+                                               'podgr'=>$item['hg_ug'],
+                                               'prime4'=>$this->getDesc($item['tsbem'], 'R'),
+                                               'grafik'=>substr($item['grafik'],strlen($item['grafik'])-3,3).'/'.substr($item['grafik'],strlen($item['grafik'])-3,3).substr($item['grafik'],1,5).substr($item['grafik'],0,1),
+                                               'ObDvig'=>array_unique($sDataLitr0))
 
-        }
+               );
 
-        return $subgroups;
-    }
+           }
+           return $subgroups;
+       }
 
-    public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
-    {
-        $modificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+       public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
+       {
+           $modificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
-        $groupCode = (($groupCode == '10')?'0':$groupCode);
+           $groupCode = (($groupCode == '10')?'0':$groupCode);
 
-        $sql = "
-        SELECT all_katalog.id, all_katalog.bildtafel, all_katalog.grafik, all_katalog.bildtafel2
-        FROM all_katalog
-        WHERE all_katalog.catalog = 'au'
-        and all_katalog.epis_typ = :modificationCode
-        and  LEFT(hg_ug, 1) = :groupCode
-        and all_katalog.bildtafel <> ''
-        and dir_name = 'R'
-        and bildtafel2 = :subGroupCode
+           $sql = "
+           SELECT all_katalog.id, all_katalog.bildtafel, all_katalog.grafik, all_katalog.bildtafel2
+           FROM all_katalog
+           WHERE all_katalog.catalog = 'au'
+           and all_katalog.epis_typ = :modificationCode
+           and  LEFT(hg_ug, 1) = :groupCode
+           and all_katalog.bildtafel <> ''
+           and dir_name = 'R'
+           and bildtafel2 = :subGroupCode
 
-        ";
+           ";
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode',  $modificationCode);
-        $query->bindValue('groupCode',  $groupCode);
-        $query->bindValue('subGroupCode',  $subGroupCode);
-        $query->execute();
+           $query = $this->conn->prepare($sql);
+           $query->bindValue('modificationCode',  $modificationCode);
+           $query->bindValue('groupCode',  $groupCode);
+           $query->bindValue('subGroupCode',  $subGroupCode);
+           $query->execute();
 
-        $aData = $query->fetchAll();
+           $aData = $query->fetchAll();
 
-        $schemas = array();
-        foreach($aData as $item)
-        {
+           $schemas = array();
+           foreach($aData as $item)
+           {
 
-		            $schemas[substr($item['grafik'],strlen($item['grafik'])-3,3).substr($item['grafik'],1,5).substr($item['grafik'],0,1)] = array(
-                    Constants::NAME => urlencode(substr($item['grafik'],strlen($item['grafik'])-3,3).'/'.substr($item['grafik'],strlen($item['grafik'])-3,3).substr($item['grafik'],1,5).substr($item['grafik'],0,1)),
-                    Constants::OPTIONS => array('cd'=>substr($item['grafik'],strlen($item['grafik'])-3,3))
-                );
-        }
-
-
-        return $schemas;
-    }
-
-    public function getSchema($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
-    {
-        print_r($schemaCode); die;
-
-        $schema = array();
-
-			
-		            $schema[$schemaCode] = array(
-                    Constants::NAME => $schemaCode,
-                        Constants::OPTIONS => array(
-                            Constants::CD => $schemaCode
-                        )
-                );
+                       $schemas[substr($item['grafik'],strlen($item['grafik'])-3,3).substr($item['grafik'],1,5).substr($item['grafik'],0,1)] = array(
+                       Constants::NAME => urlencode(substr($item['grafik'],strlen($item['grafik'])-3,3).'/'.substr($item['grafik'],strlen($item['grafik'])-3,3).substr($item['grafik'],1,5).substr($item['grafik'],0,1)),
+                       Constants::OPTIONS => array('cd'=>substr($item['grafik'],strlen($item['grafik'])-3,3))
+                   );
+           }
 
 
+           return $schemas;
+       }
 
-        return $schema;
-    }
+       public function getSchema($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
+       {
+           print_r($schemaCode); die;
 
-    public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
-    {
-
-        $modificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-
-        $groupCode = (($groupCode == '10')?'0':$groupCode);
-
-        $sqlPnc = "
-        SELECT all_katalog.btpos, all_katalog.tsben, all_katalog.bemerkung
-        FROM all_katalog
-        WHERE all_katalog.catalog = 'au'
-        and all_katalog.epis_typ = :modificationCode
-        and  LEFT(hg_ug, 1) = :groupCode
-        and  LEFT(btpos, 1) <> '('
-        and all_katalog.bildtafel = ''
-        and ou = ''
-        and dir_name = 'R'
-        and bildtafel2 = :subGroupCode
-
-        ";
-
-    	$query = $this->conn->prepare($sqlPnc);
-        $query->bindValue('modificationCode',  $modificationCode);
-        $query->bindValue('groupCode',  $groupCode);
-        $query->bindValue('subGroupCode',  $subGroupCode);
-        $query->execute();
-
-        $aPncs = $query->fetchAll();
-
-        foreach ($aPncs as $index=>$value)
-        {
-            if ($value['tsben'] == '22358')
-            {
-                unset ($aPncs[$index]);
-            }
-        }
+           $schema = array();
 
 
-    	
-    	foreach ($aPncs as &$aPnc)
-    	{
-    		
-    	$sqlSchemaLabels = "
-        SELECT cLeft, cTop, cWidth, cHeight
-        FROM all_coord
-        WHERE dirname = :cd
-          AND cPoint = :pnc_code
-          AND filename =  :schemaCode
-        ";
-
-        $query = $this->conn->prepare($sqlSchemaLabels);
-            $query->bindValue('schemaCode', $schemaCode);
-            $query->bindValue('cd', $options['cd']);
-        $query->bindValue('pnc_code', $aPnc['btpos']);
-        $query->execute();
-        
-        $aPnc['clangjap'] = $query->fetchAll();
-
-		}
+                       $schema[$schemaCode] = array(
+                       Constants::NAME => $schemaCode,
+                           Constants::OPTIONS => array(
+                               Constants::CD => $schemaCode
+                           )
+                   );
 
 
-        $pncs = array();
-        $str = array();
-      foreach ($aPncs as $index=>$value) {
-            {
-                if (!$value['clangjap'])
-                {
-                    unset ($aPncs[$index]);
-                }
 
-                foreach ($value['clangjap'] as $item1)
-            	{
-            	$pncs[$value['btpos']][Constants::OPTIONS][Constants::COORDS][$item1['cLeft']] = array(
-                    Constants::X2 => floor(($item1['cLeft'])),
-                    Constants::Y2 => $item1['cTop'],
-                    Constants::X1 => $item1['cWidth'] + $item1['cLeft'],
-                    Constants::Y1 => $item1['cHeight'] + $item1['cTop']);
-            	
-            	}
+           return $schema;
+       }
 
-                if (strpos($value['tsben'],'16529'))
-                {
-                    $str[$value['btpos']] = str_replace(';',' ',$value['bemerkung']);
-                }
-                else {
-                    $str[$value['btpos']] = '';
-                }
+       public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
+       {
 
-                
-            }
-        }
+           $modificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
-        foreach ($aPncs as $item) {
-         	
-         	
-				$pncs[$item['btpos']][Constants::NAME] = $this->getDesc($item['tsben'], 'R').$str[$item['btpos']];
+           $groupCode = (($groupCode == '10')?'0':$groupCode);
 
-			
-           
-        }
+           $sqlPnc = "
+           SELECT all_katalog.btpos, all_katalog.tsben, all_katalog.bemerkung
+           FROM all_katalog
+           WHERE all_katalog.catalog = 'au'
+           and all_katalog.epis_typ = :modificationCode
+           and  LEFT(hg_ug, 1) = :groupCode
 
-         return $pncs;
-    }
+           and all_katalog.bildtafel = ''
+           and ou = ''
+           and dir_name = 'R'
+           and bildtafel2 = :subGroupCode
 
-    public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
-    {
-     /*   $sqlSchemaLabels = "
-        SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
-        FROM pictures p
-        WHERE p.catalog = :regionCode
-          AND p.cd = :cd
-          AND p.pic_name = :schemaCode
-          AND p.XC26ECHK = 2
-        ";
+           ";
 
-        $query = $this->conn->prepare($sqlSchemaLabels);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('cd', $cd);
-        $query->bindValue('schemaCode', $schemaCode);
-        $query->execute();
+           $query = $this->conn->prepare($sqlPnc);
+           $query->bindValue('modificationCode',  $modificationCode);
+           $query->bindValue('groupCode',  $groupCode);
+           $query->bindValue('subGroupCode',  $subGroupCode);
+           $query->execute();
 
-        $aDataLabels = $query->fetchAll();
+           $aPncs = $query->fetchAll();
 
-        $articuls = array();
-        foreach ($aDataLabels as $item) {
-            $articuls[$item['part_code']][Constants::NAME] = $item['part_code'];
+           foreach ($aPncs as $index=>$value)
+           {
+               if ($value['tsben'] == '22358')
+               {
+                   unset ($aPncs[$index]);
+               }
+           }
 
-            $articuls[$item['part_code']][Constants::OPTIONS][Constants::COORDS][] = array(
-                Constants::X1 => $item['xs'],
-                Constants::Y1 => $item['ys'],
-                Constants::X2 => $item['xe'],
-                Constants::Y2 => $item['ye'],
-            );
-        }*/
+
+
+           foreach ($aPncs as &$aPnc)
+           {
+
+           $sqlSchemaLabels = "
+           SELECT cLeft, cTop, cWidth, cHeight
+           FROM all_coord
+           WHERE dirname = :cd
+             AND cPoint = :pnc_code
+             AND filename =  :schemaCode
+           ";
+
+           $query = $this->conn->prepare($sqlSchemaLabels);
+               $query->bindValue('schemaCode', $schemaCode);
+               $query->bindValue('cd', $options['cd']);
+           $query->bindValue('pnc_code', str_replace(array('(', ')'),'',$aPnc['btpos']));
+           $query->execute();
+
+           $aPnc['clangjap'] = $query->fetchAll();
+
+           }
+
+
+           $pncs = array();
+           $str = array();
+         foreach ($aPncs as $index=>$value) {
+               {
+                   if (!$value['clangjap'])
+                   {
+                       unset ($aPncs[$index]);
+                   }
+
+                   foreach ($value['clangjap'] as $item1)
+                   {
+                   $pncs[str_replace(array('(', ')'),'',$value['btpos'])][Constants::OPTIONS][Constants::COORDS][$item1['cLeft']] = array(
+                       Constants::X2 => floor(($item1['cLeft'])),
+                       Constants::Y2 => $item1['cTop'],
+                       Constants::X1 => $item1['cWidth'] + $item1['cLeft'],
+                       Constants::Y1 => $item1['cHeight'] + $item1['cTop']);
+
+                   }
+
+                   if (strpos($value['tsben'],'16529'))
+                   {
+                       $str[str_replace(array('(', ')'),'',$value['btpos'])] = str_replace(';',' ',$value['bemerkung']);
+                   }
+                   else {
+                       $str[str_replace(array('(', ')'),'',$value['btpos'])] = '';
+                   }
+
+
+               }
+           }
+
+
+           foreach ($aPncs as $item) {
+               if (strpos($this->getDesc($item['tsben'], 'R'),';'))
+               {
+                   $name = substr($this->getDesc($item['tsben'], 'R'),0,strpos($this->getDesc($item['tsben'], 'R'),';')).$str[str_replace(array('(', ')'),'',$item['btpos'])];
+
+               }
+               else
+               {
+                   $name = $this->getDesc($item['tsben'], 'R').$str[str_replace(array('(', ')'),'',$item['btpos'])];
+
+               }
+
+
+
+                   $pncs[str_replace(array('(', ')'),'',$item['btpos'])][Constants::NAME] = $name;
+
+
+
+           }
+
+            return $pncs;
+       }
+
+       public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
+       {
+        /*   $sqlSchemaLabels = "
+           SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
+           FROM pictures p
+           WHERE p.catalog = :regionCode
+             AND p.cd = :cd
+             AND p.pic_name = :schemaCode
+             AND p.XC26ECHK = 2
+           ";
+
+           $query = $this->conn->prepare($sqlSchemaLabels);
+           $query->bindValue('regionCode', $regionCode);
+           $query->bindValue('cd', $cd);
+           $query->bindValue('schemaCode', $schemaCode);
+           $query->execute();
+
+           $aDataLabels = $query->fetchAll();
+
+           $articuls = array();
+           foreach ($aDataLabels as $item) {
+               $articuls[$item['part_code']][Constants::NAME] = $item['part_code'];
+
+               $articuls[$item['part_code']][Constants::OPTIONS][Constants::COORDS][] = array(
+                   Constants::X1 => $item['xs'],
+                   Constants::Y1 => $item['ys'],
+                   Constants::X2 => $item['xe'],
+                   Constants::Y2 => $item['ye'],
+               );
+           }*/
 $articuls = array();
         return $articuls;
     }
@@ -624,9 +663,9 @@ $articuls = array();
 
         $sqlPnc = "
         SELECT all_katalog.teilenummer, all_katalog.tsben, all_katalog.tsbem, all_katalog.modellangabe, all_katalog.stuck, einsatz, auslauf, mv_data, all_stamm.gruppen_data newArt,
-        all_stamm.entfalldatum dataOtmeny
+        all_stamm.entfalldatum dataOtmeny, all_katalog.bemerkung
         FROM all_katalog
-        left join all_stamm on (all_stamm.catalog = all_katalog.catalog and all_stamm.markt = :regionCode and all_stamm.teilenummer = all_katalog.teilenummer)
+        left join all_stamm on (all_stamm.catalog = all_katalog.catalog and (all_stamm.markt = :regionCode or all_stamm.markt = '') and all_stamm.teilenummer = all_katalog.teilenummer)
         WHERE all_katalog.catalog = 'au'
         and all_katalog.epis_typ = :modificationCode
         and  LEFT(hg_ug, 1) = :groupCode
@@ -662,7 +701,7 @@ $articuls = array();
                     Constants::QUANTITY => $item['stuck'],
                     Constants::START_DATE => $item['einsatz'],
                     Constants::END_DATE => $item['auslauf'],
-                    'prime4' => $this->getDesc($item['tsbem'], 'R'),
+                    'prime4' => ($this->getDesc($item['tsbem'], 'R'))?$this->getDesc($item['tsbem'], 'R'):$item['bemerkung'],
                     'dannye' => $item['modellangabe'],
                     'with' => $item['mv_data'],
                     'zamena' => substr($item['newArt'], 0, strpos($item['newArt'], '~')),
@@ -674,6 +713,7 @@ $articuls = array();
             );
             
         }
+
 
         return $articuls;
     }

@@ -12,6 +12,7 @@
 
 {% block subgroupImage %}
         {% endblock subgroupImage %}
+
 {% block subgroupItem %}
     <div id="subgroup{{ subgroup.getCode }}">
         <a href="{{ path('articul_audi_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">{{ subgroup.getRuname }}</a>
