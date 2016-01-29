@@ -21,7 +21,14 @@ class AudiCatalogModel extends CatalogModel{
         SELECT markt
         FROM all_overview
         WHERE catalog = 'au'
-        GROUP BY markt
+        AND markt = 'RDW'
+        OR markt = 'USA'
+        UNION
+        SELECT markt
+        FROM all_overview
+        WHERE catalog = 'au'
+        AND markt NOT LIKE 'RDW'
+        AND markt NOT LIKE 'USA'
         ";
 
         $query = $this->conn->query($sql);
@@ -369,9 +376,6 @@ class AudiCatalogModel extends CatalogModel{
            }
         $sDataLitr = array();
 
-
-
-        $array = array('0','1','2','3','4','5','6','7','8','9',',','/','-');
         foreach($ObDvig as $index=>&$value)
                     {
                         preg_match_all("/\d{1}\,\d{1}/x",

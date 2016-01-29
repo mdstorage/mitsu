@@ -9,42 +9,36 @@
 {% block complectation %}
 {% endblock complectation %}
 
-{% block subgroupImage %}{% endblock subgroupImage %}
-
- {% block subGroupsMap %}
-
-
-{% block subgroupItem %}
+{% block subgroupImage %}
 
     <div class="row">
 
+        <div class="form-horizontal">
+            <div class="form-group">
+                <div class="col-lg-4 col-xs-4 col-sm-4 col-md-4">
+                    <input name="filter-query" class="form-control" value="" id="filter-query" onclick="this.value='';"
+                           type="text" placeholder="Введите любой признак для фильтрации параметров"/>
 
-        <div class="form-group">
-
-            <div class="col-lg-5">
-
-                <input name="filter-query" class="form-control" value="" id="filter-query" onclick="this.value='';"
-                       type="text" placeholder="Введите любой признак для фильтрации параметров"/>
+                </div>
+                <div class="col-lg-2 col-xs-2 col-sm-2 col-md-2">
+                    <input type="button" class="btn btn-default" onclick="$('#filter-query').val('');
+        repeatact();return false" value="Показать все" id="vin-button"/>
+                </div>
             </div>
 
-            <a href="#" class="btn btn-default" onclick="$('#filter-query').val('');
-        repeatact();return false">Показать все</a>
-
         </div>
-
-
     </div>
 
-   <div class="row">
+    <div class="row">
         {% if oContainer.getActiveGroup.getSubgroups|first.getOption('ObDvig') %}
 
-                <b>Двигатель:</b>
-                {% for trans in oContainer.getActiveGroup.getSubgroups|first.getOption('ObDvig') %}
+            <b>Объем двигателя:</b>
+            {% for trans in oContainer.getActiveGroup.getSubgroups|first.getOption('ObDvig') %}
 
-                    <a href="#" class="btn btn-default" onclick="$('#filter-query').val('{{ trans }}');
-                                                       repeatact();return false">{{ trans }}</a>
+                <a href="#" class="btn btn-default" onclick="$('#filter-query').val('{{ trans }}');
+                        repeatact();return false">{{ trans }}</a>
 
-                {% endfor %}
+            {% endfor %}
 
         {% endif %}
 
@@ -56,33 +50,34 @@
 
 
 
-              <table class="table">
-                  <thead>
-                  <tr>
-                      <th>Подгруппа</th>
-                      <th>Код</th>
-                      <th>Описание</th>
-                      <th>Примечание</th>
-                      <th>Данные по модели</th>
-                      <th>Изображение</th>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Подгруппа</th>
+            <th>Код</th>
+            <th>Описание</th>
+            <th>Примечание</th>
+            <th>Данные по модели</th>
+            <th>Изображение</th>
 
-                  </tr>
-                  </thead>
-                  <tbody>
-                  {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
 
-                      <tr id="tri">
-                                                  <td>{{ subgroup.getOption('podgr') }}</td>
-                                                  <td>{{ subgroup.getCode }}</td>
-                                                  <td> <a href="{{ path('catalog_audi_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}"> {{ subgroup.getRuname }}</a></td>
-                          <td>{{ subgroup.getOption('prime4') }}</td>
-               <td>{{ subgroup.getOption('dannye')|replace({';':' '}) }}</td>
+            <tr>
+                <td>{{ subgroup.getOption('podgr') }}</td>
+                <td>{{ subgroup.getCode }}</td>
+                <td> <a href="{{ path('catalog_audi_schemas',
+                    parameters|merge({'subGroupCode': subgroup.getCode})) }}"> {{ subgroup.getRuname }}</a></td>
+                <td>{{ subgroup.getOption('prime4') }}</td>
+                <td>{{ subgroup.getOption('dannye')|replace({';':' '}) }}</td>
                 <td>
-                <div class="row">
-                    <a href="{{ path('catalog_audi_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">
-                    <img src="{{ asset('bundles/catalogaudi/Images/Minis/'~subgroup.getOption('grafik')~'.png') }}" width="100" alt="{{ subgroup.getRuname }}"/>
-                    </a>
-                </div>
+                    <div class="row">
+                        <a href="{{ path('catalog_audi_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">
+                            <img src="{{ asset('bundles/catalogaudi/Images/Minis/'~subgroup.getOption('grafik')~'.png') }}" width="100" alt="{{ subgroup.getRuname }}"/>
+                        </a>
+                    </div>
                 </td>
             </tr>
 
@@ -90,33 +85,42 @@
         </tbody>
     </table>
 
-<script>
+    <script>
 
-$(document).ready(function() {
+        $(document).ready(function() {
 
-  $('#filter-query').keyup(function(event){
+            $('#filter-query').keyup(function(event){
 
-      if (event.keyCode == 27 || $(this).val() == '') {
-          $(this).val('');
-          $('.table tbody tr').removeClass('visible').show().addClass('visible');
-      }
-      else {
-          filter('.table tbody tr', $(this).val());
-      }
-  });
+                if (event.keyCode == 27 || $(this).val() == '') {
+                    $(this).val('');
+                    $('.table tbody tr').removeClass('visible').show().addClass('visible');
+                }
+                else {
+                    filter('.table tbody tr', $(this).val());
+                }
+            });
 
-});
-function filter(selector, query) {
-  query = $.trim(query);
-  $(selector).each(function() {
-      ($(this).text().search(new RegExp(query, "i")) < 0)
-              ? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
-  });
-}
-function repeatact(){
-  filter('.table tbody tr', $('#filter-query').val());
-}
+        });
+        function filter(selector, query) {
+            query = $.trim(query);
+            re = /(\d(\,\d))/i;
+            
+            $(selector).each(function() {
+                (($(this).text().search(new RegExp(query, "i")) < 0) & ($(this).text().match(re)!=null))
+                        ? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
+            });
+        }
+        function repeatact(){
+            filter('.table tbody tr', $('#filter-query').val());
+        }
 
-</script>
+    </script>
+{% endblock subgroupImage %}
+
+ {% block subGroupsMap %}
+
+
+{% block subgroupItem %}
+
 {% endblock subgroupItem %}
 {% endblock subGroupsMap %}
