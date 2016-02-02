@@ -35,8 +35,8 @@
             <b>Объем двигателя:</b>
             {% for trans in oContainer.getActiveGroup.getSubgroups|first.getOption('ObDvig') %}
 
-                <a href="#" class="btn btn-default" onclick="$('#filter-query').val('{{ trans }}');
-                        repeatact();return false">{{ trans }}</a>
+                <a href="#" name = "res" id = "{{ trans }}" class="btn btn-default" onclick="$('#filter-query').val('{{ trans }}');
+                        repeatact(); $(this).addClass('btn-primary'); return false ;">{{ trans }}</a>
 
             {% endfor %}
 
@@ -89,6 +89,7 @@
 
         $(document).ready(function() {
 
+
             $('#filter-query').keyup(function(event){
 
                 if (event.keyCode == 27 || $(this).val() == '') {
@@ -103,8 +104,11 @@
         });
         function filter(selector, query) {
             query = $.trim(query);
+
+            $('a[name="res"]').removeClass('btn-primary');
+
             re = /(\d(\,\d))/i;
-            
+
             $(selector).each(function() {
                 (($(this).text().search(new RegExp(query, "i")) < 0) & ($(this).text().match(re)!=null))
                         ? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
@@ -119,8 +123,4 @@
 
  {% block subGroupsMap %}
 
-
-{% block subgroupItem %}
-
-{% endblock subgroupItem %}
 {% endblock subGroupsMap %}

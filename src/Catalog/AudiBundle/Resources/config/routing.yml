@@ -42,6 +42,11 @@ vin_audi:
   path:         /audi/vin/0
   defaults:     {_controller: CatalogAudiBundle:Vin:index}
 
+vin_audi_region:
+  path:         /audi/vin/2
+  defaults:     {_controller: CatalogAudiBundle:Vin:region}
+  requirements: {_method: POST}
+
 vin_audi_result:
   path:         /audi/vin/1
   defaults:     {_controller: CatalogAudiBundle:Vin:result}
@@ -53,7 +58,7 @@ vin_audi_groups:
 
 vin_audi_subgroups:
   path:         /audi/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogAudiBundle:Vin:subgroups}
+  defaults:     {_controller: CatalogAudiBundle:Vin:vinSubgroups}
 
 vin_audi_schemas:
   path:         /audi/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}

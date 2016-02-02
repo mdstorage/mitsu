@@ -26,6 +26,93 @@ class VinController extends BaseController{
         return 'Catalog\AudiBundle\Components\AudiConstants';
     }
 
+    public function regionAction(Request $request, $regionCode = null)
+    {
+        if ($request->isXmlHttpRequest()) {
+
+            $vin = $request->get('vin');
+
+
+            $aRegions = $this->model()->getVinRegions($vin);
+
+            if(empty($aRegions)){
+                return $this->render($this->bundle().':empty.html.twig');
+            } else {
+                $oActiveRegion = Factory::createRegion();
+                /**
+                 * Если регионы найдены, они помещаются в контейнер
+                 */
+                $regionsCollection = Factory::createCollection($aRegions, $oActiveRegion);
+                $oContainer = Factory::createContainer()
+                    ->setRegions($regionsCollection);
+                unset($aRegions);
+                /**
+                 * Если пользователь задал регион, то этот регион становится активным
+                 */
+                $regionsList = $regionsCollection->getCollection();
+                if (!is_null($regionCode)){
+                    $oActiveRegion = $regionsList[$regionCode];
+                } else{
+                    /*
+                     * Если пользователь не задавал регион, то в качестве активного выбирается первый из списка регионов объект
+                     */
+                    $oActiveRegion = reset($regionsList);
+                }
+
+                /**
+                 * Выборка моделей из базы для данного артикула и региона
+                 */
+
+
+                $oContainer->setActiveRegion($oActiveRegion);
+
+                $this->filter($oContainer);
+            }
+
+
+
+
+
+            /**
+             * @deprecated Оставлен для совместимости с маздой
+             */
+
+            setcookie(Constants::VIN, $vin);
+
+
+            return $this->render($this->bundle().':02_region.html.twig', array(
+                'oContainer' => $oContainer
+            ));
+        }
+    }
+
+
+
+    public function resultAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $vin = $request->cookies->get(Constants::VIN);
+
+
+            $region = $request->get('region');
+
+
+            $result = $this->model()->getVinFinderResult($vin, $region);
+            if (!$result) {
+                return $this->render($this->bundle().':empty.html.twig');
+            }
+
+            setcookie(Constants::PROD_DATE, $result[Constants::PROD_DATE]);
+
+
+            setcookie(Constants::VIN, $vin);
+
+            return $this->render($this->bundle().':02_result.html.twig', array(
+                'result' => $result
+            ));
+        }
+    }
+
 
     public function articulsAction(Request $request)
     {
@@ -49,16 +136,18 @@ class VinController extends BaseController{
         return $this->groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
     }
 
-    public function vinSubgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
+    public function vinSubgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $groupCode)
     {
+
         $this->addFilter('vinSubGroupFilter', array(
             'regionCode' => $regionCode,
+            'modelCode' => $modelCode,
             'modificationCode' => $modificationCode,
-            'complectationCode' => substr($complectationCode, 0, 4),
-            'subComplectationCode' => substr($complectationCode, 3, 3)
+            'groupCode' => $groupCode,
+            'vin' => $request->cookies->get(Constants::VIN),
         ));
 
-        return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+        return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode,$complectationCode = null, $groupCode);
     }
 
     public function vinSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
