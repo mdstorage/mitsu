@@ -6,13 +6,13 @@
  * Time: 13:30
  */
 
-namespace Catalog\AudiBundle\Models;
+namespace Catalog\VolkswagenBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
 
-use Catalog\AudiBundle\Components\AudiConstants;
+use Catalog\VolkswagenBundle\Components\VolkswagenConstants;
 
-class AudiVinModel extends AudiCatalogModel {
+class VolkswagenVinModel extends VolkswagenCatalogModel {
 
 
     public function getVinRegions($vin)
@@ -125,7 +125,7 @@ class AudiVinModel extends AudiCatalogModel {
         $sql = "
         SELECT all_katalog.id, all_katalog.bildtafel, all_katalog.grafik, all_katalog.bildtafel2
         FROM all_katalog
-        WHERE all_katalog.catalog = 'au'
+        WHERE all_katalog.catalog = 'vw'
         and all_katalog.epis_typ = :modificationCode
         and  LEFT(hg_ug, 1) = :groupCode
         and all_katalog.bildtafel <> ''
@@ -256,7 +256,7 @@ class AudiVinModel extends AudiCatalogModel {
         all_stamm.entfalldatum dataOtmeny, all_katalog.bemerkung
         FROM all_katalog
         left join all_stamm on (all_stamm.catalog = all_katalog.catalog and (all_stamm.markt = :regionCode or all_stamm.markt = '') and all_stamm.teilenummer = all_katalog.teilenummer)
-        WHERE all_katalog.catalog = 'au'
+        WHERE all_katalog.catalog = 'vw'
         and all_katalog.epis_typ = :modificationCode
         and  LEFT(hg_ug, 1) = :groupCode
         and all_katalog.bildtafel = ''

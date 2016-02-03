@@ -33,6 +33,8 @@ class AppKernel extends Kernel
             new Catalog\SaabBundle\CatalogSaabBundle(),
             new Catalog\FordBundle\CatalogFordBundle(),
             new Catalog\AudiBundle\CatalogAudiBundle(),
+            new Catalog\VolkswagenBundle\CatalogVolkswagenBundle(),
+
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

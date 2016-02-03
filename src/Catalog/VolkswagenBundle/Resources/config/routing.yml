@@ -1,0 +1,125 @@
+catalog_volkswagen:
+  path:         /volkswagen/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_volkswagen_modifications:
+  path:         /volkswagen/catalog/1
+  defaults:     {_controller: CatalogVolkswagenBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_volkswagen_complectations:
+  path:         /volkswagen/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Catalog:complectations}
+
+catalog_volkswagen_groups:
+  path:         /volkswagen/catalog/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Catalog:groups}
+
+catalog_volkswagen_subgroups:
+  path:         /volkswagen/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Catalog:subgroups}
+
+catalog_volkswagen_schemas:
+  path:         /volkswagen/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Catalog:schemas}
+
+catalog_volkswagen_schema:
+  path:         /volkswagen/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Catalog:schema}
+
+catalog_volkswagen_articuls:
+  path:         /volkswagen/catalog/7
+  defaults:     {_controller: CatalogVolkswagenBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_volkswagen_group:
+  path:         /volkswagen/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_volkswagen:
+  path:         /volkswagen/vin/0
+  defaults:     {_controller: CatalogVolkswagenBundle:Vin:index}
+
+vin_volkswagen_region:
+  path:         /volkswagen/vin/2
+  defaults:     {_controller: CatalogVolkswagenBundle:Vin:region}
+  requirements: {_method: POST}
+
+vin_volkswagen_result:
+  path:         /volkswagen/vin/1
+  defaults:     {_controller: CatalogVolkswagenBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_volkswagen_groups:
+  path:         /volkswagen/vin/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Vin:groups}
+
+vin_volkswagen_subgroups:
+  path:         /volkswagen/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Vin:vinSubgroups}
+
+vin_volkswagen_schemas:
+  path:         /volkswagen/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Vin:schemas}
+
+vin_volkswagen_schema:
+  path:         /volkswagen/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Vin:schema}
+
+vin_volkswagen_articuls:
+  path:         /volkswagen/vin/7
+  defaults:     {_controller: CatalogVolkswagenBundle:Vin:vinArticuls}
+  requirements: {_method: POST}
+
+vin_volkswagen_group:
+  path:         /volkswagen/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_volkswagen:
+  path:         /volkswagen/articul/0
+  defaults:     {_controller: CatalogVolkswagenBundle:Articul:index}
+
+articul_volkswagen_find:
+  path:         /volkswagen/articul/1/{regionCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Articul:findByArticul, regionCode: null}
+
+articul_volkswagen_modifications:
+  path:         /volkswagen/articul/3
+  defaults:     {_controller: CatalogVolkswagenBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_volkswagen_complectations:
+  path:         /volkswagen/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Articul:volkswagenArticulComplectations}
+
+articul_volkswagen_groups:
+  path:         /volkswagen/articul/5/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Articul:volkswagenArticulgroups}
+
+articul_volkswagen_subgroups:
+  path:         /volkswagen/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Articul:volkswagenArticulSubgroups}
+
+articul_volkswagen_schemas:
+  path:         /volkswagen/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Articul:volkswagenArticulSchemas}
+
+articul_volkswagen_schema:
+  path:         /volkswagen/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Articul:volkswagenArticulSchema}
+
+articul_volkswagen_articuls:
+  path:         /volkswagen/articul/9
+  defaults:     {_controller: CatalogVolkswagenBundle:Articul:articuls}
+  requirements: {_method: POST}
+
+articul_volkswagen_group:
+  path:         /volkswagen/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogVolkswagenBundle:Articul:getGroupBySubgroup}
+catalog_volkswagen_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogVolkswagenBundle:Default:index }
