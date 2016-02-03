@@ -225,6 +225,101 @@ class AudiVinModel extends AudiCatalogModel {
 
         return $subgroupsIndexes;
     }
+
+    public function getVinArticuls($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $pncCode, $vin)
+    {
+
+        $modificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+
+        $groupCode = (($groupCode == '10')?'0':$groupCode);
+
+
+        $sql = "
+        SELECT ltr,mkb
+        FROM all_vincode, all_vkbz
+        WHERE vin = :vin and all_vkbz.vkbz = all_vincode.verkaufstyp
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('vin', $vin);
+        $query->execute();
+
+        $sData = $query->fetchAll();
+        foreach ($sData as $item)
+        {
+            $filtrDvig = substr($item['ltr'],0,1).','.substr($item['ltr'],1,1);
+            $filtrNameDvig = $item['mkb'];
+        }
+
+        $sqlPnc = "
+        SELECT all_katalog.teilenummer, all_katalog.tsben, all_katalog.tsbem, all_katalog.modellangabe, all_katalog.stuck, einsatz, auslauf, mv_data, all_stamm.gruppen_data newArt,
+        all_stamm.entfalldatum dataOtmeny, all_katalog.bemerkung
+        FROM all_katalog
+        left join all_stamm on (all_stamm.catalog = all_katalog.catalog and (all_stamm.markt = :regionCode or all_stamm.markt = '') and all_stamm.teilenummer = all_katalog.teilenummer)
+        WHERE all_katalog.catalog = 'au'
+        and all_katalog.epis_typ = :modificationCode
+        and  LEFT(hg_ug, 1) = :groupCode
+        and all_katalog.bildtafel = ''
+        and dir_name = 'R'
+        and bildtafel2 = :subGroupCode
+        and (btpos = :pncCode or btpos = :pncCodemod)
+
+        ";
+
+        $query = $this->conn->prepare($sqlPnc);
+        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('subGroupCode',  $subGroupCode);
+        $query->bindValue('pncCode', '('.$pncCode.')');
+        $query->bindValue('pncCodemod', $pncCode);
+        $query->execute();
+
+
+        $aArticuls = $query->fetchAll();
+
+
+        $articuls = array();
+        $articulsIndexes = array();
+
+        foreach ($aArticuls as $item) {
+
+
+
+            $articuls[$item['teilenummer']] = array(
+                Constants::NAME => $this->getDesc($item['tsben'], 'R'),
+                Constants::OPTIONS => array(
+                    Constants::QUANTITY => $item['stuck'],
+                    Constants::START_DATE => $item['einsatz'],
+                    Constants::END_DATE => $item['auslauf'],
+                    'prime4' => ($this->getDesc($item['tsbem'], 'R'))?$this->getDesc($item['tsbem'], 'R'):$item['bemerkung'],
+                    'dannye' => $item['modellangabe'],
+                    'with' => $item['mv_data'],
+                    'zamena' => substr($item['newArt'], 0, strpos($item['newArt'], '~')),
+                    'zamenakoli4' => substr($item['newArt'], strpos($item['newArt'], '~'), strlen($item['newArt'])),
+                    'dataOtmeny' => $item['dataOtmeny']
+
+
+                )
+            );
+
+        }
+        foreach($articuls as $index => $value)
+        {
+            if(($value['options']['prime4'] != '') & (strpos($value['options']['prime4'],$filtrDvig) === false) || ($value['options']['dannye'] != '') & (strpos($value['options']['dannye'],$filtrNameDvig) === false))
+            {
+                unset ($articuls[$index]);
+            }
+
+        }
+
+        foreach($articuls as $index => $value)
+        {
+            $articulsIndexes[] = $index;
+        }
+
+        return $articulsIndexes;
+    }
    
    
         

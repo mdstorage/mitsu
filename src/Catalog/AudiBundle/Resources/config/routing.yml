@@ -70,7 +70,7 @@ vin_audi_schema:
 
 vin_audi_articuls:
   path:         /audi/vin/7
-  defaults:     {_controller: CatalogAudiBundle:Vin:articuls}
+  defaults:     {_controller: CatalogAudiBundle:Vin:vinArticuls}
   requirements: {_method: POST}
 
 vin_audi_group:

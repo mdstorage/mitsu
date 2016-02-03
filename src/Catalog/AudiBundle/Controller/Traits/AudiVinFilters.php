@@ -19,8 +19,20 @@ trait AudiVinFilters {
         return $oContainer;
     }
     
-    public function articulDescFilter($oContainer, $parameters)
+    public function vinArticulFilter($oContainer, $parameters)
     {
+        $articuls = $this->model()->getVinArticuls($parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode'], $parameters['groupCode'], $parameters['subGroupCode'], $parameters['pncCode'], $parameters['vin']);
+
+
+        foreach ($oContainer->getActivePnc()->getArticuls() as $articul)
+        {
+
+            if (!in_array($articul->getCode(), $articuls)) {
+                $oContainer->getActivePnc()->removeArticul($articul->getCode());
+            }
+        }
+
+        return $oContainer;
         
 
         return $oContainer; 
