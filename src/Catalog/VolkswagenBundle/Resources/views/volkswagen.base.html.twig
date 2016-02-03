@@ -1,0 +1,8 @@
+{% block brand %}Volkswagen{% endblock brand %}
+{% block catalogPathLogo %}{{ path('catalog_volkswagen') }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_volkswagen') }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_volkswagen') }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_volkswagen') }}{% endblock articulPath %}
+{% block userStylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/catalogvolkswagen/css/common.css') }}" media="all">
+{% endblock userStylesheets %}

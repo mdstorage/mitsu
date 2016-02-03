@@ -1,0 +1,63 @@
+{% extends 'CatalogCommonBundle:Vin:02_result.html.twig' %}
+{% block specification %}
+    <div class="row">
+        <div class="col-lg-8">
+            <table class="table table-bordered">
+
+                <tr>
+                    <td>Регион:</td>
+                    <td>{% for region in oContainer.getRegions %}{{ region.getRuname }}{% endfor %}</td>
+                </tr>
+                <tr>
+                    <td>Модель:</td>
+                    <td>{{ result.model }}</td>
+                </tr>
+                <tr>
+                    <td>Дата выпуска:</td>
+                    <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|volkswagen_vin_date_convertor }}</td>
+                </tr>
+                    <tr>
+                        <td>Модельный год:</td>
+                        <td>{{ result.mod_god }}</td>
+                    </tr>
+
+                <tr>
+                    <td>Модельный код:</td>
+                    <td>{{ result.mod_kod }}</td>
+                </tr>
+
+                <tr>
+
+                    <td>Код двигателя:</td>
+                    <td>{{ result.dvig_kod }}</td>
+                </tr>
+                <tr>
+
+                    <td>Код КПП:</td>
+                    <td>{{ result.kpp_kod }}</td>
+                </tr>
+
+                <tr>
+
+                    <td>Код основания:</td>
+                    <td>{{ result.osn }}</td>
+                </tr>
+
+
+                <tr>
+                    <td>Цвет кузова:</td>
+                    <td>{{ result.kuzovcolor }}</td>
+                </tr>
+
+                    <tr>
+                        <td>Цвет крыши:</td>
+                        <td>{{ result.kry6acolor }}</td>
+                    </tr>
+
+            </table>
+        </div>
+    </div>
+{% endblock specification %}
+{% block catalogPath %}
+    {{ path('vin_volkswagen_groups',({'regionCode': oContainer.getRegions|first.getCode, 'modelCode': result.model_for_groups, 'modificationCode': result.modif })) }}
+{% endblock catalogPath %}

@@ -1,0 +1,20 @@
+services:
+#    catalog_volkswagen.example:
+#        class: Catalog\VolkswagenBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  volkswagen_date_convertor.extension:
+        class: Catalog\VolkswagenBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  volkswagen.catalog.model:
+    class: Catalog\VolkswagenBundle\Models\VolkswagenCatalogModel
+    arguments:  ['@doctrine.dbal.volkswagen_connection']
+
+  volkswagen.vin.model:
+    class: Catalog\VolkswagenBundle\Models\VolkswagenVinModel
+    arguments:  ['@doctrine.dbal.volkswagen_connection']
+
+  volkswagen.articul.model:
+    class: Catalog\VolkswagenBundle\Models\VolkswagenArticulModel
+    arguments:  ['@doctrine.dbal.volkswagen_connection']

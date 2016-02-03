@@ -1,0 +1,4 @@
+{% extends 'CatalogCommonBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogVolkswagenBundle::volkswagen.base.html.twig' %}
+{% block regionPath %}{{ path('catalog_volkswagen', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+{% block ajaxUrl %}{{ path('catalog_volkswagen_modifications') }}{% endblock ajaxUrl %}
