@@ -15,17 +15,24 @@ trait AudiVinFilters {
 
     public function prodDateFilter($oContainer, $parameters)
     {
-        $prodDate = $parameters[Constants::PROD_DATE];
-        foreach ($oContainer->getActivePnc()->getArticuls() as $key => $articul) {
-            if ($articul->getOption(Constants::START_DATE) > $prodDate || $articul->getOption(Constants::END_DATE) < $prodDate) {
-                $oContainer->getActivePnc()->removeArticul($key);
-            }
-        }
+
         return $oContainer;
     }
     
-    public function articulDescFilter($oContainer, $parameters)
+    public function vinArticulFilter($oContainer, $parameters)
     {
+        $articuls = $this->model()->getVinArticuls($parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode'], $parameters['groupCode'], $parameters['subGroupCode'], $parameters['pncCode'], $parameters['vin']);
+
+
+        foreach ($oContainer->getActivePnc()->getArticuls() as $articul)
+        {
+
+            if (!in_array($articul->getCode(), $articuls)) {
+                $oContainer->getActivePnc()->removeArticul($articul->getCode());
+            }
+        }
+
+        return $oContainer;
         
 
         return $oContainer; 
@@ -38,9 +45,17 @@ trait AudiVinFilters {
         return $oContainer;
     }
 
-    public function vinSubgroupFilter($oContainer, $parameters)
+    public function vinSubGroupFilter($oContainer, $parameters)
     {
-        
+        $subgroups = $this->model()->getVinSubgroups($parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode'], $parameters['groupCode'], $parameters['vin']);
+
+        foreach ($oContainer->getActiveGroup()->getSubGroups() as $subGroup) {
+
+
+            if (!in_array($subGroup->getCode(), $subgroups)) {
+                $oContainer->getActiveGroup()->removeSubgroup($subGroup->getCode());
+            }
+        }
 
         return $oContainer;
     }
