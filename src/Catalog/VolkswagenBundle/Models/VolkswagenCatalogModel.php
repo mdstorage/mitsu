@@ -651,7 +651,7 @@ $articuls = array();
         $sGroup = implode('; ', array_unique($aGroup));
 
 
-        return mb_strtoupper(iconv('cp1251', 'utf8', $sGroup), 'utf8');
+        return (iconv('cp1251', 'utf8', $sGroup));
 
     }
 
