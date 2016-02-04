@@ -160,7 +160,7 @@ class VolkswagenCatalogModel extends CatalogModel{
         foreach($aGroup as $item){
 
             $groups[$item['hg']=='0'?'10':$item['hg']] = array(
-                Constants::NAME     => iconv('Windows-1251', 'UTF-8', $item ['text']),
+                Constants::NAME     =>iconv_set_encoding($item['text'], "UTF-8"),
                 Constants::OPTIONS  => array()
             );
         }
