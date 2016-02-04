@@ -160,7 +160,7 @@ class VolkswagenCatalogModel extends CatalogModel{
         foreach($aGroup as $item){
 
             $groups[$item['hg']=='0'?'10':$item['hg']] = array(
-                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['text']),'utf8'),
+                Constants::NAME     => mb_strtoupper(iconv('Windows-1251', 'UTF-8', $item ['text']),'utf8'),
                 Constants::OPTIONS  => array()
             );
         }
@@ -651,7 +651,7 @@ $articuls = array();
         $sGroup = implode('; ', array_unique($aGroup));
 
 
-        return ($sGroup);
+        return (iconv('cp1251', 'utf8', $sGroup));
 
     }
 
