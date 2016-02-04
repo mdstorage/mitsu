@@ -19,7 +19,7 @@ class HondaEuropeCatalogModel extends CatalogModel{
 
         $sql = "
         SELECT *
-        FROM dba_pmotyt
+        FROM pmotyt
         GROUP BY cmftrepc
         ";
 
@@ -29,7 +29,7 @@ class HondaEuropeCatalogModel extends CatalogModel{
 
         $regions = array();
         foreach($aData as $item){
-            $regions[trim($item['CAREA'])] = array(Constants::NAME=>$item['CAREA'], Constants::OPTIONS=>array());
+            $regions[trim($item['carea'])] = array(Constants::NAME=>$item['carea'], Constants::OPTIONS=>array());
         }
 
         return $regions;
@@ -40,8 +40,8 @@ class HondaEuropeCatalogModel extends CatalogModel{
     {
         $sql = "
         SELECT *
-        FROM dba_pmotyt
-        WHERE CAREA =:regionCode
+        FROM pmotyt
+        WHERE carea =:regionCode
         ";
 
         $query = $this->conn->prepare($sql);
@@ -54,7 +54,7 @@ class HondaEuropeCatalogModel extends CatalogModel{
         $models = array();
         foreach($aData as $item){ 
         	 
-            $models[rawurlencode($item['CMODNAMEPC'])] = array(Constants::NAME=>$item['CMODNAMEPC'],
+            $models[rawurlencode($item['cmodnamepc'])] = array(Constants::NAME=>$item['cmodnamepc'],
             Constants::OPTIONS=>array());
       
         }
@@ -66,11 +66,11 @@ class HondaEuropeCatalogModel extends CatalogModel{
     {
     	$modelCode = rawurldecode($modelCode);
         $sql = "
-        SELECT DMODYR
-        FROM dba_pmotyt
-        WHERE CAREA =:regionCode
-        AND CMODNAMEPC = :modelCode
-        ORDER BY DMODYR
+        SELECT dmodyr
+        FROM pmotyt
+        WHERE carea =:regionCode
+        AND cmodnamepc = :modelCode
+        ORDER BY dmodyr
         ";
 
         $query = $this->conn->prepare($sql);
@@ -83,8 +83,8 @@ class HondaEuropeCatalogModel extends CatalogModel{
 
         $modifications = array();
         foreach($aData as $item){
-            $modifications[$item['DMODYR']] = array(
-                Constants::NAME     => $item['DMODYR'],
+            $modifications[$item['dmodyr']] = array(
+                Constants::NAME     => $item['dmodyr'],
                 Constants::OPTIONS  => array());
             
         }
@@ -97,10 +97,10 @@ class HondaEuropeCatalogModel extends CatalogModel{
     {   $modelCode = rawurldecode($modelCode);     
        $sql = "
         SELECT *
-        FROM dba_pmotyt
-        WHERE CAREA =:regionCode
-        AND CMODNAMEPC = :modelCode
-        AND DMODYR = :modificationCode
+        FROM pmotyt
+        WHERE carea =:regionCode
+        AND cmodnamepc = :modelCode
+        AND dmodyr = :modificationCode
         ";
 
         $query = $this->conn->prepare($sql);
@@ -116,13 +116,13 @@ class HondaEuropeCatalogModel extends CatalogModel{
         foreach($aData as &$item)
         {
             $sqlOptions = "
-        SELECT CMNOPT
-		FROM dba_pmtmot
-		WHERE HMODTYP =:hmodtyp
+        SELECT cmnopt
+		FROM pmtmot
+		WHERE hmodtyp =:hmodtyp
         ";
 
             $query = $this->conn->prepare($sqlOptions);
-            $query->bindValue('hmodtyp', $item['HMODTYP']);
+            $query->bindValue('hmodtyp', $item['hmodtyp']);
             $query->execute();
 
             $aDataOptions = $query->fetchAll();
@@ -132,14 +132,14 @@ class HondaEuropeCatalogModel extends CatalogModel{
         
         foreach($aDataOptions as $item1)
          {
-		 	$aOriginOptions[] = $item1['CMNOPT'];
+		 	$aOriginOptions[] = $item1['cmnopt'];
 		 }
 		$aOriginOptionsDesc = array(); 
 		foreach (array_unique($aOriginOptions) as $item2)
 		{
 		$sqlOptionsDesc = "
         SELECT xmnopt, cmnopt
-		FROM dba_pmnopt
+		FROM pmnopt
 		WHERE cmnopt =:item
         ";
 
@@ -166,7 +166,7 @@ class HondaEuropeCatalogModel extends CatalogModel{
 		 
 		$comma_separated = implode("; ", $aOriginOptionDescs);
 			 	 
-        $item['NFRMPF'] = $comma_separated;
+        $item['nfrmpf'] = $comma_separated;
        
 		}
 		/**
@@ -188,17 +188,17 @@ class HondaEuropeCatalogModel extends CatalogModel{
        
         foreach($aData as $item)
         {
-			$transmission[] = $item['CTRSMTYP'];
+			$transmission[] = $item['ctrsmtyp'];
 			
 		}
         foreach($aData as $item){
         		
-            $complectations[$item['HMODTYP']] = array(
-                Constants::NAME     => $item['CMODTYPFRM'],
-                Constants::OPTIONS  => array('option1'=> $item['XCARDRS'],
-                							 'option2'=> $item['CTRSMTYP'],
-                							 'option3'=> $item['NENGNPF'].' '.$item['xgradefulnam'],
-                							 'option4'=> $item['NFRMPF'],
+            $complectations[$item['hmodtyp']] = array(
+                Constants::NAME     => $item['cmodtypfrm'],
+                Constants::OPTIONS  => array('option1'=> $item['xcardrs'],
+                							 'option2'=> $item['ctrsmtyp'],
+                							 'option3'=> $item['nengnpf'].' '.$item['xgradefulnam'],
+                							 'option4'=> $item['nfrmpf'],
                 							 'option5'=> count(array_unique($transmission))>1?array_unique($transmission):'',
                 							 'option6'=> count(array_unique($aOriginOptionCodes))>1?array_unique($aOriginOptionCodes):'',
                 							 )
@@ -214,8 +214,8 @@ class HondaEuropeCatalogModel extends CatalogModel{
                
          $sql2 = "
         SELECT *
-        FROM dba_pgrout
-        WHERE CLANGJAP = 2
+        FROM pgrout
+        WHERE clangjap = 2
         ";
 
         $query = $this->conn->prepare($sql2);
@@ -224,8 +224,8 @@ class HondaEuropeCatalogModel extends CatalogModel{
 
         $groups = array();
         foreach($aData as $item){
-            $groups[$item['NPLGRP']] = array(
-                Constants::NAME     => $item['XPLGRP'],
+            $groups[$item['nplgrp']] = array(
+                Constants::NAME     => $item['xplgrp'],
                 Constants::OPTIONS  => array()
             );
         }
@@ -282,7 +282,7 @@ class HondaEuropeCatalogModel extends CatalogModel{
     	$modelCode = rawurldecode($modelCode);
     	$sql = "
         SELECT *
-        FROM dba_pmotyt
+        FROM pmotyt
         WHERE HMODTYP =:complectationCode
         AND CMODNAMEPC = :modelCode
         ";
@@ -293,16 +293,16 @@ class HondaEuropeCatalogModel extends CatalogModel{
         $query->execute();
 
         $aData = $query->fetch();
-    	$hmodtyp = $aData['HMODTYP'];
+    	$hmodtyp = $aData['hmodtyp'];
     	$NPL = $aData['npl'];
     	
     	    
         $sqlSecGroups = "
-        SELECT dba_pblmtt.NPLBLK, dba_pblmtt.NPL, dba_pblokt.NPLBLKEDIT, dba_pbldst.xplblk
-		FROM (dba_pblokt INNER JOIN dba_pblmtt ON (dba_pblokt.NPLBLK = dba_pblmtt.NPLBLK) 
-		AND (dba_pblokt.NPL = dba_pblmtt.NPL)) INNER JOIN dba_pbldst ON (dba_pblmtt.NPLBLK = dba_pbldst.nplblk) 
-		AND (dba_pblmtt.NPL = dba_pbldst.npl)
-		WHERE (((dba_pblmtt.NPL)=:NPL) AND (dba_pblokt.NPLGRP=:groupCode) AND (dba_pblmtt.HMODTYP=:hmodtyp) AND CLANGJAP = 2)
+        SELECT pblmtt.nplblk, pblmtt.npl, pblokt.nplblkedit, pbldst.xplblk
+		FROM (pblokt INNER JOIN pblmtt ON (pblokt.nplblk = pblmtt.nplblk)
+		AND (pblokt.npl = pblmtt.npl)) INNER JOIN pbldst ON (pblmtt.nplblk = pbldst.nplblk)
+		AND (pblmtt.npl = pbldst.npl)
+		WHERE (((pblmtt.npl)=:NPL) AND (pblokt.nplgrp=:groupCode) AND (pblmtt.hmodtyp=:hmodtyp) AND CLANGJAP = 2)
         ";
         
     	$query = $this->conn->prepare($sqlSecGroups);
@@ -322,8 +322,8 @@ class HondaEuropeCatalogModel extends CatalogModel{
 
         $subgroups = array();
         foreach($aSecGroups as $item){
-            $subgroups[($item['NPLBLK'])] = array(
-                Constants::NAME => '('.$item['NPLBLKEDIT'].') '.$item['xplblk'],
+            $subgroups[($item['nplblk'])] = array(
+                Constants::NAME => '('.$item['nplblkedit'].') '.$item['xplblk'],
                 Constants::OPTIONS => array()
             );
         }
@@ -336,7 +336,7 @@ class HondaEuropeCatalogModel extends CatalogModel{
         $modelCode = rawurldecode($modelCode);
         $sqlSecGroups = "
         SELECT *
-        FROM dba_pmotyt
+        FROM pmotyt
         WHERE hmodtyp =:complectationCode 
         AND cmodnamepc = :modelCode
         ";
@@ -408,9 +408,9 @@ class HondaEuropeCatalogModel extends CatalogModel{
         $modelCode = rawurldecode($modelCode);
         $sql = "
         SELECT *
-        FROM dba_pmotyt
-        WHERE HMODTYP =:complectationCode
-        AND CMODNAMEPC = :modelCode
+        FROM pmotyt
+        WHERE hmodtyp =:complectationCode
+        AND cmodnamepc = :modelCode
         ";
 
         $query = $this->conn->prepare($sql);
@@ -419,22 +419,22 @@ class HondaEuropeCatalogModel extends CatalogModel{
         $query->execute();
 
         $aData = $query->fetch();
-    	$hmodtyp = $aData['HMODTYP'];
+    	$hmodtyp = $aData['hmodtyp'];
     	$NPL = $aData['npl']; 
     	
 
         $sqlPnc = "
-        SELECT *
-        FROM dba_vw_blockpartsmodeltypes1
+        SELECT hpartplblk, npl, nplblk, nplpartref, nplpartrefseq, pblpat.npartgenu, csernumcont, nserepcstrt, nserepcend, cengnfrm, xordergun, xpartext
+        FROM pblpat, ppartt
         WHERE nplblk = :subGroupCode
         	AND npl = :NPL
-            AND hmodtyp = :hmodtyp 
+        	AND ppartt.npartgenu = pblpat.npartgenu
+        	and ppartt.clangjap = 2
         ";
 
     	$query = $this->conn->prepare($sqlPnc);
         $query->bindValue('subGroupCode', $subGroupCode);
         $query->bindValue('NPL', $NPL);
-        $query->bindValue('hmodtyp', $hmodtyp);
         $query->execute();
 
         $aPncs = $query->fetchAll();
@@ -444,10 +444,10 @@ class HondaEuropeCatalogModel extends CatalogModel{
     		
     	$sqlSchemaLabels = "
         SELECT min_x, min_y, max_x, max_y
-        FROM dba_hotspots
-        WHERE NPL = :NPL
-          AND IllustrationNumber =:subGroupCode
-          AND PartReferenceNumber =:PartReferenceNumber
+        FROM hotspots
+        WHERE npl = :NPL
+          AND illustrationnumber =:subGroupCode
+          AND partreferencenumber =:PartReferenceNumber
         ";
 
         $query = $this->conn->prepare($sqlSchemaLabels);
@@ -533,7 +533,7 @@ $articuls = array();
         $modelCode = rawurldecode($modelCode);
         $sql = "
         SELECT *
-        FROM dba_pmotyt
+        FROM pmotyt
         WHERE hmodtyp =:complectationCode
         AND cmodnamepc = :modelCode 
         ";
@@ -544,23 +544,24 @@ $articuls = array();
         $query->execute();
 
         $aData = $query->fetch();
-    	$hmodtyp = $aData['HMODTYP'];
+    	$hmodtyp = $aData['hmodtyp'];
     	$NPL = $aData['npl'];
-        
+
 
         $sqlPnc = "
-        SELECT *
-        FROM dba_vw_blockpartsmodeltypes1
+        SELECT hpartplblk, npl, nplblk, nplpartref, nplpartrefseq, pblpat.npartgenu, csernumcont, nserepcstrt, nserepcend, cengnfrm, xordergun, xpartext
+        FROM pblpat, ppartt
         WHERE nplblk = :subGroupCode
         	AND npl = :NPL
-            AND hmodtyp = :hmodtyp
-            AND nplpartref= :pncCode 
+        	AND nplpartref= :pncCode
+        	AND ppartt.npartgenu = pblpat.npartgenu
+        	and ppartt.clangjap = 2
         ";
+
         
     	$query = $this->conn->prepare($sqlPnc);
         $query->bindValue('NPL', $NPL);
         $query->bindValue('subGroupCode', $subGroupCode);
-        $query->bindValue('hmodtyp', $hmodtyp);
         $query->bindValue('pncCode', $pncCode);
         
         $query->execute();
