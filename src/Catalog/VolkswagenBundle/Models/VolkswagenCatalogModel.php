@@ -651,7 +651,7 @@ $articuls = array();
         $sGroup = implode('; ', array_unique($aGroup));
 
 
-        return (iconv('cp1251', 'utf8', $sGroup));
+        return ($sGroup);
 
     }
 
