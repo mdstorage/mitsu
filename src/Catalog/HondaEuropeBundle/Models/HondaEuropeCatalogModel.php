@@ -96,8 +96,7 @@ class HondaEuropeCatalogModel extends CatalogModel{
    
     {   $modelCode = rawurldecode($modelCode);
 
-        $aOriginOptionDescs = array();
-        $aOriginOptionCodes = array();
+
        $sql = "
         SELECT *
         FROM pmotyt
@@ -152,7 +151,7 @@ class HondaEuropeCatalogModel extends CatalogModel{
         $aOriginOptionsDesc[] = $query->fetch();
 		 	
 		 }
-
+            $aOriginOptionDescs = array();
 		foreach($aOriginOptionsDesc as $item3)
          {
 		 	$aOriginOptionDescs[] = '('.$item3['cmnopt'].') '.$item3['xmnopt'];
