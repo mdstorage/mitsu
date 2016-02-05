@@ -1,0 +1,35 @@
+<div class="row">
+
+
+        <h4>Выберите регион:</h4>
+    {% for region in oContainer.getRegions %}
+
+            <input type="button" name = "button_res" id = "id{{ region.getCode }}" class="btn btn-default" value = "{{ region.getRuname }}">
+
+            <script>
+                $("#id{{ region.getCode }}").on('click', function(){
+                    $('input[name="button_res"]').removeClass('btn-primary');
+                    $(this).addClass('btn-primary');
+                    $.ajax({
+                        type:   'POST',
+                        async:  false,
+                        url:    "{{ path('vin_skoda_result') }}",
+                        data:   {
+                            region: '{{ region.getCode }}',
+                                },
+                        success: function(data) {
+                            $("#result_for_region").html(data);
+                        }
+                    });
+
+                });
+
+
+            </script>
+        {% endfor %}
+
+</div>
+<br>
+<div class="row">
+    <div id="result_for_region"></div>
+</div>

@@ -330,7 +330,7 @@ class BmwCatalogModel extends CatalogModel{
 
         foreach($aData as $item){
             $groups[$item['Hauptgruppe']] = array(
-                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Benennung']),'utf8'),
+                Constants::NAME     => mb_strtoupper(iconv('utf8', 'utf8', $item ['Benennung']),'utf8'),
                 Constants::OPTIONS  => array('Id' => $item ['BlobMod'])
             );
         }

@@ -1,0 +1,8 @@
+{% block brand %}Skoda{% endblock brand %}
+{% block catalogPathLogo %}{{ path('catalog_skoda') }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_skoda') }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_skoda') }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_skoda') }}{% endblock articulPath %}
+{% block userStylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/catalogskoda/css/common.css') }}" media="all">
+{% endblock userStylesheets %}
