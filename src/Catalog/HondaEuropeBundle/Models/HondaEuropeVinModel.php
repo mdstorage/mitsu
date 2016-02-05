@@ -19,7 +19,7 @@ class HondaEuropeVinModel extends HondaEuropeCatalogModel {
         
         $sql = "
         SELECT *
-        FROM dba_pmotyt
+        FROM pmotyt
         WHERE nfrmpf = :vin
         ";
 
@@ -28,15 +28,7 @@ class HondaEuropeVinModel extends HondaEuropeCatalogModel {
         $query->execute();
 
         $aData = $query->fetchAll();
-               
-        $complectations = array();
-        
-		
-		
-			foreach($aData as $item1)
-			{
-			$complectations[]=$item1['NFRMPF'];
-			}
+
 		
         return $aData;
     }

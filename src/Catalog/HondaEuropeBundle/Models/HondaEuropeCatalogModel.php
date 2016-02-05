@@ -20,7 +20,7 @@ class HondaEuropeCatalogModel extends CatalogModel{
         $sql = "
         SELECT *
         FROM pmotyt
-        GROUP BY cmftrepc
+        GROUP BY carea
         ";
 
         $query = $this->conn->query($sql);
@@ -94,7 +94,10 @@ class HondaEuropeCatalogModel extends CatalogModel{
 
     public function getComplectations($regionCode, $modelCode, $modificationCode)
    
-    {   $modelCode = rawurldecode($modelCode);     
+    {   $modelCode = rawurldecode($modelCode);
+
+        $aOriginOptionDescs = array();
+        $aOriginOptionCodes = array();
        $sql = "
         SELECT *
         FROM pmotyt
@@ -149,7 +152,7 @@ class HondaEuropeCatalogModel extends CatalogModel{
         $aOriginOptionsDesc[] = $query->fetch();
 		 	
 		 }
-		 $aOriginOptionDescs = array();
+
 		foreach($aOriginOptionsDesc as $item3)
          {
 		 	$aOriginOptionDescs[] = '('.$item3['cmnopt'].') '.$item3['xmnopt'];
