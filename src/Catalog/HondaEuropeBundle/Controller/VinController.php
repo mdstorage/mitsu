@@ -55,7 +55,7 @@ class VinController extends BaseController{
         setcookie(Constants::VIN, $vin);
         foreach($vinComplectations as $item)
 			{
-			$regionCode = $item['cmftrepc'];
+			$regionCode = $item['carea'];
 			$modelCode =  rawurlencode($item['cmodnamepc']);
 			$modificationCode = $item['dmodyr'];
 			}
