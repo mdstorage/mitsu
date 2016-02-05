@@ -1,0 +1,20 @@
+services:
+#    catalog_skoda.example:
+#        class: Catalog\SkodaBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  skoda_date_convertor.extension:
+        class: Catalog\SkodaBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  skoda.catalog.model:
+    class: Catalog\SkodaBundle\Models\SkodaCatalogModel
+    arguments:  ['@doctrine.dbal.skoda_connection']
+
+  skoda.vin.model:
+    class: Catalog\SkodaBundle\Models\SkodaVinModel
+    arguments:  ['@doctrine.dbal.skoda_connection']
+
+  skoda.articul.model:
+    class: Catalog\SkodaBundle\Models\SkodaArticulModel
+    arguments:  ['@doctrine.dbal.skoda_connection']

@@ -34,6 +34,8 @@ class AppKernel extends Kernel
             new Catalog\FordBundle\CatalogFordBundle(),
             new Catalog\AudiBundle\CatalogAudiBundle(),
             new Catalog\VolkswagenBundle\CatalogVolkswagenBundle(),
+            new Catalog\SkodaBundle\CatalogSkodaBundle(),
+
 
         );
 

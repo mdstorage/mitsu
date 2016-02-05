@@ -159,6 +159,7 @@ class VolkswagenCatalogModel extends CatalogModel{
 
         foreach($aGroup as $item){
 
+
             $groups[$item['hg']=='0'?'10':$item['hg']] = array(
                 Constants::NAME     => mb_convert_encoding($item ['text'], 'UTF-8', 'Windows-1251'),
                 Constants::OPTIONS  => array()

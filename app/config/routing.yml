@@ -1,3 +1,7 @@
+catalog_skoda:
+    resource: "@CatalogSkodaBundle/Resources/config/routing.yml"
+    prefix:   /
+
 catalog_volkswagen:
     resource: "@CatalogVolkswagenBundle/Resources/config/routing.yml"
     prefix:   /
