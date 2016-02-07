@@ -1,0 +1,125 @@
+catalog_seat:
+  path:         /seat/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogSeatBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_seat_modifications:
+  path:         /seat/catalog/1
+  defaults:     {_controller: CatalogSeatBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_seat_complectations:
+  path:         /seat/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogSeatBundle:Catalog:complectations}
+
+catalog_seat_groups:
+  path:         /seat/catalog/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogSeatBundle:Catalog:groups}
+
+catalog_seat_subgroups:
+  path:         /seat/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogSeatBundle:Catalog:subgroups}
+
+catalog_seat_schemas:
+  path:         /seat/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSeatBundle:Catalog:schemas}
+
+catalog_seat_schema:
+  path:         /seat/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogSeatBundle:Catalog:schema}
+
+catalog_seat_articuls:
+  path:         /seat/catalog/7
+  defaults:     {_controller: CatalogSeatBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_seat_group:
+  path:         /seat/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSeatBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_seat:
+  path:         /seat/vin/0
+  defaults:     {_controller: CatalogSeatBundle:Vin:index}
+
+vin_seat_region:
+  path:         /seat/vin/2
+  defaults:     {_controller: CatalogSeatBundle:Vin:region}
+  requirements: {_method: POST}
+
+vin_seat_result:
+  path:         /seat/vin/1
+  defaults:     {_controller: CatalogSeatBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_seat_groups:
+  path:         /seat/vin/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogSeatBundle:Vin:groups}
+
+vin_seat_subgroups:
+  path:         /seat/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogSeatBundle:Vin:vinSubgroups}
+
+vin_seat_schemas:
+  path:         /seat/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSeatBundle:Vin:schemas}
+
+vin_seat_schema:
+  path:         /seat/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogSeatBundle:Vin:schema}
+
+vin_seat_articuls:
+  path:         /seat/vin/7
+  defaults:     {_controller: CatalogSeatBundle:Vin:vinArticuls}
+  requirements: {_method: POST}
+
+vin_seat_group:
+  path:         /seat/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSeatBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_seat:
+  path:         /seat/articul/0
+  defaults:     {_controller: CatalogSeatBundle:Articul:index}
+
+articul_seat_find:
+  path:         /seat/articul/1/{regionCode}
+  defaults:     {_controller: CatalogSeatBundle:Articul:findByArticul, regionCode: null}
+
+articul_seat_modifications:
+  path:         /seat/articul/3
+  defaults:     {_controller: CatalogSeatBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_seat_complectations:
+  path:         /seat/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogSeatBundle:Articul:seatArticulComplectations}
+
+articul_seat_groups:
+  path:         /seat/articul/5/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogSeatBundle:Articul:seatArticulgroups}
+
+articul_seat_subgroups:
+  path:         /seat/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogSeatBundle:Articul:seatArticulSubgroups}
+
+articul_seat_schemas:
+  path:         /seat/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSeatBundle:Articul:seatArticulSchemas}
+
+articul_seat_schema:
+  path:         /seat/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogSeatBundle:Articul:seatArticulSchema}
+
+articul_seat_articuls:
+  path:         /seat/articul/9
+  defaults:     {_controller: CatalogSeatBundle:Articul:articuls}
+  requirements: {_method: POST}
+
+articul_seat_group:
+  path:         /seat/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSeatBundle:Articul:getGroupBySubgroup}
+catalog_seat_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogSeatBundle:Default:index }
