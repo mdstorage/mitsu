@@ -1,0 +1,30 @@
+{% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
+{% use 'CatalogSeatBundle::seat.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('catalog_seat') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('catalog_seat_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> /
+    <a href="{{ path('catalog_seat_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
+    <a href="{{ path('catalog_seat_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему
+{% endblock breadcrumbs %}
+
+{% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
+
+{% block schema %}
+    {% if schema.getCode is not empty %}
+            <div class="col-xs-3">
+        <a href="{{ path('catalog_seat_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+
+                    <div class="row">
+                        {{ schema.getCode }}
+                    </div>
+
+                    <div class="row">
+                        <img src="{{ asset('bundles/catalogaudi/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
+                    </div>
+
+
+        </a>
+            </div>
+    {% endif %}
+{% endblock schema %}

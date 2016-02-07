@@ -1,3 +1,7 @@
+catalog_seat:
+    resource: "@CatalogSeatBundle/Resources/config/routing.yml"
+    prefix:   /
+
 catalog_skoda:
     resource: "@CatalogSkodaBundle/Resources/config/routing.yml"
     prefix:   /

@@ -1,0 +1,20 @@
+services:
+#    catalog_seat.example:
+#        class: Catalog\SeatBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  seat_date_convertor.extension:
+        class: Catalog\SeatBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  seat.catalog.model:
+    class: Catalog\SeatBundle\Models\SeatCatalogModel
+    arguments:  ['@doctrine.dbal.seat_connection']
+
+  seat.vin.model:
+    class: Catalog\SeatBundle\Models\SeatVinModel
+    arguments:  ['@doctrine.dbal.seat_connection']
+
+  seat.articul.model:
+    class: Catalog\SeatBundle\Models\SeatArticulModel
+    arguments:  ['@doctrine.dbal.seat_connection']
