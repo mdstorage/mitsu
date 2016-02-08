@@ -38,7 +38,7 @@ class SeatArticulModel extends SeatCatalogModel{
 
     }
 
-    public function getArticulModels($articul, $regionCode)
+    public function getArticulModels ($articul, $regionCode)
     {
 
         $sql = "
