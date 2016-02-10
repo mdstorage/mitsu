@@ -5,8 +5,9 @@
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
     <a href="{{ path('catalog_ford_complectations', parameters) }}">Комплектация</a> /
     <a href="{{ path('catalog_ford_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getCode}})</a> / 
-    Подгруппа запчастей
+
 {% endblock breadcrumbs %}
+
 {% block complectation %}{% endblock complectation %}
 
 

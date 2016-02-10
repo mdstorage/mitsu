@@ -1,0 +1,20 @@
+services:
+#    catalog_fiat.example:
+#        class: Catalog\FiatBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  fiat_date_convertor.extension:
+        class: Catalog\FiatBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  fiat.catalog.model:
+    class: Catalog\FiatBundle\Models\FiatCatalogModel
+    arguments:  ['@doctrine.dbal.fiat_connection']
+
+  fiat.vin.model:
+    class: Catalog\FiatBundle\Models\FiatVinModel
+    arguments:  ['@doctrine.dbal.fiat_connection']
+
+  fiat.articul.model:
+    class: Catalog\FiatBundle\Models\FiatArticulModel
+    arguments:  ['@doctrine.dbal.fiat_connection']
