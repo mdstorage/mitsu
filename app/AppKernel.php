@@ -36,6 +36,7 @@ class AppKernel extends Kernel
             new Catalog\VolkswagenBundle\CatalogVolkswagenBundle(),
             new Catalog\SkodaBundle\CatalogSkodaBundle(),
             new Catalog\SeatBundle\CatalogSeatBundle(),
+            new Catalog\FiatBundle\CatalogFiatBundle(),
 
 
         );

@@ -1,0 +1,125 @@
+catalog_fiat:
+  path:         /fiat/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogFiatBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_fiat_modifications:
+  path:         /fiat/catalog/1
+  defaults:     {_controller: CatalogFiatBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_fiat_complectations:
+  path:         /fiat/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogFiatBundle:Catalog:complectations}
+
+catalog_fiat_groups:
+  path:         /fiat/catalog/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogFiatBundle:Catalog:groups}
+
+catalog_fiat_subgroups:
+  path:         /fiat/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogFiatBundle:Catalog:subgroups}
+
+catalog_fiat_schemas:
+  path:         /fiat/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogFiatBundle:Catalog:schemas}
+
+catalog_fiat_schema:
+  path:         /fiat/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogFiatBundle:Catalog:schema}
+
+catalog_fiat_articuls:
+  path:         /fiat/catalog/7
+  defaults:     {_controller: CatalogFiatBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_fiat_group:
+  path:         /fiat/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogFiatBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_fiat:
+  path:         /fiat/vin/0
+  defaults:     {_controller: CatalogFiatBundle:Vin:index}
+
+vin_fiat_region:
+  path:         /fiat/vin/2
+  defaults:     {_controller: CatalogFiatBundle:Vin:region}
+  requirements: {_method: POST}
+
+vin_fiat_result:
+  path:         /fiat/vin/1
+  defaults:     {_controller: CatalogFiatBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_fiat_groups:
+  path:         /fiat/vin/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogFiatBundle:Vin:groups}
+
+vin_fiat_subgroups:
+  path:         /fiat/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogFiatBundle:Vin:vinSubgroups}
+
+vin_fiat_schemas:
+  path:         /fiat/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogFiatBundle:Vin:schemas}
+
+vin_fiat_schema:
+  path:         /fiat/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogFiatBundle:Vin:schema}
+
+vin_fiat_articuls:
+  path:         /fiat/vin/7
+  defaults:     {_controller: CatalogFiatBundle:Vin:vinArticuls}
+  requirements: {_method: POST}
+
+vin_fiat_group:
+  path:         /fiat/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogFiatBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_fiat:
+  path:         /fiat/articul/0
+  defaults:     {_controller: CatalogFiatBundle:Articul:index}
+
+articul_fiat_find:
+  path:         /fiat/articul/1/{regionCode}
+  defaults:     {_controller: CatalogFiatBundle:Articul:findByArticul, regionCode: null}
+
+articul_fiat_modifications:
+  path:         /fiat/articul/3
+  defaults:     {_controller: CatalogFiatBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_fiat_complectations:
+  path:         /fiat/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogFiatBundle:Articul:fiatArticulComplectations}
+
+articul_fiat_groups:
+  path:         /fiat/articul/5/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogFiatBundle:Articul:fiatArticulgroups}
+
+articul_fiat_subgroups:
+  path:         /fiat/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogFiatBundle:Articul:fiatArticulSubgroups}
+
+articul_fiat_schemas:
+  path:         /fiat/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogFiatBundle:Articul:fiatArticulSchemas}
+
+articul_fiat_schema:
+  path:         /fiat/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogFiatBundle:Articul:fiatArticulSchema}
+
+articul_fiat_articuls:
+  path:         /fiat/articul/9
+  defaults:     {_controller: CatalogFiatBundle:Articul:articuls}
+  requirements: {_method: POST}
+
+articul_fiat_group:
+  path:         /fiat/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogFiatBundle:Articul:getGroupBySubgroup}
+catalog_fiat_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogFiatBundle:Default:index }

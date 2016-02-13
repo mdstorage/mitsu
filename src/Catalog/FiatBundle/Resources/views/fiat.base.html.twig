@@ -1,0 +1,8 @@
+{% block brand %}Fiat{% endblock brand %}
+{% block catalogPathLogo %}{{ path('catalog_fiat') }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_fiat') }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_fiat') }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_fiat') }}{% endblock articulPath %}
+{% block userStylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/catalogfiat/css/common.css') }}" media="all">
+{% endblock userStylesheets %}

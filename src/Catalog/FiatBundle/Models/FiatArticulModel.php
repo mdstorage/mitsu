@@ -6,12 +6,12 @@
  * Time: 16:58
  */
 
-namespace Catalog\SeatBundle\Models;
+namespace Catalog\FiatBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
-use Catalog\SeatBundle\Components\SeatConstants;
+use Catalog\FiatBundle\Components\FiatConstants;
 
-class SeatArticulModel extends SeatCatalogModel{
+class FiatArticulModel extends FiatCatalogModel{
 
     public function getArticulRegions($articulCode){
 

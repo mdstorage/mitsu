@@ -1,0 +1,34 @@
+{% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
+{% use 'CatalogFiatBundle::fiat.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('catalog_fiat') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('catalog_fiat_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
+    <a href="{{ path('catalog_fiat_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему
+{% endblock breadcrumbs %}
+
+{% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
+{% block complectation %}{% endblock complectation %}
+
+{% block schema %}
+    {% if schema.getCode is not empty %}
+            <div class="col-xs-4">
+        <a href="{{ path('catalog_fiat_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+
+                    <div class="row">
+                        {{ schema.getRuname }}
+                    </div>
+
+                    <div class="row">
+                    {{ schema.getOption('pattern') }}
+                    </div>
+
+                    <div class="row">
+                        <img src="{{ asset('bundles/catalogfiat/Imgs/images/'~schema.getOption('catalog')~'/'~schema.getOption('picture')|replace({'png':'th.png'})) }}" width="200" alt="{{ schema.getRuname }}"/>
+                    </div>
+
+
+        </a>
+            </div>
+    {% endif %}
+{% endblock schema %}
