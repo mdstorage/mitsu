@@ -6,8 +6,6 @@
             <th>Наименование</th>
             <th>Примечание</th>
             <th>Кол-во</th>
-            <th>Период</th>
-            <th>Данные по модели</th>
         </tr>
     </thead>
 
@@ -15,13 +13,10 @@
     {% for articul in oContainer.getActivePnc.getArticuls %}
         <tr>
             <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a>
-                {% if articul.getOption('zamena') %} <br>C {{ articul.getOption('dataOtmeny')|fiat_date_convertor  }} замена: {{ articul.getOption('zamena') }} <br>({{ articul.getOption('zamenakoli4')|replace({'~':' '}) }} шт.){% endif %}
             </td>
             <td>{{ articul.getRuname }}</td>
-            <td>{% if articul.getOption('prime4') %} {{ articul.getOption('prime4')|replace({'~':'', 'X':'', ';':''})}} {% endif %}<br/> {{ articul.getOption('with')|replace({'~':'', 'X':'', ';':''})}}</td>
+            <td></td>
             <td>{% autoescape false %}{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY'))|replace({';':'<br/>'}) }}{% endautoescape %}<br/></td>
-            <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|fiat_date_convertor}} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|fiat_date_convertor}}</td>
-            <td>{% if articul.getOption('dannye') %} {{ articul.getOption('dannye')|replace({';':' '}) }} {% endif %}</td>
             
         </tr>
     {% endfor %}
