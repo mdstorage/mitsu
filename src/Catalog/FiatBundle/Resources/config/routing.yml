@@ -42,11 +42,6 @@ vin_fiat:
   path:         /fiat/vin/0
   defaults:     {_controller: CatalogFiatBundle:Vin:index}
 
-vin_fiat_region:
-  path:         /fiat/vin/2
-  defaults:     {_controller: CatalogFiatBundle:Vin:region}
-  requirements: {_method: POST}
-
 vin_fiat_result:
   path:         /fiat/vin/1
   defaults:     {_controller: CatalogFiatBundle:Vin:result}
