@@ -270,7 +270,7 @@ class FiatCatalogModel extends CatalogModel{
        public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
        {
 
-           $sgs_cod = substr($schemaCode, strpos($schemaCode, '_')+1, strlen($schemaCode));
+          $sgs_cod = substr($schemaCode, strpos($schemaCode, '_')+1, strlen($schemaCode));
            $variante = substr($schemaCode, 0, strpos($schemaCode, '_'));
 
 
@@ -306,71 +306,51 @@ class FiatCatalogModel extends CatalogModel{
            foreach ($aPncs as &$aPnc)
            {
                $singleCoords[$aPnc['tbd_rif']] = explode(';', $aPnc['hotspots']);
-           }var_dump($singleCoords); die;
+           }
+
+
            foreach ($singleCoords as $index=>$value)
            {
-               foreach ($value as $index_1=>$value_1)
-               {
+               foreach ($value as $index_1=>$value_1) {
                    $aCoords1[$index_1] = explode(',', $value_1);
+
+                   $aCoords[$index][$index_1] = $aCoords1[$index_1];
                }
-               $aCoords[$index] = $aCoords1[0];
 
            }
 
-           var_dump($aCoords); die;
+
+
+
 
            $pncs = array();
            $str = array();
          foreach ($aPncs as $index=>$value) {
                {
-                   if (!$value['clangjap'])
+
+                   foreach ($aCoords[$value['tbd_rif']] as $item1)
                    {
-                       unset ($aPncs[$index]);
-                   }
-
-                   foreach ($value['clangjap'] as $item1)
-                   {
-                   $pncs[$value['tbd_rif']][Constants::OPTIONS][Constants::COORDS][$item1['cLeft']] = array(
-                       Constants::X2 => floor(($item1['cLeft'])),
-                       Constants::Y2 => $item1['cTop'],
-                       Constants::X1 => $item1['cWidth'] + $item1['cLeft'],
-                       Constants::Y1 => $item1['cHeight'] + $item1['cTop']);
+                   $pncs[$value['tbd_rif']][Constants::OPTIONS][Constants::COORDS][$item1[0]] = array(
+                       Constants::X1 => floor(($item1[0])),
+                       Constants::Y1 => $item1[1],
+                       Constants::X2 => $item1[2],
+                       Constants::Y2 => $item1[3]);
 
                    }
-
-                   if (strpos($value['tsben'],'16529'))
-                   {
-                       $str[str_replace(array('(', ')'),'',$value['btpos'])] = str_replace(';',' ',$value['bemerkung']);
-                   }
-                   else {
-                       $str[str_replace(array('(', ')'),'',$value['btpos'])] = '';
-                   }
-
 
                }
            }
 
 
            foreach ($aPncs as $item) {
-               if (strpos($this->getDesc($item['tsben'], 'R'),';'))
-               {
-                   $name = substr($this->getDesc($item['tsben'], 'R'),0,strpos($this->getDesc($item['tsben'], 'R'),';')).$str[str_replace(array('(', ')'),'',$item['btpos'])];
-
-               }
-               else
-               {
-                   $name = $this->getDesc($item['tsben'], 'R').$str[str_replace(array('(', ')'),'',$item['btpos'])];
-
-               }
 
 
 
-                   $pncs[str_replace(array('(', ')'),'',$item['btpos'])][Constants::NAME] = $name;
+                   $pncs[$item['tbd_rif']][Constants::NAME] = iconv('cp1251', 'utf8', $item['cds_dsc']);
 
 
 
            }
-
             return $pncs;
        }
 
@@ -443,60 +423,49 @@ $articuls = array();
         return $groups;
     }
 
-    public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, $options)
+    public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $pncCode, $options)
     {
+         $sgs_cod = substr($schemaCode, strpos($schemaCode, '_')+1, strlen($schemaCode));
+          $variante = substr($schemaCode, 0, strpos($schemaCode, '_'));
 
-        $modificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+         $sqlPnc = "
+         SELECT prt_cod, tbd_qty, cds_dsc
+          FROM `tbdata`, codes_dsc
+          WHERE `cat_cod` LIKE :modificationCode
+          AND `grp_cod` = :groupCode
+          AND `sgrp_cod` = :subGroupCode
+          and variante = :variante
+          and sgs_cod = :sgs_cod
+          and tbdata.cds_cod = codes_dsc.cds_cod
+          and codes_dsc.lng_cod = 'N'
+          and tbd_rif = :pncCode
 
-        $groupCode = (($groupCode == '10')?'0':$groupCode);
+         ";
 
-        $sqlPnc = "
-        SELECT all_katalog.teilenummer, all_katalog.tsben, all_katalog.tsbem, all_katalog.modellangabe, all_katalog.stuck, einsatz, auslauf, mv_data, all_stamm.gruppen_data newArt,
-        all_stamm.entfalldatum dataOtmeny, all_katalog.bemerkung
-        FROM all_katalog
-        left join all_stamm on (all_stamm.catalog = all_katalog.catalog and (all_stamm.markt = :regionCode or all_stamm.markt = '') and all_stamm.teilenummer = all_katalog.teilenummer)
-        WHERE all_katalog.catalog = 'se'
-        and all_katalog.epis_typ = :modificationCode
-        and  LEFT(hg_ug, 1) = :groupCode
-        and all_katalog.bildtafel = ''
-        and dir_name = 'R'
-        and bildtafel2 = :subGroupCode
-        and (btpos = :pncCode or btpos = :pncCodemod)
+         $query = $this->conn->prepare($sqlPnc);
+         $query->bindValue('modificationCode',  $modificationCode);
+         $query->bindValue('groupCode',  $groupCode);
+         $query->bindValue('subGroupCode',  str_replace($groupCode,'',$subGroupCode));
+         $query->bindValue('variante',  $variante);
+         $query->bindValue('sgs_cod',  $sgs_cod);
+         $query->bindValue('pncCode',  $pncCode);
 
-        ";
+         $query->execute();
 
-        $query = $this->conn->prepare($sqlPnc);
-        $query->bindValue('modificationCode',  $modificationCode);
-        $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('groupCode',  $groupCode);
-        $query->bindValue('subGroupCode',  $subGroupCode);
-        $query->bindValue('pncCode', '('.$pncCode.')');
-        $query->bindValue('pncCodemod', $pncCode);
-        $query->execute();
+         $aArticuls = $query->fetchAll();
 
+$articuls = array();
 
-        $aArticuls = $query->fetchAll();
-
-
-        $articuls = array();
-      
         foreach ($aArticuls as $item) {
         	 
             
             
-				$articuls[$item['teilenummer']] = array(
-                Constants::NAME => $this->getDesc($item['tsben'], 'R'),
+				$articuls[$item['prt_cod']] = array(
+                Constants::NAME => iconv('cp1251', 'utf8', $item['cds_dsc']),
                 Constants::OPTIONS => array(
-                    Constants::QUANTITY => $item['stuck'],
-                    Constants::START_DATE => $item['einsatz'],
-                    Constants::END_DATE => $item['auslauf'],
-                    'prime4' => ($this->getDesc($item['tsbem'], 'R'))?$this->getDesc($item['tsbem'], 'R'):$item['bemerkung'],
-                    'dannye' => $item['modellangabe'],
-                    'with' => $item['mv_data'],
-                    'zamena' => substr($item['newArt'], 0, strpos($item['newArt'], '~')),
-                    'zamenakoli4' => substr($item['newArt'], strpos($item['newArt'], '~'), strlen($item['newArt'])),
-                    'dataOtmeny' => $item['dataOtmeny']
-
+                    Constants::QUANTITY => $item['tbd_qty'],
+                    Constants::START_DATE => '',
+                    Constants::END_DATE => '',
 
                 )
             );
@@ -505,46 +474,6 @@ $articuls = array();
 
 
         return $articuls;
-    }
-
-    public function getDesc($sitemCode, $language)
-    {
-        $aitemCode = array();
-        $aGroup = array();
-
-
-        $aitemCode = explode(';',$sitemCode);
-
-        foreach ($aitemCode as $index=>&$value)
-        {
-            if ($value == '')
-            {
-               unset ($aitemCode[$index]);
-            }
-            $value = str_replace('~', '', $value);
-
-        }
-
-        foreach ($aitemCode as $item)
-        {
-            $sqlLex = "
-        SELECT text
-        FROM all_duden
-        WHERE :item = all_duden.ts and all_duden.catalog = 'se' and all_duden.lang = 'R'
-        ";
-
-            $query = $this->conn->prepare($sqlLex);
-            $query->bindValue('item',  $item);
-            $query->execute();
-            $aGroup[] = $query->fetchColumn(0);
-
-        }
-
-        $sGroup = implode('; ', array_unique($aGroup));
-
-
-        return mb_strtoupper(iconv('cp1251', 'utf8', $sGroup), 'utf8');
-
     }
 
     public function getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode)

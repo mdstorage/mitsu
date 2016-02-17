@@ -45,4 +45,40 @@ class CatalogController extends BaseController{
 
         
     }
+    public function articulsAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+            $modificationCode = $request->get('modificationCode');
+            $complectationCode = $request->get('complectationCode');
+            $groupCode = $request->get('groupCode');
+            $subGroupCode = $request->get('subGroupCode');
+            $schemaCode = $request->get('schemaCode');
+            $pncCode = $request->get('pncCode');
+            $options = $request->get('options');
+
+            $parameters = array(
+                'regionCode' => $regionCode,
+                'modificationCode' => $modificationCode,
+                'options' => json_decode($options, true),
+                'subGroupCode' => $subGroupCode,
+                'pncCode' => $pncCode
+            );
+
+            $articuls = $this->model()->getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $pncCode, json_decode($options, true));
+
+            $oContainer = Factory::createContainer()
+                ->setActivePnc(Factory::createPnc($pncCode, $pncCode)
+                    ->setArticuls(Factory::createCollection($articuls, Factory::createArticul()))
+                );
+
+            $this->filter($oContainer);
+
+            return $this->render($this->bundle() . ':08_articuls.html.twig', array(
+                'oContainer' => $oContainer,
+                'parameters' => $parameters
+            ));
+        }
+    }
 } 

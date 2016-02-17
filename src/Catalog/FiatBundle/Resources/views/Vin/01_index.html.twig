@@ -11,7 +11,7 @@
             $.ajax({
                 type:   'POST',
                 async:  false,
-                url:    "{% block vinAjaxPath %}{{ path('vin_fiat_region') }}{% endblock vinAjaxPath %}",
+                url:    "{% block vinAjaxPath %}{{ path('vin_fiat_result') }}{% endblock vinAjaxPath %}",
                 data:   { vin: $("#vin").val(). replace(/\s+/g, '') },
                 success: function(data) {
                     $("#vin-result").html(data);

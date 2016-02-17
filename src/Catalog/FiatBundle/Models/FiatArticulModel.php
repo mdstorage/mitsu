@@ -15,26 +15,18 @@ class FiatArticulModel extends FiatCatalogModel{
 
     public function getArticulRegions($articulCode){
 
-        
-        $sql = "
-        select markt from all_overview, all_katalog
-        where teilenummer = :articulCode and all_katalog.epis_typ = all_overview.epis_typ and all_katalog.catalog = all_overview.catalog
-        and all_overview.catalog = 'se'
-        ";
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', $articulCode);
-        $query->execute();
+        $aData = array('EU' => 'Европа');
 
-        $aData = $query->fetchAll();
+
+
         $regions = array();
-
-        foreach($aData as $item)
+        foreach($aData as $index => $value)
         {
-            $regions[] = $item['markt'];
-
+            $regions[] = $index;
         }
-        return array_unique($regions);
+
+        return $regions;
 
     }
 
@@ -42,14 +34,13 @@ class FiatArticulModel extends FiatCatalogModel{
     {
 
         $sql = "
-        select modell from all_overview, all_katalog
-        where teilenummer = :articulCode and all_katalog.epis_typ = all_overview.epis_typ and all_katalog.catalog = all_overview.catalog
-        and all_overview.catalog = 'se' and all_overview.markt = :regionCode
+        select comm_modgrp.cmg_cod from tbdata, catalogues, comm_modgrp
+        where prt_cod = :articulCode and tbdata.cat_cod = catalogues.cat_cod and catalogues.cmg_cod = comm_modgrp.cmg_cod
+        and catalogues.mk2_cod = comm_modgrp.mk2_cod
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
-        $query->bindValue('regionCode', $regionCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -59,7 +50,7 @@ class FiatArticulModel extends FiatCatalogModel{
 
         foreach($aData as $item)
         {
-            $models[] = $item['modell'];
+            $models[] = $item['cmg_cod'];
 
         }
 
@@ -71,14 +62,12 @@ class FiatArticulModel extends FiatCatalogModel{
         $modelCode = urldecode($modelCode);
 
         $sql = "
-        select all_katalog.epis_typ, all_overview.einsatz from all_overview, all_katalog
-        where teilenummer = :articulCode and all_katalog.epis_typ = all_overview.epis_typ and all_katalog.catalog = all_overview.catalog
-        and all_overview.catalog = 'se' and all_overview.markt = :regionCode and all_overview.modell = :modelCode
+        select catalogues.cat_cod from tbdata, catalogues
+        where tbdata.prt_cod = :articulCode and tbdata.cat_cod = catalogues.cat_cod and catalogues.cmg_cod = :modelCode
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
-        $query->bindValue('regionCode', $regionCode);
         $query->bindValue('modelCode', $modelCode);
         $query->execute();
 
@@ -86,7 +75,7 @@ class FiatArticulModel extends FiatCatalogModel{
 
         foreach($aData as $item)
         {
-            $modifications[] = $item['einsatz'].'_'.$item['epis_typ'];
+            $modifications[] = $item['cat_cod'];
 
         }
 
@@ -181,12 +170,10 @@ class FiatArticulModel extends FiatCatalogModel{
     {
 
         $modelCode = urldecode($modelCode);
-        $modificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
         $sql = "
-        select hg_ug from all_katalog
-        where teilenummer = :articulCode and epis_typ = :modificationCode
-        and catalog = 'se'
+        select grp_cod from tbdata
+        where tbdata.prt_cod = :articulCode and tbdata.cat_cod = :modificationCode
         ";
 
         $query = $this->conn->prepare($sql);
@@ -201,7 +188,7 @@ class FiatArticulModel extends FiatCatalogModel{
         foreach($aData as $item)
 		{
 
-			$groups[]= (substr($item['hg_ug'],0,1)=='0')?'10':substr($item['hg_ug'],0,1);
+			$groups[]= $item['grp_cod'];
 
 			
 		}
@@ -212,14 +199,9 @@ class FiatArticulModel extends FiatCatalogModel{
 
     public function getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
-        $modelCode = urldecode($modelCode);
-        $modificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-        $groupCode = (($groupCode == '10')?'0':$groupCode);
-
         $sql = "
-        select bildtafel2 from all_katalog
-        where teilenummer = :articulCode and epis_typ = :modificationCode
-        and catalog = 'se' and  LEFT(hg_ug, 1) = :groupCode
+        select sgrp_cod from tbdata
+        where tbdata.prt_cod = :articulCode and tbdata.cat_cod = :modificationCode and grp_cod = :groupCode
         ";
 
         $query = $this->conn->prepare($sql);
@@ -234,11 +216,10 @@ class FiatArticulModel extends FiatCatalogModel{
 
         foreach($aData as $item)
         {
-
-            $subgroups[]= $item['bildtafel2'];
-
+            $subgroups[]= $groupCode.$item['sgrp_cod'];
 
         }
+
 
         return array_unique($subgroups);
 
@@ -246,20 +227,17 @@ class FiatArticulModel extends FiatCatalogModel{
     
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
-        $modelCode = urldecode($modelCode);
-        $modificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-        $groupCode = (($groupCode == '10')?'0':$groupCode);
 
         $sql = "
-        select grafik from all_katalog
-        where epis_typ = :modificationCode and all_katalog.bildtafel <> '' and bildtafel2 = :subGroupCode
-        and catalog = 'se' and  LEFT(hg_ug, 1) = :groupCode
+        select variante, sgs_cod from tbdata
+        where tbdata.prt_cod = :articulCode and tbdata.cat_cod = :modificationCode and grp_cod = :groupCode and sgrp_cod = :subGroupCode
         ";
 
         $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', $articul);
         $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('groupCode', $groupCode);
-        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('subGroupCode', str_replace($groupCode,'',$subGroupCode));
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -267,7 +245,7 @@ class FiatArticulModel extends FiatCatalogModel{
 	   $schemas = array();
         foreach($aData as $item) {
 
-                $schemas[] = substr($item['grafik'],strlen($item['grafik'])-3,3).substr($item['grafik'],1,5).substr($item['grafik'],0,1);
+                $schemas[] = $item['variante'].'_'.$item['sgs_cod'];
 
 
         }
@@ -275,24 +253,25 @@ class FiatArticulModel extends FiatCatalogModel{
         return array_unique($schemas);
     }
          
-     public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
+     public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
-        $modelCode = urldecode($modelCode);
-        $modificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-        $groupCode = (($groupCode == '10')?'0':$groupCode);
+
+        $sgs_cod = substr($schemaCode, strpos($schemaCode, '_')+1, strlen($schemaCode));
+        $variante = substr($schemaCode, 0, strpos($schemaCode, '_'));
 
         $sql = "
-        select btpos from all_katalog
-        where teilenummer = :articulCode and epis_typ = :modificationCode
-        and catalog = 'se' and  LEFT(hg_ug, 1) = :groupCode and bildtafel2 = :subGroupCode
+        select tbd_rif from tbdata
+        where tbdata.prt_cod = :articulCode and tbdata.cat_cod = :modificationCode and grp_cod = :groupCode and sgrp_cod = :subGroupCode
+        and sgs_cod = :sgs_cod and variante = :variante
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
         $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('groupCode', $groupCode);
-        $query->bindValue('subGroupCode', $subGroupCode);
-
+        $query->bindValue('subGroupCode', str_replace($groupCode,'',$subGroupCode));
+        $query->bindValue('sgs_cod', $sgs_cod);
+        $query->bindValue('variante', $variante);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -300,11 +279,11 @@ class FiatArticulModel extends FiatCatalogModel{
         $pncs = array();
         foreach($aData as $item) {
 
-                $pncs[] = str_replace(array('(', ')'),'',$item['btpos']);
+                $pncs[] = $item['tbd_rif'];
 
 
         }
-        
+
         return array_unique($pncs);
     }
 } 

@@ -27,7 +27,7 @@ class MercedesCatalogModel extends CatalogModel{
         $aData = array_unique(str_split($sData));
 
         foreach ($aData as $item) {
-            if ($item !== " ") {
+            if (($item !== " ") && ($item !== "M")) {
                 $regions[$item] = array(
                     Constants::NAME => 'region_' . $item,
                     Constants::OPTIONS => array()

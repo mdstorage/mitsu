@@ -14,15 +14,19 @@
 
 {% block schema %}
     {% if schema.getCode is not empty %}
-        <div class="col-xs-3">
+        <div class="col-xs-4">
             <a href="{{ path('vin_fiat_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
                 <div class="row">
-                    {{ schema.getCode }}
+                    {{ schema.getRuname }}
                 </div>
 
                 <div class="row">
-                    <img src="{{ asset('bundles/catalogaudi/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
+                    {{ schema.getOption('pattern') }}
+                </div>
+
+                <div class="row">
+                    <img src="{{ asset('bundles/catalogfiat/Imgs/images/'~schema.getOption('catalog')~'/'~schema.getOption('picture')|replace({'png':'th.png'})) }}" width="200" alt="{{ schema.getRuname }}"/>
                 </div>
 
 
