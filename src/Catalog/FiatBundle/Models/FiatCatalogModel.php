@@ -454,7 +454,7 @@ $articuls = array();
 
          $aArticuls = $query->fetchAll();
 
-
+$articuls = array();
 
         foreach ($aArticuls as $item) {
         	 

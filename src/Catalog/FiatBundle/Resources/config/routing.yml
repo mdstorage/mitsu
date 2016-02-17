@@ -53,7 +53,7 @@ vin_fiat_groups:
 
 vin_fiat_subgroups:
   path:         /fiat/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogFiatBundle:Vin:vinSubgroups}
+  defaults:     {_controller: CatalogFiatBundle:Vin:subgroups}
 
 vin_fiat_schemas:
   path:         /fiat/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
@@ -65,7 +65,7 @@ vin_fiat_schema:
 
 vin_fiat_articuls:
   path:         /fiat/vin/7
-  defaults:     {_controller: CatalogFiatBundle:Vin:vinArticuls}
+  defaults:     {_controller: CatalogFiatBundle:Vin:articuls}
   requirements: {_method: POST}
 
 vin_fiat_group:
@@ -109,7 +109,7 @@ articul_fiat_schema:
 
 articul_fiat_articuls:
   path:         /fiat/articul/9
-  defaults:     {_controller: CatalogFiatBundle:Articul:articuls}
+  defaults:     {_controller: CatalogFiatBundle:Articul:fiatArticularticuls}
   requirements: {_method: POST}
 
 articul_fiat_group:

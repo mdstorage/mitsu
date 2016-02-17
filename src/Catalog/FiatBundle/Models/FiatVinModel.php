@@ -47,7 +47,7 @@ class FiatVinModel extends FiatCatalogModel {
                 'modif' => $aData['cat_dsc'],
                 'modif_for_group' => $aData['cat_cod'],
                 'model_for_group' => $aData['cmg_cod'],
-                Constants::PROD_DATE => $aData['date'] ,
+                Constants::PROD_DATE => $aData['date'],
                 'region' => 'EU',
                 'motor' => $aData['motor'],
                 );

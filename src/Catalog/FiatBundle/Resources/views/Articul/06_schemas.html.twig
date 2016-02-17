@@ -4,21 +4,28 @@
     <a href="{{ path('articul_fiat_find') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_fiat_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('articul_fiat_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
 {% endblock breadcrumbs %}
 
-
+{% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
+{% block complectation %}{% endblock complectation %}
 
 {% block schema %}
     {% if schema.getCode is not empty %}
-            <div class="col-xs-3">
-        <a href="{{ path('articul_fiat_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+        <div class="col-xs-4">
+            <a href="{{ path('articul_fiat_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
-                    <div class="row">
-                        {{ schema.getCode }}
-                    </div>
-                    <div class="row">
-                        <img src="{{ asset('bundles/catalogfiat/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
-                    </div>
+                <div class="row">
+                    {{ schema.getRuname }}
+                </div>
 
-        </a>
-            </div>
+                <div class="row">
+                    {{ schema.getOption('pattern') }}
+                </div>
+
+                <div class="row">
+                    <img src="{{ asset('bundles/catalogfiat/Imgs/images/'~schema.getOption('catalog')~'/'~schema.getOption('picture')|replace({'png':'th.png'})) }}" width="200" alt="{{ schema.getRuname }}"/>
+                </div>
+
+
+            </a>
+        </div>
     {% endif %}
 {% endblock schema %}

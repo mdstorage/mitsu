@@ -11,47 +11,9 @@
 {% block complectation %}
 {% endblock complectation %}
 
-{% block subgroupImage %}
-
-
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Подгруппа</th>
-            <th>Код</th>
-            <th>Описание</th>
-            <th>Примечание</th>
-            <th>Данные по модели</th>
-            <th>Изображение</th>
-
-        </tr>
-        </thead>
-        <tbody>
-        {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
-
-            <tr>
-                <td>{{ subgroup.getOption('podgr') }}</td>
-                <td>{{ subgroup.getCode }}</td>
-                <td> <a href="{{ path('vin_fiat_schemas',
-                    parameters|merge({'subGroupCode': subgroup.getCode})) }}"> {{ subgroup.getRuname }}</a></td>
-                <td>{{ subgroup.getOption('prime4') }}</td>
-                <td>{{ subgroup.getOption('dannye')|replace({';':' '}) }}</td>
-                <td>
-                    <div class="row">
-                        <a href="{{ path('vin_fiat_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">
-                            <img src="{{ asset('bundles/catalogaudi/Images/Minis/'~subgroup.getOption('grafik')~'.png') }}" width="100" alt="{{ subgroup.getRuname }}"/>
-                        </a>
-                    </div>
-                </td>
-            </tr>
-
-        {% endfor %}
-        </tbody>
-    </table>
-
-    
-{% endblock subgroupImage %}
-
- {% block subGroupsMap %}
-
- {% endblock subGroupsMap %}
+{% block subgroupImage %}{% endblock subgroupImage %}
+{% block subgroupItem %}
+    <div id="subgroup{{ subgroup.getCode }}">
+        <a href="{{ path('vin_fiat_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
+    </div>
+{% endblock subgroupItem %}
