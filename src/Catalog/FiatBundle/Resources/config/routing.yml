@@ -65,7 +65,7 @@ vin_fiat_schema:
 
 vin_fiat_articuls:
   path:         /fiat/vin/7
-  defaults:     {_controller: CatalogFiatBundle:Vin:articuls}
+  defaults:     {_controller: CatalogFiatBundle:Vin:vinarticuls}
   requirements: {_method: POST}
 
 vin_fiat_group:

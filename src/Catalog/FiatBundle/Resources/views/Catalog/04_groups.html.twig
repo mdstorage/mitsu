@@ -16,8 +16,24 @@
         {% block groups %}
             <div class="groups">
                 {% for group in oContainer.getGroups %}
-                    <div>
-                        <a href="{{ path('catalog_fiat_subgroups', parameters|merge({'groupCode': group.getCode})) }}">({{ group.getCode }}) {{ group.getRuname }}</a>
+
+                    <div style=" height: 250px; " class="col-sm-2 col-sm-offset-5 col-md-2 col-md-offset-0">
+
+                        <a href="{{ path('catalog_fiat_subgroups', parameters|merge({'groupCode': group.getCode})) }}">
+                            <div class="row">
+
+                            ({{ group.getCode }}) {{ group.getRuname }}
+
+                            </div>
+                            <br>
+
+                            <div class="row">
+                            <img src="{{ asset('bundles/catalogfiat/Imgs/images/L_EPERFIG/'~group.getOption('catalog')~'/'~group.getOption('picture')|replace({'png':'th.png'})) }}" alt="{{ group.getRuname }}" width="100%"/>
+                            </div>
+
+
+                        </a>
+
                     </div>
                 {% endfor %}
             </div>
