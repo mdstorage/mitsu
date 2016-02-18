@@ -10,10 +10,14 @@
 {% block complectation %}{% endblock complectation %}
 
 {% block subgroupImage %}
-        {% endblock subgroupImage %}
+    <div class="col-lg-8">
+        <img src="{{ asset('bundles/catalogfiat/Imgs/images/L_EPERFIG/'~oContainer.getActiveGroup.getOption('catalog')~'/'~oContainer.getActiveGroup.getOption('picture')) }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
 
-{% block subgroupItem %}
-    <div id="subgroup{{ subgroup.getCode }}">
-        <a href="{{ path('articul_fiat_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">{{ subgroup.getRuname }}</a>
     </div>
-{% endblock subgroupItem %}
+{% endblock subgroupImage %}
+
+
+
+{% block pathToSchemas %}
+    {{ path('articul_fiat_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}
+{% endblock pathToSchemas %}
