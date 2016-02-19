@@ -18,9 +18,9 @@ class FiatVinModel extends FiatCatalogModel {
     {
 
         $sql = "
-        SELECT vin_chassis.mvs, motor, vin_chassis.date, mvs.cat_cod, catalogues.cat_dsc, comm_modgrp.cmg_dsc, brands.title, comm_modgrp.cmg_cod
+        SELECT vin_chassis.mvs, motor, vin_chassis.date, mvs.cat_cod, catalogues.cat_dsc, comm_modgrp.cmg_dsc, brands.title, comm_modgrp.cmg_cod, mvs.mvs_dsc
         FROM vin_chassis, mvs, catalogues, comm_modgrp, brands
-        WHERE vin = :vin
+        WHERE (vin_chassis.vin = :vin or (vin_chassis.chassy = RIGHT(:vin,8) AND SUBSTRING(vin_chassis.mvs, 1, 3) = SUBSTRING(:vin, 4, 3)))
         AND mvs.mod_cod = SUBSTRING(vin_chassis.mvs, 1, 3)
         AND mvs.mvs_version = SUBSTRING(vin_chassis.mvs, 4, 3)
         AND mvs.mvs_serie = SUBSTRING(vin_chassis.mvs, 7, 1)
@@ -50,6 +50,7 @@ class FiatVinModel extends FiatCatalogModel {
                 Constants::PROD_DATE => $aData['date'],
                 'region' => 'EU',
                 'motor' => $aData['motor'],
+                'mvs_dsc' => $aData['mvs_dsc']
                 );
         }
 
