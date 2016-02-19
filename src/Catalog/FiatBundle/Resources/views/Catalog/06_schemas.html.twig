@@ -20,7 +20,7 @@
                     </div>
 
                     <div class="row">
-                    {{ schema.getOption('pattern') }}
+                    {{ schema.getOption('pattern')|replace({',':', '}) }}
                     </div>
 
                     <div class="row">
