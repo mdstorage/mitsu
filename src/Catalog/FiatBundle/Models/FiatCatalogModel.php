@@ -102,7 +102,7 @@ class FiatCatalogModel extends CatalogModel{
 
 
         $sql = "
-        SELECT groups_dsc.grp_cod, groups_dsc.grp_dsc
+        SELECT groups_dsc.grp_cod, groups_dsc.grp_dsc, groups.img_name
         FROM groups_dsc, catalogues, groups
         WHERE catalogues.cat_cod = :modificationCode
         and catalogues.cat_cod = groups.cat_cod and groups.grp_cod = groups_dsc.grp_cod and groups_dsc.lng_cod = 'N'
@@ -122,10 +122,14 @@ class FiatCatalogModel extends CatalogModel{
 
 
         foreach($aData as $item){
+            $schCode = substr($item['img_name'], strpos($item['img_name'], '/')+1, strlen($item['img_name']));
+            $schCatalog = substr($item['img_name'], 0, strpos($item['img_name'], '/'));
 
             $groups[$item['grp_cod']] = array(
                 Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['grp_dsc']),'utf8'),
-                Constants::OPTIONS  => array()
+                Constants::OPTIONS => array('catalog' => $schCatalog,
+                    'picture' => $schCode
+                )
             );
         }
 
@@ -178,11 +182,13 @@ class FiatCatalogModel extends CatalogModel{
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
         $sql = "
-        SELECT subgroups_dsc.sgrp_cod Cod, subgroups_dsc.sgrp_dsc Dsc
-        FROM subgroups_dsc, subgroups_by_cat
+        SELECT subgroups_dsc.sgrp_cod Cod, subgroups_dsc.sgrp_dsc Dsc, groups.img_name, hs_figurini.x1, hs_figurini.y1, hs_figurini.x2, hs_figurini.y2
+        FROM subgroups_dsc, subgroups_by_cat, hs_figurini, groups
         WHERE subgroups_by_cat.cat_cod = :modificationCode
         and subgroups_by_cat.grp_cod = subgroups_dsc.grp_cod and subgroups_by_cat.sgrp_cod = subgroups_dsc.sgrp_cod and subgroups_dsc.grp_cod = :groupCode and subgroups_dsc.lng_cod = 'N'
+        and groups.cat_cod = :modificationCode and groups.grp_cod = :groupCode and groups.img_name = hs_figurini.img_name and hs_figurini.code = CONCAT(:groupCode,LPAD(subgroups_dsc.sgrp_cod,2,'0'))
         ";
+
 
 
         $query = $this->conn->prepare($sql);
@@ -199,10 +205,15 @@ class FiatCatalogModel extends CatalogModel{
            foreach($aData as $item)
            {
 
-               $subgroups[$groupCode.$item['Cod']] = array(
+               $subgroups[$groupCode.str_pad($item['Cod'], 2, "0", STR_PAD_LEFT)] = array(
 
                    Constants::NAME => mb_strtoupper(iconv('cp1251', 'utf8', $item['Dsc']),'utf8'),
-                   Constants::OPTIONS => array()
+                   Constants::OPTIONS => array(
+                       Constants::X1 => floor($item['x1']),
+                       Constants::X2 => $item['x2'],
+                       Constants::Y1 => $item['y1'],
+                       Constants::Y2 => $item['y2'],
+                   )
 
                );
 
@@ -284,6 +295,7 @@ class FiatCatalogModel extends CatalogModel{
             and sgs_cod = :sgs_cod
             and tbdata.cds_cod = codes_dsc.cds_cod
             and codes_dsc.lng_cod = 'N'
+            order by tbd_rif
 
            ";
 

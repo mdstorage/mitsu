@@ -216,7 +216,7 @@ class FiatArticulModel extends FiatCatalogModel{
 
         foreach($aData as $item)
         {
-            $subgroups[]= $groupCode.$item['sgrp_cod'];
+            $subgroups[]= $groupCode.str_pad($item['sgrp_cod'], 2, "0", STR_PAD_LEFT);
 
         }
 

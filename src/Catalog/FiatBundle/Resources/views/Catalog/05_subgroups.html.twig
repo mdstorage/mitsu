@@ -9,9 +9,15 @@
 {% block complectation %}{% endblock complectation %}
 
 
-{% block subgroupImage %}{% endblock subgroupImage %}
-{% block subgroupItem %}
-    <div id="subgroup{{ subgroup.getCode }}">
-        <a href="{{ path('catalog_fiat_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
+{% block subgroupImage %}
+    <div class="col-lg-8">
+        <img src="{{ asset('bundles/catalogfiat/Imgs/images/L_EPERFIG/'~oContainer.getActiveGroup.getOption('catalog')~'/'~oContainer.getActiveGroup.getOption('picture')) }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
+
     </div>
-{% endblock subgroupItem %}
+{% endblock subgroupImage %}
+
+
+
+{% block pathToSchemas %}
+    {{ path('catalog_fiat_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}
+{% endblock pathToSchemas %}
