@@ -39,6 +39,7 @@ class AppKernel extends Kernel
             new Catalog\FiatBundle\CatalogFiatBundle(),
             new Catalog\LanciaBundle\CatalogLanciaBundle(),
             new Catalog\AlfaRomeoBundle\CatalogAlfaRomeoBundle(),
+            new Catalog\FiatProfessionalBundle\CatalogFiatProfessionalBundle(),
 
 
         );

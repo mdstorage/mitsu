@@ -1,0 +1,47 @@
+{% extends 'CatalogCommonBundle:Vin:02_result.html.twig' %}
+{% block specification %}
+    <div class="row">
+        <div class="col-lg-8">
+            <table class="table table-bordered">
+
+                <tr>
+                    <td>Брэнд:</td>
+                    <td>{{ result.brand }}</td>
+                </tr>
+                <tr>
+                    <td>Дата выпуска:</td>
+                    <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|fiatprofessional_vin_date_convertor }}</td>
+                </tr>
+                    <tr>
+                        <td>Модель:</td>
+                        <td>{{ result.model }}</td>
+                    </tr>
+
+                <tr>
+                    <td>Модификация:</td>
+                    <td>{{ result.modif }}</td>
+                </tr>
+
+                <tr>
+                    <td>Модельный код:</td>
+                    <td>{{ result.modif_for_group }}</td>
+                </tr>
+
+                <tr>
+                    <td>Код двигателя:</td>
+                    <td>{{ result.motor }}</td>
+                </tr>
+
+                <tr>
+                    <td>Описание:</td>
+                    <td>{{ result.mvs_dsc }}</td>
+                </tr>
+
+
+            </table>
+        </div>
+    </div>
+{% endblock specification %}
+{% block catalogPath %}
+    {{ path('vin_fiatprofessional_groups',({'regionCode': result.region, 'modelCode': result.model_for_group, 'modificationCode': result.modif_for_group })) }}
+{% endblock catalogPath %}
