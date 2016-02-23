@@ -1,3 +1,7 @@
+catalog_lancia:
+    resource: "@CatalogLanciaBundle/Resources/config/routing.yml"
+    prefix:   /
+
 catalog_fiat:
     resource: "@CatalogFiatBundle/Resources/config/routing.yml"
     prefix:   /

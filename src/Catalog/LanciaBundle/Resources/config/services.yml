@@ -1,0 +1,20 @@
+services:
+#    catalog_lancia.example:
+#        class: Catalog\LanciaBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  lancia_date_convertor.extension:
+        class: Catalog\LanciaBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  lancia.catalog.model:
+    class: Catalog\LanciaBundle\Models\LanciaCatalogModel
+    arguments:  ['@doctrine.dbal.lancia_connection']
+
+  lancia.vin.model:
+    class: Catalog\LanciaBundle\Models\LanciaVinModel
+    arguments:  ['@doctrine.dbal.lancia_connection']
+
+  lancia.articul.model:
+    class: Catalog\LanciaBundle\Models\LanciaArticulModel
+    arguments:  ['@doctrine.dbal.lancia_connection']

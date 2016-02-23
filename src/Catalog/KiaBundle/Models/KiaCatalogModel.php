@@ -86,7 +86,7 @@ class KiaCatalogModel extends CatalogModel{
         $models = array();
         foreach($modelsReg as $item){
         	 
-            $models[$item] = array(Constants::NAME=>strtoupper($item),
+            $models[urlencode($item)] = array(Constants::NAME=>strtoupper($item),
             Constants::OPTIONS=>array());
       
         }
@@ -96,6 +96,7 @@ class KiaCatalogModel extends CatalogModel{
 
     public function getModifications($regionCode, $modelCode)
     {
+        $modelCode = urldecode($modelCode);
         $sql = "
         SELECT *
         FROM kiac
