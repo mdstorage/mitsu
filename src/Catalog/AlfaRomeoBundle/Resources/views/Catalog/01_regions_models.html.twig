@@ -1,0 +1,4 @@
+{% extends 'CatalogCommonBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogAlfaRomeoBundle::alfaromeo.base.html.twig' %}
+{% block regionPath %}{{ path('catalog_alfaromeo', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+{% block ajaxUrl %}{{ path('catalog_alfaromeo_modifications') }}{% endblock ajaxUrl %}

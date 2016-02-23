@@ -1,0 +1,20 @@
+services:
+#    catalog_alfaromeo.example:
+#        class: Catalog\AlfaRomeoBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  alfaromeo_date_convertor.extension:
+        class: Catalog\AlfaRomeoBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  alfaromeo.catalog.model:
+    class: Catalog\AlfaRomeoBundle\Models\AlfaRomeoCatalogModel
+    arguments:  ['@doctrine.dbal.alfaromeo_connection']
+
+  alfaromeo.vin.model:
+    class: Catalog\AlfaRomeoBundle\Models\AlfaRomeoVinModel
+    arguments:  ['@doctrine.dbal.alfaromeo_connection']
+
+  alfaromeo.articul.model:
+    class: Catalog\AlfaRomeoBundle\Models\AlfaRomeoArticulModel
+    arguments:  ['@doctrine.dbal.alfaromeo_connection']

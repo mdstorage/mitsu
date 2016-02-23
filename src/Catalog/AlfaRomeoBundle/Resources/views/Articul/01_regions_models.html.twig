@@ -1,0 +1,8 @@
+{% extends 'CatalogAlfaRomeoBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogAlfaRomeoBundle::alfaromeo.base.html.twig' %}
+{% block regionPath %}{{ path('articul_alfaromeo_find', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+{% block ajaxUrl %}{{ path('articul_alfaromeo_modifications') }}{% endblock ajaxUrl %}
+{% block head %}
+    <h3>Запчасть с таким артикулом найдена в следующих моделях:</h3>
+    {{ parent() }}
+{% endblock head %}
