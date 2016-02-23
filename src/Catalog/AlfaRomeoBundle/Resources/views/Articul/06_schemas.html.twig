@@ -1,0 +1,31 @@
+{% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
+{% use 'CatalogAlfaRomeoBundle::alfaromeo.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('articul_alfaromeo_find') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_alfaromeo_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('articul_alfaromeo_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
+{% endblock breadcrumbs %}
+
+{% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
+{% block complectation %}{% endblock complectation %}
+
+{% block schema %}
+    {% if schema.getCode is not empty %}
+        <div style=" height: 300px; " class="col-sm-4 col-sm-offset-5 col-md-4 col-md-offset-0">
+            <a href="{{ path('articul_alfaromeo_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+
+                <div class="row">
+                    {{ schema.getRuname }}
+                </div>
+
+                <div class="row">
+                    {{ schema.getOption('pattern')|replace({',':', '}) }}
+                </div>
+
+                <div class="row">
+                    <img src="{{ asset('bundles/catalogfiat/Imgs/images/'~schema.getOption('catalog')~'/'~schema.getOption('picture')|replace({'png':'th.png'})) }}" width="200" alt="{{ schema.getRuname }}"/>
+                </div>
+
+
+            </a>
+        </div>
+    {% endif %}
+{% endblock schema %}

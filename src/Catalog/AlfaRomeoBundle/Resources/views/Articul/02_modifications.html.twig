@@ -1,0 +1,15 @@
+<div class="modifications">
+    <div class="row">
+        {% for modification in oContainer.getActiveModel.getModifications %}
+            <div>
+                {% block modification %}
+                    <div class="row">
+                        <a href="{{ path('articul_alfaromeo_groups', parameters|merge({'modificationCode': modification.getCode})) }}">
+                            {{ modification.getRuname }}
+                        </a>
+                    </div>
+                {% endblock modification %}
+            </div>
+        {% endfor %}
+    </div>
+</div>

@@ -1,0 +1,44 @@
+{% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
+{% use 'CatalogAlfaRomeoBundle::alfaromeo.base.html.twig' %}
+{% block breadcrumbs %}
+   <a href="{{ path('vin_alfaromeo') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }}, 
+   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>
+    / Группа запчастей
+{% endblock breadcrumbs %}
+
+
+{% block complectation %}
+{% endblock complectation %}
+
+
+{% block body %}
+    {% block head %}<h3>Выбрать группу запчастей:</h3>{% endblock head %}
+    <div class="row">
+    <div class="col-lg-12">
+        {% block groups %}
+            <div class="groups">
+                {% for group in oContainer.getGroups %}
+                    <div style=" height: 250px; " class="col-sm-2 col-sm-offset-5 col-md-2 col-md-offset-0">
+
+                        <a href="{{ path('vin_alfaromeo_subgroups', parameters|merge({'groupCode': group.getCode})) }}">
+                            <div class="row">
+
+                                ({{ group.getCode }}) {{ group.getRuname }}
+
+                            </div>
+                            <br>
+
+                            <div class="row">
+                                <img src="{{ asset('bundles/catalogfiat/Imgs/images/L_EPERFIG/'~group.getOption('catalog')~'/'~group.getOption('picture')|replace({'png':'th.png'})) }}" alt="{{ group.getRuname }}" width="100%"/>
+                            </div>
+
+
+                        </a>
+
+                    </div>
+                {% endfor %}
+            </div>
+        {% endblock groups %}
+    </div>
+    </div>
+{% endblock body %}
