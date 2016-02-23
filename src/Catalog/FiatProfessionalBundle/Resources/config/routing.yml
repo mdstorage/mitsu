@@ -1,0 +1,120 @@
+catalog_fiatprofessional:
+  path:         /fiatprofessional/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_fiatprofessional_modifications:
+  path:         /fiatprofessional/catalog/1
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_fiatprofessional_complectations:
+  path:         /fiatprofessional/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Catalog:complectations}
+
+catalog_fiatprofessional_groups:
+  path:         /fiatprofessional/catalog/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Catalog:groups}
+
+catalog_fiatprofessional_subgroups:
+  path:         /fiatprofessional/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Catalog:subgroups}
+
+catalog_fiatprofessional_schemas:
+  path:         /fiatprofessional/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Catalog:schemas}
+
+catalog_fiatprofessional_schema:
+  path:         /fiatprofessional/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Catalog:schema}
+
+catalog_fiatprofessional_articuls:
+  path:         /fiatprofessional/catalog/7
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_fiatprofessional_group:
+  path:         /fiatprofessional/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_fiatprofessional:
+  path:         /fiatprofessional/vin/0
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Vin:index}
+
+vin_fiatprofessional_result:
+  path:         /fiatprofessional/vin/1
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_fiatprofessional_groups:
+  path:         /fiatprofessional/vin/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Vin:groups}
+
+vin_fiatprofessional_subgroups:
+  path:         /fiatprofessional/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Vin:subgroups}
+
+vin_fiatprofessional_schemas:
+  path:         /fiatprofessional/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Vin:schemas}
+
+vin_fiatprofessional_schema:
+  path:         /fiatprofessional/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Vin:schema}
+
+vin_fiatprofessional_articuls:
+  path:         /fiatprofessional/vin/7
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Vin:vinarticuls}
+  requirements: {_method: POST}
+
+vin_fiatprofessional_group:
+  path:         /fiatprofessional/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_fiatprofessional:
+  path:         /fiatprofessional/articul/0
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Articul:index}
+
+articul_fiatprofessional_find:
+  path:         /fiatprofessional/articul/1/{regionCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Articul:findByArticul, regionCode: null}
+
+articul_fiatprofessional_modifications:
+  path:         /fiatprofessional/articul/3
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_fiatprofessional_complectations:
+  path:         /fiatprofessional/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Articul:fiatprofessionalArticulComplectations}
+
+articul_fiatprofessional_groups:
+  path:         /fiatprofessional/articul/5/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Articul:fiatprofessionalArticulgroups}
+
+articul_fiatprofessional_subgroups:
+  path:         /fiatprofessional/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Articul:fiatprofessionalArticulSubgroups}
+
+articul_fiatprofessional_schemas:
+  path:         /fiatprofessional/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Articul:fiatprofessionalArticulSchemas}
+
+articul_fiatprofessional_schema:
+  path:         /fiatprofessional/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Articul:fiatprofessionalArticulSchema}
+
+articul_fiatprofessional_articuls:
+  path:         /fiatprofessional/articul/9
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Articul:fiatprofessionalArticularticuls}
+  requirements: {_method: POST}
+
+articul_fiatprofessional_group:
+  path:         /fiatprofessional/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogFiatProfessionalBundle:Articul:getGroupBySubgroup}
+catalog_fiatprofessional_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogFiatProfessionalBundle:Default:index }
