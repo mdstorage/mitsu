@@ -1,0 +1,120 @@
+catalog_lancia:
+  path:         /lancia/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogLanciaBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_lancia_modifications:
+  path:         /lancia/catalog/1
+  defaults:     {_controller: CatalogLanciaBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_lancia_complectations:
+  path:         /lancia/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogLanciaBundle:Catalog:complectations}
+
+catalog_lancia_groups:
+  path:         /lancia/catalog/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogLanciaBundle:Catalog:groups}
+
+catalog_lancia_subgroups:
+  path:         /lancia/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogLanciaBundle:Catalog:subgroups}
+
+catalog_lancia_schemas:
+  path:         /lancia/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogLanciaBundle:Catalog:schemas}
+
+catalog_lancia_schema:
+  path:         /lancia/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogLanciaBundle:Catalog:schema}
+
+catalog_lancia_articuls:
+  path:         /lancia/catalog/7
+  defaults:     {_controller: CatalogLanciaBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_lancia_group:
+  path:         /lancia/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogLanciaBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_lancia:
+  path:         /lancia/vin/0
+  defaults:     {_controller: CatalogLanciaBundle:Vin:index}
+
+vin_lancia_result:
+  path:         /lancia/vin/1
+  defaults:     {_controller: CatalogLanciaBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_lancia_groups:
+  path:         /lancia/vin/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogLanciaBundle:Vin:groups}
+
+vin_lancia_subgroups:
+  path:         /lancia/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogLanciaBundle:Vin:subgroups}
+
+vin_lancia_schemas:
+  path:         /lancia/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogLanciaBundle:Vin:schemas}
+
+vin_lancia_schema:
+  path:         /lancia/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogLanciaBundle:Vin:schema}
+
+vin_lancia_articuls:
+  path:         /lancia/vin/7
+  defaults:     {_controller: CatalogLanciaBundle:Vin:vinarticuls}
+  requirements: {_method: POST}
+
+vin_lancia_group:
+  path:         /lancia/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogLanciaBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_lancia:
+  path:         /lancia/articul/0
+  defaults:     {_controller: CatalogLanciaBundle:Articul:index}
+
+articul_lancia_find:
+  path:         /lancia/articul/1/{regionCode}
+  defaults:     {_controller: CatalogLanciaBundle:Articul:findByArticul, regionCode: null}
+
+articul_lancia_modifications:
+  path:         /lancia/articul/3
+  defaults:     {_controller: CatalogLanciaBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_lancia_complectations:
+  path:         /lancia/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogLanciaBundle:Articul:lanciaArticulComplectations}
+
+articul_lancia_groups:
+  path:         /lancia/articul/5/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogLanciaBundle:Articul:lanciaArticulgroups}
+
+articul_lancia_subgroups:
+  path:         /lancia/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogLanciaBundle:Articul:lanciaArticulSubgroups}
+
+articul_lancia_schemas:
+  path:         /lancia/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogLanciaBundle:Articul:lanciaArticulSchemas}
+
+articul_lancia_schema:
+  path:         /lancia/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogLanciaBundle:Articul:lanciaArticulSchema}
+
+articul_lancia_articuls:
+  path:         /lancia/articul/9
+  defaults:     {_controller: CatalogLanciaBundle:Articul:lanciaArticularticuls}
+  requirements: {_method: POST}
+
+articul_lancia_group:
+  path:         /lancia/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogLanciaBundle:Articul:getGroupBySubgroup}
+catalog_lancia_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogLanciaBundle:Default:index }
