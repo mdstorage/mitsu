@@ -1,0 +1,15 @@
+services:
+#    catalog_smart.example:
+#        class: Catalog\SmartBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+  smart.catalog.model:
+    class: Catalog\SmartBundle\Models\SmartCatalogModel
+    arguments:  ['@doctrine.dbal.smart_connection']
+
+  smart.articul.model:
+    class: Catalog\SmartBundle\Models\SmartArticulModel
+    arguments:  ['@doctrine.dbal.smart_connection']
+
+  smart.vin.model:
+    class: Catalog\SmartBundle\Models\SmartVinModel
+    arguments:  ['@doctrine.dbal.smart_connection']
