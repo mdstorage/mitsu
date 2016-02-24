@@ -1,0 +1,140 @@
+catalog_smart:
+  path:         /smart/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogSmartBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_smart_modifications:
+  path:         /smart/catalog/1
+  defaults:     {_controller: CatalogSmartBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_smart_complectations:
+  path:         /smart/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogSmartBundle:Catalog:complectations}
+
+catalog_smart_groups:
+  path:         /smart/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogSmartBundle:Catalog:groups}
+
+catalog_smart_subgroups:
+  path:         /smart/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogSmartBundle:Catalog:subgroups}
+
+catalog_smart_safirstlevelsubgroups:
+  path:         /smart/catalog/41/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{sanum}
+  defaults:     {_controller: CatalogSmartBundle:Catalog:saFirstLevelSubgroups}
+
+catalog_smart_saschemas:
+  path:         /smart/catalog/42/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{sanum}
+  defaults:     {_controller: CatalogSmartBundle:Catalog:saSchemas}
+
+catalog_smart_saschema:
+  path:         /smart/catalog/43/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{sanum}/{schemaCode}
+  defaults:     {_controller: CatalogSmartBundle:Catalog:saSchema}
+
+catalog_smart_saarticuls:
+  path:         /smart/catalog/44
+  defaults:     {_controller: CatalogSmartBundle:Catalog:saArticuls}
+  requirements: {_method: POST}
+
+catalog_smart_schemas:
+  path:         /smart/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSmartBundle:Catalog:schemas}
+
+catalog_smart_schema:
+  path:         /smart/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogSmartBundle:Catalog:schema}
+
+catalog_smart_articuls:
+  path:         /smart/catalog/7
+  defaults:     {_controller: CatalogSmartBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+
+#----------------------------------------------------------------------------------
+
+articul_smart:
+  path:         /smart/articul/0
+  defaults:     {_controller: CatalogSmartBundle:Articul:index}
+
+articul_smart_find:
+  path:         /smart/articul/1/{regionCode}
+  defaults:     {_controller: CatalogSmartBundle:Articul:findByArticul, regionCode: null}
+
+articul_smart_modifications:
+  path:         /smart/articul/3
+  defaults:     {_controller: CatalogSmartBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_smart_complectations:
+  path:         /smart/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogSmartBundle:Articul:complectations}
+
+articul_smart_groups:
+  path:         /smart/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogSmartBundle:Articul:smartArticulGroups}
+
+articul_smart_subgroups:
+  path:         /smart/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogSmartBundle:Articul:smartArticulSubgroups}
+
+articul_smart_safirstlevelsubgroups:
+  path:         /smart/articul/41/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{sanum}
+  defaults:     {_controller: CatalogSmartBundle:Articul:saFirstLevelSubgroups}
+
+articul_smart_saschemas:
+  path:         /smart/articul/42/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{sanum}
+  defaults:     {_controller: CatalogSmartBundle:Articul:saSchemas}
+
+articul_smart_saschema:
+  path:         /smart/articul/43/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{sanum}/{schemaCode}
+  defaults:     {_controller: CatalogSmartBundle:Articul:saSchema}
+
+articul_smart_saarticuls:
+  path:         /smart/articul/44
+  defaults:     {_controller: CatalogSmartBundle:Articul:saArticuls}
+  requirements: {_method: POST}
+
+articul_smart_schemas:
+  path:         /smart/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSmartBundle:Articul:smartArticulSchemas}
+
+articul_smart_schema:
+  path:         /smart/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogSmartBundle:Articul:smartArticulSchema}
+
+articul_smart_articuls:
+  path:         /smart/articul/9
+  defaults:     {_controller: CatalogSmartBundle:Articul:articuls}
+  requirements: {_method: POST}
+
+#-------------------------------------------------------------------------------------
+
+vin_smart:
+  path:         /smart/vin/0
+  defaults:     {_controller: CatalogSmartBundle:Vin:index}
+
+vin_smart_result:
+  path:         /smart/vin/1
+  defaults:     {_controller: CatalogSmartBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_smart_groups:
+  path:         /smart/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogSmartBundle:Vin:groups}
+
+vin_smart_subgroups:
+  path:         /smart/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogSmartBundle:Vin:subgroups}
+
+vin_smart_schemas:
+  path:         /smart/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSmartBundle:Vin:schemas}
+
+vin_smart_schema:
+  path:         /smart/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogSmartBundle:Vin:schema}
+
+vin_smart_articuls:
+  path:         /smart/vin/7
+  defaults:     {_controller: CatalogSmartBundle:Vin:articuls}
+  requirements: {_method: POST}

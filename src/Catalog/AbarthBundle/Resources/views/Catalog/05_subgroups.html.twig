@@ -1,0 +1,23 @@
+{% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
+{% use 'CatalogAbarthBundle::abarth.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('catalog_abarth') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('catalog_abarth_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getCode}})</a> /
+    Подгруппа запчастей
+{% endblock breadcrumbs %}
+{% block complectation %}{% endblock complectation %}
+
+
+{% block subgroupImage %}
+    <div class="col-lg-8">
+        <img src="{{ asset('bundles/catalogfiat/Imgs/images/L_EPERFIG/'~oContainer.getActiveGroup.getOption('catalog')~'/'~oContainer.getActiveGroup.getOption('picture')) }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
+
+    </div>
+{% endblock subgroupImage %}
+
+
+
+{% block pathToSchemas %}
+    {{ path('catalog_abarth_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}
+{% endblock pathToSchemas %}

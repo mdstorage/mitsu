@@ -1,3 +1,7 @@
+catalog_abarth:
+    resource: "@CatalogAbarthBundle/Resources/config/routing.yml"
+    prefix:   /
+
 catalog_fiatprofessional:
     resource: "@CatalogFiatProfessionalBundle/Resources/config/routing.yml"
     prefix:   /
@@ -48,6 +52,10 @@ catalog_subaru:
 
 catalog_mercedes:
     resource: "@CatalogMercedesBundle/Resources/config/routing.yml"
+    prefix:   /
+
+catalog_smart:
+    resource: "@CatalogSmartBundle/Resources/config/routing.yml"
     prefix:   /
 
 catalog_common:

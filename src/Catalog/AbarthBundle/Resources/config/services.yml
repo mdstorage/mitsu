@@ -1,0 +1,20 @@
+services:
+#    catalog_abarth.example:
+#        class: Catalog\AbarthBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  abarth_date_convertor.extension:
+        class: Catalog\AbarthBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  abarth.catalog.model:
+    class: Catalog\AbarthBundle\Models\AbarthCatalogModel
+    arguments:  ['@doctrine.dbal.abarth_connection']
+
+  abarth.vin.model:
+    class: Catalog\AbarthBundle\Models\AbarthVinModel
+    arguments:  ['@doctrine.dbal.abarth_connection']
+
+  abarth.articul.model:
+    class: Catalog\AbarthBundle\Models\AbarthArticulModel
+    arguments:  ['@doctrine.dbal.abarth_connection']

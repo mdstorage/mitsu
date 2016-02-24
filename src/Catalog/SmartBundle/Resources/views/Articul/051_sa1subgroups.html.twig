@@ -1,0 +1,39 @@
+{% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
+{% use 'CatalogSmartBundle::smart.base.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/catalogsmart/css/smart.css') }}" media="all">
+{% endblock %}
+
+{% block subGroup %}<b>Подгруппа запчастей:</b> {{ oContainer.getActiveGroup.getSubGroup(parameters['sanum']).getRuname }}{% endblock subGroup %}
+
+{% block breadcrumbs %}
+    <a href="{{ path('articul_smart') }}">Выбрать регион, модель, модификацию</a> /
+    <a href="{{ path('articul_smart_complectations', parameters) }}">Выбрать комплектацию</a> /
+    <a href="{{ path('articul_smart_groups', parameters) }}">Выбрать группу запчастей</a> /
+    Выбрать подгруппу запчастей
+{% endblock breadcrumbs %}
+
+
+{% block subgroupImage %}{% endblock subgroupImage %}
+{% block subgroups %}
+    {{ parent() }}
+    {% block saSubgroups %}
+        {% if oContainer.getGroups is not empty %}
+            <h4>SA-каталог (специальная комплектация)</h4>
+            {% for subgroup in oContainer.getGroups %}
+                <div id="subgroup{{ subgroup.getCode }}">
+                    <a href="{{ path('articul_smart_saschemas', parameters) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endblock saSubgroups %}
+{% endblock subgroups %}
+
+{% block imagePath %}{% endblock imagePath %}
+{% block subGroupsMap %}{% endblock subGroupsMap %}
+{% block cycleScript %}{% endblock cycleScript %}
+
+{% block pathToSchemas %}
+    {{ path('catalog_smart_saschemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}
+{% endblock pathToSchemas %}

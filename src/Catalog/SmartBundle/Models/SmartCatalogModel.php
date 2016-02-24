@@ -1,10 +1,10 @@
 <?php
-namespace Catalog\MercedesBundle\Models;
+namespace Catalog\SmartBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Models\CatalogModel;
 
-class MercedesCatalogModel extends CatalogModel{
+class SmartCatalogModel extends CatalogModel{
 
     public function getRegions()
     {
@@ -27,7 +27,7 @@ class MercedesCatalogModel extends CatalogModel{
         $aData = array_unique(str_split($sData));
 
         foreach ($aData as $item) {
-            if (($item !== " ")) {
+            if (($item == "M")) {
                 $regions[$item] = array(
                     Constants::NAME => 'region_' . $item,
                     Constants::OPTIONS => array()
