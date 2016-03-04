@@ -1,0 +1,20 @@
+services:
+#    catalog_chevroletusa.example:
+#        class: Catalog\ChevroletUsaBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  chevroletusa_date_convertor.extension:
+        class: Catalog\ChevroletUsaBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  chevroletusa.catalog.model:
+    class: Catalog\ChevroletUsaBundle\Models\ChevroletUsaCatalogModel
+    arguments:  ['@doctrine.dbal.chevroletusa_connection']
+
+  chevroletusa.vin.model:
+    class: Catalog\ChevroletUsaBundle\Models\ChevroletUsaVinModel
+    arguments:  ['@doctrine.dbal.chevroletusa_connection']
+
+  chevroletusa.articul.model:
+    class: Catalog\ChevroletUsaBundle\Models\ChevroletUsaArticulModel
+    arguments:  ['@doctrine.dbal.chevroletusa_connection']

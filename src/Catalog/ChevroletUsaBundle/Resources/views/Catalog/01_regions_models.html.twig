@@ -1,0 +1,4 @@
+{% extends 'CatalogCommonBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogChevroletUsaBundle::chevroletusa.base.html.twig' %}
+{% block regionPath %}{{ path('catalog_chevroletusa', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+{% block ajaxUrl %}{{ path('catalog_chevroletusa_modifications') }}{% endblock ajaxUrl %}
