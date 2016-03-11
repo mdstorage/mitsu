@@ -1,0 +1,120 @@
+catalog_nissan:
+  path:         /nissan/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogNissanBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_nissan_modifications:
+  path:         /nissan/catalog/1
+  defaults:     {_controller: CatalogNissanBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_nissan_complectations:
+  path:         /nissan/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogNissanBundle:Catalog:complectations}
+
+catalog_nissan_groups:
+  path:         /nissan/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogNissanBundle:Catalog:groups}
+
+catalog_nissan_subgroups:
+  path:         /nissan/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogNissanBundle:Catalog:subgroups}
+
+catalog_nissan_schemas:
+  path:         /nissan/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogNissanBundle:Catalog:schemas}
+
+catalog_nissan_schema:
+  path:         /nissan/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogNissanBundle:Catalog:schema}
+
+catalog_nissan_articuls:
+  path:         /nissan/catalog/7
+  defaults:     {_controller: CatalogNissanBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_nissan_group:
+  path:         /nissan/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogNissanBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_nissan:
+  path:         /nissan/vin/0
+  defaults:     {_controller: CatalogNissanBundle:Vin:index}
+
+vin_nissan_result:
+  path:         /nissan/vin/1
+  defaults:     {_controller: CatalogNissanBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_nissan_groups:
+  path:         /nissan/vin/3/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogNissanBundle:Vin:groups}
+
+vin_nissan_subgroups:
+  path:         /nissan/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogNissanBundle:Vin:subgroups}
+
+vin_nissan_schemas:
+  path:         /nissan/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogNissanBundle:Vin:schemas}
+
+vin_nissan_schema:
+  path:         /nissan/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogNissanBundle:Vin:schema}
+
+vin_nissan_articuls:
+  path:         /nissan/vin/7
+  defaults:     {_controller: CatalogNissanBundle:Vin:vinarticuls}
+  requirements: {_method: POST}
+
+vin_nissan_group:
+  path:         /nissan/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogNissanBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_nissan:
+  path:         /nissan/articul/0
+  defaults:     {_controller: CatalogNissanBundle:Articul:index}
+
+articul_nissan_find:
+  path:         /nissan/articul/1/{regionCode}
+  defaults:     {_controller: CatalogNissanBundle:Articul:findByArticul, regionCode: null}
+
+articul_nissan_modifications:
+  path:         /nissan/articul/3
+  defaults:     {_controller: CatalogNissanBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_nissan_complectations:
+  path:         /nissan/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogNissanBundle:Articul:nissanArticulComplectations}
+
+articul_nissan_groups:
+  path:         /nissan/articul/5/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogNissanBundle:Articul:nissanArticulgroups}
+
+articul_nissan_subgroups:
+  path:         /nissan/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  defaults:     {_controller: CatalogNissanBundle:Articul:nissanArticulSubgroups}
+
+articul_nissan_schemas:
+  path:         /nissan/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogNissanBundle:Articul:nissanArticulSchemas}
+
+articul_nissan_schema:
+  path:         /nissan/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogNissanBundle:Articul:nissanArticulSchema}
+
+articul_nissan_articuls:
+  path:         /nissan/articul/9
+  defaults:     {_controller: CatalogNissanBundle:Articul:nissanArticularticuls}
+  requirements: {_method: POST}
+
+articul_nissan_group:
+  path:         /nissan/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogNissanBundle:Articul:getGroupBySubgroup}
+catalog_nissan_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogNissanBundle:Default:index }
