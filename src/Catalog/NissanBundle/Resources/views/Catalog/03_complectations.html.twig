@@ -65,7 +65,7 @@
                       
             {% for complectation in oContainer.getActiveModification.getComplectations %}
                 {% block complectationItem %}
-            <div class="col-lg-4">
+            <div class="col-lg-3">
            
                              <a href="{{ path('catalog_nissan_groups', parameters|merge({'complectationCode': complectation.getCode})) }}">
         
@@ -112,20 +112,20 @@
 		
 		if (event.keyCode == 27 || $(this).val() == '') {
 			$(this).val('');
-			$('.col-lg-4').removeClass('visible').show().addClass('visible');
+			$('.col-lg-3').removeClass('visible').show().addClass('visible');
 		}
 		else {
-			filter('.col-lg-4', $(this).val());
+			filter('.col-lg-3', $(this).val());
 		}
 	});
 	$('#filter-query2').keyup(function(event){
 		
 		if (event.keyCode == 27 || $(this).val() == '') {
 			$(this).val('');
-			$('.col-lg-4').removeClass('visible').show().addClass('visible');
+			$('.col-lg-3').removeClass('visible').show().addClass('visible');
 		}
 		else {
-			filter('.col-lg-4', $(this).val());
+			filter('.col-lg-3', $(this).val());
 		}
 	});
 });
@@ -137,7 +137,7 @@ function filter(selector, query) {
 	});
 }
 function repeatact(){
-	filter('.col-lg-4', $('#filter-query2').val());
+	filter('.col-lg-3', $('#filter-query2').val());
 }
 
 </script>

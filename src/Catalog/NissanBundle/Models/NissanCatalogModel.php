@@ -133,7 +133,8 @@ class NissanCatalogModel extends CatalogModel{
         $sql = "
         SELECT DATA21, DATA22, DATA23, DATA24, DATA25, DATA26, DATA27, DATA28, destcnt.ShashuCD,
          VARIATION1, VARIATION2, VARIATION3, VARIATION4, VARIATION5, VARIATION6, VARIATION7, VARIATION8, NNO, abbrev1.DESCRIPTION ABBREV1, abbrev2.DESCRIPTION ABBREV2, abbrev3.DESCRIPTION ABBREV3,
-         abbrev4.DESCRIPTION ABBREV4, abbrev5.DESCRIPTION ABBREV5, abbrev6.DESCRIPTION ABBREV6, abbrev7.DESCRIPTION ABBREV7, abbrev8.DESCRIPTION ABBREV8, posname.MDLDIR
+         abbrev4.DESCRIPTION ABBREV4, abbrev5.DESCRIPTION ABBREV5, abbrev6.DESCRIPTION ABBREV6, abbrev7.DESCRIPTION ABBREV7, abbrev8.DESCRIPTION ABBREV8, posname.MDLDIR,
+          descEn1.group DECSEN1, descEn2.group DECSEN2, descEn3.group DECSEN3, descEn4.group DECSEN4, descEn5.group DECSEN5, descEn6.group DECSEN6, descEn7.group DECSEN7, descEn8.group DECSEN8
         FROM cdindex
         LEFT JOIN destcnt ON (destcnt.CATALOG = cdindex.CATALOG AND destcnt.SHASHU = cdindex.SHASHU)
         LEFT JOIN posname ON (posname.CATALOG = destcnt.CATALOG AND posname.MDLDIR = destcnt.ShashuCD)
@@ -145,6 +146,17 @@ class NissanCatalogModel extends CatalogModel{
         LEFT JOIN appname abbrev6 ON (abbrev6.CATALOG = posname.CATALOG and abbrev6.MDLDIR = posname.MDLDIR AND abbrev6.MDLDIR = posname.MDLDIR AND abbrev6.VARIATION = posname.VARIATION6)
         LEFT JOIN appname abbrev7 ON (abbrev7.CATALOG = posname.CATALOG and abbrev7.MDLDIR = posname.MDLDIR AND abbrev7.MDLDIR = posname.MDLDIR AND abbrev7.VARIATION = posname.VARIATION7)
         LEFT JOIN appname abbrev8 ON (abbrev8.CATALOG = posname.CATALOG and abbrev8.MDLDIR = posname.MDLDIR AND abbrev8.MDLDIR = posname.MDLDIR AND abbrev8.VARIATION = posname.VARIATION8)
+
+
+        LEFT JOIN data_variation_jp_en descEn1 on (descEn1.data_jp = DATA21)
+        LEFT JOIN data_variation_jp_en descEn2 on (descEn2.data_jp = DATA22)
+        LEFT JOIN data_variation_jp_en descEn3 on (descEn3.data_jp = DATA23)
+        LEFT JOIN data_variation_jp_en descEn4 on (descEn4.data_jp = DATA24)
+        LEFT JOIN data_variation_jp_en descEn5 on (descEn5.data_jp = DATA25)
+        LEFT JOIN data_variation_jp_en descEn6 on (descEn6.data_jp = DATA26)
+        LEFT JOIN data_variation_jp_en descEn7 on (descEn7.data_jp = DATA27)
+        LEFT JOIN data_variation_jp_en descEn8 on (descEn8.data_jp = DATA28)
+
         WHERE cdindex.CATALOG = :regionCode
         AND cdindex.SHASHU = :modificationCode
         ";
@@ -165,7 +177,7 @@ class NissanCatalogModel extends CatalogModel{
         {
             for ($i = 1;$i<9;$i++)
             {
-                if ($item['DATA2'.$i]=='TRANS')
+                if (($item['DATA2'.$i]=='TRANS') || ($item['DECSEN'.$i]=='TRANS'))
                 {
                     $trans[] = $item['VARIATION'.$i];
                 }
@@ -175,20 +187,41 @@ class NissanCatalogModel extends CatalogModel{
         }
 
         foreach($aData as $item){
-            $complectations[$item['MDLDIR'].'_'.$item['NNO']] = array(
-                Constants::NAME     => $item['NNO'],
-                Constants::OPTIONS  => array(
-                    'OPTION1' =>  $item['DATA21'].': ('.$item['VARIATION1'].') '.$item['ABBREV1'],
-                    'OPTION2' => $item['DATA22'].': ('.$item['VARIATION2'].') '.$item['ABBREV2'],
-                    'OPTION3' => ($item['VARIATION3'])?($item['DATA23'].': ('.$item['VARIATION3'].') '.$item['ABBREV3']):'',
-                    'OPTION4' => ($item['VARIATION4'])?($item['DATA24'].': ('.$item['VARIATION4'].') '.$item['ABBREV4']):'',
-                    'OPTION5' => ($item['VARIATION5'])?($item['DATA25'].': ('.$item['VARIATION5'].') '.$item['ABBREV5']):'',
-                    'OPTION6' => ($item['VARIATION6'])?($item['DATA26'].': ('.$item['VARIATION6'].') '.$item['ABBREV6']):'',
-                    'OPTION7' => ($item['VARIATION7'])?($item['DATA27'].': ('.$item['VARIATION7'].') '.$item['ABBREV7']):'',
-                    'OPTION8' => ($item['VARIATION8'])?($item['DATA28'].': ('.$item['VARIATION8'].') '.$item['ABBREV8']):'',
-                    'trans' => array_unique($trans),
 
-                ));
+            if ($regionCode != 'JP') {
+                $complectations[str_pad($item['MDLDIR'], 3, "0", STR_PAD_LEFT) . '_' . $item['NNO']] = array(
+                    Constants::NAME => $item['NNO'],
+                    Constants::OPTIONS => array(
+                        'OPTION1' => $item['DATA21'] . ': (' . $item['VARIATION1'] . ') ' . $item['ABBREV1'],
+                        'OPTION2' => $item['DATA22'] . ': (' . $item['VARIATION2'] . ') ' . $item['ABBREV2'],
+                        'OPTION3' => ($item['VARIATION3']) ? ($item['DATA23'] . ': (' . $item['VARIATION3'] . ') ' . $item['ABBREV3']) : '',
+                        'OPTION4' => ($item['VARIATION4']) ? ($item['DATA24'] . ': (' . $item['VARIATION4'] . ') ' . $item['ABBREV4']) : '',
+                        'OPTION5' => ($item['VARIATION5']) ? ($item['DATA25'] . ': (' . $item['VARIATION5'] . ') ' . $item['ABBREV5']) : '',
+                        'OPTION6' => ($item['VARIATION6']) ? ($item['DATA26'] . ': (' . $item['VARIATION6'] . ') ' . $item['ABBREV6']) : '',
+                        'OPTION7' => ($item['VARIATION7']) ? ($item['DATA27'] . ': (' . $item['VARIATION7'] . ') ' . $item['ABBREV7']) : '',
+                        'OPTION8' => ($item['VARIATION8']) ? ($item['DATA28'] . ': (' . $item['VARIATION8'] . ') ' . $item['ABBREV8']) : '',
+                        'trans' => count(array_unique($trans)>1)?array_unique($trans):'',
+
+                    ));
+            }
+            else
+            {
+                $complectations[str_pad($item['MDLDIR'], 3, "0", STR_PAD_LEFT) . '_' . $item['NNO']] = array(
+                    Constants::NAME => $item['NNO'],
+                    Constants::OPTIONS => array(
+                        'OPTION1' => $item['DECSEN1'] . ': ' . $item['VARIATION1'],
+                        'OPTION2' => $item['DECSEN2'] . ': ' . $item['VARIATION2'],
+                        'OPTION3' => ($item['VARIATION3']) ? ($item['DECSEN3'] . ': ' . $item['VARIATION3']) : '',
+                        'OPTION4' => ($item['VARIATION4']) ? ($item['DECSEN4'] . ': ' . $item['VARIATION4']) : '',
+                        'OPTION5' => ($item['VARIATION5']) ? ($item['DECSEN5'] . ': ' . $item['VARIATION5']) : '',
+                        'OPTION6' => ($item['VARIATION6']) ? ($item['DECSEN6'] . ': ' . $item['VARIATION6']) : '',
+                        'OPTION7' => ($item['VARIATION7']) ? ($item['DECSEN7'] . ': ' . $item['VARIATION7']) : '',
+                        'OPTION8' => ($item['VARIATION8']) ? ($item['DECSEN8'] . ': ' . $item['VARIATION8']) : '',
+                        'trans' => count(array_unique($trans)>1)?array_unique($trans):'',
+
+                    ));
+
+            }
 
         }
 
@@ -200,20 +233,43 @@ class NissanCatalogModel extends CatalogModel{
     {
 
         $MDLDIR = substr($complectationCode, 0, strpos($complectationCode, '_'));
+        $table = 'genloc_all';
 
+        $what = 'PICGROUP';
 
-        $sql = "
-        SELECT PICGROUP, PARTNAME_E, PIMGSTR
-        FROM genloc_all
+        if ($regionCode != 'JP')
+        {
+            $sql = "
+        SELECT $what, PARTNAME_E, PIMGSTR
+        FROM $table
         WHERE CATALOG = :regionCode
         and MDLDIR = :MDLDIR
         ";
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('MDLDIR',  $MDLDIR);
+            $query = $this->conn->prepare($sql);
+            $query->bindValue('regionCode',  $regionCode);
+            $query->bindValue('MDLDIR',  $MDLDIR);
 
-        $query->execute();
+            $query->execute();
+        }
+
+        else
+        {
+            $sql = "
+        SELECT emoloc_jp.PICGROUP, genloc_all.PARTNAME_E, emoloc_jp.PIMGSTR
+        FROM emoloc_jp
+        INNER JOIN genloc_all ON (genloc_all.PIMGSTR = emoloc_jp.PIMGSTR)
+        WHERE emoloc_jp.CATALOG = :regionCode
+        and emoloc_jp.MDLDIR = :MDLDIR
+        ";
+
+            $query = $this->conn->prepare($sql);
+            $query->bindValue('regionCode',  $regionCode);
+            $query->bindValue('MDLDIR',  $MDLDIR);
+
+            $query->execute();
+        }
+
 
         $aData = $query->fetchAll();
 
@@ -283,7 +339,9 @@ class NissanCatalogModel extends CatalogModel{
         $MDLDIR = substr($complectationCode, 0, strpos($complectationCode, '_'));
 
 
-        $sql = "
+        if ($regionCode != 'JP')
+        {
+            $sql = "
         SELECT id, FIGURE, PARTNAME_E, X_LT, Y_LT
         FROM gsecloc_all
         WHERE PICGROUP = :groupCode
@@ -291,6 +349,26 @@ class NissanCatalogModel extends CatalogModel{
         AND CATALOG = :regionCode
         ORDER BY FIGURE
         ";
+
+            $nameSubgroup = 'PARTNAME_E';
+            $k = 2;
+        }
+
+        else
+        {
+            $sql = "
+        SELECT id, FIGURE, PARTNAME, X_LT, Y_LT
+        FROM esecloc_jp
+        WHERE PICGROUP = :groupCode
+        AND MDLDIR = :MDLDIR
+        AND CATALOG = :regionCode
+        ORDER BY FIGURE
+        ";
+
+            $nameSubgroup = 'PARTNAME';
+            $k = 2.5;
+        }
+
 
 
 
@@ -311,12 +389,12 @@ class NissanCatalogModel extends CatalogModel{
 
                $subgroups[$item['FIGURE']] = array(
 
-                   Constants::NAME => $item['PARTNAME_E'],
+                   Constants::NAME => iconv('cp1251', 'utf8', $item[$nameSubgroup]),
                    Constants::OPTIONS => array(
-                       Constants::X1 => floor($item['X_LT']/2),
-                       Constants::X2 => floor($item['X_LT']/2)+30,
-                       Constants::Y1 => floor($item['Y_LT']/2),
-                       Constants::Y2 => floor($item['Y_LT']/2)+20,
+                       Constants::X1 => floor($item['X_LT']/$k),
+                       Constants::X2 => floor($item['X_LT']/$k)+30,
+                       Constants::Y1 => floor($item['Y_LT']/$k),
+                       Constants::Y2 => floor($item['Y_LT']/$k)+20,
                    )
 
                );
@@ -614,6 +692,9 @@ $articuls = array();
         return $groupCode;
 
     }
+
+
+
 
     
 } 
