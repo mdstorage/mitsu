@@ -1,0 +1,20 @@
+services:
+#    catalog_nissan.example:
+#        class: Catalog\NissanBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  nissan_date_convertor.extension:
+        class: Catalog\NissanBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  nissan.catalog.model:
+    class: Catalog\NissanBundle\Models\NissanCatalogModel
+    arguments:  ['@doctrine.dbal.nissan_connection']
+
+  nissan.vin.model:
+    class: Catalog\NissanBundle\Models\NissanVinModel
+    arguments:  ['@doctrine.dbal.nissan_connection']
+
+  nissan.articul.model:
+    class: Catalog\NissanBundle\Models\NissanArticulModel
+    arguments:  ['@doctrine.dbal.nissan_connection']

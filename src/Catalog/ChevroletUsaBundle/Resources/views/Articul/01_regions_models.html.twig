@@ -1,0 +1,8 @@
+{% extends 'CatalogChevroletUsaBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogChevroletUsaBundle::chevroletusa.base.html.twig' %}
+{% block regionPath %}{{ path('articul_chevroletusa_find', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+{% block ajaxUrl %}{{ path('articul_chevroletusa_modifications') }}{% endblock ajaxUrl %}
+{% block head %}
+    <h3>Запчасть с таким артикулом найдена в следующих моделях:</h3>
+    {{ parent() }}
+{% endblock head %}

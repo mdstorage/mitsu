@@ -1,3 +1,11 @@
+catalog_nissan:
+    resource: "@CatalogNissanBundle/Resources/config/routing.yml"
+    prefix:   /
+
+catalog_chevroletusa:
+    resource: "@CatalogChevroletUsaBundle/Resources/config/routing.yml"
+    prefix:   /
+
 catalog_abarth:
     resource: "@CatalogAbarthBundle/Resources/config/routing.yml"
     prefix:   /
