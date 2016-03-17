@@ -3,7 +3,7 @@
 {% block breadcrumbs %}
     <a href="{{ path('catalog_nissan') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
-    / <a href="{{ path('catalog_nissan_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a>
+    <a href="{{ path('catalog_nissan_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a>/
     <a href="{{ path('catalog_nissan_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getCode}})</a> /
     Подгруппа запчастей
 {% endblock breadcrumbs %}

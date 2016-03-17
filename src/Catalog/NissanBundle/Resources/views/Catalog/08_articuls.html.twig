@@ -3,9 +3,9 @@
     <thead>
         <tr>
             <th>Артикул</th>
-            <th>Наименование</th>
-            <th>Примечание</th>
+            <th>Период выпуска</th>
             <th>Кол-во</th>
+            <th>Применяемость</th>
         </tr>
     </thead>
 
@@ -13,10 +13,10 @@
     {% for articul in oContainer.getActivePnc.getArticuls %}
         <tr>
             <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a>
-            </td>
-            <td>{{ articul.getRuname }}</td>
-            <td></td>
-            <td>{% autoescape false %}{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY'))|replace({';':'<br/>'}) }}{% endautoescape %}<br/></td>
+                <br/> {% if articul.getOption('REPLACE') %} Замена: {{ articul.getOption('REPLACE') }} {% endif %} </td>
+            <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|nissan_date_convertor }} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|nissan_date_convertor }}</td>
+            <td> {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }} </td>
+            <td>{% autoescape false %}{{ articul.getOption('DESCR') }}{% endautoescape %}<br/></td>
             
         </tr>
     {% endfor %}

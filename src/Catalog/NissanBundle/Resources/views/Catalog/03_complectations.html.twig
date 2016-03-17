@@ -69,7 +69,7 @@
            
                              <a href="{{ path('catalog_nissan_groups', parameters|merge({'complectationCode': complectation.getCode})) }}">
         
-    <b>    {{ complectation.getRuname }} из {{ oContainer.getActiveModification.getComplectations|length }} </b>
+    <b>    {{ complectation.getOption('FROMDATE')|nissan_date_convertor }} - {{ complectation.getOption('UPTODATE')|nissan_date_convertor }} </b>
       </a> <br/>
                 {{ complectation.getOption('OPTION1')}}<br/>
                 {{ complectation.getOption('OPTION2')}}<br/>

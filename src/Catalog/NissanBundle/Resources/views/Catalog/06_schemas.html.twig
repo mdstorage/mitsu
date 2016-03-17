@@ -3,28 +3,37 @@
 {% block breadcrumbs %}
     <a href="{{ path('catalog_nissan') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('catalog_nissan_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a>/
     <a href="{{ path('catalog_nissan_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
     <a href="{{ path('catalog_nissan_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему
 {% endblock breadcrumbs %}
 
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
-{% block complectation %}{% endblock complectation %}
+
+
+{% set a = 'SECIMG' %}
+{% if oContainer.getActiveRegion.getCode != "JP"  %}
+    {% set a = 'SECIMG' %}
+{% endif %}
 
 {% block schema %}
     {% if schema.getCode is not empty %}
         <div style=" height: 300px; " class="col-sm-4 col-sm-offset-5 col-md-4 col-md-offset-0">
         <a href="{{ path('catalog_nissan_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
+
+                    <div class="row">
+                        {{ schema.getOption('FROMDATE')|nissan_date_convertor }} - {{ schema.getOption('UPTODATE')|nissan_date_convertor }}
+                    </div>
+
                     <div class="row">
                         {{ schema.getRuname }}
                     </div>
 
-                    <div class="row">
-                    {{ schema.getOption('pattern')|replace({',':', '}) }}
-                    </div>
+
 
                     <div class="row">
-                        <img src="{{ asset('bundles/catalognissan/Imgs/images/'~schema.getOption('catalog')~'/'~schema.getOption('picture')|replace({'png':'th.png'})) }}" width="200" alt="{{ schema.getRuname }}"/>
+                        <img src="{{ asset('bundles/catalognissan/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/'~a~'/'~schema.getCode~'.gif') }}" width="300" alt="{{ schema.getRuname }}"/>
                     </div>
 
 
