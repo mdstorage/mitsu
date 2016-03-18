@@ -601,7 +601,7 @@ class NissanCatalogModel extends CatalogModel{
 
 
 
-               $pncs[$item['PARTCODE']][Constants::NAME] = $item['PARTNAME_E'];
+               $pncs[$item['PARTCODE']][Constants::NAME] = iconv('utf8', 'Shift-JIS', $item['PARTNAME_E']);
 
 
 
