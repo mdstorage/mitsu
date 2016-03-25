@@ -2,12 +2,12 @@
 {% use 'CatalogNissanBundle::nissan.base.html.twig' %}
 {% block breadcrumbs %}
     <a href="{{ path('articul_nissan_find') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
-   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / Группа запчастей
+   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>
+    / <a href="{{ path('articul_nissan_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a>
+    / Группа запчастей
 {% endblock breadcrumbs %}
 
 
-{% block complectation %}
-{% endblock complectation %}
 
 {% block body %}
     {% block head %}<h3>Выбрать группу запчастей:</h3>{% endblock head %}
@@ -16,24 +16,20 @@
         {% block groups %}
             <div class="groups">
                 {% for group in oContainer.getGroups %}
-                    <div style=" height: 250px; " class="col-sm-2 col-sm-offset-5 col-md-2 col-md-offset-0">
-
-                        <a href="{{ path('articul_nissan_subgroups', parameters|merge({'groupCode': group.getCode})) }}">
-                            <div class="row">
-
-                                ({{ group.getCode }}) {{ group.getRuname }}
-
-                            </div>
-                            <br>
-
-                            <div class="row">
-                                <img src="{{ asset('bundles/catalognissan/Imgs/images/L_EPERFIG/'~group.getOption('catalog')~'/'~group.getOption('picture')|replace({'png':'th.png'})) }}" alt="{{ group.getRuname }}" width="100%"/>
-                            </div>
 
 
-                        </a>
 
-                    </div>
+                    <a href="{{ path('articul_nissan_subgroups', parameters|merge({'groupCode': group.getCode})) }}">
+                        <div class="row">
+
+                            ({{ group.getCode }}) {{ group.getRuname }}
+
+                        </div>
+
+
+                    </a>
+
+
                 {% endfor %}
             </div>
         {% endblock groups %}

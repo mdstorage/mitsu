@@ -5,17 +5,14 @@
             <table class="table table-bordered">
 
                 <tr>
-                    <td>Брэнд:</td>
-                    <td>{{ result.brand }}</td>
+                    <td>Регион:</td>
+                    <td>{{ result.region }}</td>
                 </tr>
+
                 <tr>
-                    <td>Дата выпуска:</td>
-                    <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|nissan_vin_date_convertor }}</td>
+                    <td>Модель:</td>
+                    <td>{{ result.model }}</td>
                 </tr>
-                    <tr>
-                        <td>Модель:</td>
-                        <td>{{ result.model }}</td>
-                    </tr>
 
                 <tr>
                     <td>Модификация:</td>
@@ -23,18 +20,28 @@
                 </tr>
 
                 <tr>
-                    <td>Модельный код:</td>
-                    <td>{{ result.modif_for_group }}</td>
+                    <td>Комплектация:</td>
+                    <td>{% for compl in result.complectation %}
+                        {% if compl %}
+                        {{ compl }}<br>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
                 </tr>
 
                 <tr>
-                    <td>Код двигателя:</td>
-                    <td>{{ result.motor }}</td>
+                    <td>Дата выпуска:</td>
+                    <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|nissan_date_convertor }}</td>
                 </tr>
 
                 <tr>
-                    <td>Описание:</td>
-                    <td>{{ result.mvs_dsc }}</td>
+                    <td>Цвет салона:</td>
+                    <td>{{ result.cvet_salona }}</td>
+                </tr>
+
+                <tr>
+                    <td>Цвет кузова:</td>
+                    <td>{{ result.cvet_kuzova }}</td>
                 </tr>
 
 
@@ -43,5 +50,5 @@
     </div>
 {% endblock specification %}
 {% block catalogPath %}
-    {{ path('vin_nissan_groups',({'regionCode': result.region, 'modelCode': result.model_for_group, 'modificationCode': result.modif_for_group })) }}
+    {{ path('vin_nissan_groups',({'regionCode': result.region, 'modelCode': result.model, 'modificationCode': result.modif, 'complectationCode': result.kod_complektacii })) }}
 {% endblock catalogPath %}

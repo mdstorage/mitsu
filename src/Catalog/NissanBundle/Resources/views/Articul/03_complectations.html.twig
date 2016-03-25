@@ -35,20 +35,20 @@
 
 
                 <div class="row">
-                    {# {% if oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
-                              <div class="col-lg-4">
-                                   <b>Трансмиссия:</b>
-                         {% for trans in oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
+                    {% if oContainer.getActiveModification.getComplectations|first.getOption('trans') %}
+                        <div class="col-lg-4">
+                            <b>Трансмиссия:</b>
+                            {% for trans in oContainer.getActiveModification.getComplectations|first.getOption('trans') %}
 
-                             <a href="#" class="btn btn-default" onclick="$('#filter-query').val('{{ trans }}');
-                             $('#filter-query2').val($('#filter-query').val().concat('+',$('#filter-query1').val()));
-                             repeatact();return false">{{ trans }}</a>
+                                <a href="#" class="btn btn-default" onclick="$('#filter-query').val('{{ trans }}');
+                                        $('#filter-query2').val($('#filter-query').val());
+                                        repeatact();return false">{{ trans }}</a>
 
-                         {% endfor %}
-                             </div>
-                     {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
 
-                     {% if oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
+                    {#  {% if oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
                              <div class="col-lg-4">
                               <b>Положение руля:</b>
                          {% for role in oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
@@ -65,17 +65,33 @@
 
                 {% for complectation in oContainer.getActiveModification.getComplectations %}
                     {% block complectationItem %}
-                        <div class="col-lg-4">
+                        <div style=" height: 180px; " class="col-sm-3 col-sm-offset-5 col-md-3 col-md-offset-0">
 
                             <a href="{{ path('articul_nissan_groups', parameters|merge({'complectationCode': complectation.getCode})) }}">
 
-                                <b>    {{ complectation.getRuname }} </b>
+                                <b>    {{ complectation.getOption('FROMDATE')|nissan_date_convertor }} - {{ complectation.getOption('UPTODATE')|nissan_date_convertor }} </b>
                             </a> <br/>
-                            ({{ complectation.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|nissan_date_convertor }} -
-                            {{ complectation.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|nissan_date_convertor }})<br/>
-                            {%for opt in complectation.getOption('option1') %}
-                                {{ opt }} <br/>
-                            {% endfor %}
+                            {{ complectation.getOption('OPTION1')}}<br/>
+                            {{ complectation.getOption('OPTION2')}}<br/>
+
+                            {% if complectation.getOption('OPTION3') %}
+                                {{ complectation.getOption('OPTION3')}}<br/>
+                            {% endif %}
+                            {% if  complectation.getOption('OPTION4') %}
+                                {{ complectation.getOption('OPTION4')}}<br/>
+                            {% endif %}
+                            {% if  complectation.getOption('OPTION5') %}
+                                {{ complectation.getOption('OPTION5')}}<br/>
+                            {% endif %}
+                            {% if complectation.getOption('OPTION6') %}
+                                {{ complectation.getOption('OPTION6')}}<br/>
+                            {% endif %}
+                            {% if  complectation.getOption('OPTION7') %}
+                                {{ complectation.getOption('OPTION7')}}<br/>
+                            {% endif %}
+                            {% if complectation.getOption('OPTION8') %}
+                                {{ complectation.getOption('OPTION8')}}<br/>
+                            {% endif %}
 
                             <hr />
 
@@ -96,33 +112,32 @@
 
                 if (event.keyCode == 27 || $(this).val() == '') {
                     $(this).val('');
-                    $('.col-lg-4').removeClass('visible').show().addClass('visible');
+                    $('.col-lg-3').removeClass('visible').show().addClass('visible');
                 }
                 else {
-                    filter('.col-lg-4', $(this).val());
+                    filter('.col-lg-3', $(this).val());
                 }
             });
             $('#filter-query2').keyup(function(event){
 
                 if (event.keyCode == 27 || $(this).val() == '') {
                     $(this).val('');
-                    $('.col-lg-4').removeClass('visible').show().addClass('visible');
+                    $('.col-lg-3').removeClass('visible').show().addClass('visible');
                 }
                 else {
-                    filter('.col-lg-4', $(this).val());
+                    filter('.col-lg-3', $(this).val());
                 }
             });
         });
         function filter(selector, query) {
             query =	$.trim(query);
             $(selector).each(function() {
-                (($(this).text().search(new RegExp(query.substr(0,query.indexOf("+")), "i")) < 0) ||
-                ($(this).text().search(new RegExp(query.substr(query.indexOf("+")+1,query.length), "i")) < 0))
+                ($(this).text().search(new RegExp(query, "i")) < 0)
                         ? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
             });
         }
         function repeatact(){
-            filter('.col-lg-4', $('#filter-query2').val());
+            filter('.col-lg-3', $('#filter-query2').val());
         }
 
     </script>

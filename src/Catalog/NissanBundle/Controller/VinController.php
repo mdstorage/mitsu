@@ -2,6 +2,7 @@
 namespace Catalog\NissanBundle\Controller;
 
 use Catalog\CommonBundle\Components\Constants;
+use Catalog\NissanBundle\Components\NissanConstants;
 use Catalog\CommonBundle\Components\Factory;
 use Catalog\CommonBundle\Components\Interfaces\CommonInterface;
 use Catalog\CommonBundle\Controller\VinController as BaseController;
@@ -26,13 +27,41 @@ class VinController extends BaseController{
         return 'Catalog\NissanBundle\Components\NissanConstants';
     }
 
+    public function resultAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+
+            $vin = $request->get('vin');
+
+            $result = $this->model()->getVinFinderResult($vin);
+            if (!$result) {
+                return $this->render($this->bundle().':empty.html.twig');
+            }
+
+            /**
+             * @deprecated Оставлен для совместимости с маздой
+             */
+            setcookie(Constants::PROD_DATE, $result[Constants::PROD_DATE]);
+            setcookie(NissanConstants::INTCOLOR, $result[ NissanConstants::INTCOLOR]);
+
+
+            setcookie(Constants::VIN, $vin);
+
+            return $this->render($this->bundle().':02_result.html.twig', array(
+                'result' => $result
+            ));
+        }
+    }
+
 
     public function articulsAction(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
             $prodDate = $request->cookies->get(Constants::PROD_DATE);
+            $color = $request->cookies->get(NissanConstants::INTCOLOR);
             $this->addFilter('prodDateFilter', array(Constants::PROD_DATE => $prodDate));
-            $this->addFilter('articulDescFilter', array('regionCode'=>$request->request->get('regionCode'), 'modelCode'=>$request->request->get('modelCode'), 'complectationCode'=>$request->request->get('complectationCode')));
+            $this->addFilter('vinArticulFilter', array('regionCode'=>$request->request->get('regionCode'), 'modelCode'=>$request->request->get('modelCode'), 'modificationCode'=>$request->request->get('modificationCode'),
+                'complectationCode'=>$request->request->get('complectationCode'), 'color'=>$color));
             return parent::articulsAction($request);
 
         }

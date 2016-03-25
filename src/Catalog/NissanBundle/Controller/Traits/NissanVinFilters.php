@@ -15,25 +15,40 @@ trait NissanVinFilters {
 
     public function prodDateFilter($oContainer, $parameters)
     {
+        $prodDate = $parameters[Constants::PROD_DATE];
+        foreach ($oContainer->getActivePnc()->getArticuls() as $key => $articul) {
+            if ($articul->getOption(Constants::START_DATE) > $prodDate || $articul->getOption(Constants::END_DATE) < $prodDate) {
+                $oContainer->getActivePnc()->removeArticul($key);
+            }
+        }
 
         return $oContainer;
     }
     
     public function vinArticulFilter($oContainer, $parameters)
-    {
-        $articuls = $this->model()->getVinArticuls($parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode'], $parameters['groupCode'], $parameters['subGroupCode'], $parameters['pncCode'], $parameters['vin']);
 
+    {
+
+        $color = array($parameters['color'], 'C'.$parameters['color']);
+        $complectations = $this->model()->getComplectations($parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode']);
+        $aComplOptions = explode('.', $complectations[$parameters['complectationCode']]['options']['OPTION9']);
 
         foreach ($oContainer->getActivePnc()->getArticuls() as $articul)
         {
+            /*  $aArticulOptions = explode('.', $articul->getOption('DESCR'));
 
-            if (!in_array($articul->getCode(), $articuls)) {
-                $oContainer->getActivePnc()->removeArticul($articul->getCode());
-            }
+              if (count($aArticulOptions) != count(array_intersect($aArticulOptions, $aComplOptions)))
+              {
+                  $oContainer->getActivePnc()->removeArticul($articul->getCode());
+              }
+
+              if (($articul->getOption('ColorCode')) && (!in_array($articul->getOption('ColorCode'), $color)))
+              {
+                  $oContainer->getActivePnc()->removeArticul($articul->getCode());
+              }*/
+
+
         }
-
-        return $oContainer;
-        
 
         return $oContainer; 
     }
