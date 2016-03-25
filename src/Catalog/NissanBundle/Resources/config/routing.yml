@@ -33,7 +33,7 @@ catalog_nissan_articuls:
   requirements: {_method: POST}
 
 catalog_nissan_group:
-  path:         /nissan/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /nissan/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
   defaults:     {_controller: CatalogNissanBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------
@@ -48,28 +48,28 @@ vin_nissan_result:
   requirements: {_method: POST}
 
 vin_nissan_groups:
-  path:         /nissan/vin/3/{regionCode}/{modelCode}/{modificationCode}
+  path:         /nissan/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
   defaults:     {_controller: CatalogNissanBundle:Vin:groups}
 
 vin_nissan_subgroups:
-  path:         /nissan/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  path:         /nissan/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
   defaults:     {_controller: CatalogNissanBundle:Vin:subgroups}
 
 vin_nissan_schemas:
-  path:         /nissan/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  path:         /nissan/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogNissanBundle:Vin:schemas}
 
 vin_nissan_schema:
-  path:         /nissan/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  path:         /nissan/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
   defaults:     {_controller: CatalogNissanBundle:Vin:schema}
 
 vin_nissan_articuls:
   path:         /nissan/vin/7
-  defaults:     {_controller: CatalogNissanBundle:Vin:vinarticuls}
+  defaults:     {_controller: CatalogNissanBundle:Vin:articuls}
   requirements: {_method: POST}
 
 vin_nissan_group:
-  path:         /nissan/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /nissan/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
   defaults:     {_controller: CatalogNissanBundle:Vin:getGroupBySubgroup}
 
 #---------------------------------------------------------------------------------------------
@@ -92,24 +92,24 @@ articul_nissan_complectations:
   defaults:     {_controller: CatalogNissanBundle:Articul:nissanArticulComplectations}
 
 articul_nissan_groups:
-  path:         /nissan/articul/5/{regionCode}/{modelCode}/{modificationCode}
+  path:         /nissan/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
   defaults:     {_controller: CatalogNissanBundle:Articul:nissanArticulgroups}
 
 articul_nissan_subgroups:
-  path:         /nissan/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  path:         /nissan/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
   defaults:     {_controller: CatalogNissanBundle:Articul:nissanArticulSubgroups}
 
 articul_nissan_schemas:
-  path:         /nissan/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  path:         /nissan/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogNissanBundle:Articul:nissanArticulSchemas}
 
 articul_nissan_schema:
-  path:         /nissan/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  path:         /nissan/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
   defaults:     {_controller: CatalogNissanBundle:Articul:nissanArticulSchema}
 
 articul_nissan_articuls:
   path:         /nissan/articul/9
-  defaults:     {_controller: CatalogNissanBundle:Articul:nissanArticularticuls}
+  defaults:     {_controller: CatalogNissanBundle:Articul:articuls}
   requirements: {_method: POST}
 
 articul_nissan_group:

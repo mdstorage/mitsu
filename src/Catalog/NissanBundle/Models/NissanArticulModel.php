@@ -16,14 +16,23 @@ class NissanArticulModel extends NissanCatalogModel{
     public function getArticulRegions($articulCode){
 
 
-        $aData = array('EU' => 'Европа');
 
+        $sqlPnc = "
+         SELECT CATALOG
+          FROM catalog
+          WHERE catalog.OEMCODE = :articulCode
+         ";
 
+        $query = $this->conn->prepare($sqlPnc);
+        $query->bindValue('articulCode',  $articulCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
 
         $regions = array();
         foreach($aData as $index => $value)
         {
-            $regions[] = $index;
+            $regions[] = $value['CATALOG'];
         }
 
         return $regions;
@@ -33,14 +42,40 @@ class NissanArticulModel extends NissanCatalogModel{
     public function getArticulModels ($articul, $regionCode)
     {
 
-        $sql = "
-        select comm_modgrp.cmg_cod from tbdata, catalogues, comm_modgrp
-        where prt_cod = :articulCode and tbdata.cat_cod = catalogues.cat_cod and catalogues.cmg_cod = comm_modgrp.cmg_cod
-        and catalogues.mk2_cod = comm_modgrp.mk2_cod
+
+        if ($regionCode !== 'JP')
+        {
+            $sql = "
+        SELECT catalog.CATALOG, cdindex.SHASHU, cdindex.SHASHUKO
+        FROM catalog
+        INNER JOIN destcnt ON (destcnt.CATALOG = catalog.CATALOG AND destcnt.ShashuCD = catalog.MDLDIR)
+        INNER JOIN cdindex ON (cdindex.CATALOG = catalog.CATALOG AND cdindex.SHASHU = destcnt.SHASHU)
+        WHERE catalog.OEMCODE = :articulCode
+        and catalog.CATALOG = :regionCode
+        ORDER by SHASHUKO
         ";
+        }
+
+        else
+        {
+            $sql = "
+        SELECT cdindex.SHASHU, cdindex_jp_en.SHASHUKO
+        FROM catalog
+        LEFT JOIN destcnt ON (destcnt.CATALOG = catalog.CATALOG AND destcnt.ShashuCD = catalog.MDLDIR)
+        LEFT JOIN cdindex ON (cdindex.CATALOG = catalog.CATALOG AND cdindex.SHASHU = destcnt.SHASHU)
+        LEFT JOIN cdindex_jp_en ON (cdindex.SHASHU = cdindex_jp_en.SHASHU)
+        WHERE catalog.OEMCODE = :articulCode
+        and catalog.CATALOG = :regionCode
+        ORDER by SHASHUKO
+
+        ";
+        }
+
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
+        $query->bindValue('regionCode', $regionCode);
+
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -50,7 +85,7 @@ class NissanArticulModel extends NissanCatalogModel{
 
         foreach($aData as $item)
         {
-            $models[] = $item['cmg_cod'];
+            $models[] = urlencode($item['SHASHUKO']);
 
         }
 
@@ -61,21 +96,52 @@ class NissanArticulModel extends NissanCatalogModel{
     {
         $modelCode = urldecode($modelCode);
 
-        $sql = "
-        select catalogues.cat_cod from tbdata, catalogues
-        where tbdata.prt_cod = :articulCode and tbdata.cat_cod = catalogues.cat_cod and catalogues.cmg_cod = :modelCode
+        if ($regionCode !== 'JP')
+        {
+            $sql = "
+        SELECT cdindex.SHASHU
+        FROM catalog
+        LEFT JOIN destcnt ON (destcnt.CATALOG = catalog.CATALOG AND destcnt.ShashuCD = catalog.MDLDIR)
+        LEFT JOIN cdindex ON (cdindex.CATALOG = catalog.CATALOG AND cdindex.SHASHU = destcnt.SHASHU and cdindex.SHASHUKO = :modelCode)
+        WHERE catalog.OEMCODE = :articulCode
+        and catalog.CATALOG = :regionCode
+        ORDER by SHASHUKO
         ";
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', $articul);
-        $query->bindValue('modelCode', $modelCode);
+            $query = $this->conn->prepare($sql);
+            $query->bindValue('articulCode', $articul);
+            $query->bindValue('regionCode', $regionCode);
+            $query->bindValue('modelCode', $modelCode);
+        }
+
+        else
+        {
+            $sql = "
+        SELECT catalog.CATALOG, cdindex.SHASHU
+        FROM catalog
+        left JOIN destcnt ON (destcnt.CATALOG = catalog.CATALOG AND destcnt.ShashuCD = catalog.MDLDIR)
+        left JOIN cdindex ON (cdindex.CATALOG = catalog.CATALOG AND cdindex.SHASHU = destcnt.SHASHU)
+        WHERE catalog.OEMCODE = :articulCode
+        and catalog.CATALOG = :regionCode
+        ORDER by SHASHU
+
+        ";
+            $query = $this->conn->prepare($sql);
+            $query->bindValue('articulCode', $articul);
+            $query->bindValue('regionCode', $regionCode);
+
+        }
+
+
+
         $query->execute();
 
         $aData = $query->fetchAll();
+        $modifications = array();
 
         foreach($aData as $item)
         {
-            $modifications[] = $item['cat_cod'];
+            $modifications[] = $item['SHASHU'];
 
         }
 
@@ -86,112 +152,74 @@ class NissanArticulModel extends NissanCatalogModel{
     
     public function getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode)
     {
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-        $ghg = $this->getComplectations($regionCode, $modelCode, $modificationCode);
-        $test = array();
-
-
-        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
 
         $sql = "
-        select * from cats_table
-        where detail_code = :articulCode
-        AND catalog_code = :catCode
+        SELECT posname.NNO, posname.MDLDIR, posname.DATA1
+        FROM catalog
+        LEFT JOIN posname ON (posname.CATALOG = catalog.CATALOG AND posname.MDLDIR = catalog.MDLDIR)
+        WHERE catalog.OEMCODE = :articulCode
+        and catalog.CATALOG = :regionCode
+
 
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
-        $query->bindValue('catCode', $catCode);
+        $query->bindValue('regionCode', $regionCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
-        $aDataCatalog = array();
 
-        if ($aData)
-        {
-
-            foreach ($aData as $item) {
-                $sqlCatalog = "
-        SELECT model_index
-        FROM vin_model
-        WHERE model =:modificationCode
-        ";
-
-                $query = $this->conn->prepare($sqlCatalog);
-                $query->bindValue('modificationCode', $modificationCode);
-                $query->execute();
-
-                $aDataCatalog[] = $query->fetchAll();
-            }
 
 
             $complectations = array();
 
-            foreach ($aDataCatalog as $item2) {
-                foreach ($item2 as $item1) {
-                    $complectations[] = $item1['model_index'];
-                }
+            foreach ($aData as $item) {
 
-            }
-        }
-
-        foreach ($ghg as $indexCompl => $valueCompl)
-        {
-            foreach ($aData as $index => $value)
-            {
-                $value2 = str_replace(substr($value['model_options'], 0, strpos($value['model_options'], '|')), '', $value['model_options']);
-                $articulOptions = explode('|', str_replace(';', '', $value2));
-            /*  $complectationOptions = $ghg['37454']['options']['option2'];*/
-                $complectationOptions = $valueCompl['options']['option2'];
-
-                foreach ($articulOptions as $index1 => $value1) {
-                    if (($value1 == '') || ($index1 > (count($complectationOptions)-1))) {
-                        unset ($articulOptions[$index1]);
-                    }
-                }
-                $cd = count($articulOptions);
-                $cdc = count(array_intersect_assoc($articulOptions, $complectationOptions));
-
-                if ($cd == $cdc)
-                {
-                  $test[] = $indexCompl;
-                }
+                    $complectations[] = str_pad($item['MDLDIR'], 3, "0", STR_PAD_LEFT) . '_' . $item['NNO']. '_' .$item['DATA1'];
 
             }
 
-        }
 
-        return (array_intersect(array_unique($complectations), array_unique($test)));
+        return array_unique($complectations);
     }
     
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
 
-        $modelCode = urldecode($modelCode);
+        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
+
 
         $sql = "
-        select grp_cod from tbdata
-        where tbdata.prt_cod = :articulCode and tbdata.cat_cod = :modificationCode
+        SELECT gsecloc_all.PICGROUP
+        FROM catalog
+        left JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
+        left JOIN gsecloc_all ON (gsecloc_all.CATALOG = catalog.CATALOG AND gsecloc_all.MDLDIR = catalog.MDLDIR and gsecloc_all.FIGURE = SUBSTRING(pcodenes.FIGURE,1,3))
+        WHERE catalog.CATALOG = :regionCode
+        AND catalog.OEMCODE = :articulCode
+        and catalog.MDLDIR = :MDLDIR
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
-        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('MDLDIR', $MDLDIR);
         $query->execute();
 
         $aData = $query->fetchAll();
 
-    	$groups = array();
+
+
+        $groups = array();
 
         foreach($aData as $item)
 		{
 
-			$groups[]= $item['grp_cod'];
+			$groups[]= $item['PICGROUP'];
 
-			
 		}
+
 
         return array_unique($groups);
     }
@@ -199,26 +227,37 @@ class NissanArticulModel extends NissanCatalogModel{
 
     public function getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
+        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
+
         $sql = "
-        select sgrp_cod from tbdata
-        where tbdata.prt_cod = :articulCode and tbdata.cat_cod = :modificationCode and grp_cod = :groupCode
+        SELECT gsecloc_all.FIGURE
+        FROM catalog
+        LEFT JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
+        LEFT JOIN gsecloc_all ON (gsecloc_all.CATALOG = catalog.CATALOG AND gsecloc_all.MDLDIR = catalog.MDLDIR and gsecloc_all.FIGURE = SUBSTRING(pcodenes.FIGURE,1,3)
+        AND gsecloc_all.PICGROUP = :groupCode)
+        WHERE catalog.CATALOG = :regionCode
+        AND catalog.OEMCODE = :articulCode
+        and catalog.MDLDIR = :MDLDIR
+
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
-        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('regionCode', $regionCode);
         $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('MDLDIR', $MDLDIR);
+
         $query->execute();
 
         $aData = $query->fetchAll();
-
     	$subgroups = array();
 
         foreach($aData as $item)
         {
-            $subgroups[]= $groupCode.str_pad($item['sgrp_cod'], 2, "0", STR_PAD_LEFT);
+            $subgroups[]= $item['FIGURE'];
 
         }
+
 
 
         return array_unique($subgroups);
@@ -228,16 +267,23 @@ class NissanArticulModel extends NissanCatalogModel{
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
 
+        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
+
         $sql = "
-        select variante, sgs_cod from tbdata
-        where tbdata.prt_cod = :articulCode and tbdata.cat_cod = :modificationCode and grp_cod = :groupCode and sgrp_cod = :subGroupCode
+        SELECT illnote.PIMGSTR
+        FROM catalog
+        LEFT JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
+        LEFT JOIN illnote ON (illnote.CATALOG = catalog.CATALOG AND illnote.MDLDIR = catalog.MDLDIR and illnote.FIGURE = pcodenes.FIGURE AND illnote.SECNO = pcodenes.SECNO)
+        WHERE catalog.CATALOG = :regionCode
+        AND catalog.OEMCODE = :articulCode
+        and catalog.MDLDIR = :MDLDIR
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('groupCode', $groupCode);
-        $query->bindValue('subGroupCode', str_replace($groupCode,'',$subGroupCode));
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('MDLDIR', $MDLDIR);
+
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -245,10 +291,11 @@ class NissanArticulModel extends NissanCatalogModel{
 	   $schemas = array();
         foreach($aData as $item) {
 
-                $schemas[] = $item['variante'].'_'.$item['sgs_cod'];
+                $schemas[] = $item['PIMGSTR'];
 
 
         }
+
 		   
         return array_unique($schemas);
     }
@@ -256,22 +303,22 @@ class NissanArticulModel extends NissanCatalogModel{
      public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
 
-        $sgs_cod = substr($schemaCode, strpos($schemaCode, '_')+1, strlen($schemaCode));
-        $variante = substr($schemaCode, 0, strpos($schemaCode, '_'));
+
+        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
 
         $sql = "
-        select tbd_rif from tbdata
-        where tbdata.prt_cod = :articulCode and tbdata.cat_cod = :modificationCode and grp_cod = :groupCode and sgrp_cod = :subGroupCode
-        and sgs_cod = :sgs_cod and variante = :variante
+        SELECT PARTCODE
+        FROM catalog
+        WHERE catalog.CATALOG = :regionCode
+        AND catalog.OEMCODE = :articulCode
+        and catalog.MDLDIR = :MDLDIR
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('groupCode', $groupCode);
-        $query->bindValue('subGroupCode', str_replace($groupCode,'',$subGroupCode));
-        $query->bindValue('sgs_cod', $sgs_cod);
-        $query->bindValue('variante', $variante);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('MDLDIR', $MDLDIR);
+
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -279,7 +326,7 @@ class NissanArticulModel extends NissanCatalogModel{
         $pncs = array();
         foreach($aData as $item) {
 
-                $pncs[] = $item['tbd_rif'];
+                $pncs[] = $item['PARTCODE'];
 
 
         }

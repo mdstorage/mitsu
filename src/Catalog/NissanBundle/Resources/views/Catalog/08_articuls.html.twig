@@ -16,7 +16,8 @@
                 <br/> {% if articul.getOption('REPLACE') %} Замена: {{ articul.getOption('REPLACE') }} {% endif %} </td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|nissan_date_convertor }} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|nissan_date_convertor }}</td>
             <td> {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }} </td>
-            <td>{% autoescape false %}{{ articul.getOption('DESCR') }}{% endautoescape %}<br/></td>
+            <td>{% autoescape false %}{{ articul.getOption('DESCR') }}{% endautoescape %}<br/>
+                {% if articul.getOption('COLOR') %} {{ articul.getOption('COLOR') }} {% endif %} </td>
             
         </tr>
     {% endfor %}

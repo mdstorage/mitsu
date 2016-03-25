@@ -8,12 +8,14 @@
 {% endblock breadcrumbs %}
 
 
-{% block complectation %}
-{% endblock complectation %}
+{% set a = 'EMOIMG' %}
+{% if oContainer.getActiveRegion.getCode != "JP"  %}
+    {% set a = 'GRPIMG' %}
+{% endif %}
 
 {% block subgroupImage %}
     <div class="col-lg-8">
-        <img src="{{ asset('bundles/catalognissan/Imgs/images/L_EPERFIG/'~oContainer.getActiveGroup.getOption('catalog')~'/'~oContainer.getActiveGroup.getOption('picture')) }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
+        <img src="{{ asset('bundles/catalognissan/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/'~a~'/'~oContainer.getActiveGroup.getOption('picture')~'.gif') }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
 
     </div>
 {% endblock subgroupImage %}

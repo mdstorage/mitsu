@@ -14,4 +14,5 @@ class NissanConstants {
     const PROD_DATE = 'prod_date';
     const CARLINE  = 'carline';
     const PAGE = 'page';
+    const INTCOLOR = 'INTCOLOR';
 } 

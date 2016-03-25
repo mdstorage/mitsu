@@ -12,7 +12,7 @@
 
 {% block pnc %}
     <div class="pnc glyphicon-plus small" id="pnc_{{ pnc.getCode }}">
-        ({{ pnc.getCode }}) {{ pnc.getRuname|convert_encoding('UTF-8', 'Shift-JIS') }}</a>
+        ({{ pnc.getCode }}) {{ pnc.getRuname }}</a>
     </div>
     {% block pncScript %}
         <script>
