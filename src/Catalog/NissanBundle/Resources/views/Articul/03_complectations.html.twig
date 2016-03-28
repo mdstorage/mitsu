@@ -65,7 +65,7 @@
 
                 {% for complectation in oContainer.getActiveModification.getComplectations %}
                     {% block complectationItem %}
-                        <div style=" height: 180px; " class="col-sm-3 col-sm-offset-5 col-md-3 col-md-offset-0">
+                        <div style=" height: 180px; " class="col-lg-3 col-sm-offset-5 col-md-3 col-md-offset-0">
 
                             <a href="{{ path('articul_nissan_groups', parameters|merge({'complectationCode': complectation.getCode})) }}">
 

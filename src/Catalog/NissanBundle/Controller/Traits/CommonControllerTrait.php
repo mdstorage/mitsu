@@ -14,7 +14,7 @@ use Catalog\CommonBundle\Components\Factory;
 trait CommonControllerTrait {
     public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
     {
-        var_dump($request); die;
+
         $this->addFilter('catalogGroupsFilter', array(
             'regionCode' => $regionCode,
             'modelCode' => $modelCode,

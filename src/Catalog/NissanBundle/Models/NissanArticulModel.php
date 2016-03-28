@@ -191,7 +191,9 @@ class NissanArticulModel extends NissanCatalogModel{
         $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
 
 
-        $sql = "
+        if ($regionCode != 'JP')
+        {
+            $sql = "
         SELECT gsecloc_all.PICGROUP
         FROM catalog
         left JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
@@ -200,6 +202,21 @@ class NissanArticulModel extends NissanCatalogModel{
         AND catalog.OEMCODE = :articulCode
         and catalog.MDLDIR = :MDLDIR
         ";
+
+        }
+
+        else{
+            $sql = "
+        SELECT esecloc_jp.PICGROUP
+        FROM catalog
+        left JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
+        left JOIN esecloc_jp ON (esecloc_jp.CATALOG = catalog.CATALOG AND esecloc_jp.MDLDIR = catalog.MDLDIR and esecloc_jp.FIGURE = SUBSTRING(pcodenes.FIGURE,1,3))
+        WHERE catalog.CATALOG = :regionCode
+        AND catalog.OEMCODE = :articulCode
+        and catalog.MDLDIR = :MDLDIR
+        ";
+
+        }
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
@@ -229,7 +246,9 @@ class NissanArticulModel extends NissanCatalogModel{
     {
         $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
 
-        $sql = "
+        if ($regionCode != 'JP')
+        {
+            $sql = "
         SELECT gsecloc_all.FIGURE
         FROM catalog
         LEFT JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
@@ -240,6 +259,23 @@ class NissanArticulModel extends NissanCatalogModel{
         and catalog.MDLDIR = :MDLDIR
 
         ";
+        }
+
+        else{
+            $sql = "
+        SELECT esecloc_jp.FIGURE
+        FROM catalog
+        LEFT JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
+        LEFT JOIN esecloc_jp ON (esecloc_jp.CATALOG = catalog.CATALOG AND esecloc_jp.MDLDIR = catalog.MDLDIR and esecloc_jp.FIGURE = SUBSTRING(pcodenes.FIGURE,1,3)
+        AND esecloc_jp.PICGROUP = :groupCode)
+        WHERE catalog.CATALOG = :regionCode
+        AND catalog.OEMCODE = :articulCode
+        and catalog.MDLDIR = :MDLDIR
+
+        ";
+        }
+
+
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
@@ -269,6 +305,7 @@ class NissanArticulModel extends NissanCatalogModel{
 
         $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
 
+
         $sql = "
         SELECT illnote.PIMGSTR
         FROM catalog
@@ -287,6 +324,7 @@ class NissanArticulModel extends NissanCatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
+
 	   
 	   $schemas = array();
         foreach($aData as $item) {
@@ -332,5 +370,36 @@ class NissanArticulModel extends NissanCatalogModel{
         }
 
         return array_unique($pncs);
+    }
+
+    public function getArticulDesc($articul, $regionCode, $modelCode, $modificationCode)
+    {
+
+
+
+
+            $sql = "
+        SELECT catalog.REC3
+        FROM catalog
+        INNER JOIN cdindex ON (cdindex.CATALOG = catalog.CATALOG AND cdindex.SHASHU = :modificationCode)
+        INNER JOIN destcnt ON (destcnt.CATALOG = catalog.CATALOG AND destcnt.SHASHU = cdindex.SHASHU and destcnt.ShashuCD = catalog.MDLDIR)
+        WHERE catalog.OEMCODE = :articulCode
+        and catalog.CATALOG = :regionCode
+
+        ";
+
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', $articul);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+
+
+        return $aData;
     }
 } 
