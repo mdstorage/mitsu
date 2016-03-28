@@ -5,10 +5,10 @@ use Catalog\CommonBundle\Components\Factory;
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Controller\ArticulController as BaseController;
 use Symfony\Component\HttpFoundation\Request;
-use Catalog\NissanBundle\Controller\Traits\NissanVinFilters;
+use Catalog\NissanBundle\Controller\Traits\NissanArticulFilters;
 
 class ArticulController extends BaseController{
-use NissanVinFilters;
+use NissanArticulFilters;
     public function bundle()
     {
         return 'CatalogNissanBundle:Articul';
@@ -35,11 +35,16 @@ use NissanVinFilters;
     public function nissanArticulComplectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
     {
        $articul = $request->cookies->get(Constants::ARTICUL);
-        $articulComplectations = $this->model()->getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode);
 
-        $this->addFilter('articulComplectationsFilter', array(
-            'articulComplectations' => $articulComplectations
+        $parameters = array();
+
+        $this->addFilter('CFilter', array(
+            'regionCode' => $regionCode,
+            'modelCode' => $modelCode,
+            'modificationCode' => $modificationCode,
+            'articul' => $articul
         ));
+
 
         return parent::complectationsAction($request, $regionCode, $modelCode, $modificationCode);
     }

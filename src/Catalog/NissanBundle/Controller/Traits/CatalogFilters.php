@@ -36,7 +36,7 @@ trait CatalogFilters {
 
     public function catalogSubGroupsFilter($oContainer, $parameters)
     {
-       var_dump($parameters); die;
+
         $subgroups = $this->model()->getSubgroups($parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode'], $parameters['complectationCode'], $parameters['groupCode']); 
         $subGroupCode = array_keys($oContainer->getActiveGroup()->getSubGroups())[0];
         $sa = count($oContainer->getActiveGroup()->getSubGroups());

@@ -31,6 +31,8 @@ class NissanCatalogModel extends CatalogModel{
         $regions = array();
         foreach($aData as $item)
         {
+
+            if (substr($item['CATALOG'], -3) != 'INF')
             $regions[$item['CATALOG']] = array(Constants::NAME=>$item['CATALOG'], Constants::OPTIONS=>array());
         }
 
@@ -441,6 +443,7 @@ class NissanCatalogModel extends CatalogModel{
 
 
 
+
            $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
 
 
@@ -460,36 +463,45 @@ class NissanCatalogModel extends CatalogModel{
 
            $aData = $query->fetchAll();
            $schemaOptions = array();
-
-
-
-
            $plus = array();
 
-           foreach($aData as $index => $value)
-           {
-               $schemaOptions = explode ('.', $value['REC3']);
-               foreach ($schemaOptions as &$item)
-               {
-                   $item = trim($item,(')('));
-                   if (strpos($item,"+"))
-                   {
-                      $plus =  $this->multiexplode(array('+', ' +', '+ '), $item);
+           if ($regionCode != 'JP') {
+
+               foreach ($aData as $index => $value) {
+                   $ct = 0;
+                   $schemaOptions = $this->multiexplode(array('+', ' +', '+ '), $value['REC3']);
+
+
+                   foreach ($schemaOptions as $item) {
+
+                       $item = trim($item, ('*()'));
+                       if (strpos($item, ".")) {
+                           $plus = explode('.', $item);
+
+
+                           if (count($plus) == count(array_intersect($plus, $complectation[0]))) {
+                               $ct = $ct + 1;
+                           }
+
+
+                       } else {
+
+                           if (in_array($item, $complectation[0])) {
+                               $ct = $ct + 1;
+                           }
+
+                       }
+
 
                    }
+
+
+                   if ($ct === 0) {
+                       unset ($aData[$index]);
+                   }
+
                }
-
-
-
-               if (count($schemaOptions) != count(array_intersect($schemaOptions, $complectation[0])) + count(array_intersect($plus, $complectation[0])))
-               {
-
-                   unset ($aData[$index]);
-               }
-
            }
-
-
 
 
            $schemas = array();
@@ -997,51 +1009,49 @@ class NissanCatalogModel extends CatalogModel{
 
 
 
+
+
         $plus = array();
 
 
-        foreach($aArticuls as $index => $value)
-        {
-            $ct = 0;
-            $schemaOptions = $this->multiexplode(array('+', ' +', '+ '), $value['REC3']);
+       if ($regionCode != 'JP') {
 
 
-            foreach ($schemaOptions as $item)
-            {
-
-                $item = trim($item,('*()'));
-                if (strpos($item,"."))
-                {
-                    $plus =  explode('.', $item);
+           foreach ($aArticuls as $index => $value) {
+               $ct = 0;
+               $schemaOptions = $this->multiexplode(array('+', ' +', '+ '), $value['REC3']);
 
 
-                    if (count($plus) == count(array_intersect($plus, $complectation[0])))
-                    {
-                        $ct = $ct + 1;
-                    }
+               foreach ($schemaOptions as $item) {
+
+                   $item = trim($item, ('*()'));
+                   if (strpos($item, ".")) {
+                       $plus = explode('.', $item);
 
 
-                }
-
-                else{
-
-                    if (in_array($item, $complectation[0]))
-                    {
-                        $ct = $ct + 1;
-                    }
-
-                }
+                       if (count($plus) == count(array_intersect($plus, $complectation[0]))) {
+                           $ct = $ct + 1;
+                       }
 
 
-            }
+                   } else {
+
+                       if (in_array($item, $complectation[0])) {
+                           $ct = $ct + 1;
+                       }
+
+                   }
 
 
-            if ($ct === 0)
-            {
-                unset ($aArticuls[$index]);
-            }
+               }
 
-        }
+
+               if ($ct === 0) {
+                   unset ($aArticuls[$index]);
+               }
+
+           }
+       }
 
 
 $articuls = array();
