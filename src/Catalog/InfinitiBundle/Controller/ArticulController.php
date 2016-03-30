@@ -1,27 +1,27 @@
 <?php
-namespace Catalog\NissanBundle\Controller;
+namespace Catalog\InfinitiBundle\Controller;
 
 use Catalog\CommonBundle\Components\Factory;
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Controller\ArticulController as BaseController;
 use Symfony\Component\HttpFoundation\Request;
-use Catalog\NissanBundle\Controller\Traits\NissanArticulFilters;
+use Catalog\InfinitiBundle\Controller\Traits\InfinitiArticulFilters;
 
 class ArticulController extends BaseController{
-use NissanArticulFilters;
+use InfinitiArticulFilters;
     public function bundle()
     {
-        return 'CatalogNissanBundle:Articul';
+        return 'CatalogInfinitiBundle:Articul';
     }
 
     public function model()
     {
-        return $this->get('nissan.articul.model');
+        return $this->get('infiniti.articul.model');
     }
 
     public function bundleConstants()
     {
-        return 'Catalog\NissanBundle\Components\NissanConstants';
+        return 'Catalog\InfinitiBundle\Components\InfinitiConstants';
     }
 
     public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $subGroupCode)
@@ -32,7 +32,7 @@ use NissanArticulFilters;
     }
     
        
-    public function nissanArticulComplectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
+    public function infinitiArticulComplectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
     {
        $articul = $request->cookies->get(Constants::ARTICUL);
 
@@ -49,7 +49,7 @@ use NissanArticulFilters;
         return parent::complectationsAction($request, $regionCode, $modelCode, $modificationCode);
     }
 
-    public function nissanArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
+    public function infinitiArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
       
@@ -62,7 +62,7 @@ use NissanArticulFilters;
         return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
     }
 
-    public function nissanArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
+    public function infinitiArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL); 
         $articulSubGroups = $this->model()->getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
@@ -75,7 +75,7 @@ use NissanArticulFilters;
         
     }
 
-    public function nissanArticulSchemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null)
+    public function infinitiArticulSchemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulSchemas = $this->model()->getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
@@ -88,7 +88,7 @@ use NissanArticulFilters;
         return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
     }
 
-    public function nissanArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null)
+    public function infinitiArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulPncs = $this->model()->getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode);
@@ -99,7 +99,7 @@ use NissanArticulFilters;
 
         return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode);
     }
-    public function nissanArticularticulsAction(Request $request)
+    public function infinitiArticularticulsAction(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
             $regionCode = $request->get('regionCode');

@@ -6,12 +6,12 @@
  * Time: 17:25
  */
 
-namespace Catalog\NissanBundle\Controller\Traits;
+namespace Catalog\InfinitiBundle\Controller\Traits;
 
 
 use Catalog\CommonBundle\Components\Constants;
 
-trait NissanArticulFilters {
+trait InfinitiArticulFilters {
 
     public function prodDateFilter($oContainer, $parameters)
     {

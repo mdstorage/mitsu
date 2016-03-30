@@ -44,6 +44,7 @@ class AppKernel extends Kernel
             new Catalog\AbarthBundle\CatalogAbarthBundle(),
             new Catalog\ChevroletUsaBundle\CatalogChevroletUsaBundle(),
             new Catalog\NissanBundle\CatalogNissanBundle(),
+            new Catalog\InfinitiBundle\CatalogInfinitiBundle(),
 
 
         );
