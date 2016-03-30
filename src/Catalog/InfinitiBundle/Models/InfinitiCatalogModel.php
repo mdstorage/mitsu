@@ -6,33 +6,28 @@
  * Time: 12:14
  */
 
-namespace Catalog\NissanBundle\Models;
+namespace Catalog\InfinitiBundle\Models;
 
 
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Models\CatalogModel;
-use Catalog\NissanBundle\Components\NissanConstants;
+use Catalog\InfinitiBundle\Components\InfinitiConstants;
 
-class NissanCatalogModel extends CatalogModel{
+class InfinitiCatalogModel extends CatalogModel{
 
     public function getRegions(){
 
         $sql = "
         SELECT CATALOG
         FROM cdindex
-        WHERE CATALOG LIKE 'EL'
-        OR CATALOG LIKE 'ER'
-        OR CATALOG LIKE 'JP'
-        OR CATALOG LIKE 'US'
+        WHERE CATALOG LIKE 'ELINF'
+        OR CATALOG LIKE 'ERINF'
 
         UNION
         SELECT CATALOG
         FROM cdindex
-        WHERE CATALOG NOT LIKE 'EL'
-        OR CATALOG NOT LIKE 'ER'
-        OR CATALOG NOT LIKE 'JP'
-        OR CATALOG NOT LIKE 'US'
-
+        WHERE CATALOG LIKE 'USINF'
+        OR CATALOG LIKE 'CAINF'
         ";
 
         $query = $this->conn->prepare($sql);
@@ -44,7 +39,6 @@ class NissanCatalogModel extends CatalogModel{
         foreach($aData as $item)
         {
 
-            if (substr($item['CATALOG'], -3) != 'INF')
             $regions[$item['CATALOG']] = array(Constants::NAME=>$item['CATALOG'], Constants::OPTIONS=>array());
         }
 

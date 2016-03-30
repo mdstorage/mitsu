@@ -1,0 +1,43 @@
+{% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
+{% use 'CatalogInfinitiBundle::infiniti.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('catalog_infiniti') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('catalog_infiniti_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a>/
+    <a href="{{ path('catalog_infiniti_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
+    <a href="{{ path('catalog_infiniti_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему
+{% endblock breadcrumbs %}
+
+{% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
+
+
+{% set a = 'SECIMG' %}
+{% if oContainer.getActiveRegion.getCode != "JP"  %}
+    {% set a = 'SECIMG' %}
+{% endif %}
+
+{% block schema %}
+    {% if schema.getCode is not empty %}
+        <div style=" height: 300px; " class="col-sm-4 col-sm-offset-5 col-md-4 col-md-offset-0">
+        <a href="{{ path('catalog_infiniti_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+
+
+                    <div class="row">
+                        {{ schema.getOption('FROMDATE')|infiniti_date_convertor }} - {{ schema.getOption('UPTODATE')|infiniti_date_convertor }}
+                    </div>
+
+                    <div class="row">
+                        {{ schema.getRuname }}
+                    </div>
+
+
+
+                    <div class="row">
+                        <img src="{{ asset('bundles/cataloginfiniti/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/'~a~'/'~schema.getCode~'.gif') }}" width="300" alt="{{ schema.getRuname }}"/>
+                    </div>
+
+
+        </a>
+            </div>
+    {% endif %}
+{% endblock schema %}

@@ -6,12 +6,12 @@
  * Time: 16:58
  */
 
-namespace Catalog\NissanBundle\Models;
+namespace Catalog\InfinitiBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
-use Catalog\NissanBundle\Components\NissanConstants;
+use Catalog\InfinitiBundle\Components\InfinitiConstants;
 
-class NissanArticulModel extends NissanCatalogModel{
+class InfinitiArticulModel extends InfinitiCatalogModel{
 
     public function getArticulRegions($articulCode){
 

@@ -1,0 +1,20 @@
+services:
+#    catalog_infiniti.example:
+#        class: Catalog\InfinitiBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  infiniti_date_convertor.extension:
+        class: Catalog\InfinitiBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  infiniti.catalog.model:
+    class: Catalog\InfinitiBundle\Models\InfinitiCatalogModel
+    arguments:  ['@doctrine.dbal.infiniti_connection']
+
+  infiniti.vin.model:
+    class: Catalog\InfinitiBundle\Models\InfinitiVinModel
+    arguments:  ['@doctrine.dbal.infiniti_connection']
+
+  infiniti.articul.model:
+    class: Catalog\InfinitiBundle\Models\InfinitiArticulModel
+    arguments:  ['@doctrine.dbal.infiniti_connection']

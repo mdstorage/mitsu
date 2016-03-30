@@ -1,0 +1,18 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/book/service_container.html
+parameters:
+#    parameter_name: value
+
+services:
+#    service_name:
+#        class: AppBundle\Directory\ClassName
+#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+  pagination:
+    class: AppBundle\Utils\Pagination
+
+  callme_swiftmailer:
+    class: AppBundle\Utils\CallMeSwiftMailer
+    arguments: ['@mailer']
+
+  callme_phpmail:
+    class: AppBundle\Utils\CallMePhpMail
