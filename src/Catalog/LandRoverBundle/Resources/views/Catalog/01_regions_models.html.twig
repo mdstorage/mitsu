@@ -1,0 +1,4 @@
+{% extends 'CatalogCommonBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogLandRoverBundle::landrover.base.html.twig' %}
+{% block regionPath %}{{ path('catalog_landrover', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+{% block ajaxUrl %}{{ path('catalog_landrover_modifications') }}{% endblock ajaxUrl %}

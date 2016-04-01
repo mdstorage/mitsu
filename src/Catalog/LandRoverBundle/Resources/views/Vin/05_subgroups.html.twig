@@ -1,0 +1,27 @@
+{% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
+{% use 'CatalogLandRoverBundle::landrover.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('vin_landrover') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }}, 
+   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('vin_landrover_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> / 
+    Подгруппа запчастей
+{% endblock breadcrumbs %}
+
+
+{% set a = 'EMOIMG' %}
+{% if oContainer.getActiveRegion.getCode != "JP"  %}
+    {% set a = 'GRPIMG' %}
+{% endif %}
+
+{% block subgroupImage %}
+    <div class="col-lg-8">
+        <img src="{{ asset('bundles/cataloglandrover/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/'~a~'/'~oContainer.getActiveGroup.getOption('picture')~'.gif') }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
+
+    </div>
+{% endblock subgroupImage %}
+
+
+
+{% block pathToSchemas %}
+    {{ path('vin_landrover_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}
+{% endblock pathToSchemas %}

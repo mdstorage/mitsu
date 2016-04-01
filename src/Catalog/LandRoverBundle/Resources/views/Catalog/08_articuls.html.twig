@@ -1,0 +1,32 @@
+<table class="table small">
+    {% if oContainer.getActivePnc.getArticuls %}
+    <thead>
+        <tr>
+            <th>Артикул</th>
+            <th>Период выпуска</th>
+            <th>Кол-во</th>
+            <th>Применяемость</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for articul in oContainer.getActivePnc.getArticuls %}
+        <tr>
+            <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a>
+                <br/> {% if articul.getOption('REPLACE') %} Замена: {{ articul.getOption('REPLACE') }} {% endif %} </td>
+            <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|landrover_date_convertor }} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|landrover_date_convertor }}</td>
+            <td> {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }} </td>
+            <td>{% autoescape false %}{{ articul.getOption('DESCR') }}{% endautoescape %}<br/>
+                {% if articul.getOption('COLOR') %} {{ articul.getOption('COLOR') }} {% endif %} </td>
+            
+        </tr>
+    {% endfor %}
+    </tbody>
+    {% endif %}
+    {% if not oContainer.getActivePnc.getArticuls %}
+        <tbody>
+    Запчасть не применяется в выбранной комплектации
+    </tbody>
+    {% endif %}
+
+</table>
