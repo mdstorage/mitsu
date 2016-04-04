@@ -1,21 +1,22 @@
 {% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
 {% use 'CatalogLandRoverBundle::landrover.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('catalog_landrover') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
-        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
-    <a href="{{ path('catalog_landrover_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a>/
+    <a href="{{ path('catalog_landrover') }}"> Модель ({{ oContainer.getActiveModel.getRuname }})</a> /
     <a href="{{ path('catalog_landrover_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getCode}})</a> /
     Подгруппа запчастей
 {% endblock breadcrumbs %}
 
-{% set a = 'EMOIMG' %}
-{% if oContainer.getActiveRegion.getCode != "JP"  %}
-    {% set a = 'GRPIMG' %}
-{% endif %}
+{% block region %}{% endblock region%}
+{% block regions %}{% endblock regions %}
+{% block complectation %}
+{% endblock complectation %}
+{% block modification %}
+{% endblock modification %}
+
 
 {% block subgroupImage %}
     <div class="col-lg-8">
-        <img src="{{ asset('bundles/cataloglandrover/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/'~a~'/'~oContainer.getActiveGroup.getOption('picture')~'.gif') }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
+        <img src="{{ asset('bundles/cataloglandrover/Images/'~oContainer.getActiveGroup.getOption('pictureFolder')~'/'~oContainer.getActiveGroup.getOption('picture')~'.png') }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
 
     </div>
 {% endblock subgroupImage %}

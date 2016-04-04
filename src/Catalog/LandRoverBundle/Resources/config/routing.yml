@@ -12,19 +12,19 @@ catalog_landrover_complectations:
   defaults:     {_controller: CatalogLandRoverBundle:Catalog:complectations}
 
 catalog_landrover_groups:
-  path:         /landrover/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Catalog:groups}
+  path:         /landrover/catalog/3/{regionCode}/{modelCode}
+  defaults:     {_controller: CatalogLandRoverBundle:Catalog:groups, modificationCode: '1'}
 
 catalog_landrover_subgroups:
-  path:         /landrover/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Catalog:subgroups}
+  path:         /landrover/catalog/4/{regionCode}/{modelCode}/{groupCode}
+  defaults:     {_controller: CatalogLandRoverBundle:Catalog:subgroups, modificationCode: '1'}
 
 catalog_landrover_schemas:
-  path:         /landrover/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  path:         /landrover/catalog/5/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogLandRoverBundle:Catalog:schemas}
 
 catalog_landrover_schema:
-  path:         /landrover/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  path:         /landrover/catalog/6/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}/{schemaCode}
   defaults:     {_controller: CatalogLandRoverBundle:Catalog:schema}
 
 catalog_landrover_articuls:
@@ -33,7 +33,7 @@ catalog_landrover_articuls:
   requirements: {_method: POST}
 
 catalog_landrover_group:
-  path:         /landrover/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /landrover/catalog/8/{regionCode}/{modelCode}/{subGroupCode}
   defaults:     {_controller: CatalogLandRoverBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------

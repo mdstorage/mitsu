@@ -1,11 +1,17 @@
 {% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
 {% use 'CatalogLandRoverBundle::landrover.base.html.twig' %}
 {% block breadcrumbs %}
-   <a href="{{ path('catalog_landrover') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
-   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>
-    / <a href="{{ path('catalog_landrover_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a>
+   <a href="{{ path('catalog_landrover') }}"> Модель ({{ oContainer.getActiveModel.getRuname }})</a>
     / Группа запчастей
 {% endblock breadcrumbs %}
+
+{% block region %}{% endblock region%}
+{% block regions %}{% endblock regions %}
+{% block complectation %}
+{% endblock complectation %}
+{% block modification %}
+{% endblock modification %}
+
 
 
 {% block body %}
@@ -21,7 +27,7 @@
                         <a href="{{ path('catalog_landrover_subgroups', parameters|merge({'groupCode': group.getCode})) }}">
                             <div class="row">
 
-                            ({{ group.getCode }}) {{ group.getRuname }}
+                            ({{ group.getCode }}) {{ group.getRuname|upper }}
 
                             </div>
 

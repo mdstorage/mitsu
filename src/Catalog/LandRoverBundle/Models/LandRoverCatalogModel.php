@@ -35,7 +35,7 @@ class LandRoverCatalogModel extends CatalogModel{
     {
 
             $sql = "
-        SELECT auto_name, model_id
+        SELECT auto_name, model_id, engine_type
         FROM lrec
         ORDER by ABS(model_id)
         ";
@@ -46,16 +46,27 @@ class LandRoverCatalogModel extends CatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
-              
+        $aDatas = array();
 
-        $models = array();
+        foreach($aData as $item) {
+
+            if ($item['model_id'] !== NULL)
+            $aDatas[] = $item['model_id'];
+        }
+
+            $models = array();
+
+
         foreach($aData as $item){
 
-        	 if ($item['model_id'] !== null)
+            if ($item['model_id'] !== null)
 
-            $models[$item['model_id']] = array(Constants::NAME=>strtoupper($item['auto_name']),
-            Constants::OPTIONS=>array());
-      
+            $models[$item['model_id'].'_'.(ctype_alpha($item['engine_type'])?'GC'.$item['engine_type']:$item['engine_type'])] = array(Constants::NAME=>strtoupper($item['auto_name']),
+            Constants::OPTIONS=>array(
+                'key' => (array_search($item['model_id'],$aDatas)!=0)?array_search($item['model_id'],$aDatas):"0",
+                'type' => ctype_alpha($item['engine_type'])?'GC'.$item['engine_type']:$item['engine_type']
+
+            ));
         }
 
         return $models;
@@ -65,32 +76,12 @@ class LandRoverCatalogModel extends CatalogModel{
     {
 
 
-
-            $sql = "
-        SELECT cdindex.SHASHU, cdindex.FROM_DATE, cdindex.UPTO_DATE
-        FROM cdindex
-        WHERE cdindex.CATALOG = :regionCode
-        AND SHASHUKO = :modelCode
-        ";
-
-
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode',  $regionCode);
-        $query->execute();
-
-        $aData = $query->fetchAll();
-
         $modifications = array();
-        foreach($aData as $item){
-            $modifications[$item['SHASHU']] = array(
-                Constants::NAME     => $item['SHASHU'],
-                Constants::OPTIONS  => array(
-                    Constants::START_DATE => $item['FROM_DATE'],
-                    Constants::END_DATE => $item['UPTO_DATE'],
 
-                ));
+            $modifications['1'] = array(
+                Constants::NAME     => '1',
+                Constants::OPTIONS  => array());
 
-        }
 
         return $modifications;
     }
@@ -98,109 +89,15 @@ class LandRoverCatalogModel extends CatalogModel{
     public function getComplectations($regionCode, $modelCode, $modificationCode)
    
     {
-        $sql = "
-        SELECT DATA21, DATA22, DATA23, DATA24, DATA25, DATA26, DATA27, DATA28, destcnt.ShashuCD,
-         VARIATION1, VARIATION2, VARIATION3, VARIATION4, VARIATION5, VARIATION6, VARIATION7, VARIATION8, NNO, posname.FROM_DATE, posname.UPTO_DATE, posname.DATA1, abbrev1.DESCRIPTION ABBREV1, abbrev2.DESCRIPTION ABBREV2, abbrev3.DESCRIPTION ABBREV3,
-         abbrev4.DESCRIPTION ABBREV4, abbrev5.DESCRIPTION ABBREV5, abbrev6.DESCRIPTION ABBREV6, abbrev7.DESCRIPTION ABBREV7, abbrev8.DESCRIPTION ABBREV8, posname.MDLDIR,
-          descEn1.group DECSEN1, descEn2.group DECSEN2, descEn3.group DECSEN3, descEn4.group DECSEN4, descEn5.group DECSEN5, descEn6.group DECSEN6, descEn7.group DECSEN7, descEn8.group DECSEN8
-        FROM cdindex
-        LEFT JOIN destcnt ON (destcnt.CATALOG = cdindex.CATALOG AND destcnt.SHASHU = cdindex.SHASHU)
-        LEFT JOIN posname ON (posname.CATALOG = destcnt.CATALOG AND posname.MDLDIR = destcnt.ShashuCD)
-        LEFT JOIN appname abbrev1 ON (abbrev1.CATALOG = posname.CATALOG and abbrev1.MDLDIR = posname.MDLDIR AND abbrev1.MDLDIR = posname.MDLDIR AND abbrev1.VARIATION = posname.VARIATION1)
-        LEFT JOIN appname abbrev2 ON (abbrev2.CATALOG = posname.CATALOG and abbrev2.MDLDIR = posname.MDLDIR AND abbrev2.MDLDIR = posname.MDLDIR AND abbrev2.VARIATION = posname.VARIATION2)
-        LEFT JOIN appname abbrev3 ON (abbrev3.CATALOG = posname.CATALOG and abbrev3.MDLDIR = posname.MDLDIR AND abbrev3.MDLDIR = posname.MDLDIR AND abbrev3.VARIATION = posname.VARIATION3)
-        LEFT JOIN appname abbrev4 ON (abbrev4.CATALOG = posname.CATALOG and abbrev4.MDLDIR = posname.MDLDIR AND abbrev4.MDLDIR = posname.MDLDIR AND abbrev4.VARIATION = posname.VARIATION4)
-        LEFT JOIN appname abbrev5 ON (abbrev5.CATALOG = posname.CATALOG and abbrev5.MDLDIR = posname.MDLDIR AND abbrev5.MDLDIR = posname.MDLDIR AND abbrev5.VARIATION = posname.VARIATION5)
-        LEFT JOIN appname abbrev6 ON (abbrev6.CATALOG = posname.CATALOG and abbrev6.MDLDIR = posname.MDLDIR AND abbrev6.MDLDIR = posname.MDLDIR AND abbrev6.VARIATION = posname.VARIATION6)
-        LEFT JOIN appname abbrev7 ON (abbrev7.CATALOG = posname.CATALOG and abbrev7.MDLDIR = posname.MDLDIR AND abbrev7.MDLDIR = posname.MDLDIR AND abbrev7.VARIATION = posname.VARIATION7)
-        LEFT JOIN appname abbrev8 ON (abbrev8.CATALOG = posname.CATALOG and abbrev8.MDLDIR = posname.MDLDIR AND abbrev8.MDLDIR = posname.MDLDIR AND abbrev8.VARIATION = posname.VARIATION8)
-
-
-        LEFT JOIN data_variation_jp_en descEn1 on (descEn1.data_jp = DATA21)
-        LEFT JOIN data_variation_jp_en descEn2 on (descEn2.data_jp = DATA22)
-        LEFT JOIN data_variation_jp_en descEn3 on (descEn3.data_jp = DATA23)
-        LEFT JOIN data_variation_jp_en descEn4 on (descEn4.data_jp = DATA24)
-        LEFT JOIN data_variation_jp_en descEn5 on (descEn5.data_jp = DATA25)
-        LEFT JOIN data_variation_jp_en descEn6 on (descEn6.data_jp = DATA26)
-        LEFT JOIN data_variation_jp_en descEn7 on (descEn7.data_jp = DATA27)
-        LEFT JOIN data_variation_jp_en descEn8 on (descEn8.data_jp = DATA28)
-
-        WHERE cdindex.CATALOG = :regionCode
-        AND cdindex.SHASHU = :modificationCode
-        ";
-
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('modificationCode',  $modificationCode);
-        $query->execute();
-
-        $aData = $query->fetchAll();
 
 
         $complectations = array();
-        $trans = array();
 
 
-        foreach($aData as $item)
-        {
-            for ($i = 1;$i<9;$i++)
-            {
-                if (($item['DATA2'.$i]=='TRANS') || ($item['DECSEN'.$i]=='TRANS'))
-                {
-                    $trans[] = $item['VARIATION'.$i];
-                }
-            }
+                $complectations['1'] = array(
+                    Constants::NAME => '1',
+                    Constants::OPTIONS => array());
 
-
-        }
-
-        foreach($aData as $item){
-
-            if ($regionCode != 'JP') {
-                $complectations[str_pad($item['MDLDIR'], 3, "0", STR_PAD_LEFT) . '_' . $item['NNO']. '_' .$item['DATA1']] = array(
-                    Constants::NAME => $item['NNO'],
-                    Constants::OPTIONS => array(
-                        'OPTION1' => $item['DATA21'] . ': (' . $item['VARIATION1'] . ') ' . $item['ABBREV1'],
-                        'OPTION2' => $item['DATA22'] . ': (' . $item['VARIATION2'] . ') ' . $item['ABBREV2'],
-                        'OPTION3' => ($item['VARIATION3']) ? ($item['DATA23'] . ': (' . $item['VARIATION3'] . ') ' . $item['ABBREV3']) : '',
-                        'OPTION4' => ($item['VARIATION4']) ? ($item['DATA24'] . ': (' . $item['VARIATION4'] . ') ' . $item['ABBREV4']) : '',
-                        'OPTION5' => ($item['VARIATION5']) ? ($item['DATA25'] . ': (' . $item['VARIATION5'] . ') ' . $item['ABBREV5']) : '',
-                        'OPTION6' => ($item['VARIATION6']) ? ($item['DATA26'] . ': (' . $item['VARIATION6'] . ') ' . $item['ABBREV6']) : '',
-                        'OPTION7' => ($item['VARIATION7']) ? ($item['DATA27'] . ': (' . $item['VARIATION7'] . ') ' . $item['ABBREV7']) : '',
-                        'OPTION8' => ($item['VARIATION8']) ? ($item['DATA28'] . ': (' . $item['VARIATION8'] . ') ' . $item['ABBREV8']) : '',
-                        'trans' => (count(array_unique($trans))>1)?array_unique($trans):'',
-                        'FROMDATE' => $item['FROM_DATE'],
-                        'UPTODATE' => $item['UPTO_DATE'],
-                        'OPTION9' => $item['VARIATION1'].'.'.$item['VARIATION2'].'.'.$item['VARIATION3'].'.'.$item['VARIATION4'].'.'.
-                            $item['VARIATION5'].'.'.$item['VARIATION6'].'.'.$item['VARIATION7'].'.'.$item['VARIATION8'],
-
-
-                    ));
-            }
-            else
-            {
-                $complectations[str_pad($item['MDLDIR'], 3, "0", STR_PAD_LEFT) . '_' . $item['NNO']. '_' .$item['DATA1']] = array(
-                    Constants::NAME => $item['NNO'],
-                    Constants::OPTIONS => array(
-                        'OPTION1' => $item['DECSEN1'] . ': (' . $item['VARIATION1'] . ') ' . $item['ABBREV1'],
-                        'OPTION2' => $item['DECSEN2'] . ': (' . $item['VARIATION2'] . ') ' . $item['ABBREV2'],
-                        'OPTION3' => ($item['VARIATION3']) ? ($item['DECSEN3'] . ': (' . $item['VARIATION3'] . ') ' . $item['ABBREV3']) : '',
-                        'OPTION4' => ($item['VARIATION4']) ? ($item['DECSEN4'] . ': (' . $item['VARIATION4'] . ') ' . $item['ABBREV4']) : '',
-                        'OPTION5' => ($item['VARIATION5']) ? ($item['DECSEN5'] . ': (' . $item['VARIATION5'] . ') ' . $item['ABBREV5']) : '',
-                        'OPTION6' => ($item['VARIATION6']) ? ($item['DECSEN6'] . ': (' . $item['VARIATION6'] . ') ' . $item['ABBREV6']) : '',
-                        'OPTION7' => ($item['VARIATION7']) ? ($item['DECSEN7'] . ': (' . $item['VARIATION7'] . ') ' . $item['ABBREV7']) : '',
-                        'OPTION8' => ($item['VARIATION8']) ? ($item['DECSEN8'] . ': (' . $item['VARIATION8'] . ') ' . $item['ABBREV8']) : '',
-                        'trans' => (count(array_unique($trans))>1)?array_unique($trans):'',
-                        'FROMDATE' => $item['FROM_DATE'],
-                        'UPTODATE' => $item['UPTO_DATE'],
-                        'OPTION9' => $item['VARIATION1'].'.'.$item['VARIATION2'].'.'.$item['VARIATION3'].'.'.$item['VARIATION4'].'.'.
-                            $item['VARIATION5'].'.'.$item['VARIATION6'].'.'.$item['VARIATION7'].'.'.$item['VARIATION8']
-
-                    ));
-
-            }
-
-        }
 
          return $complectations;
      
@@ -208,73 +105,39 @@ class LandRoverCatalogModel extends CatalogModel{
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
+        $pictureFolder = substr($modelCode, strpos($modelCode, '_')+1, strlen($modelCode));
 
-        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
-        $table = 'genloc_all';
+        $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
 
-        $what = 'PICGROUP';
 
-        if ($regionCode != 'JP')
-        {
             $sql = "
-        SELECT $what, PARTNAME_E, PIMGSTR
-        FROM $table
-        WHERE CATALOG = :regionCode
-        and MDLDIR = :MDLDIR
+        SELECT SUBSTRING(name_group,1,1) as ngroup, lex_name, coordinates.num_index
+        FROM coord_header_info
+        LEFT JOIN lex ON (lex.index_lex = coord_header_info.id_main AND lex.lang = 'EN')
+        INNER JOIN coordinates ON (coordinates.model_id = coord_header_info.model_id AND coordinates.label_name = coord_header_info.name_group
+        AND LENGTH(coordinates.label_name) > 1)
+
+        WHERE coord_header_info.model_id = :modelCode
         ";
 
             $query = $this->conn->prepare($sql);
-            $query->bindValue('regionCode',  $regionCode);
-            $query->bindValue('MDLDIR',  $MDLDIR);
-
-            $query->execute();
-            $aData = $query->fetchAll();
-        }
-
-        else
-        {
-            $sql = "
-        SELECT emoloc_jp.PICGROUP, emoloc_jp.PIMGSTR
-        FROM emoloc_jp
-        WHERE emoloc_jp.CATALOG = :regionCode
-        and emoloc_jp.MDLDIR = :MDLDIR
-        ORDER by emoloc_jp.PICGROUP
-        ";
-
-            $query = $this->conn->prepare($sql);
-            $query->bindValue('regionCode',  $regionCode);
-            $query->bindValue('MDLDIR',  $MDLDIR);
+            $query->bindValue('modelCode',  $modelCode);
 
             $query->execute();
             $aData = $query->fetchAll();
 
-            foreach($aData as &$item)
-            {
-                switch (substr($item['PICGROUP'],0,1))
-                {
-                    case 'V': $item['PARTNAME_E'] = 'ACCESSORY. PART'.substr($item['PICGROUP'],1,1); unset($item);break;
-                    case 'W': $item['PARTNAME_E'] = 'ELECTRICAL. PART'.substr($item['PICGROUP'],1,1); unset($item);break;
-                    case 'X': $item['PARTNAME_E'] = 'CHASIS,POWER TRAIN,BRAKE. PART'.substr($item['PICGROUP'],1,1);unset($item);break;
-                    case 'Y': $item['PARTNAME_E'] = 'BODY,TRIM. PART'.substr($item['PICGROUP'],1,1);unset($item);break;
-                    case 'Z': $item['PARTNAME_E'] = 'ENGINE,FUEL. PART'.substr($item['PICGROUP'],1,1);unset($item);break;
 
-
-
-                }
-            }
-
-
-
-        }
 
         $groups = array();
 
 
         foreach($aData as $item){
 
-            $groups[$item['PICGROUP']] = array(
-                Constants::NAME     =>$item ['PARTNAME_E'],
-                Constants::OPTIONS => array('picture' => strtoupper($item ['PIMGSTR'])
+            $groups[$item['ngroup']] = array(
+                Constants::NAME     =>$item ['lex_name'],
+                Constants::OPTIONS => array(
+                    'picture' => $item['num_index'],
+                    'pictureFolder' => $pictureFolder,
                 )
             );
         }
@@ -327,49 +190,26 @@ class LandRoverCatalogModel extends CatalogModel{
 
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
-        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
+        $pictureFolder = substr($modelCode, strpos($modelCode, '_')+1, strlen($modelCode));
+        $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
 
 
 
-        if ($regionCode != 'JP')
-        {
-            $sql = "
-        SELECT id, FIGURE, PARTNAME_E, X_LT, Y_LT
-        FROM gsecloc_all
-        WHERE PICGROUP = :groupCode
-        AND MDLDIR = :MDLDIR
-        AND CATALOG = :regionCode
-        ORDER BY FIGURE
+        $sql = "
+        SELECT SUBSTRING(coord_header_info.name_group,2,2) as nsubgroup, lex_name, coordinates.num_index, coordinates.x1, coordinates.x2, coordinates.y1, coordinates.y2
+        FROM coord_header_info
+        INNER JOIN lex ON (lex.index_lex = coord_header_info.id_sector AND lex.lang = 'EN')
+        INNER JOIN coordinates ON (coordinates.model_id = coord_header_info.model_id AND coordinates.label_name = CONCAT(:groupCode, SUBSTRING(coord_header_info.name_group,3,1)))
+        WHERE coord_header_info.model_id = :modelCode
+        AND SUBSTRING(coord_header_info.name_group,1,1) = :groupCode
         ";
-
-            $nameSubgroup = 'PARTNAME_E';
-            $k = 2;
-        }
-
-        else
-        {
-            $sql = "
-        SELECT id, FIGURE, PARTNAME, X_LT, Y_LT
-        FROM esecloc_jp
-        WHERE PICGROUP = :groupCode
-        AND MDLDIR = :MDLDIR
-        AND CATALOG = :regionCode
-        ORDER BY FIGURE
-        ";
-
-            $nameSubgroup = 'PARTNAME';
-            $k = 2.5;
-        }
-
-
-
 
         $query = $this->conn->prepare($sql);
+        $query->bindValue('modelCode',  $modelCode);
         $query->bindValue('groupCode',  $groupCode);
-        $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('MDLDIR',  $MDLDIR);
-        $query->execute();
 
+
+        $query->execute();
         $aData = $query->fetchAll();
 
 
@@ -383,14 +223,16 @@ class LandRoverCatalogModel extends CatalogModel{
 
 
 
-               $subgroups[$item['FIGURE']] = array(
+               $subgroups[$item['nsubgroup']] = array(
 
-               Constants::NAME => $item[$nameSubgroup],
+               Constants::NAME => $item['lex_name'],
                    Constants::OPTIONS => array(
-                       Constants::X1 => floor($item['X_LT']/$k),
-                       Constants::X2 => floor($item['X_LT']/$k)+30,
-                       Constants::Y1 => floor($item['Y_LT']/$k),
-                       Constants::Y2 => floor($item['Y_LT']/$k)+20,
+                       'picture' => $item['num_index'],
+                       'pictureFolder' => $pictureFolder,
+                       Constants::X1 => floor($item['x1']),
+                       Constants::X2 => floor($item['x2']),
+                       Constants::Y1 => floor($item['y1']),
+                       Constants::Y2 => floor($item['y2']),
                    )
 
                );
