@@ -1,0 +1,41 @@
+{% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
+{% use 'CatalogLandRoverBundle::landrover.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('catalog_landrover') }}"> Модель ({{ oContainer.getActiveModel.getRuname }})</a> /
+    <a href="{{ path('catalog_landrover_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
+    <a href="{{ path('catalog_landrover_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему
+{% endblock breadcrumbs %}
+
+{% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
+
+
+{% block region %}{% endblock region%}
+{% block regions %}{% endblock regions %}
+{% block complectation %}
+{% endblock complectation %}
+{% block modification %}
+{% endblock modification %}
+
+
+{% block schema %}
+    {% if schema.getCode is not empty %}
+        <div style=" height: 320px; " class="col-sm-2 col-sm-offset-5 col-md-2 col-md-offset-0">
+        <a href="{{ path('catalog_landrover_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+
+
+
+                    <div class="row">
+                        {{ schema.getRuname|upper }}
+                    </div>
+
+
+
+                    <div class="row">
+                        <img src="{{ asset('bundles/cataloglandrover/Images/'~schema.getOption('pictureFolder')~'/'~schema.getCode~'.png') }}" width="150" alt="{{ schema.getRuname }}"/>
+                    </div>
+
+
+        </a>
+            </div>
+    {% endif %}
+{% endblock schema %}

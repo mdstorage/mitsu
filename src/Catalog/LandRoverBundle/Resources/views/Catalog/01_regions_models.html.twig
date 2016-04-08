@@ -1,0 +1,38 @@
+{% extends 'CatalogCommonBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogLandRoverBundle::landrover.base.html.twig' %}
+{% block regionPath %}{{ path('catalog_landrover', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+
+{% block region %}{% endblock region%}
+{% block regions %}{% endblock regions %}
+
+{% block models %}
+    {% block head %}<h3>Модельный ряд:</h3>{% endblock head %}
+    <div class="row">
+        <div class="col-md-12">
+
+            {% block groups %}
+                <div class="groups">
+                    {% for model in oContainer.getActiveRegion.getModels %}
+
+
+
+                        <div style=" height: 250px; " class="col-sm-2 col-sm-offset-5 col-md-2 col-md-offset-0">
+
+                            <a href="{{ path('catalog_landrover_groups', {'regionCode':  oContainer.getActiveRegion.getCode, 'modelCode': model.getCode}) }}">
+
+                                <img src="{{ asset('bundles/cataloglandrover/Images/'~(model.getOption('key')!=''?model.getOption('key'):'0')~'-'~model.getOption('type')~'.png') }}" width="100%" alt="{{ model.getRuname }}"/>
+                                {{ model.getRuname }}
+
+                            </a>
+
+                        </div>
+
+
+
+                    {% endfor %}
+
+                </div>
+            {% endblock groups %}
+        </div>
+    </div>
+{% endblock models %}

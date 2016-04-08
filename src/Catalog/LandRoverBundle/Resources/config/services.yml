@@ -1,0 +1,20 @@
+services:
+#    catalog_landrover.example:
+#        class: Catalog\LandRoverBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  landrover_date_convertor.extension:
+        class: Catalog\LandRoverBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  landrover.catalog.model:
+    class: Catalog\LandRoverBundle\Models\LandRoverCatalogModel
+    arguments:  ['@doctrine.dbal.landrover_connection']
+
+  landrover.vin.model:
+    class: Catalog\LandRoverBundle\Models\LandRoverVinModel
+    arguments:  ['@doctrine.dbal.landrover_connection']
+
+  landrover.articul.model:
+    class: Catalog\LandRoverBundle\Models\LandRoverArticulModel
+    arguments:  ['@doctrine.dbal.landrover_connection']

@@ -1,0 +1,54 @@
+{% extends 'CatalogCommonBundle:Vin:02_result.html.twig' %}
+{% block specification %}
+    <div class="row">
+        <div class="col-lg-8">
+            <table class="table table-bordered">
+
+                <tr>
+                    <td>Регион:</td>
+                    <td>{{ result.region }}</td>
+                </tr>
+
+                <tr>
+                    <td>Модель:</td>
+                    <td>{{ result.model }}</td>
+                </tr>
+
+                <tr>
+                    <td>Модификация:</td>
+                    <td>{{ result.modif }}</td>
+                </tr>
+
+                <tr>
+                    <td>Комплектация:</td>
+                    <td>{% for compl in result.complectation %}
+                        {% if compl %}
+                        {{ compl }}<br>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Дата выпуска:</td>
+                    <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|landrover_date_convertor }}</td>
+                </tr>
+
+                <tr>
+                    <td>Цвет салона:</td>
+                    <td>{{ result.cvet_salona }}</td>
+                </tr>
+
+                <tr>
+                    <td>Цвет кузова:</td>
+                    <td>{{ result.cvet_kuzova }}</td>
+                </tr>
+
+
+            </table>
+        </div>
+    </div>
+{% endblock specification %}
+{% block catalogPath %}
+    {{ path('vin_landrover_groups',({'regionCode': result.region, 'modelCode': result.model, 'modificationCode': result.modif, 'complectationCode': result.kod_complektacii })) }}
+{% endblock catalogPath %}
