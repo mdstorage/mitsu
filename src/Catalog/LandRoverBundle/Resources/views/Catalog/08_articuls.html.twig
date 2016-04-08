@@ -3,7 +3,7 @@
     <thead>
         <tr>
             <th>Артикул</th>
-            <th>Период выпуска</th>
+            <th>Описание</th>
             <th>Кол-во</th>
             <th>Применяемость</th>
         </tr>
@@ -14,7 +14,7 @@
         <tr>
             <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a>
                 <br/> {% if articul.getOption('REPLACE') %} Замена: {{ articul.getOption('REPLACE') }} {% endif %} </td>
-            <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|landrover_date_convertor }} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|landrover_date_convertor }}</td>
+            <td>{{ articul.getRuname|upper }}</td>
             <td> {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }} </td>
             <td>{% autoescape false %}{{ articul.getOption('DESCR') }}{% endautoescape %}<br/>
                 {% if articul.getOption('COLOR') %} {{ articul.getOption('COLOR') }} {% endif %} </td>

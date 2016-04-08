@@ -1,9 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogLandRoverBundle::landrover.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('catalog_landrover') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
-        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
-    <a href="{{ path('catalog_landrover_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a>/
+    <a href="{{ path('catalog_landrover') }}"> Модель ({{ oContainer.getActiveModel.getRuname }})</a> /
     <a href="{{ path('catalog_landrover_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
     <a href="{{ path('catalog_landrover_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему
 {% endblock breadcrumbs %}
@@ -11,29 +9,29 @@
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
 
 
-{% set a = 'SECIMG' %}
-{% if oContainer.getActiveRegion.getCode != "JP"  %}
-    {% set a = 'SECIMG' %}
-{% endif %}
+{% block region %}{% endblock region%}
+{% block regions %}{% endblock regions %}
+{% block complectation %}
+{% endblock complectation %}
+{% block modification %}
+{% endblock modification %}
+
 
 {% block schema %}
     {% if schema.getCode is not empty %}
-        <div style=" height: 300px; " class="col-sm-4 col-sm-offset-5 col-md-4 col-md-offset-0">
+        <div style=" height: 320px; " class="col-sm-2 col-sm-offset-5 col-md-2 col-md-offset-0">
         <a href="{{ path('catalog_landrover_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
 
-                    <div class="row">
-                        {{ schema.getOption('FROMDATE')|landrover_date_convertor }} - {{ schema.getOption('UPTODATE')|landrover_date_convertor }}
-                    </div>
 
                     <div class="row">
-                        {{ schema.getRuname }}
+                        {{ schema.getRuname|upper }}
                     </div>
 
 
 
                     <div class="row">
-                        <img src="{{ asset('bundles/cataloglandrover/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/'~a~'/'~schema.getCode~'.gif') }}" width="300" alt="{{ schema.getRuname }}"/>
+                        <img src="{{ asset('bundles/cataloglandrover/Images/'~schema.getOption('pictureFolder')~'/'~schema.getCode~'.png') }}" width="150" alt="{{ schema.getRuname }}"/>
                     </div>
 
 

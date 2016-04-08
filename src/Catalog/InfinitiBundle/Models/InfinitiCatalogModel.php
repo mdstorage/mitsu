@@ -248,16 +248,16 @@ class InfinitiCatalogModel extends CatalogModel{
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
-
         $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
         $table = 'genloc_all';
 
         $what = 'PICGROUP';
+        $k = 1;
 
         if ($regionCode != 'JP')
         {
             $sql = "
-        SELECT $what, PARTNAME_E, PIMGSTR
+        SELECT $what, PARTNAME_E, PIMGSTR, X_LT, Y_LT
         FROM $table
         WHERE CATALOG = :regionCode
         and MDLDIR = :MDLDIR
@@ -269,12 +269,14 @@ class InfinitiCatalogModel extends CatalogModel{
 
             $query->execute();
             $aData = $query->fetchAll();
+            $k = 2;
+
         }
 
         else
         {
             $sql = "
-        SELECT emoloc_jp.PICGROUP, emoloc_jp.PIMGSTR
+        SELECT emoloc_jp.PICGROUP, emoloc_jp.PIMGSTR, '1' AS X_LT, '1' AS Y_LT
         FROM emoloc_jp
         WHERE emoloc_jp.CATALOG = :regionCode
         and emoloc_jp.MDLDIR = :MDLDIR
@@ -314,7 +316,11 @@ class InfinitiCatalogModel extends CatalogModel{
 
             $groups[$item['PICGROUP']] = array(
                 Constants::NAME     =>$item ['PARTNAME_E'],
-                Constants::OPTIONS => array('picture' => strtoupper($item ['PIMGSTR'])
+                Constants::OPTIONS => array('picture' => strtoupper($item ['PIMGSTR']),
+                    Constants::X1 => floor($item['X_LT']/$k),
+                    Constants::X2 => floor($item['X_LT']/$k)+30,
+                    Constants::Y1 => floor($item['Y_LT']/$k)-2,
+                    Constants::Y2 => floor($item['Y_LT']/$k)+30,
                 )
             );
         }

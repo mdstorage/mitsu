@@ -110,14 +110,14 @@ class LandRoverCatalogModel extends CatalogModel{
         $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
 
 
+
             $sql = "
         SELECT SUBSTRING(name_group,1,1) as ngroup, lex_name, coordinates.num_index
         FROM coord_header_info
-        LEFT JOIN lex ON (lex.index_lex = coord_header_info.id_main AND lex.lang = 'EN')
-        INNER JOIN coordinates ON (coordinates.model_id = coord_header_info.model_id AND coordinates.label_name = coord_header_info.name_group
-        AND LENGTH(coordinates.label_name) > 1)
-
+        INNER JOIN coordinates ON (coordinates.model_id = coord_header_info.model_id AND SUBSTRING(coordinates.label_name,1,1) = SUBSTRING(coord_header_info.name_group,1,1))
+        INNER JOIN lex ON (lex.index_lex = coord_header_info.id_main AND lex.lang = 'EN' AND LENGTH(coordinates.label_name) > 1)
         WHERE coord_header_info.model_id = :modelCode
+        group by ngroup
         ";
 
             $query = $this->conn->prepare($sql);
@@ -127,14 +127,13 @@ class LandRoverCatalogModel extends CatalogModel{
             $aData = $query->fetchAll();
 
 
-
         $groups = array();
 
 
         foreach($aData as $item){
 
             $groups[$item['ngroup']] = array(
-                Constants::NAME     =>$item ['lex_name'],
+                Constants::NAME     => strtoupper($item ['lex_name']),
                 Constants::OPTIONS => array(
                     'picture' => $item['num_index'],
                     'pictureFolder' => $pictureFolder,
@@ -196,12 +195,13 @@ class LandRoverCatalogModel extends CatalogModel{
 
 
         $sql = "
-        SELECT SUBSTRING(coord_header_info.name_group,2,2) as nsubgroup, lex_name, coordinates.num_index, coordinates.x1, coordinates.x2, coordinates.y1, coordinates.y2
+        SELECT coord_header_info.name_group as nsubgroup, lex_name, coordinates.num_index, coordinates.x1, coordinates.x2, coordinates.y1, coordinates.y2
         FROM coord_header_info
         INNER JOIN lex ON (lex.index_lex = coord_header_info.id_sector AND lex.lang = 'EN')
-        INNER JOIN coordinates ON (coordinates.model_id = coord_header_info.model_id AND coordinates.label_name = CONCAT(:groupCode, SUBSTRING(coord_header_info.name_group,3,1)))
+        INNER JOIN coordinates ON (coordinates.model_id = coord_header_info.model_id AND coordinates.label_name = CONCAT(:groupCode, ABS(SUBSTRING(coord_header_info.name_group,2,2))))
         WHERE coord_header_info.model_id = :modelCode
         AND SUBSTRING(coord_header_info.name_group,1,1) = :groupCode
+        group by nsubgroup
         ";
 
         $query = $this->conn->prepare($sql);
@@ -220,19 +220,16 @@ class LandRoverCatalogModel extends CatalogModel{
            foreach($aData as $item)
            {
 
-
-
-
                $subgroups[$item['nsubgroup']] = array(
 
-               Constants::NAME => $item['lex_name'],
+               Constants::NAME => strtoupper($item['lex_name']),
                    Constants::OPTIONS => array(
                        'picture' => $item['num_index'],
                        'pictureFolder' => $pictureFolder,
                        Constants::X1 => floor($item['x1']),
-                       Constants::X2 => floor($item['x2']),
+                       Constants::X2 => floor($item['x1']+30),
                        Constants::Y1 => floor($item['y1']),
-                       Constants::Y2 => floor($item['y2']),
+                       Constants::Y2 => floor($item['y1']+20),
                    )
 
                );
@@ -244,81 +241,29 @@ class LandRoverCatalogModel extends CatalogModel{
 
        public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
        {
-           $datas = array();
-           $datas = explode('_', $complectationCode);
 
-           $complectation = $this->getComplForSchemas($regionCode, ltrim($datas[0],'0'), $datas[1], $datas[2]);
-
-
-
-
-           $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
+           $pictureFolder = substr($modelCode, strpos($modelCode, '_')+1, strlen($modelCode));
+           $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
 
 
            $sql = "
-           SELECT *
-           FROM illnote
-           WHERE illnote.CATALOG= :regionCode
-           and  illnote.MDLDIR = :MDLDIR
-           and illnote.FIGURE LIKE :subGroupCode
+           SELECT coord_detail_info.code_detail,coordinates_names.num_index, lex.lex_name
+           FROM coord_detail_info
+           INNER JOIN coordinates_names ON (coordinates_names.num_model_group = coord_detail_info.num_model_group
+           AND coordinates_names.model_id = coord_detail_info.model_id AND coordinates_names.group_detail_sign = 2)
+           INNER JOIN lex ON (lex.index_lex = coord_detail_info.id_detail AND lex.lang = 'EN')
+           WHERE coord_detail_info.model_id = :modelCode
+           AND coord_detail_info.code_detail LIKE :subGroupCode
+
            ";
 
            $query = $this->conn->prepare($sql);
-           $query->bindValue('regionCode',  $regionCode);
-           $query->bindValue('MDLDIR',  $MDLDIR);
+           $query->bindValue('modelCode',  $modelCode);
            $query->bindValue('subGroupCode',  '%'.$subGroupCode.'%');
            $query->execute();
 
            $aData = $query->fetchAll();
-           $schemaOptions = array();
-           $plus = array();
 
-           if ($regionCode != 'JP') {
-
-               foreach ($aData as $index => $value) {
-                   $ct = 0;
-                   $schemaOptions = $this->multiexplode(array('+', ' +', '+ '), $value['REC3']);
-
-
-                   foreach ($schemaOptions as $item) {
-
-                       $item = trim($item, ('*()'));
-                       if (strpos($item, ".")) {
-                           $plus = explode('.', $item);
-
-
-                           if (count($plus) == count(array_intersect($plus, $complectation[0]))) {
-                               $ct = $ct + 1;
-                           }
-
-
-                       } else {
-
-                           foreach ($complectation[0] as $indexCo => $valueCo)
-                           {
-
-                               if (stripos($valueCo, $item) !== false) {
-                                   $ct = $ct + 1;
-                               }
-
-                           }
-
-
-
-                       }
-
-
-                   }
-
-
-
-
-                   if ($ct === 0) {
-                       unset ($aData[$index]);
-                   }
-
-               }
-           }
 
 
 
@@ -326,12 +271,12 @@ class LandRoverCatalogModel extends CatalogModel{
            foreach($aData as $item)
            {
 
-                       $schemas[strtoupper($item['PIMGSTR'])] = array(
-                       Constants::NAME => $item['REC2'].' '.$item['REC3'],
-                       Constants::OPTIONS => array('figure' => trim($item['FIGURE'], ('*()')),
-                           'FROMDATE' => $item['FROM_DATE'],
-                           'UPTODATE' => $item['UPTO_DATE'],
-                           'SECNO' => $item['SECNO'])
+                       $schemas[$item['num_index']] = array(
+                       Constants::NAME => $item['lex_name'],
+                       Constants::OPTIONS => array(
+                           'picture' => $item['num_index'],
+                           'pictureFolder' => $pictureFolder,
+                           )
                    );
            }
 
@@ -359,48 +304,42 @@ class LandRoverCatalogModel extends CatalogModel{
 
        public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
        {
-
-           $FIGURE_WITH_PREFIX = $options['figure'];
-           $SECNO = $options['SECNO'];
-
-           $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
+           $pictureFolder = substr($modelCode, strpos($modelCode, '_')+1, strlen($modelCode));
+           $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
 
 
-         /*  $sqlPnc = "
-           SELECT PARTNAME_E, patcode.PARTCODE
-            FROM patcode,  pcodenes
-            where patcode.CATALOG = :regionCode
-            and patcode.MDLDIR = :MDLDIR
-            and patcode.FIGURE LIKE :FIGURE_WITHOUT_PREFIX
-            and patcode.CATALOG = pcodenes.CATALOG
-            and patcode.MDLDIR = pcodenes.MDLDIR
-            and pcodenes.FIGURE = :FIGURE_WITH_PREFIX
-            and patcode.PARTCODE = pcodenes.PARTCODE
-            and pcodenes.SECNO = :SECNO
-            group by patcode.PARTCODE
+           $num_index = $options['picture'];
 
-           ";*/
+
+
            $sqlPnc = "
-           SELECT PARTNAME_E, patcode.PARTCODE
-            FROM patcode,  pcodenes
-            where patcode.CATALOG = :regionCode
-            and patcode.MDLDIR = :MDLDIR
-            and patcode.FIGURE LIKE :FIGURE_WITHOUT_PREFIX
-            and patcode.CATALOG = pcodenes.CATALOG
-            and patcode.MDLDIR = pcodenes.MDLDIR
-            and pcodenes.FIGURE LIKE :FIGURE_WITH_PREFIX
-            and patcode.PARTCODE = pcodenes.PARTCODE
-            and pcodenes.SECNO = :SECNO
+           SELECT coordinates.label_name, mcpart1.detail_code, lex.lex_name
+           FROM coordinates
+           INNER JOIN mcpart1 ON (mcpart1.pict_index = coordinates.num_index
+           AND coordinates.label_name = SUBSTRING_INDEX(mcpart1.param1, '.', 1))
 
+           INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
+           INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
+           WHERE coordinates.num_index = :num_index
+
+           UNION
+
+           SELECT coordinates.label_name, mcpart1.detail_code, lex.lex_name
+           FROM coordinates
+           INNER JOIN mcpart1 ON (mcpart1.pict_index = coordinates.num_index
+           AND coordinates.label_name = SUBSTRING_INDEX(mcpart1.param1, '-', 1))
+
+           INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
+           INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
+           WHERE coordinates.num_index = :num_index
+
+            ORDER BY (1);
            ";
 
 
            $query = $this->conn->prepare($sqlPnc);
-           $query->bindValue('regionCode',  $regionCode);
-           $query->bindValue('MDLDIR',  $MDLDIR);
-           $query->bindValue('FIGURE_WITH_PREFIX',  '%'.substr($FIGURE_WITH_PREFIX,0,strlen($FIGURE_WITH_PREFIX)).'%');
-           $query->bindValue('FIGURE_WITHOUT_PREFIX',  '%'.substr($FIGURE_WITH_PREFIX,0,3).'%');
-           $query->bindValue('SECNO',  $SECNO);
+
+           $query->bindValue('num_index',  $num_index);
 
            $query->execute();
 
@@ -408,44 +347,33 @@ class LandRoverCatalogModel extends CatalogModel{
 
 
 
-
            foreach ($aPncs as &$aPnc)
            {
 
                $sqlSchemaLabels = "
-           SELECT `pcodenes`.LABEL_X, `pcodenes`.LABEL_Y
-           FROM `pcodenes`
-           WHERE `CATALOG`= :regionCode
-            and `MDLDIR` = :MDLDIR and `FIGURE` LIKE :FIGURE_WITH_PREFIX
-            and `pcodenes`.`PARTCODE` = :pnc
-            and `pcodenes`.`SECNO` LIKE :SECNO
+           SELECT x1, x2, y1, y2
+           FROM coordinates
+            WHERE coordinates.num_index = :num_index
+            AND coordinates.model_id = :modelCode
+            AND coordinates.label_name = ABS(:pnc)
+
            ";
 
                $query = $this->conn->prepare($sqlSchemaLabels);
-               $query->bindValue('regionCode',  $regionCode);
-               $query->bindValue('MDLDIR',  $MDLDIR);
-               $query->bindValue('FIGURE_WITH_PREFIX',  '%'.substr($FIGURE_WITH_PREFIX,0,strlen($FIGURE_WITH_PREFIX)).'%');
-               $query->bindValue('SECNO',  $SECNO);
-               $query->bindValue('pnc',  $aPnc['PARTCODE']);
+               $query->bindValue('modelCode',  $modelCode);
+               $query->bindValue('num_index',  $num_index);
+               $query->bindValue('pnc',  $aPnc['label_name']);
 
 
                $query->execute();
 
                $aPnc['clangjap'] = $query->fetchAll();
-               unset($aPnc);
+
+
+               unset ($aPnc);
 
            }
-           $kp = 1;
 
-           if ($regionCode != 'JP')
-           {
-               $kp = 2;
-           }
-
-           else
-           {
-               $kp = 2.5;
-           }
 
            $pncs = array();
            $str = array();
@@ -458,11 +386,11 @@ class LandRoverCatalogModel extends CatalogModel{
 
                    foreach ($value['clangjap'] as $item1)
                    {
-                       $pncs[$value['PARTCODE']][Constants::OPTIONS][Constants::COORDS][$item1['LABEL_X']] = array(
-                           Constants::X2 => floor((($item1['LABEL_X']))/$kp),
-                           Constants::Y2 => ($item1['LABEL_Y']-5)/$kp,
-                           Constants::X1 => floor($item1['LABEL_X']/$kp)+80,
-                           Constants::Y1 => $item1['LABEL_Y']/$kp + 15);
+                       $pncs[$value['label_name']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
+                           Constants::X2 => floor((($item1['x2']))),
+                           Constants::Y2 => ($item1['y2']),
+                           Constants::X1 => floor($item1['x1']),
+                           Constants::Y1 => $item1['y1']);
 
                    }
 
@@ -476,7 +404,7 @@ class LandRoverCatalogModel extends CatalogModel{
 
 
 
-               $pncs[$item['PARTCODE']][Constants::NAME] = $item['PARTNAME_E'];
+               $pncs[$item['label_name']][Constants::NAME] = strtoupper($item['lex_name']);
 
 
 
@@ -486,164 +414,10 @@ class LandRoverCatalogModel extends CatalogModel{
             return $pncs;
        }
 
-       public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
-       {
-
-           $FIGURE_WITH_PREFIX = $options['figure'];
-           $SECNO = $options['SECNO'];
-
-           $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
-
-
-           $sqlPnc = "
-           SELECT `patcode`.`PARTCODE`  FROM `patcode`,  `pcodenes` where `patcode`.`CATALOG`= :regionCode
-            and `patcode`.`MDLDIR` = :MDLDIR and `patcode`.`FIGURE` like :FIGURE_WITHOUT_PREFIX
-            and `patcode`.`CATALOG` = `pcodenes`.`CATALOG` and `patcode`.`MDLDIR` = `pcodenes`.`MDLDIR`
-            and `pcodenes`.`FIGURE` = :FIGURE_WITH_PREFIX and `patcode`.`PARTCODE` = `pcodenes`.`PARTCODE`
-            and `pcodenes`.`SECNO` LIKE :SECNO group by `patcode`.`PARTCODE`
-
-           ";
-
-           $query = $this->conn->prepare($sqlPnc);
-           $query->bindValue('regionCode',  $regionCode);
-           $query->bindValue('MDLDIR',  $MDLDIR);
-           $query->bindValue('FIGURE_WITH_PREFIX',  $FIGURE_WITH_PREFIX);
-           $query->bindValue('FIGURE_WITHOUT_PREFIX',  '%'.substr($FIGURE_WITH_PREFIX,0,3).'%');
-
-           $query->bindValue('SECNO',  $SECNO);
-
-           $query->execute();
-
-           $aPncs = $query->fetchAll();
-           $aPncsCompare = array();
-
-           foreach ($aPncs as $item)
-           {
-               $aPncsCompare[] = $item['PARTCODE'];
-           }
-
-
-           $sqlPnc2= "
-          SELECT `pcodenes`.`PARTCODE` FROM `pcodenes`
-          left outer join `patcode` on
-          (`patcode`.`PARTCODE` = `pcodenes`.`PARTCODE` and `patcode`.`CATALOG` = `pcodenes`.`CATALOG` and `patcode`.`MDLDIR` = `pcodenes`.`MDLDIR` and `patcode`.`FIGURE` like :FIGURE_WITHOUT_PREFIX)
-          where `pcodenes`.`CATALOG`= :regionCode and `pcodenes`.`MDLDIR` = :MDLDIR  and `pcodenes`.`FIGURE` = :FIGURE_WITH_PREFIX and `pcodenes`.`SECNO` LIKE :SECNO group by `pcodenes`.`PARTCODE`
-
-           ";
-
-           $query = $this->conn->prepare($sqlPnc2);
-           $query->bindValue('regionCode',  $regionCode);
-           $query->bindValue('MDLDIR',  $MDLDIR);
-           $query->bindValue('FIGURE_WITH_PREFIX',  $FIGURE_WITH_PREFIX);
-           $query->bindValue('FIGURE_WITHOUT_PREFIX',  '%'.substr($FIGURE_WITH_PREFIX,0,3).'%');
-
-           $query->bindValue('SECNO',  $SECNO);
-
-           $query->execute();
-
-           $aPncs2 = $query->fetchAll();
-           $aPncs2Compare = array();
-
-           foreach ($aPncs2 as $item)
-           {
-               $aPncs2Compare[] = $item['PARTCODE'];
-           }
-
-
-           $arrayArticuls = array();
-           $arrayArticuls1 = array();
-           $arrayArticuls = array_diff($aPncs2Compare, $aPncsCompare);
-
-
-
-
-           foreach ($arrayArticuls as &$aPnc)
-           {
-
-
-
-               $sqlSchemaLabels = "
-           SELECT `pcodenes`.LABEL_X, `pcodenes`.LABEL_Y
-           FROM `pcodenes`
-           WHERE `CATALOG`= :regionCode
-            and `MDLDIR` = :MDLDIR and `FIGURE` = :FIGURE_WITH_PREFIX
-            and `pcodenes`.`PARTCODE` = :pnc
-            and `pcodenes`.`SECNO` LIKE :SECNO
-           ";
-
-               $query = $this->conn->prepare($sqlSchemaLabels);
-               $query->bindValue('regionCode',  $regionCode);
-               $query->bindValue('MDLDIR',  $MDLDIR);
-               $query->bindValue('FIGURE_WITH_PREFIX',  $FIGURE_WITH_PREFIX);
-               $query->bindValue('SECNO',  $SECNO);
-               $query->bindValue('pnc',  $aPnc);
-
-
-               $query->execute();
-
-               $arrayArticuls1[$aPnc]['clangjap'] = $query->fetchAll();
-
-
-           }
-
-           $kp = 1;
-
-           if ($regionCode != 'JP')
-           {
-               $kp = 2;
-           }
-
-           else
-           {
-               $kp = 2.5;
-           }
-
+    public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
+    {
 
            $pncs = array();
-           $str = array();
-
-           foreach ($arrayArticuls1 as $index=>$value) {
-
-
-               if (!$value['clangjap'] || strlen($index) == 3) {
-                   unset ($arrayArticuls1[$index]);
-               }
-           }
-
-           foreach ($arrayArticuls1 as $index=>$value) {
-
-
-                   if (!$value['clangjap'])
-                   {
-                       unset ($arrayArticuls1[$index]);
-                   }
-
-                   foreach ($value['clangjap'] as $item1)
-                   {
-                       $pncs[$index][Constants::OPTIONS][Constants::COORDS][$item1['LABEL_X']] = array(
-                           Constants::X2 => floor(($item1['LABEL_X'])/$kp),
-                           Constants::Y2 => ($item1['LABEL_Y']-5)/$kp,
-                           Constants::X1 => floor($item1['LABEL_X']/$kp)+120,
-                           Constants::Y1 => $item1['LABEL_Y']/$kp + 15);
-
-                   }
-
-
-
-
-           }
-
-
-
-           foreach ($arrayArticuls1 as $index=>$value) {
-
-
-
-               $pncs[$index][Constants::NAME] = $index;
-
-
-
-           }
 
            return $pncs;
 
@@ -652,157 +426,7 @@ class LandRoverCatalogModel extends CatalogModel{
     public function getReferGroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
     {
 
-        $FIGURE_WITH_PREFIX = $options['figure'];
-        $SECNO = $options['SECNO'];
-
-        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
-
-
-        $sqlPnc = "
-           SELECT `patcode`.`PARTCODE`  FROM `patcode`,  `pcodenes` where `patcode`.`CATALOG`= :regionCode
-            and `patcode`.`MDLDIR` = :MDLDIR and `patcode`.`FIGURE` like :FIGURE_WITHOUT_PREFIX
-            and `patcode`.`CATALOG` = `pcodenes`.`CATALOG` and `patcode`.`MDLDIR` = `pcodenes`.`MDLDIR`
-            and `pcodenes`.`FIGURE` = :FIGURE_WITH_PREFIX and `patcode`.`PARTCODE` = `pcodenes`.`PARTCODE`
-            and `pcodenes`.`SECNO` LIKE :SECNO group by `patcode`.`PARTCODE`
-
-           ";
-
-        $query = $this->conn->prepare($sqlPnc);
-        $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('MDLDIR',  $MDLDIR);
-        $query->bindValue('FIGURE_WITH_PREFIX',  $FIGURE_WITH_PREFIX);
-        $query->bindValue('FIGURE_WITHOUT_PREFIX',  '%'.substr($FIGURE_WITH_PREFIX,0,3).'%');
-
-        $query->bindValue('SECNO',  $SECNO);
-
-        $query->execute();
-
-        $aPncs = $query->fetchAll();
-        $aPncsCompare = array();
-
-        foreach ($aPncs as $item)
-        {
-            $aPncsCompare[] = $item['PARTCODE'];
-        }
-
-
-        $sqlPnc2= "
-          SELECT `pcodenes`.`PARTCODE` FROM `pcodenes`
-          left outer join `patcode` on
-          (`patcode`.`PARTCODE` = `pcodenes`.`PARTCODE` and `patcode`.`CATALOG` = `pcodenes`.`CATALOG` and `patcode`.`MDLDIR` = `pcodenes`.`MDLDIR` and `patcode`.`FIGURE` like :FIGURE_WITHOUT_PREFIX)
-          where `pcodenes`.`CATALOG`= :regionCode and `pcodenes`.`MDLDIR` = :MDLDIR  and `pcodenes`.`FIGURE` = :FIGURE_WITH_PREFIX and `pcodenes`.`SECNO` LIKE :SECNO group by `pcodenes`.`PARTCODE`
-
-           ";
-
-        $query = $this->conn->prepare($sqlPnc2);
-        $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('MDLDIR',  $MDLDIR);
-        $query->bindValue('FIGURE_WITH_PREFIX',  $FIGURE_WITH_PREFIX);
-        $query->bindValue('FIGURE_WITHOUT_PREFIX',  '%'.substr($FIGURE_WITH_PREFIX,0,3).'%');
-
-        $query->bindValue('SECNO',  $SECNO);
-
-        $query->execute();
-
-        $aPncs2 = $query->fetchAll();
-        $aPncs2Compare = array();
-
-        foreach ($aPncs2 as $item)
-        {
-            $aPncs2Compare[] = $item['PARTCODE'];
-        }
-
-
-        $arrayArticuls = array();
-        $arrayArticuls1 = array();
-        $arrayArticuls = array_diff($aPncs2Compare, $aPncsCompare);
-
-
-
-
-        foreach ($arrayArticuls as &$aPnc)
-        {
-
-
-
-            $sqlSchemaLabels = "
-           SELECT `pcodenes`.LABEL_X, `pcodenes`.LABEL_Y
-           FROM `pcodenes`
-           WHERE `CATALOG`= :regionCode
-            and `MDLDIR` = :MDLDIR and `FIGURE` = :FIGURE_WITH_PREFIX
-            and `pcodenes`.`PARTCODE` = :pnc
-            and `pcodenes`.`SECNO` LIKE :SECNO
-           ";
-
-            $query = $this->conn->prepare($sqlSchemaLabels);
-            $query->bindValue('regionCode',  $regionCode);
-            $query->bindValue('MDLDIR',  $MDLDIR);
-            $query->bindValue('FIGURE_WITH_PREFIX',  $FIGURE_WITH_PREFIX);
-            $query->bindValue('SECNO',  $SECNO);
-            $query->bindValue('pnc',  $aPnc);
-
-
-            $query->execute();
-
-            $arrayArticuls1[$aPnc]['clangjap'] = $query->fetchAll();
-
-
-        }
-
-        $kp = 1;
-
-        if ($regionCode != 'JP')
-        {
-            $kp = 2;
-        }
-
-        else
-        {
-            $kp = 2.5;
-        }
-
-
-
-
         $pncs = array();
-        $str = array();
-        foreach ($arrayArticuls1 as $index=>$value) {
-
-
-            if (!$value['clangjap'] || strlen($index) > 3) {
-                unset ($arrayArticuls1[$index]);
-            }
-        }
-
-        foreach ($arrayArticuls1 as $index=>$value) {
-
-            foreach ($value['clangjap'] as $item1)
-            {
-                $pncs[$index][Constants::OPTIONS][Constants::COORDS][$item1['LABEL_X']] = array(
-                    Constants::X2 => floor(($item1['LABEL_X'])/$kp),
-                    Constants::Y2 => ($item1['LABEL_Y']-5)/$kp,
-                    Constants::X1 => floor($item1['LABEL_X']/$kp)+40,
-                    Constants::Y1 => $item1['LABEL_Y']/$kp + 15);
-
-            }
-
-
-
-
-        }
-
-
-
-        foreach ($arrayArticuls1 as $index=>$value) {
-
-
-
-
-            $pncs[$index][Constants::NAME] = $index;
-
-
-
-        }
 
 
         return $pncs;
@@ -813,28 +437,35 @@ class LandRoverCatalogModel extends CatalogModel{
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, $options)
     {
 
-        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
-        $FIGURE_PREFIX = substr($options['figure'],-1);
+        $pictureFolder = substr($modelCode, strpos($modelCode, '_')+1, strlen($modelCode));
+        $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
 
+        $num_index = $options['picture'];
 
-        $datas = array();
-        $datas = explode('_', $complectationCode);
-
-        $complectation = $this->getComplForSchemas($regionCode, ltrim($datas[0],'0'), $datas[1], $datas[2]);
 
 
         $sqlPnc = "
-         SELECT OEMCODE, FROM_DATE, UPTO_DATE, PER_COUNT, REC3, REP_OEM, REC1, abbrev.DESCRSTR
-          FROM catalog
-          LEFT JOIN abbrev ON (abbrev.CATALOG = catalog.CATALOG and abbrev.MDLDIR = catalog.MDLDIR AND (abbrev.ABBRSTR = CONCAT('C', catalog.REC1) OR abbrev.ABBRSTR = catalog.REC1))
-          WHERE catalog.CATALOG = :regionCode
-          AND catalog.MDLDIR = :MDLDIR
-          AND catalog.PARTCODE = :pncCode
+
+           SELECT mcpart1.detail_code, lex.lex_name
+           FROM mcpart1
+           INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
+           INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
+           WHERE mcpart1.pict_index = :num_index AND SUBSTRING_INDEX(mcpart1.param1, '.', 1) = :pncCode
+
+           UNION
+
+           SELECT mcpart1.detail_code, lex.lex_name
+           FROM mcpart1
+           INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
+           INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
+           WHERE mcpart1.pict_index = :num_index AND SUBSTRING_INDEX(mcpart1.param1, '-', 1) = :pncCode
+
+          GROUP BY 1
          ";
 
-         $query = $this->conn->prepare($sqlPnc);
-         $query->bindValue('regionCode',  $regionCode);
-         $query->bindValue('MDLDIR',  $MDLDIR);
+
+        $query = $this->conn->prepare($sqlPnc);
+         $query->bindValue('num_index',  $num_index);
          $query->bindValue('pncCode',  $pncCode);
 
 
@@ -846,65 +477,15 @@ class LandRoverCatalogModel extends CatalogModel{
 
 
 
-        $plus = array();
-
-
-       if ($regionCode != 'JP') {
-
-
-           foreach ($aArticuls as $index => $value) {
-               $ct = 0;
-               $schemaOptions = $this->multiexplode(array('+', ' +', '+ '), $value['REC3']);
-
-
-               foreach ($schemaOptions as $item) {
-
-                   $item = trim($item, ('*()'));
-                   if (strpos($item, ".")) {
-                       $plus = explode('.', $item);
-
-
-                       if (count($plus) == count(array_intersect($plus, $complectation[0]))) {
-                           $ct = $ct + 1;
-                       }
-
-
-                   } else {
-
-                       if (in_array($item, $complectation[0])) {
-                           $ct = $ct + 1;
-                       }
-
-                   }
-
-
-               }
-
-
-               if ($ct === 0) {
-                   unset ($aArticuls[$index]);
-               }
-
-           }
-       }
-
-
 $articuls = array();
 
         foreach ($aArticuls as $item) {
         	 
             
             
-				$articuls[$item['OEMCODE']] = array(
-                Constants::NAME => $item['OEMCODE'],
+				$articuls[$item['detail_code']] = array(
+                Constants::NAME => $item['lex_name'],
                 Constants::OPTIONS => array(
-                    Constants::QUANTITY => $item['PER_COUNT'],
-                    Constants::START_DATE => $item['FROM_DATE'],
-                    Constants::END_DATE => $item['UPTO_DATE'],
-                    'DESCR' => $item['REC3'],
-                    'REPLACE' => $item['REP_OEM'],
-                    'COLOR' => ($item['REC1'])?'('.$item['REC1'].') '.$item['DESCRSTR']:'',
-                    'ColorCode' => $item['REC1']
 
 
                 )

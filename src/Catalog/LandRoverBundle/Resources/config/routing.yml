@@ -21,11 +21,11 @@ catalog_landrover_subgroups:
 
 catalog_landrover_schemas:
   path:         /landrover/catalog/5/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Catalog:schemas}
+  defaults:     {_controller: CatalogLandRoverBundle:Catalog:schemas, modificationCode: '1'}
 
 catalog_landrover_schema:
   path:         /landrover/catalog/6/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Catalog:schema}
+  defaults:     {_controller: CatalogLandRoverBundle:Catalog:schema, modificationCode: '1'}
 
 catalog_landrover_articuls:
   path:         /landrover/catalog/7

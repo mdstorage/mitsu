@@ -17,63 +17,25 @@ class LandRoverVinModel extends LandRoverCatalogModel {
     public function getVinFinderResult($vin)
     {
 
-
-        $sqlMinSerial = "
-        SELECT MIN(ABS(vindat.SERIAL - SUBSTRING(:vin,12,6))) as minimum
-        from vindat
-        where vindat.vin = SUBSTRING(:vin,1,11)
-        AND vindat.SERIAL = SUBSTRING(:vin,12,6)
-        ";
-
-        $query = $this->conn->prepare($sqlMinSerial);
-        $query->bindValue('vin', $vin);
-        $query->execute();
-
-        $sMinimumSerial = $query->fetchColumn(0);
-
-
-        $sqlMin = "
-        SELECT MIN(ABS(vindat.MDLPOS - mdlcode.POSDATA)) as minimum
-        from vindat, mdlcode
-        where vindat.vin = SUBSTRING(:vin,1,11)
-        AND vindat.SERIAL = SUBSTRING(:vin,12,6)
-        AND ABS(vindat.SERIAL - SUBSTRING(:vin,12,6)) = :MinimumSerial
-        AND vindat.CDNAME = mdlcode.CDNAME
-        AND vindat.CATALOG = mdlcode.CATALOG
-
-        ";
-
-        $query = $this->conn->prepare($sqlMin);
-        $query->bindValue('vin', $vin);
-        $query->bindValue('MinimumSerial', $sMinimumSerial);
-        $query->execute();
-
-        $sMinimum = $query->fetchColumn(0);
-
         $sql = "
-        SELECT vindat.CATALOG, vindat.PRODYM, vindat.COLOR1, vindat.COLOR2, mdlcode.MODSERIES, mdlcode.POSNUM, destcnt.ShashuCD as MDLDIR, posname.DATA1, cdindex.SHASHUKO, COLOR1.DESCRSTR AS COL1,
-        COLOR2.DESCRSTR AS COL2
-        from vindat
-        LEFT JOIN mdlcode ON (vindat.CDNAME = mdlcode.CDNAME AND ABS(vindat.MDLPOS - mdlcode.POSDATA) = :minimum AND vindat.CATALOG = mdlcode.CATALOG)
-        LEFT JOIN destcnt ON (destcnt.CATALOG = vindat.CATALOG AND destcnt.SHASHU = mdlcode.MODSERIES)
-        LEFT JOIN posname ON (posname.CATALOG = destcnt.CATALOG  AND posname.MDLDIR = destcnt.ShashuCD AND posname.NNO = mdlcode.POSNUM)
-        LEFT JOIN cdindex ON (cdindex.CATALOG = vindat.CATALOG and cdindex.SHASHU = mdlcode.MODSERIES)
-        LEFT join abbrev COLOR1 ON (COLOR1.CATALOG = vindat.CATALOG and COLOR1.MDLDIR = destcnt.ShashuCD and COLOR1.ABBRSTR = CONCAT('C', vindat.COLOR1))
-        LEFT join abbrev COLOR2 ON (COLOR2.CATALOG = vindat.CATALOG and COLOR2.MDLDIR = destcnt.ShashuCD and COLOR2.ABBRSTR = CONCAT('C#', vindat.COLOR2))
-
-
-        where vindat.vin = SUBSTRING(:vin,1,11)
-        AND vindat.SERIAL = SUBSTRING(:vin,12,6)
+        SELECT *
+        FROM vin
+        INNER JOIN vin_group ON (vin_group.vin_desc_offset = vin.vin_desc_offset)
+        INNER JOIN vin_description ON (vin_description.vin_desc_offset = vin.vin_desc_offset)
+        INNER JOIN eng ON (:vin LIKE CONCAT(eng.vin_part, '%'))
+        INNER JOIN lex ON (lex.lex_code = eng.eng_part)
+        where vin.vin = :vin
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('vin', $vin);
-        $query->bindValue('minimum', $sMinimum);
 
         $query->execute();
 
         $aData = $query->fetchAll();
-        $OnlyCompl = array();
+
+        var_dump($aData); die;
+
 
 
 
