@@ -318,7 +318,7 @@ class LandRoverCatalogModel extends CatalogModel{
            AND coordinates.label_name = SUBSTRING_INDEX(mcpart1.param1, '.', 1))
 
            INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
-           INNER JOIN lex ON (lex.index_lex = 0 AND lex.lang = 'EN')
+           INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
            WHERE coordinates.num_index = :num_index
 
            UNION
@@ -329,7 +329,7 @@ class LandRoverCatalogModel extends CatalogModel{
            AND coordinates.label_name = SUBSTRING_INDEX(mcpart1.param1, '-', 1))
 
            INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
-           INNER JOIN lex ON (lex.index_lex = 0 AND lex.lang = 'EN')
+           INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
            WHERE coordinates.num_index = :num_index
 
             ORDER BY (1);
@@ -343,7 +343,7 @@ class LandRoverCatalogModel extends CatalogModel{
            $query->execute();
 
            $aPncs = $query->fetchAll();
-
+           
 
 
 
