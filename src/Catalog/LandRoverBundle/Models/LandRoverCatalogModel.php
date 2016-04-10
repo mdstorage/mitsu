@@ -114,17 +114,28 @@ class LandRoverCatalogModel extends CatalogModel{
             $sql = "
         SELECT SUBSTRING(name_group,1,1) as ngroup, lex_name, coordinates.num_index
         FROM coord_header_info
-        INNER JOIN coordinates ON (coordinates.model_id = coord_header_info.model_id AND SUBSTRING(coordinates.label_name,1,1) = SUBSTRING(coord_header_info.name_group,1,1))
-        INNER JOIN lex ON (lex.index_lex = coord_header_info.id_main AND lex.lang = 'EN' AND LENGTH(coordinates.label_name) > 1)
+        INNER JOIN coordinates ON (coordinates.model_id = coord_header_info.model_id AND SUBSTRING(coordinates.label_name,1,1) = SUBSTRING(coord_header_info.name_group,1,1)
+          AND LENGTH(coordinates.label_name) > 1)
+        INNER JOIN lex ON (lex.index_lex = coord_header_info.id_main AND lex.lang = 'EN')
         WHERE coord_header_info.model_id = :modelCode
         group by ngroup
         ";
+
+       /* $sql = "
+        SELECT SUBSTRING(name_group,1,1) as ngroup
+        FROM coord_header_info
+        WHERE coord_header_info.model_id = :modelCode
+        group by ngroup
+        ";*/
 
             $query = $this->conn->prepare($sql);
             $query->bindValue('modelCode',  $modelCode);
 
             $query->execute();
             $aData = $query->fetchAll();
+
+
+        var_dump($aData); die;
 
 
         $groups = array();
