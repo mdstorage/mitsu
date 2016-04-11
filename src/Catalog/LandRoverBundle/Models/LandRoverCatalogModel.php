@@ -112,22 +112,38 @@ class LandRoverCatalogModel extends CatalogModel{
 
 
             $sql = "
-        SELECT SUBSTRING(name_group,1,1) as ngroup, lex_name, coordinates.num_index
+        SELECT (SUBSTRING(RIGHT(name_group,3),1,1)) as ngroup, lex_name, coordinates_names.index1 as num_index
         FROM coord_header_info
-        INNER JOIN coordinates ON (coordinates.model_id = coord_header_info.model_id AND SUBSTRING(coordinates.label_name,1,1) = SUBSTRING(coord_header_info.name_group,1,1)
-          AND LENGTH(coordinates.label_name) > 1)
+
+        INNER JOIN coordinates_names ON (coordinates_names.model_id = coord_header_info.model_id AND coordinates_names.group_detail_sign = 1
+        AND coordinates_names.num_model_group = ASCII(SUBSTRING(RIGHT(name_group,3),1,1))-64)
+
         INNER JOIN lex ON (lex.index_lex = coord_header_info.id_main AND lex.lang = 'EN')
         WHERE coord_header_info.model_id = :modelCode
-        group by ngroup
+
+
+        UNION
+
+        SELECT (SUBSTRING(RIGHT(name_group,3),1,1)) as ngroup, lex_name, coordinates_names.num_index as num_index
+        FROM coord_header_info
+
+        INNER JOIN coordinates_names ON (coordinates_names.model_id = coord_header_info.model_id AND coordinates_names.group_detail_sign = 1
+        AND coordinates_names.num_model_group = (SUBSTRING(RIGHT(name_group,3),1,1)))
+
+        INNER JOIN lex ON (lex.index_lex = coord_header_info.id_main AND lex.lang = 'EN')
+        WHERE coord_header_info.model_id = :modelCode
+
+        order by (1)
+
         ";
 
-       /* $sql = "
+  /*     $sql = "
         SELECT SUBSTRING(name_group,1,1) as ngroup
         FROM coord_header_info
         WHERE coord_header_info.model_id = :modelCode
         group by ngroup
-        ";*/
-
+        ";
+*/
             $query = $this->conn->prepare($sql);
             $query->bindValue('modelCode',  $modelCode);
 
@@ -135,7 +151,8 @@ class LandRoverCatalogModel extends CatalogModel{
             $aData = $query->fetchAll();
 
 
-        var_dump($aData); die;
+
+
 
 
         $groups = array();
@@ -143,7 +160,7 @@ class LandRoverCatalogModel extends CatalogModel{
 
         foreach($aData as $item){
 
-            $groups[$item['ngroup']] = array(
+            $groups[$item['ngroup'].'_'.$item['num_index']] = array(
                 Constants::NAME     => strtoupper($item ['lex_name']),
                 Constants::OPTIONS => array(
                     'picture' => $item['num_index'],
@@ -204,21 +221,52 @@ class LandRoverCatalogModel extends CatalogModel{
         $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
 
 
+        $groupCode = substr($groupCode, 0, strpos($groupCode, '_'));
 
-        $sql = "
+        $num_index = substr($groupCode, strpos($groupCode, '_')+1, strlen($groupCode));
+
+if (strlen($pictureFolder) == 2) {
+
+
+    $sql = "
         SELECT coord_header_info.name_group as nsubgroup, lex_name, coordinates.num_index, coordinates.x1, coordinates.x2, coordinates.y1, coordinates.y2
         FROM coord_header_info
         INNER JOIN lex ON (lex.index_lex = coord_header_info.id_sector AND lex.lang = 'EN')
         INNER JOIN coordinates ON (coordinates.model_id = coord_header_info.model_id AND coordinates.label_name = CONCAT(:groupCode, ABS(SUBSTRING(coord_header_info.name_group,2,2))))
         WHERE coord_header_info.model_id = :modelCode
+        AND coord_header_info.pnc_code = ''
         AND SUBSTRING(coord_header_info.name_group,1,1) = :groupCode
-        group by nsubgroup
+
+        group by (1)
         ";
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('modelCode',  $modelCode);
-        $query->bindValue('groupCode',  $groupCode);
+    $query = $this->conn->prepare($sql);
+    $query->bindValue('modelCode', $modelCode);
+    $query->bindValue('groupCode', $groupCode);
+    $query->execute();
+    $aData = $query->fetchAll();
 
+}
+
+        else {
+
+            $sql = "
+
+        SELECT (RIGHT(coord_header_info.name_group,3)) as nsubgroup, lex_name, coordinates.num_index, coordinates.x1, coordinates.x2, coordinates.y1, coordinates.y2
+        FROM coord_header_info
+        left JOIN lex ON (lex.index_lex = coord_header_info.id_sector AND lex.lang = 'EN')
+        left JOIN coordinates ON (coordinates.model_id = coord_header_info.model_id AND coordinates.label_name LIKE CONCAT('%',coord_header_info.pnc_code,'%'))
+        WHERE coord_header_info.model_id = :modelCode
+    AND SUBSTRING(RIGHT(coord_header_info.name_group,3),1,1) = :groupCode
+
+    group by (1)
+        ";
+        }
+
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('modelCode', $modelCode);
+        $query->bindValue('groupCode', $groupCode);
 
         $query->execute();
         $aData = $query->fetchAll();
@@ -258,10 +306,12 @@ class LandRoverCatalogModel extends CatalogModel{
 
 
            $sql = "
-           SELECT coord_detail_info.code_detail,coordinates_names.num_index, lex.lex_name
+           SELECT coord_detail_info.code_detail, coordinates_names.num_index, lex.lex_name
            FROM coord_detail_info
+
            INNER JOIN coordinates_names ON (coordinates_names.num_model_group = coord_detail_info.num_model_group
            AND coordinates_names.model_id = coord_detail_info.model_id AND coordinates_names.group_detail_sign = 2)
+
            INNER JOIN lex ON (lex.index_lex = coord_detail_info.id_detail AND lex.lang = 'EN')
            WHERE coord_detail_info.model_id = :modelCode
            AND coord_detail_info.code_detail LIKE :subGroupCode
