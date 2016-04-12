@@ -305,16 +305,51 @@ if (strlen($pictureFolder) == 2) {
            $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
 
 
-           $sql = "
-           SELECT coord_detail_info.code_detail, coordinates_names.num_index, lex.lex_name
+         /*  $sql = "
+         SELECT coord_detail_info.code_detail, coordinates_names.num_index, lex1.lex_name as lex11, lex2.lex_name as lex22
            FROM coord_detail_info
 
            INNER JOIN coordinates_names ON (coordinates_names.num_model_group = coord_detail_info.num_model_group
            AND coordinates_names.model_id = coord_detail_info.model_id AND coordinates_names.group_detail_sign = 2)
 
-           INNER JOIN lex ON (lex.index_lex = coord_detail_info.id_detail AND lex.lang = 'EN')
+           INNER JOIN lex lex1 ON (lex1.index_lex = SUBSTRING(coord_detail_info.id_detail, 1, INSTR(coord_detail_info.id_detail, ' ')-1) AND lex1.lang = 'EN')
+           INNER JOIN lex lex2 ON (lex2.lex_code = RIGHT(TRIM(coord_detail_info.code_filter),5) AND lex2.lang = 'EN')
+
+
            WHERE coord_detail_info.model_id = :modelCode
            AND coord_detail_info.code_detail LIKE :subGroupCode
+
+           ";*/
+
+
+           $sql = "
+           SELECT coord_detail_info.code_detail, coordinates_names.num_index, lex1.lex_name as lex11, lex2.lex_name as lex22
+           FROM coord_detail_info
+
+           INNER JOIN coordinates_names ON (coordinates_names.num_model_group = coord_detail_info.num_model_group
+           AND coordinates_names.model_id = coord_detail_info.model_id AND coordinates_names.group_detail_sign = 2)
+
+           INNER JOIN lex lex1 ON (lex1.index_lex = SUBSTRING(coord_detail_info.id_detail, 1, INSTR(coord_detail_info.id_detail, ' ')-1) AND lex1.lang = 'EN')
+           INNER JOIN lex lex2 ON (lex2.lex_code = RIGHT(TRIM(coord_detail_info.code_filter),5) AND lex2.lang = 'EN')
+
+
+           WHERE coord_detail_info.model_id = :modelCode
+           AND coord_detail_info.code_detail LIKE :subGroupCode
+
+           UNION
+
+          SELECT coord_detail_info.code_detail, coordinates_names.num_index, lex1.lex_name as lex11, lex2.lex_name as lex22
+           FROM coord_detail_info
+
+           INNER JOIN coordinates_names ON (coordinates_names.num_model_group = coord_detail_info.num_model_group
+           AND coordinates_names.model_id = coord_detail_info.model_id AND coordinates_names.group_detail_sign = 2)
+
+           INNER JOIN lex lex1 ON (lex1.index_lex = coord_detail_info.id_detail AND lex1.lang = 'EN')
+           INNER JOIN lex lex2 ON (lex2.lex_code = RIGHT(TRIM(coord_detail_info.code_filter),6) AND lex2.lang = 'EN')
+
+           WHERE coord_detail_info.model_id = :modelCode
+           AND coord_detail_info.code_detail LIKE :subGroupCode
+
 
            ";
 
@@ -333,10 +368,11 @@ if (strlen($pictureFolder) == 2) {
            {
 
                        $schemas[$item['num_index']] = array(
-                       Constants::NAME => $item['lex_name'],
+                       Constants::NAME => $item['lex11'],
                        Constants::OPTIONS => array(
                            'picture' => $item['num_index'],
                            'pictureFolder' => $pictureFolder,
+                           'descr' => iconv('cp1251', 'utf8', $item['lex22'])
                            )
                    );
            }
@@ -371,7 +407,9 @@ if (strlen($pictureFolder) == 2) {
 
            $num_index = $options['picture'];
 
-           $sqlPnc = "
+           if (strlen($pictureFolder) == 2) {
+
+               $sqlPnc = "
 
            SELECT coordinates.label_name, mcpart1.detail_code, lex.lex_name
            FROM coordinates
@@ -393,8 +431,26 @@ if (strlen($pictureFolder) == 2) {
            INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
            WHERE coordinates.num_index = :num_index
 
-            ORDER BY (1);
+
+           ORDER BY (1);
            ";
+           }
+
+           else {
+
+               $sqlPnc = "
+
+           SELECT coordinates.label_name, lex.lex_name
+           FROM coordinates
+           INNER JOIN mcpart3 ON (mcpart3.pict_index = coordinates.num_index
+           AND coordinates.label_name = mcpart3.detail_code)
+           INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart3.param1_offset)
+
+           INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
+           WHERE coordinates.num_index = :num_index
+           ";
+           }
+
 
 
            $query = $this->conn->prepare($sqlPnc);
@@ -407,7 +463,6 @@ if (strlen($pictureFolder) == 2) {
            
 
 
-
            foreach ($aPncs as &$aPnc)
            {
 
@@ -416,7 +471,7 @@ if (strlen($pictureFolder) == 2) {
            FROM coordinates
             WHERE coordinates.num_index = :num_index
             AND coordinates.model_id = :modelCode
-            AND coordinates.label_name = ABS(:pnc)
+            AND coordinates.label_name = :pnc
 
            ";
 
