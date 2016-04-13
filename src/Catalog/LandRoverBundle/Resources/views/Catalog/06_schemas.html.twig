@@ -28,9 +28,26 @@
                         {{ schema.getRuname|upper }}
                     </div>
 
+        {% if schema.getOption('add') != schema.getOption('descr') %}
+
             <div class="row">
                 {{ schema.getOption('descr')|upper }}
             </div>
+
+        {% if schema.getOption('add') is not empty %}
+
+            <div class="row">
+            {{ schema.getOption('add') }}
+            </div>
+
+        {% endif %}
+            {% else %}
+                <div class="row">
+                    {{ schema.getOption('descr')|upper }}
+                </div>
+
+
+        {% endif %}
 
 
 

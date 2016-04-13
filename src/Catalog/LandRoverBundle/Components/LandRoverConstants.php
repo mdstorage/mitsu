@@ -8,8 +8,8 @@
 namespace Catalog\LandRoverBundle\Components;
 class LandRoverConstants {
     const LOCALE    = 'ru_RU';
-    const TRANSLATION_RESOURCE = '/../../../../app/Resources/translations/nissan.ru.yml';
-    const TRANSLATION_DOMAIN = 'nissan';
+    const TRANSLATION_RESOURCE = '/../../../../app/Resources/translations/landrover.ru.yml';
+    const TRANSLATION_DOMAIN = 'landrover';
     const PROD_YEAR = 'prod_year';
     const PROD_DATE = 'prod_date';
     const CARLINE  = 'carline';
