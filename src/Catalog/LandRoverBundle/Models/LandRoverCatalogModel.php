@@ -160,7 +160,7 @@ class LandRoverCatalogModel extends CatalogModel{
 
         foreach($aData as $item){
 
-            $groups[$item['ngroup'].'_'.$item['num_index']] = array(
+            $groups[$item['ngroup']] = array(
                 Constants::NAME     => strtoupper($item ['lex_name']),
                 Constants::OPTIONS => array(
                     'picture' => $item['num_index'],
@@ -187,8 +187,8 @@ class LandRoverCatalogModel extends CatalogModel{
         $query->bindValue('groupCode', $groupCode);
         $query->execute();
 
-        $aData = $query->fetch();  
-       
+        $aData = $query->fetch();
+
         $sqlNumModel = "
         SELECT num_model
         FROM part_images
@@ -221,9 +221,9 @@ class LandRoverCatalogModel extends CatalogModel{
         $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
 
 
-        $groupCode = substr($groupCode, 0, strpos($groupCode, '_'));
 
-        $num_index = substr($groupCode, strpos($groupCode, '_')+1, strlen($groupCode));
+
+
 
 if (strlen($pictureFolder) == 2) {
 
@@ -376,8 +376,8 @@ if (strlen($pictureFolder) == 2) {
                        Constants::OPTIONS => array(
                            'picture' => $item['num_index'],
                            'pictureFolder' => $pictureFolder,
-                           'descr' => iconv('cp1251', 'utf8', $item['lex22']),
-                           'add' => iconv('cp1251', 'utf8', $item['lex33'])
+                           'descr' => $item['lex22'],
+                           'add' => $item['lex33']
                            )
                    );
            }
@@ -411,6 +411,7 @@ if (strlen($pictureFolder) == 2) {
 
 
            $num_index = $options['picture'];
+
            $aPncs = array();
 
 
@@ -418,7 +419,7 @@ if (strlen($pictureFolder) == 2) {
 
                $sqlPnc = "
 
-           SELECT ABS(coordinates.label_name) label_name, mcpart1.detail_code, lex.lex_name
+           SELECT ABS(coordinates.label_name) as label_name, mcpart1.detail_code, lex.lex_name
            FROM coordinates
            INNER JOIN mcpart1 ON (mcpart1.pict_index = coordinates.num_index
            AND coordinates.label_name = SUBSTRING_INDEX(mcpart1.param1, '.', 1))
@@ -429,7 +430,7 @@ if (strlen($pictureFolder) == 2) {
 
            UNION
 
-           SELECT ABS(coordinates.label_name) label_name, mcpart1.detail_code, lex.lex_name
+           SELECT ABS(coordinates.label_name) as label_name, mcpart1.detail_code, lex.lex_name
            FROM coordinates
            INNER JOIN mcpart1 ON (mcpart1.pict_index = coordinates.num_index
            AND coordinates.label_name = SUBSTRING_INDEX(mcpart1.param1, '-', 1))
@@ -438,7 +439,6 @@ if (strlen($pictureFolder) == 2) {
            INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
            WHERE coordinates.num_index = :num_index
            ORDER BY (1)
-
            ";
            }
 
@@ -511,9 +511,9 @@ if (strlen($pictureFolder) == 2) {
                    {
                        $pncs[($value['label_name'])][Constants::OPTIONS][Constants::COORDS][($item1['x1'])] = array(
                            Constants::X2 => floor($item1['x2']),
-                           Constants::Y2 => floor($item1['y2']),
+                           Constants::Y2 => ($item1['y2']),
                            Constants::X1 => floor($item1['x1']),
-                           Constants::Y1 => floor($item1['y1']));
+                           Constants::Y1 => ($item1['y1']));
 
                    }
 

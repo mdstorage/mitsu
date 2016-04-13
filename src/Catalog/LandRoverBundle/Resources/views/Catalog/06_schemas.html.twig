@@ -31,7 +31,7 @@
         {% if schema.getOption('add') != schema.getOption('descr') %}
 
             <div class="row">
-                {{ schema.getOption('descr')|upper }}
+                {{ schema.getOption('descr')|convert_encoding('cp1251', 'utf8') }}
             </div>
 
         {% if schema.getOption('add') is not empty %}
@@ -43,7 +43,7 @@
         {% endif %}
             {% else %}
                 <div class="row">
-                    {{ schema.getOption('descr')|upper }}
+                    {{ schema.getOption('descr')|convert_encoding('UTF-8', 'CP1251')|upper }}
                 </div>
 
 

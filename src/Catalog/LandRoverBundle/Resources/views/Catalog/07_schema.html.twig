@@ -16,44 +16,67 @@
 
 {% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
 
-							{% block pncScript %}
-                                <script>
-                                    $("#pnc_{{ pnc.getCode }}").on("click", function(){
 
-                                        {% block pncClick %}
+{% block pncs %}
+    {% for pnc in oContainer.getActiveSchema.getPncs %}
+        {% block pnc %}
+            <div class="pnc glyphicon-plus small" id="pnc_{{ pnc.getCode }}">
+                ({{ pnc.getCode }}) {{ pnc.getRuname }}
+            </div>
+            {% block pncScript %}
+                <script>
+                    $("#pnc_{{ pnc.getCode }}").on("click", function(){
+                        {% block pncClick %}
+                        $("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
+                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
+                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                        $.ajax({
+                            type:   'POST',
+                            async:  false,
+                            url:    "{{ path('catalog_landrover_articuls') }}",
+                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}',groupCode: '{{ parameters.groupCode }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}', options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'  },
+                            success: function(data) {
+                                $("#articul_for_pnc{{ pnc.getCode }}").html(data);
+                            }
+                        });
+                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
+                        $("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
+                        {% endblock pncClick %}
+                    });
+                    $("#pnc_{{ pnc.getCode }}").on("mouseover", function(){
+                        $(this).css("cursor", "pointer");
+                        $(this).addClass("btn-info");
+                    });
+                    $("#pnc_{{ pnc.getCode }}").on("mouseout", function(){
+                        $(this).removeClass("btn-info");
+                    });
+                </script>
+            {% endblock pncScript %}
+            {% for coords in pnc.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
+                <area shape="rect" coords="
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}
+                                    " href="#" id="{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" data-name="{% block dataName %}{{ pnc.getCode }}{% endblock dataName %}"/>
+                {% block pncAreaScript %}
+                    <script>
+                        $("area#{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}").on("click", function(){
+                            {{ block('pncClick') }}
+                        })
+                    </script>
+                {% endblock pncAreaScript %}
+            {% endfor %}
+        {% endblock pnc %}
+        {% block articulForPnc %}
+            <div class="hidden" id="articul_for_pnc{{ pnc.getCode }}"></div>
+        {% endblock articulForPnc %}
+    {% endfor %}
+{% endblock pncs %}
 
-                                        $("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
-                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
-
-                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
-                                        $.ajax({
-                                            type:   'POST',
-                                            async:  false,
-                                            url:    "{{ path('catalog_landrover_articuls') }}",
-                                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}',groupCode: '{{ parameters.groupCode }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}', options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'  },
-                                            success: function(data) {
-                                                $("#articul_for_pnc{{ pnc.getCode }}").html(data);
-                                            }
-                                        });
-
-                                        $.scrollTo("#pnc_{{ pnc.getCode }}", {duration:1500});
 
 
-                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
-                                        $("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
 
-                                        {% endblock pncClick %}
-                                    });
-                                    $("#pnc_{{ pnc.getCode }}").on("mouseover", function(){
-                                        $(this).css("cursor", "pointer");
-                                        $(this).addClass("btn-info");
-                                    });
-                                    $("#pnc_{{ pnc.getCode }}").on("mouseout", function(){
-                                        $(this).removeClass("btn-info");
-                                    });
-
-                                </script>
-                            {% endblock pncScript %}
                             
 {% block image %}
 
