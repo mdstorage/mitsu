@@ -376,8 +376,7 @@ if (strlen($pictureFolder) == 2) {
                        Constants::OPTIONS => array(
                            'picture' => $item['num_index'],
                            'pictureFolder' => $pictureFolder,
-                           'descr' => $item['lex22'],
-                           'add' => $item['lex33']
+
                            )
                    );
            }
@@ -395,7 +394,7 @@ if (strlen($pictureFolder) == 2) {
                        $schema[$schemaCode] = array(
                        Constants::NAME => $schemaCode,
                            Constants::OPTIONS => array(
-                               Constants::CD => $schemaCode
+                               Constants::CD => '1'
                            )
                    );
 
@@ -422,7 +421,7 @@ if (strlen($pictureFolder) == 2) {
            SELECT ABS(coordinates.label_name) as label_name, mcpart1.detail_code, lex.lex_name
            FROM coordinates
            INNER JOIN mcpart1 ON (mcpart1.pict_index = coordinates.num_index
-           AND coordinates.label_name = SUBSTRING_INDEX(mcpart1.param1, '.', 1))
+           AND coordinates.label_name = REPLACE(SUBSTRING_INDEX(mcpart1.param1, '.', 1), '1:', '20')-1 AND coordinates.label_name >= 10)
 
            INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
            INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
@@ -573,17 +572,18 @@ if (strlen($pictureFolder) == 2) {
            FROM mcpart1
            INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
            INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
-           WHERE mcpart1.pict_index = :num_index AND SUBSTRING_INDEX(mcpart1.param1, '.', 1) = :pncCode
+           WHERE mcpart1.pict_index = :num_index AND SUBSTRING_INDEX(mcpart1.param1, '-', 1) = :pncCode
 
            UNION
 
            SELECT mcpart1.detail_code, lex.lex_name
            FROM mcpart1
-           INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
-           INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
-           WHERE mcpart1.pict_index = :num_index AND SUBSTRING_INDEX(mcpart1.param1, '-', 1) = :pncCode
+           LEFT JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
+           LEFT JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
+           WHERE mcpart1.pict_index = :num_index AND REPLACE(SUBSTRING_INDEX(mcpart1.param1, '.', 1), '1:', '20')-1 = :pncCode AND REPLACE(SUBSTRING_INDEX(mcpart1.param1, '.', 1), '1:', '20') >= 10
 
-          GROUP BY 1
+
+          GROUP BY (1)
          ";
         }
 
@@ -608,8 +608,6 @@ if (strlen($pictureFolder) == 2) {
         $query->execute();
 
          $aArticuls = $query->fetchAll();
-
-
 
 
 
