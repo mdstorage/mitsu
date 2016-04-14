@@ -22,8 +22,7 @@ class LandRoverVinModel extends LandRoverCatalogModel {
         FROM vin
         INNER JOIN vin_group ON (vin_group.vin_desc_offset = vin.vin_desc_offset)
         INNER JOIN vin_description ON (vin_description.vin_desc_offset = vin.vin_desc_offset)
-        INNER JOIN eng ON (:vin LIKE CONCAT(eng.vin_part, '%'))
-        INNER JOIN lex ON (lex.lex_code = eng.eng_part)
+
         where vin.vin = :vin
         ";
 
