@@ -48,20 +48,20 @@ vin_landrover_result:
   requirements: {_method: POST}
 
 vin_landrover_groups:
-  path:         /landrover/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Vin:groups}
+  path:         /landrover/vin/3/{regionCode}/{modelCode}
+  defaults:     {_controller: CatalogLandRoverBundle:Vin:groups, modificationCode: '1'}
 
 vin_landrover_subgroups:
-  path:         /landrover/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Vin:subgroups}
+  path:         /landrover/vin/4/{regionCode}/{modelCode}/{groupCode}
+  defaults:     {_controller: CatalogLandRoverBundle:Vin:subgroups, modificationCode: '1'}
 
 vin_landrover_schemas:
-  path:         /landrover/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Vin:schemas}
+  path:         /landrover/vin/5/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogLandRoverBundle:Vin:schemas, modificationCode: '1'}
 
 vin_landrover_schema:
-  path:         /landrover/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Vin:schema}
+  path:         /landrover/vin/6/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogLandRoverBundle:Vin:schema, modificationCode: '1'}
 
 vin_landrover_articuls:
   path:         /landrover/vin/7

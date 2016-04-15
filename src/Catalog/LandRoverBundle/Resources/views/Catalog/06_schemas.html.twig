@@ -28,7 +28,7 @@
                         {{ schema.getRuname|upper }}
                     </div>
 
-        {% if schema.getOption('add') != schema.getOption('descr') %}
+    {#    {% if schema.getOption('add') != schema.getOption('descr') %}
 
             <div class="row">
                 {{ schema.getOption('descr')|convert_encoding('cp1251', 'utf8') }}
@@ -48,6 +48,7 @@
 
 
         {% endif %}
+        #}
 
 
 

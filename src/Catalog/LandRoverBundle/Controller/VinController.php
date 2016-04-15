@@ -42,7 +42,7 @@ class VinController extends BaseController{
              * @deprecated Оставлен для совместимости с маздой
              */
             setcookie(Constants::PROD_DATE, $result[Constants::PROD_DATE]);
-            setcookie(LandRoverConstants::INTCOLOR, $result[ LandRoverConstants::INTCOLOR]);
+
 
 
             setcookie(Constants::VIN, $vin);
