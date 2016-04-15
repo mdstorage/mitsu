@@ -22,8 +22,10 @@ class LandRoverVinModel extends LandRoverCatalogModel {
         FROM vin
         INNER JOIN vin_group ON (vin_group.vin_desc_offset = vin.vin_desc_offset)
         INNER JOIN vin_description ON (vin_description.vin_desc_offset = vin.vin_desc_offset)
-        INNER JOIN eng ON (:vin LIKE CONCAT(eng.vin_part, '%'))
-        INNER JOIN lex ON (lex.lex_code = eng.eng_part)
+        INNER JOIN eng ON (:vin LIKE CONCAT(eng.vin_part, '%' ))
+        INNER JOIN avsmodel ON (avsmodel.model_code = eng.eng_part)
+        INNER JOIN lrec ON (lrec.engine_type = SUBSTRING(avsmodel.model_auto, 3, 2))
+
         where vin.vin = :vin
         ";
 
@@ -34,19 +36,9 @@ class LandRoverVinModel extends LandRoverCatalogModel {
 
         $aData = $query->fetchAll();
 
-        var_dump($aData); die;
 
 
 
-
-        $complectations = $this->getComplectations($aData[0]['CATALOG'], $aData[0]['SHASHUKO'], $aData[0]['MODSERIES']);
-        $complectation = $complectations[str_pad($aData[0]['MDLDIR'], 3, "0", STR_PAD_LEFT).'_'.$aData[0]['POSNUM'].'_'.$aData[0]['DATA1']];
-
-
-       for ($i = 1; $i < 9; $i++)
-        {
-            $OnlyCompl[] = $complectation['options']['OPTION'.$i];
-        }
 
 
 
@@ -55,16 +47,10 @@ class LandRoverVinModel extends LandRoverCatalogModel {
 
         if ($aData) {
             $result = array(
-                'model' => urlencode($aData[0]['SHASHUKO']),
-                'modif' => $aData[0]['MODSERIES'],
-                'complectation' => $OnlyCompl,
-                Constants::PROD_DATE => $aData[0]['PRODYM'],
+                'model_for_groups' => $aData[0]['model_id'].'_'.(ctype_alpha($aData[0]['engine_type'])?'GC'.$aData[0]['engine_type']:$aData[0]['engine_type']),
 
-                'region' => $aData[0]['CATALOG'],
-                LandRoverConstants::INTCOLOR => $aData[0]['COLOR1'],
-                'cvet_salona' => $aData[0]['COL1'],
-                'cvet_kuzova' => $aData[0]['COL2'],
-                'kod_complektacii' => str_pad($aData[0]['MDLDIR'], 3, "0", STR_PAD_LEFT).'_'.$aData[0]['POSNUM'].'_'.$aData[0]['DATA1'],
+                Constants::PROD_DATE => $aData[0]['date_output'],
+
                 );
         }
 

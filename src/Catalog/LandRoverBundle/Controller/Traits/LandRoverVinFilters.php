@@ -15,12 +15,12 @@ trait LandRoverVinFilters {
 
     public function prodDateFilter($oContainer, $parameters)
     {
-        $prodDate = $parameters[Constants::PROD_DATE];
+    /*    $prodDate = $parameters[Constants::PROD_DATE];
         foreach ($oContainer->getActivePnc()->getArticuls() as $key => $articul) {
             if ($articul->getOption(Constants::START_DATE) > $prodDate || $articul->getOption(Constants::END_DATE) < $prodDate) {
                 $oContainer->getActivePnc()->removeArticul($key);
             }
-        }
+        }*/
 
         return $oContainer;
     }
@@ -29,9 +29,6 @@ trait LandRoverVinFilters {
 
     {
 
-        $color = array($parameters['color'], 'C'.$parameters['color']);
-        $complectations = $this->model()->getComplectations($parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode']);
-        $aComplOptions = explode('.', $complectations[$parameters['complectationCode']]['options']['OPTION9']);
 
         foreach ($oContainer->getActivePnc()->getArticuls() as $articul)
         {

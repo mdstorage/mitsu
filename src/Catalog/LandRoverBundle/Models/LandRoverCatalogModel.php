@@ -112,19 +112,47 @@ class LandRoverCatalogModel extends CatalogModel{
 
 
             $sql = "
-        SELECT SUBSTRING(name_group,1,1) as ngroup, lex_name, coordinates.num_index
+        SELECT (SUBSTRING(RIGHT(name_group,3),1,1)) as ngroup, lex_name, coordinates_names.index1 as num_index
         FROM coord_header_info
-        INNER JOIN coordinates ON (coordinates.model_id = coord_header_info.model_id AND SUBSTRING(coordinates.label_name,1,1) = SUBSTRING(coord_header_info.name_group,1,1))
-        INNER JOIN lex ON (lex.index_lex = coord_header_info.id_main AND lex.lang = 'EN' AND LENGTH(coordinates.label_name) > 1)
+
+        INNER JOIN coordinates_names ON (coordinates_names.model_id = coord_header_info.model_id AND coordinates_names.group_detail_sign = 1
+        AND coordinates_names.num_model_group = ASCII(SUBSTRING(RIGHT(name_group,3),1,1))-64)
+
+        INNER JOIN lex ON (lex.index_lex = coord_header_info.id_main AND lex.lang = 'EN')
+        WHERE coord_header_info.model_id = :modelCode
+
+
+        UNION
+
+        SELECT (SUBSTRING(RIGHT(name_group,3),1,1)) as ngroup, lex_name, coordinates_names.num_index as num_index
+        FROM coord_header_info
+
+        INNER JOIN coordinates_names ON (coordinates_names.model_id = coord_header_info.model_id AND coordinates_names.group_detail_sign = 1
+        AND coordinates_names.num_model_group = (SUBSTRING(RIGHT(name_group,3),1,1)))
+
+        INNER JOIN lex ON (lex.index_lex = coord_header_info.id_main AND lex.lang = 'EN')
+        WHERE coord_header_info.model_id = :modelCode
+
+        order by (1)
+
+        ";
+
+  /*     $sql = "
+        SELECT SUBSTRING(name_group,1,1) as ngroup
+        FROM coord_header_info
         WHERE coord_header_info.model_id = :modelCode
         group by ngroup
         ";
-
+*/
             $query = $this->conn->prepare($sql);
             $query->bindValue('modelCode',  $modelCode);
 
             $query->execute();
             $aData = $query->fetchAll();
+
+
+
+
 
 
         $groups = array();
@@ -159,8 +187,8 @@ class LandRoverCatalogModel extends CatalogModel{
         $query->bindValue('groupCode', $groupCode);
         $query->execute();
 
-        $aData = $query->fetch();  
-       
+        $aData = $query->fetch();
+
         $sqlNumModel = "
         SELECT num_model
         FROM part_images
@@ -194,20 +222,51 @@ class LandRoverCatalogModel extends CatalogModel{
 
 
 
-        $sql = "
+
+
+
+if (strlen($pictureFolder) == 2) {
+
+
+    $sql = "
         SELECT coord_header_info.name_group as nsubgroup, lex_name, coordinates.num_index, coordinates.x1, coordinates.x2, coordinates.y1, coordinates.y2
         FROM coord_header_info
         INNER JOIN lex ON (lex.index_lex = coord_header_info.id_sector AND lex.lang = 'EN')
         INNER JOIN coordinates ON (coordinates.model_id = coord_header_info.model_id AND coordinates.label_name = CONCAT(:groupCode, ABS(SUBSTRING(coord_header_info.name_group,2,2))))
         WHERE coord_header_info.model_id = :modelCode
+        AND coord_header_info.pnc_code = ''
         AND SUBSTRING(coord_header_info.name_group,1,1) = :groupCode
-        group by nsubgroup
+
+        group by (1)
         ";
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('modelCode',  $modelCode);
-        $query->bindValue('groupCode',  $groupCode);
+    $query = $this->conn->prepare($sql);
+    $query->bindValue('modelCode', $modelCode);
+    $query->bindValue('groupCode', $groupCode);
+    $query->execute();
+    $aData = $query->fetchAll();
 
+}
+
+        else {
+
+            $sql = "
+
+        SELECT (RIGHT(coord_header_info.name_group,3)) as nsubgroup, lex_name, coordinates.num_index, coordinates.x1, coordinates.x2, coordinates.y1, coordinates.y2
+        FROM coord_header_info
+        left JOIN lex ON (lex.index_lex = coord_header_info.id_sector AND lex.lang = 'EN')
+        left JOIN coordinates ON (coordinates.model_id = coord_header_info.model_id AND coordinates.label_name LIKE CONCAT('%',coord_header_info.pnc_code,'%'))
+        WHERE coord_header_info.model_id = :modelCode
+    AND SUBSTRING(RIGHT(coord_header_info.name_group,3),1,1) = :groupCode
+
+    group by (1)
+        ";
+        }
+
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('modelCode', $modelCode);
+        $query->bindValue('groupCode', $groupCode);
 
         $query->execute();
         $aData = $query->fetchAll();
@@ -246,14 +305,55 @@ class LandRoverCatalogModel extends CatalogModel{
            $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
 
 
-           $sql = "
-           SELECT coord_detail_info.code_detail,coordinates_names.num_index, lex.lex_name
+         /*  $sql = "
+         SELECT coord_detail_info.code_detail, coordinates_names.num_index, lex1.lex_name as lex11, lex2.lex_name as lex22
            FROM coord_detail_info
+
            INNER JOIN coordinates_names ON (coordinates_names.num_model_group = coord_detail_info.num_model_group
            AND coordinates_names.model_id = coord_detail_info.model_id AND coordinates_names.group_detail_sign = 2)
-           INNER JOIN lex ON (lex.index_lex = coord_detail_info.id_detail AND lex.lang = 'EN')
+
+           INNER JOIN lex lex1 ON (lex1.index_lex = SUBSTRING(coord_detail_info.id_detail, 1, INSTR(coord_detail_info.id_detail, ' ')-1) AND lex1.lang = 'EN')
+           INNER JOIN lex lex2 ON (lex2.lex_code = RIGHT(TRIM(coord_detail_info.code_filter),5) AND lex2.lang = 'EN')
+
+
            WHERE coord_detail_info.model_id = :modelCode
            AND coord_detail_info.code_detail LIKE :subGroupCode
+
+           ";*/
+
+
+           $sql = "
+           SELECT coord_detail_info.code_detail, coordinates_names.num_index, lex1.lex_name as lex11, lex2.lex_name as lex22, lex3.lex_name as lex33
+           FROM coord_detail_info
+
+           INNER JOIN coordinates_names ON (coordinates_names.num_model_group = coord_detail_info.num_model_group
+           AND coordinates_names.model_id = coord_detail_info.model_id AND coordinates_names.group_detail_sign = 2)
+
+           INNER JOIN lex lex1 ON ((lex1.index_lex = SUBSTRING(coord_detail_info.id_detail, 1, INSTR(coord_detail_info.id_detail, ' ')-1)
+           OR lex1.index_lex = TRIM(coord_detail_info.id_detail)) AND lex1.lang = 'EN')
+           LEFT JOIN lex lex2 ON ((lex2.lex_code = RIGHT(TRIM(coord_detail_info.code_filter),5) OR lex2.lex_code = LEFT(TRIM(coord_detail_info.code_filter),5)) AND lex2.lang = 'EN')
+           LEFT JOIN lex lex3 ON (lex3.index_lex = TRIM(coord_detail_info.lex_filter) AND lex3.lang = 'EN')
+
+
+           WHERE coord_detail_info.model_id = :modelCode
+           AND coord_detail_info.code_detail LIKE :subGroupCode
+
+           UNION
+
+          SELECT coord_detail_info.code_detail, coordinates_names.num_index, lex1.lex_name as lex11, lex2.lex_name as lex22, lex3.lex_name as lex33
+           FROM coord_detail_info
+
+           INNER JOIN coordinates_names ON (coordinates_names.num_model_group = coord_detail_info.num_model_group
+           AND coordinates_names.model_id = coord_detail_info.model_id AND coordinates_names.group_detail_sign = 2)
+
+           INNER JOIN lex lex1 ON (lex1.index_lex = coord_detail_info.id_detail AND lex1.lang = 'EN')
+           LEFT JOIN lex lex2 ON (lex2.lex_code = RIGHT(TRIM(coord_detail_info.code_filter),6) AND lex2.lang = 'EN')
+           LEFT JOIN lex lex3 ON (lex3.index_lex = TRIM(coord_detail_info.lex_filter) AND lex3.lang = 'EN')
+
+
+           WHERE coord_detail_info.model_id = :modelCode
+           AND coord_detail_info.code_detail LIKE :subGroupCode
+
 
            ";
 
@@ -272,10 +372,11 @@ class LandRoverCatalogModel extends CatalogModel{
            {
 
                        $schemas[$item['num_index']] = array(
-                       Constants::NAME => $item['lex_name'],
+                       Constants::NAME => $item['lex11'],
                        Constants::OPTIONS => array(
                            'picture' => $item['num_index'],
                            'pictureFolder' => $pictureFolder,
+
                            )
                    );
            }
@@ -293,7 +394,7 @@ class LandRoverCatalogModel extends CatalogModel{
                        $schema[$schemaCode] = array(
                        Constants::NAME => $schemaCode,
                            Constants::OPTIONS => array(
-                               Constants::CD => $schemaCode
+                               Constants::CD => '1'
                            )
                    );
 
@@ -310,12 +411,17 @@ class LandRoverCatalogModel extends CatalogModel{
 
            $num_index = $options['picture'];
 
-           $sqlPnc = "
+           $aPncs = array();
 
-           SELECT coordinates.label_name, mcpart1.detail_code, lex.lex_name
+
+           if (strlen($pictureFolder) == 2) {
+
+               $sqlPnc = "
+
+           SELECT ABS(coordinates.label_name) as label_name, mcpart1.detail_code, lex.lex_name
            FROM coordinates
            INNER JOIN mcpart1 ON (mcpart1.pict_index = coordinates.num_index
-           AND coordinates.label_name = SUBSTRING_INDEX(mcpart1.param1, '.', 1))
+           AND coordinates.label_name = REPLACE(SUBSTRING_INDEX(mcpart1.param1, '.', 1), '1:', '20')-1 AND coordinates.label_name >= 10)
 
            INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
            INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
@@ -323,7 +429,7 @@ class LandRoverCatalogModel extends CatalogModel{
 
            UNION
 
-           SELECT coordinates.label_name, mcpart1.detail_code, lex.lex_name
+           SELECT ABS(coordinates.label_name) as label_name, mcpart1.detail_code, lex.lex_name
            FROM coordinates
            INNER JOIN mcpart1 ON (mcpart1.pict_index = coordinates.num_index
            AND coordinates.label_name = SUBSTRING_INDEX(mcpart1.param1, '-', 1))
@@ -331,9 +437,25 @@ class LandRoverCatalogModel extends CatalogModel{
            INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
            INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
            WHERE coordinates.num_index = :num_index
-
-            ORDER BY (1);
+           ORDER BY (1)
            ";
+           }
+
+           else {
+
+               $sqlPnc = "
+
+           SELECT coordinates.label_name, lex.lex_name
+           FROM coordinates
+           INNER JOIN mcpart3 ON (mcpart3.pict_index = coordinates.num_index
+           AND coordinates.label_name = mcpart3.detail_code)
+           INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart3.param1_offset)
+
+           INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
+           WHERE coordinates.num_index = :num_index
+           ";
+           }
+
 
 
            $query = $this->conn->prepare($sqlPnc);
@@ -343,7 +465,6 @@ class LandRoverCatalogModel extends CatalogModel{
            $query->execute();
 
            $aPncs = $query->fetchAll();
-           
 
 
 
@@ -355,7 +476,7 @@ class LandRoverCatalogModel extends CatalogModel{
            FROM coordinates
             WHERE coordinates.num_index = :num_index
             AND coordinates.model_id = :modelCode
-            AND coordinates.label_name = ABS(:pnc)
+            AND coordinates.label_name = :pnc
 
            ";
 
@@ -375,6 +496,7 @@ class LandRoverCatalogModel extends CatalogModel{
            }
 
 
+
            $pncs = array();
            $str = array();
            foreach ($aPncs as $index=>$value) {
@@ -386,11 +508,11 @@ class LandRoverCatalogModel extends CatalogModel{
 
                    foreach ($value['clangjap'] as $item1)
                    {
-                       $pncs[$value['label_name']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
-                           Constants::X2 => floor((($item1['x2']))),
+                       $pncs[($value['label_name'])][Constants::OPTIONS][Constants::COORDS][($item1['x1'])] = array(
+                           Constants::X2 => floor($item1['x2']),
                            Constants::Y2 => ($item1['y2']),
                            Constants::X1 => floor($item1['x1']),
-                           Constants::Y1 => $item1['y1']);
+                           Constants::Y1 => ($item1['y1']));
 
                    }
 
@@ -404,7 +526,7 @@ class LandRoverCatalogModel extends CatalogModel{
 
 
 
-               $pncs[$item['label_name']][Constants::NAME] = strtoupper($item['lex_name']);
+               $pncs[$item['label_name']][Constants::NAME] = strtoupper(trim($item['lex_name']));
 
 
 
@@ -442,17 +564,9 @@ class LandRoverCatalogModel extends CatalogModel{
 
         $num_index = $options['picture'];
 
+        if (strlen($pictureFolder) == 2) {
 
-
-        $sqlPnc = "
-
-           SELECT mcpart1.detail_code, lex.lex_name
-           FROM mcpart1
-           INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
-           INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
-           WHERE mcpart1.pict_index = :num_index AND SUBSTRING_INDEX(mcpart1.param1, '.', 1) = :pncCode
-
-           UNION
+            $sqlPnc = "
 
            SELECT mcpart1.detail_code, lex.lex_name
            FROM mcpart1
@@ -460,8 +574,30 @@ class LandRoverCatalogModel extends CatalogModel{
            INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
            WHERE mcpart1.pict_index = :num_index AND SUBSTRING_INDEX(mcpart1.param1, '-', 1) = :pncCode
 
-          GROUP BY 1
+           UNION
+
+           SELECT mcpart1.detail_code, lex.lex_name
+           FROM mcpart1
+           LEFT JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
+           LEFT JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
+           WHERE mcpart1.pict_index = :num_index AND REPLACE(SUBSTRING_INDEX(mcpart1.param1, '.', 1), '1:', '20')-1 = :pncCode AND REPLACE(SUBSTRING_INDEX(mcpart1.param1, '.', 1), '1:', '20') >= 10
+
+
+          GROUP BY (1)
          ";
+        }
+
+        else
+        {
+            $sqlPnc = "
+            SELECT mcpart1.detail_code, lex.lex_name
+           FROM mcpart1
+           INNER JOIN mcpart3 ON (mcpart3.param1_offset = mcpart1.param1_offset and mcpart3.detail_code = :pncCode)
+           INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart3.param1_offset)
+           INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
+           WHERE mcpart1.pict_index = :num_index
+            ";
+        }
 
 
         $query = $this->conn->prepare($sqlPnc);
@@ -472,8 +608,6 @@ class LandRoverCatalogModel extends CatalogModel{
         $query->execute();
 
          $aArticuls = $query->fetchAll();
-
-
 
 
 
