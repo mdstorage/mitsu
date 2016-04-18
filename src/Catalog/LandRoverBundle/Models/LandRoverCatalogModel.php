@@ -418,24 +418,22 @@ if (strlen($pictureFolder) == 2) {
 
                $sqlPnc = "
 
-           SELECT ABS(coordinates.label_name) as label_name, lex.lex_name
+           SELECT ABS(coordinates.label_name) as label_name, mcpart_un.detail_lex_index_hex
            FROM coordinates
            INNER JOIN mcpart1 ON (mcpart1.pict_index = coordinates.num_index
            AND coordinates.label_name = REPLACE(SUBSTRING_INDEX(mcpart1.param1, '.', 1), '1:', '20')-1 AND coordinates.label_name >= 10)
 
            INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
-           INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
            WHERE coordinates.num_index = :num_index
 
            UNION
 
-           SELECT ABS(coordinates.label_name) as label_name, lex.lex_name
+           SELECT ABS(coordinates.label_name) as label_name, mcpart_un.detail_lex_index_hex
            FROM coordinates
            INNER JOIN mcpart1 ON (mcpart1.pict_index = coordinates.num_index
            AND coordinates.label_name = SUBSTRING_INDEX(mcpart1.param1, '-', 1))
 
            INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
-           INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
            WHERE coordinates.num_index = :num_index
            ORDER BY (1)
            ";
@@ -445,13 +443,12 @@ if (strlen($pictureFolder) == 2) {
 
                $sqlPnc = "
 
-           SELECT coordinates.label_name, lex.lex_name
+           SELECT coordinates.label_name, mcpart_un.detail_lex_index_hex
            FROM coordinates
            INNER JOIN mcpart3 ON (mcpart3.pict_index = coordinates.num_index
            AND coordinates.label_name = mcpart3.detail_code)
            INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart3.param1_offset)
 
-           INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
            WHERE coordinates.num_index = :num_index
            ";
            }
@@ -526,7 +523,7 @@ if (strlen($pictureFolder) == 2) {
 
 
 
-               $pncs[$item['label_name']][Constants::NAME] = strtoupper(trim($item['lex_name']));
+               $pncs[$item['label_name']][Constants::NAME] = strtoupper(trim($this->gethexdecLex($item['detail_lex_index_hex'])));
 
 
 
@@ -568,18 +565,16 @@ if (strlen($pictureFolder) == 2) {
 
             $sqlPnc = "
 
-           SELECT mcpart1.detail_code, lex.lex_name
+           SELECT mcpart1.detail_code, mcpart_un.detail_lex_index_hex
            FROM mcpart1
            INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
-           INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
            WHERE mcpart1.pict_index = :num_index AND SUBSTRING_INDEX(mcpart1.param1, '-', 1) = :pncCode
 
            UNION
 
-           SELECT mcpart1.detail_code, lex.lex_name
+           SELECT mcpart1.detail_code, mcpart_un.detail_lex_index_hex
            FROM mcpart1
            LEFT JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart1.param1_offset)
-           LEFT JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
            WHERE mcpart1.pict_index = :num_index AND REPLACE(SUBSTRING_INDEX(mcpart1.param1, '.', 1), '1:', '20')-1 = :pncCode AND REPLACE(SUBSTRING_INDEX(mcpart1.param1, '.', 1), '1:', '20') >= 10
 
 
@@ -590,11 +585,11 @@ if (strlen($pictureFolder) == 2) {
         else
         {
             $sqlPnc = "
-            SELECT mcpart1.detail_code, lex.lex_name
+            SELECT mcpart1.detail_code, mcpart_un.detail_lex_index_hex
            FROM mcpart1
            INNER JOIN mcpart3 ON (mcpart3.param1_offset = mcpart1.param1_offset and mcpart3.detail_code = :pncCode)
            INNER JOIN mcpart_un ON (mcpart_un.param1_offset = mcpart3.param1_offset)
-           INNER JOIN lex ON (lex.index_lex = CONV(mcpart_un.detail_lex_index_hex, 16, 10) AND lex.lang = 'EN')
+
            WHERE mcpart1.pict_index = :num_index
             ";
         }
@@ -618,7 +613,7 @@ $articuls = array();
             
             
 				$articuls[$item['detail_code']] = array(
-                Constants::NAME => $item['lex_name'],
+                Constants::NAME => $this->gethexdecLex($item['detail_lex_index_hex']),
                 Constants::OPTIONS => array(
 
 
@@ -675,35 +670,26 @@ $articuls = array();
 
     }
 
-    public function getComplForSchemas($catalog, $mdldir, $nno, $data1)
 
-    {
+    public function gethexdecLex ($string) {
+
+        $decString = hexdec($string);
+
         $sql = "
-        SELECT VARIATION1, VARIATION2, VARIATION3, VARIATION4, VARIATION5, VARIATION6, VARIATION7, VARIATION8
-        FROM posname
-        WHERE CATALOG = :CATALOG
-          AND MDLDIR = :MDLDIR
-             AND NNO = :NNO
-              AND DATA1 = :DATA1
-             ";
+
+        SELECT lex.lex_name
+           FROM lex
+           WHERE lex.index_lex = :decString AND lex.lang = 'EN'
+
+            ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('CATALOG', $catalog);
-        $query->bindValue('MDLDIR', $mdldir);
-        $query->bindValue('NNO', $nno);
-        $query->bindValue('DATA1', $data1);
-
+        $query->bindValue('decString', $decString);
         $query->execute();
 
-        $complectation = $query->fetchAll();
+        $launch = $query->fetchColumn(0);
 
-        return $complectation;
-    }
 
-    public function multiexplode ($delimiters,$string) {
-
-        $ready = str_replace($delimiters, $delimiters[0], $string);
-        $launch = explode($delimiters[0], $ready);
         return  $launch;
     }
 
