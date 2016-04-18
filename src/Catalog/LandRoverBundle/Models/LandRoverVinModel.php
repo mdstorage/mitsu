@@ -52,13 +52,13 @@ class LandRoverVinModel extends LandRoverCatalogModel {
         {
 
             $sqlvin = "
-        SELECT *
+        SELECT vin_detail.detail_name
         FROM vin
         LEFT JOIN vin_group ON (vin_group.vin_desc_offset = vin.vin_desc_offset)
         LEFT JOIN vin_evvl ON (:vin LIKE CONCAT(vin_evvl.vin_vmi, '%'))
         LEFT JOIN lrec ON (lrec.auto_code = vin_evvl.power_model)
-        LEFT JOIN vin_detail ON (vin_detail.vin_index = vin.vin_index)
-        LEFT JOIN lex ON (lex.lex_code IN (vin_detail.detail_name) AND vin_detail.detail_name IN (CONCAT('EN', '%'), CONCAT('TR', '%')) AND lex.lang = 'EN')
+        LEFT JOIN vin_detail ON (vin_detail.vin_index = vin.vin_index AND (vin_detail.detail_name LIKE CONCAT('EN', '%') OR vin_detail.detail_name LIKE CONCAT('TR', '%')))
+        LEFT JOIN lex ON (lex.lex_code IN (vin_detail.detail_name) AND lex.lang = 'EN')
 
         where vin.vin = :vin
         ";
