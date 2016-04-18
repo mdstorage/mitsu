@@ -39,6 +39,8 @@
                                 $("#articul_for_pnc{{ pnc.getCode }}").html(data);
                             }
                         });
+                        $.scrollTo("#pnc_{{ pnc.getCode }}", {duration:1500});
+
                         $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
                         $("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
                         {% endblock pncClick %}
