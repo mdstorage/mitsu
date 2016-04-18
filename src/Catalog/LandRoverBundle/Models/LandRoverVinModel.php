@@ -58,7 +58,7 @@ class LandRoverVinModel extends LandRoverCatalogModel {
         LEFT JOIN vin_evvl ON (:vin LIKE CONCAT(vin_evvl.vin_vmi, '%'))
         LEFT JOIN lrec ON (lrec.auto_code = vin_evvl.power_model)
         LEFT JOIN vin_detail ON (vin_detail.vin_index = vin.vin_index)
-        LEFT JOIN lex ON (lex.lex_code IN (vin_detail.detail_name) AND lex.lang = 'EN')
+        LEFT JOIN lex ON (lex.lex_code IN (vin_detail.detail_name) AND vin_detail.detail_name IN (CONCAT('EN', '%'), CONCAT('TR', '%')) AND lex.lang = 'EN')
 
         where vin.vin = :vin
         ";

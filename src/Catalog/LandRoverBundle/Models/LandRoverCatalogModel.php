@@ -429,7 +429,7 @@ if (strlen($pictureFolder) == 2) {
 
            UNION
 
-           SELECT ABS(coordinates.label_name) as label_name, mcpart1.detail_code, lex.lex_name
+           SELECT ABS(coordinates.label_name) as label_name, lex.lex_name
            FROM coordinates
            INNER JOIN mcpart1 ON (mcpart1.pict_index = coordinates.num_index
            AND coordinates.label_name = SUBSTRING_INDEX(mcpart1.param1, '-', 1))
