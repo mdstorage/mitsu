@@ -340,7 +340,7 @@ if (strlen($pictureFolder) == 2) {
 
            UNION
 
-          SELECT coord_detail_info.code_detail, coordinates_names.num_index, lex1.lex_name as lex11, lex2.lex_name as lex22, lex3.lex_name as lex33
+           SELECT coord_detail_info.code_detail, coordinates_names.num_index, lex1.lex_name as lex11, lex2.lex_name as lex22, lex3.lex_name as lex33
            FROM coord_detail_info
 
            INNER JOIN coordinates_names ON (coordinates_names.num_model_group = coord_detail_info.num_model_group
@@ -418,7 +418,7 @@ if (strlen($pictureFolder) == 2) {
 
                $sqlPnc = "
 
-           SELECT ABS(coordinates.label_name) as label_name, mcpart1.detail_code, lex.lex_name
+           SELECT ABS(coordinates.label_name) as label_name, lex.lex_name
            FROM coordinates
            INNER JOIN mcpart1 ON (mcpart1.pict_index = coordinates.num_index
            AND coordinates.label_name = REPLACE(SUBSTRING_INDEX(mcpart1.param1, '.', 1), '1:', '20')-1 AND coordinates.label_name >= 10)

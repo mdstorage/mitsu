@@ -1,0 +1,22 @@
+{% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
+{% use 'CatalogLandRoverBundle::landrover.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('catalog_landrover') }}"> Модель ({{ oContainer.getActiveModel.getRuname }})</a> /
+    <a href="{{ path('catalog_landrover_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> /
+    Подгруппа запчастей
+{% endblock breadcrumbs %}
+
+{% block region %}{% endblock region%}
+{% block regions %}{% endblock regions %}
+{% block complectation %}
+{% endblock complectation %}
+{% block modification %}
+{% endblock modification %}
+
+
+{% block subgroupImage %}{% endblock subgroupImage %}
+{% block subgroupItem %}
+    <div id="subgroup{{ subgroup.getCode }}">
+        <a href="{{ path('catalog_landrover_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
+    </div>
+{% endblock subgroupItem %}
