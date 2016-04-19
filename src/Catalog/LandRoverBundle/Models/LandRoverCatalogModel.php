@@ -306,18 +306,37 @@ if (strlen($pictureFolder) == 2) {
 
 
          /*  $sql = "
-         SELECT coord_detail_info.code_detail, coordinates_names.num_index, lex1.lex_name as lex11, lex2.lex_name as lex22
+           SELECT coord_detail_info.code_detail, coordinates_names.num_index, lex1.lex_name as lex11, lex2.lex_name as lex22, lex3.lex_name as lex33
            FROM coord_detail_info
 
            INNER JOIN coordinates_names ON (coordinates_names.num_model_group = coord_detail_info.num_model_group
            AND coordinates_names.model_id = coord_detail_info.model_id AND coordinates_names.group_detail_sign = 2)
 
-           INNER JOIN lex lex1 ON (lex1.index_lex = SUBSTRING(coord_detail_info.id_detail, 1, INSTR(coord_detail_info.id_detail, ' ')-1) AND lex1.lang = 'EN')
-           INNER JOIN lex lex2 ON (lex2.lex_code = RIGHT(TRIM(coord_detail_info.code_filter),5) AND lex2.lang = 'EN')
+           INNER JOIN lex lex1 ON ((lex1.index_lex = SUBSTRING(coord_detail_info.id_detail, 1, INSTR(coord_detail_info.id_detail, ' ')-1)
+           OR lex1.index_lex = TRIM(coord_detail_info.id_detail)) AND lex1.lang = 'EN')
+           LEFT JOIN lex lex2 ON ((lex2.lex_code = RIGHT(TRIM(coord_detail_info.code_filter),5) OR lex2.lex_code = LEFT(TRIM(coord_detail_info.code_filter),5)) AND lex2.lang = 'EN')
+           LEFT JOIN lex lex3 ON (lex3.index_lex = TRIM(coord_detail_info.lex_filter) AND lex3.lang = 'EN')
 
 
            WHERE coord_detail_info.model_id = :modelCode
            AND coord_detail_info.code_detail LIKE :subGroupCode
+
+           UNION
+
+           SELECT coord_detail_info.code_detail, coordinates_names.num_index, lex1.lex_name as lex11, lex2.lex_name as lex22, lex3.lex_name as lex33
+           FROM coord_detail_info
+
+           INNER JOIN coordinates_names ON (coordinates_names.num_model_group = coord_detail_info.num_model_group
+           AND coordinates_names.model_id = coord_detail_info.model_id AND coordinates_names.group_detail_sign = 2)
+
+           INNER JOIN lex lex1 ON (lex1.index_lex = coord_detail_info.id_detail AND lex1.lang = 'EN')
+           LEFT JOIN lex lex2 ON (lex2.lex_code = RIGHT(TRIM(coord_detail_info.code_filter),6) AND lex2.lang = 'EN')
+           LEFT JOIN lex lex3 ON (lex3.index_lex = TRIM(coord_detail_info.lex_filter) AND lex3.lang = 'EN')
+
+
+           WHERE coord_detail_info.model_id = :modelCode
+           AND coord_detail_info.code_detail LIKE :subGroupCode
+
 
            ";*/
 
@@ -346,7 +365,7 @@ if (strlen($pictureFolder) == 2) {
            AND coordinates_names.model_id = coord_detail_info.model_id AND coordinates_names.group_detail_sign = 2)
 
            INNER JOIN lex lex1 ON (lex1.index_lex = coord_detail_info.id_detail AND lex1.lang = 'EN')
-           
+
 
 
            WHERE coord_detail_info.model_id = :modelCode

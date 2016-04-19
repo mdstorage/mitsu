@@ -1,35 +1,57 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogLandRoverBundle::landrover.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_landrover_find') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_landrover_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('articul_landrover_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
+    <a href="{{ path('articul_landrover_find') }}">Выбрать модель </a> / <a href="{{ path('articul_landrover_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('articul_landrover_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
 {% endblock breadcrumbs %}
 
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
 
 
-{% set a = 'SECIMG' %}
-{% if oContainer.getActiveRegion.getCode != "JP"  %}
-    {% set a = 'SECIMG' %}
-{% endif %}
+{% block region %}{% endblock region%}
+{% block regions %}{% endblock regions %}
+{% block complectation %}
+{% endblock complectation %}
+{% block modification %}
+{% endblock modification %}
+
 
 {% block schema %}
     {% if schema.getCode is not empty %}
-        <div style=" height: 300px; " class="col-sm-4 col-sm-offset-5 col-md-4 col-md-offset-0">
+        <div style=" height: 320px; " class="col-sm-2 col-sm-offset-5 col-md-2 col-md-offset-0">
             <a href="{{ path('articul_landrover_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
 
+
                 <div class="row">
-                    {{ schema.getOption('FROMDATE')|landrover_date_convertor }} - {{ schema.getOption('UPTODATE')|landrover_date_convertor }}
+                    {{ schema.getRuname|upper }}
                 </div>
 
-                <div class="row">
-                    {{ schema.getRuname }}
-                </div>
+                {#    {% if schema.getOption('add') != schema.getOption('descr') %}
+
+                        <div class="row">
+                            {{ schema.getOption('descr')|convert_encoding('cp1251', 'utf8') }}
+                        </div>
+
+                    {% if schema.getOption('add') is not empty %}
+
+                        <div class="row">
+                        {{ schema.getOption('add') }}
+                        </div>
+
+                    {% endif %}
+                        {% else %}
+                            <div class="row">
+                                {{ schema.getOption('descr')|convert_encoding('UTF-8', 'CP1251')|upper }}
+                            </div>
+
+
+                    {% endif %}
+                    #}
 
 
 
                 <div class="row">
-                    <img src="{{ asset('bundles/cataloglandrover/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/'~a~'/'~schema.getCode~'.gif') }}" width="300" alt="{{ schema.getRuname }}"/>
+                    <img src="{{ asset('bundles/cataloglandrover/Images/'~schema.getOption('pictureFolder')~'/'~schema.getCode~'.png') }}" width="150" alt="{{ schema.getRuname }}"/>
                 </div>
 
 

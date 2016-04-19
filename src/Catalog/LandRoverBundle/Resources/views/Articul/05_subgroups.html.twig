@@ -7,11 +7,17 @@
     Подгруппа запчастей
 {% endblock breadcrumbs %}
 
-{% block complectation %}{% endblock complectation %}
+{% block region %}{% endblock region%}
+{% block regions %}{% endblock regions %}
+{% block complectation %}
+{% endblock complectation %}
+{% block modification %}
+{% endblock modification %}
+
 
 {% block subgroupImage %}
     <div class="col-lg-8">
-        <img src="{{ asset('bundles/cataloglandrover/Imgs/images/L_EPERFIG/'~oContainer.getActiveGroup.getOption('catalog')~'/'~oContainer.getActiveGroup.getOption('picture')) }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
+        <img src="{{ asset('bundles/cataloglandrover/Images/'~oContainer.getActiveGroup.getOption('pictureFolder')~'/'~oContainer.getActiveGroup.getOption('picture')~'.png') }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
 
     </div>
 {% endblock subgroupImage %}

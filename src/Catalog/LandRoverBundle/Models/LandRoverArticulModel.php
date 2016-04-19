@@ -17,25 +17,14 @@ class LandRoverArticulModel extends LandRoverCatalogModel{
 
 
 
-        $sqlPnc = "
-         SELECT CATALOG
-          FROM catalog
-          WHERE catalog.OEMCODE = :articulCode
-         ";
 
-        $query = $this->conn->prepare($sqlPnc);
-        $query->bindValue('articulCode',  $articulCode);
-        $query->execute();
-
-        $aData = $query->fetchAll();
 
         $regions = array();
-        foreach($aData as $index => $value)
-        {
-            $regions[] = $value['CATALOG'];
-        }
+
+            $regions = ['EU'];
 
         return $regions;
+
 
     }
 
@@ -43,38 +32,19 @@ class LandRoverArticulModel extends LandRoverCatalogModel{
     {
 
 
-        if ($regionCode !== 'JP')
-        {
-            $sql = "
-        SELECT catalog.CATALOG, cdindex.SHASHU, cdindex.SHASHUKO
-        FROM catalog
-        INNER JOIN destcnt ON (destcnt.CATALOG = catalog.CATALOG AND destcnt.ShashuCD = catalog.MDLDIR)
-        INNER JOIN cdindex ON (cdindex.CATALOG = catalog.CATALOG AND cdindex.SHASHU = destcnt.SHASHU)
-        WHERE catalog.OEMCODE = :articulCode
-        and catalog.CATALOG = :regionCode
-        ORDER by SHASHUKO
-        ";
-        }
 
-        else
-        {
             $sql = "
-        SELECT cdindex.SHASHU, cdindex_jp_en.SHASHUKO
-        FROM catalog
-        LEFT JOIN destcnt ON (destcnt.CATALOG = catalog.CATALOG AND destcnt.ShashuCD = catalog.MDLDIR)
-        LEFT JOIN cdindex ON (cdindex.CATALOG = catalog.CATALOG AND cdindex.SHASHU = destcnt.SHASHU)
-        LEFT JOIN cdindex_jp_en ON (cdindex.SHASHU = cdindex_jp_en.SHASHU)
-        WHERE catalog.OEMCODE = :articulCode
-        and catalog.CATALOG = :regionCode
-        ORDER by SHASHUKO
-
+        SELECT lrec.model_id, lrec.engine_type
+        FROM mcpart1
+        INNER JOIN coordinates_names ON (coordinates_names.num_index = mcpart1.pict_index)
+        INNER JOIN lrec ON (lrec.model_id = coordinates_names.model_id)
+        WHERE mcpart1.detail_code = :articulCode
         ";
-        }
+
 
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
-        $query->bindValue('regionCode', $regionCode);
 
         $query->execute();
 
@@ -85,7 +55,7 @@ class LandRoverArticulModel extends LandRoverCatalogModel{
 
         foreach($aData as $item)
         {
-            $models[] = urlencode($item['SHASHUKO']);
+            $models[] = $item['model_id'].'_'.(ctype_alpha($item['engine_type'])?'GC'.$item['engine_type']:$item['engine_type']);
 
         }
 
@@ -188,109 +158,72 @@ class LandRoverArticulModel extends LandRoverCatalogModel{
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
 
-        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
+        $pictureFolder = substr($modelCode, strpos($modelCode, '_')+1, strlen($modelCode));
+
+        $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
 
 
-        if ($regionCode != 'JP')
-        {
-            $sql = "
-        SELECT gsecloc_all.PICGROUP
-        FROM catalog
-        left JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
-        left JOIN gsecloc_all ON (gsecloc_all.CATALOG = catalog.CATALOG AND gsecloc_all.MDLDIR = catalog.MDLDIR and gsecloc_all.FIGURE = SUBSTRING(pcodenes.FIGURE,1,3))
-        WHERE catalog.CATALOG = :regionCode
-        AND catalog.OEMCODE = :articulCode
-        and catalog.MDLDIR = :MDLDIR
-        ";
 
-        }
 
-        else{
-            $sql = "
-        SELECT esecloc_jp.PICGROUP
-        FROM catalog
-        left JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
-        left JOIN esecloc_jp ON (esecloc_jp.CATALOG = catalog.CATALOG AND esecloc_jp.MDLDIR = catalog.MDLDIR and esecloc_jp.FIGURE = SUBSTRING(pcodenes.FIGURE,1,3))
-        WHERE catalog.CATALOG = :regionCode
-        AND catalog.OEMCODE = :articulCode
-        and catalog.MDLDIR = :MDLDIR
-        ";
+        $sql = "
+           SELECT param2
+           FROM mcpart1
 
-        }
+           WHERE mcpart1.detail_code = :articulCode
+           ";
+
+
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('MDLDIR', $MDLDIR);
         $query->execute();
 
         $aData = $query->fetchAll();
-
-
 
         $groups = array();
 
         foreach($aData as $item)
 		{
 
-			$groups[]= $item['PICGROUP'];
+			$groups[]= substr(substr(substr($item['param2'], 0, strpos($item['param2'], '!')),-3),0,1);
 
 		}
 
-
         return array_unique($groups);
+
     }
 
 
     public function getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
-        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
+        $pictureFolder = substr($modelCode, strpos($modelCode, '_')+1, strlen($modelCode));
 
-        if ($regionCode != 'JP')
-        {
-            $sql = "
-        SELECT gsecloc_all.FIGURE
-        FROM catalog
-        LEFT JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
-        LEFT JOIN gsecloc_all ON (gsecloc_all.CATALOG = catalog.CATALOG AND gsecloc_all.MDLDIR = catalog.MDLDIR and gsecloc_all.FIGURE = SUBSTRING(pcodenes.FIGURE,1,3)
-        AND gsecloc_all.PICGROUP = :groupCode)
-        WHERE catalog.CATALOG = :regionCode
-        AND catalog.OEMCODE = :articulCode
-        and catalog.MDLDIR = :MDLDIR
+        $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
 
-        ";
-        }
 
-        else{
-            $sql = "
-        SELECT esecloc_jp.FIGURE
-        FROM catalog
-        LEFT JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
-        LEFT JOIN esecloc_jp ON (esecloc_jp.CATALOG = catalog.CATALOG AND esecloc_jp.MDLDIR = catalog.MDLDIR and esecloc_jp.FIGURE = SUBSTRING(pcodenes.FIGURE,1,3)
-        AND esecloc_jp.PICGROUP = :groupCode)
-        WHERE catalog.CATALOG = :regionCode
-        AND catalog.OEMCODE = :articulCode
-        and catalog.MDLDIR = :MDLDIR
 
-        ";
-        }
+
+        $sql = "
+           SELECT param2
+           FROM mcpart1
+
+           WHERE mcpart1.detail_code = :articulCode
+           ";
 
 
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('groupCode', $groupCode);
-        $query->bindValue('MDLDIR', $MDLDIR);
-
         $query->execute();
 
         $aData = $query->fetchAll();
+
     	$subgroups = array();
 
         foreach($aData as $item)
         {
-            $subgroups[]= $item['FIGURE'];
+            $subgroups[]= substr(substr($item['param2'], 0, strpos($item['param2'], '!')),-3);
+
 
         }
 
@@ -303,38 +236,38 @@ class LandRoverArticulModel extends LandRoverCatalogModel{
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
 
-        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
+        $pictureFolder = substr($modelCode, strpos($modelCode, '_')+1, strlen($modelCode));
+
+        $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
+
+
 
 
         $sql = "
-        SELECT illnote.PIMGSTR
-        FROM catalog
-        LEFT JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
-        LEFT JOIN illnote ON (illnote.CATALOG = catalog.CATALOG AND illnote.MDLDIR = catalog.MDLDIR and illnote.FIGURE = pcodenes.FIGURE AND illnote.SECNO = pcodenes.SECNO)
-        WHERE catalog.CATALOG = :regionCode
-        AND catalog.OEMCODE = :articulCode
-        and catalog.MDLDIR = :MDLDIR
-        ";
+           SELECT pict_index
+           FROM mcpart1
+
+           WHERE mcpart1.detail_code = :articulCode AND SUBSTRING_INDEX(param2, '!', 1) LIKE CONCAT('%', :subGroupCode)
+           ";
+
+
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('MDLDIR', $MDLDIR);
-
+        $query->bindValue('subGroupCode', $subGroupCode);
         $query->execute();
 
         $aData = $query->fetchAll();
-
 	   
 	   $schemas = array();
         foreach($aData as $item) {
 
-                $schemas[] = strtoupper($item['PIMGSTR']);
+                $schemas[] = $item['pict_index'];
 
 
         }
 
-		   
+
         return array_unique($schemas);
     }
          
@@ -342,20 +275,60 @@ class LandRoverArticulModel extends LandRoverCatalogModel{
     {
 
 
-        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
+        $pictureFolder = substr($modelCode, strpos($modelCode, '_')+1, strlen($modelCode));
+        $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
 
-        $sql = "
-        SELECT PARTCODE
-        FROM catalog
-        WHERE catalog.CATALOG = :regionCode
-        AND catalog.OEMCODE = :articulCode
-        and catalog.MDLDIR = :MDLDIR
-        ";
+
+        $aPncs = array();
+
+
+        if (strlen($pictureFolder) == 2) {
+
+            $sql = "
+
+           SELECT ABS(coordinates.label_name) as label_name
+           FROM coordinates
+           INNER JOIN mcpart1 ON (mcpart1.pict_index = coordinates.num_index
+           AND mcpart1.detail_code = :articulCode AND SUBSTRING_INDEX(param2, '!', 1) LIKE CONCAT('%', :subGroupCode)
+
+           AND coordinates.label_name = REPLACE(SUBSTRING_INDEX(mcpart1.param1, '.', 1), '1:', '20')-1 AND coordinates.label_name >= 10)
+
+
+           WHERE coordinates.num_index = :schemaCode
+
+           UNION
+
+           SELECT ABS(coordinates.label_name) as label_name
+           FROM coordinates
+           INNER JOIN mcpart1 ON (mcpart1.pict_index = coordinates.num_index
+           AND mcpart1.detail_code = :articulCode AND SUBSTRING_INDEX(param2, '!', 1) LIKE CONCAT('%', :subGroupCode)
+
+           AND coordinates.label_name = SUBSTRING_INDEX(mcpart1.param1, '-', 1))
+
+           WHERE coordinates.num_index = :schemaCode
+           ORDER BY (1)
+           ";
+        }
+
+        else {
+
+            $sql = "
+
+           SELECT mcpart3.detail_code as label_name
+           FROM mcpart1
+           INNER JOIN mcpart3 ON (mcpart3.param1_offset = mcpart1.param1_offset and mcpart3.pict_index = :schemaCode
+           AND SUBSTRING_INDEX(mcpart3.param2, '!', 1) LIKE CONCAT('%', :subGroupCode))
+
+           WHERE mcpart1.pict_index = :schemaCode
+           AND mcpart1.detail_code = :articulCode AND SUBSTRING_INDEX(mcpart1.param2, '!', 1) LIKE CONCAT('%', :subGroupCode)
+           ";
+        }
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('MDLDIR', $MDLDIR);
+        $query->bindValue('schemaCode', $schemaCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+
 
         $query->execute();
 
@@ -364,10 +337,11 @@ class LandRoverArticulModel extends LandRoverCatalogModel{
         $pncs = array();
         foreach($aData as $item) {
 
-                $pncs[] = $item['PARTCODE'];
+                $pncs[] = $item['label_name'];
 
 
         }
+
 
         return array_unique($pncs);
     }

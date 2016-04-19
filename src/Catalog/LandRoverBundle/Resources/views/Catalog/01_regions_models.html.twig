@@ -22,8 +22,10 @@
 
                         <div style=" height: 250px; " class="col-sm-2 col-sm-offset-5 col-md-2 col-md-offset-0">
 
-                            <a href="{{ path('catalog_landrover_groups', {'regionCode':  oContainer.getActiveRegion.getCode, 'modelCode': model.getCode}) }}">
+                                {% block pathToGroups %}
 
+                            <a href="{{ path('catalog_landrover_groups', {'regionCode':  oContainer.getActiveRegion.getCode, 'modelCode': model.getCode}) }}">
+                                {% endblock pathToGroups %}
                                 <img src="{{ asset('bundles/cataloglandrover/Images/'~(model.getOption('key')!=''?model.getOption('key'):'0')~'-'~model.getOption('type')~'.png') }}" width="100%" alt="{{ model.getRuname }}"/>
                                 {{ model.getRuname }}
 
