@@ -92,20 +92,20 @@ articul_landrover_complectations:
   defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulComplectations}
 
 articul_landrover_groups:
-  path:         /landrover/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulgroups}
+  path:         /landrover/articul/5/{regionCode}/{modelCode}
+  defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulgroups, modificationCode: '1'}
 
 articul_landrover_subgroups:
-  path:         /landrover/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulSubgroups}
+  path:         /landrover/articul/6/{regionCode}/{modelCode}/{groupCode}
+  defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulSubgroups, modificationCode: '1'}
 
 articul_landrover_schemas:
-  path:         /landrover/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulSchemas}
+  path:         /landrover/articul/7/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulSchemas, modificationCode: '1'}
 
 articul_landrover_schema:
-  path:         /landrover/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulSchema}
+  path:         /landrover/articul/8/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulSchema, modificationCode: '1'}
 
 articul_landrover_articuls:
   path:         /landrover/articul/9

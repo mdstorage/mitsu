@@ -1,7 +1,10 @@
 {% extends 'CatalogLandRoverBundle:Catalog:01_regions_models.html.twig' %}
 {% use 'CatalogLandRoverBundle::landrover.base.html.twig' %}
 {% block regionPath %}{{ path('articul_landrover_find', {'regionCode': region.getCode}) }}{% endblock regionPath %}
-{% block ajaxUrl %}{{ path('articul_landrover_modifications') }}{% endblock ajaxUrl %}
+{% block pathToGroups %}
+
+                            <a href="{{ path('articul_landrover_groups', {'regionCode':  oContainer.getActiveRegion.getCode, 'modelCode': model.getCode}) }}">
+                                {% endblock pathToGroups %}
 {% block head %}
     <h3>Запчасть с таким артикулом найдена в следующих моделях:</h3>
     {{ parent() }}
