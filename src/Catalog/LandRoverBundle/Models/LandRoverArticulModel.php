@@ -202,27 +202,33 @@ class LandRoverArticulModel extends LandRoverCatalogModel{
 
 
 
-
-        $sql = "
-           SELECT param2
+        $sqlCode = "
+           SELECT RIGHT(SUBSTRING_INDEX(mcpart1.param2, '!', 1),3) subgr
            FROM mcpart1
+           INNER JOIN coord_detail_info ON (coord_detail_info.model_id = :modelCode
+           AND coord_detail_info.code_detail LIKE CONCAT('%', CONCAT(RIGHT(SUBSTRING_INDEX(mcpart1.param2, '!', 1),3),'%')))
+           INNER JOIN coordinates_names ON (coordinates_names.num_model_group = coord_detail_info.num_model_group
+           AND coordinates_names.index1 = mcpart1.pict_index)
 
            WHERE mcpart1.detail_code = :articulCode
+
            ";
 
-
-
-        $query = $this->conn->prepare($sql);
+        $query = $this->conn->prepare($sqlCode);
         $query->bindValue('articulCode', $articul);
+        $query->bindValue('modelCode', $modelCode);
+
         $query->execute();
 
         $aData = $query->fetchAll();
+
+
 
     	$subgroups = array();
 
         foreach($aData as $item)
         {
-            $subgroups[]= substr(substr($item['param2'], 0, strpos($item['param2'], '!')),-3);
+            $subgroups[]= $item['subgr'];
 
 
         }
