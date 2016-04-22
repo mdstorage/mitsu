@@ -185,11 +185,28 @@ class ChevroletUsaCatalogModel extends CatalogModel{
 
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
-        $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
+
+           $subgroups = array();
+
+               $subgroups['1'] = array(
+
+                   Constants::NAME => '1',
+                   Constants::OPTIONS => array()
+
+               );
+
+           return $subgroups;
+       }
+
+       public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
+       {
 
 
-        $sql = "
-        SELECT callout_legend.ART_NBR, CAPTION_DESC
+           $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
+
+
+           $sql = "
+        SELECT callout_legend.ART_NBR, CAPTION_DESC, callout_legend.IMAGE_NAME
         FROM callout_legend, category, art, caption
         WHERE callout_legend.CATALOG_CODE = :modelCode and CAPTION_GROUP = :groupCode
         and :modificationCode BETWEEN CAPTION_FIRST_YEAR AND CAPTION_LAST_YEAR
@@ -202,70 +219,32 @@ class ChevroletUsaCatalogModel extends CatalogModel{
         ";
 
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('modelCode',  $modelCode);
-        $query->bindValue('groupCode',  $groupCode);
-        $query->bindValue('modificationCode',  $modificationCode);
+           $query = $this->conn->prepare($sql);
+           $query->bindValue('modelCode',  $modelCode);
+           $query->bindValue('groupCode',  $groupCode);
+           $query->bindValue('modificationCode',  $modificationCode);
 
-        $query->execute();
+           $query->execute();
 
-        $aData = $query->fetchAll();
+           $aData = $query->fetchAll();
 
 
 
-           $subgroups = array();
+           $schemas = array();
 
            foreach($aData as $item)
            {
 
-               $subgroups[$item['ART_NBR']] = array(
+               $schemas[$item['ART_NBR']] = array(
 
                    Constants::NAME => $item['CAPTION_DESC'],
-                   Constants::OPTIONS => array()
+                   Constants::OPTIONS => array('IMAGE_NAME' => $item['IMAGE_NAME'])
 
                );
 
            }
-           return $subgroups;
-       }
-
-       public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
-       {
-
-
-           $sql = "
-           SELECT *
-           FROM drawings, tables_dsc
-           WHERE cat_cod = :modificationCode
-           and  grp_cod = :groupCode
-           and sgrp_cod = :subGroupCode
-           and tables_dsc.lng_cod = 'N'
-           and tables_dsc.cod = drawings.table_dsc_cod
-           ";
-
-           $query = $this->conn->prepare($sql);
-           $query->bindValue('modificationCode',  $modificationCode);
-           $query->bindValue('groupCode',  $groupCode);
-           $query->bindValue('subGroupCode',  str_replace($groupCode,'',$subGroupCode));
-           $query->execute();
-
-           $aData = $query->fetchAll();
-           $schemas = array();
-           foreach($aData as $item)
-           {
-               $schCode = substr($item['img_path'], strpos($item['img_path'], '/')+1, strlen($item['img_path']));
-               $schCatalog = substr($item['img_path'], 0, strpos($item['img_path'], '/'));
-
-                       $schemas[$item['variante'].'_'.$item['sgs_cod']] = array(
-                       Constants::NAME => mb_strtoupper(iconv('cp1251', 'utf8', $item['dsc']),'utf8'),
-                       Constants::OPTIONS => array('catalog' => $schCatalog,
-                                                    'picture' => $schCode,
-                                                    'pattern' => $item['pattern']
-                                                  )
-                   );
-           }
-
            return $schemas;
+
        }
 
        public function getSchema($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
@@ -288,33 +267,32 @@ class ChevroletUsaCatalogModel extends CatalogModel{
 
        public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
        {
+           $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
 
-          $sgs_cod = substr($schemaCode, strpos($schemaCode, '_')+1, strlen($schemaCode));
-           $variante = substr($schemaCode, 0, strpos($schemaCode, '_'));
+           var_dump($modelCode); die;
 
 
-           $sqlPnc = "
-           SELECT tbd_rif, hotspots, cds_dsc
-            FROM `tbdata`, codes_dsc
-            WHERE `cat_cod` LIKE :modificationCode
-            AND `grp_cod` = :groupCode
-            AND `sgrp_cod` = :subGroupCode
-            and variante = :variante
-            and sgs_cod = :sgs_cod
-            and tbdata.cds_cod = codes_dsc.cds_cod
-            and codes_dsc.lng_cod = 'N'
-            order by tbd_rif
+           $sql = "
+        SELECT callout_legend.ART_NBR, CAPTION_DESC, callout_legend.IMAGE_NAME
+        FROM callout_legend, category, art, caption
+        WHERE callout_legend.CATALOG_CODE = :modelCode and CAPTION_GROUP = :groupCode
+        and :modificationCode BETWEEN CAPTION_FIRST_YEAR AND CAPTION_LAST_YEAR
+        and category.CATEGORY_ID = art.CATEGORY_ID and art.ART_ID = callout_legend.ART_ID
+        AND caption.ART_NBR = callout_legend.ART_NBR
+        and :modificationCode BETWEEN caption.FIRST_YEAR AND caption.LAST_YEAR
+        AND caption.COUNTRY_LANG = 'EN'
+        AND caption.CATALOG_CODE = callout_legend.CATALOG_CODE
+        GROUP BY callout_legend.ART_NBR
+        ";
 
-           ";
 
-           $query = $this->conn->prepare($sqlPnc);
-           $query->bindValue('modificationCode',  $modificationCode);
+           $query = $this->conn->prepare($sql);
+           $query->bindValue('modelCode',  $modelCode);
            $query->bindValue('groupCode',  $groupCode);
-           $query->bindValue('subGroupCode',  str_replace($groupCode,'',$subGroupCode));
-           $query->bindValue('variante',  $variante);
-           $query->bindValue('sgs_cod',  $sgs_cod);
+           $query->bindValue('modificationCode',  $modificationCode);
 
            $query->execute();
+
 
            $aPncs = $query->fetchAll();
 
