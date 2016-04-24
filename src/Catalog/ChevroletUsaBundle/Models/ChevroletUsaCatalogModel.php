@@ -19,7 +19,7 @@ class ChevroletUsaCatalogModel extends CatalogModel{
 
 
 
-        $aData = array('USA' => 'USA');
+        $aData = array('US' => 'US');
 
 
 
@@ -117,6 +117,7 @@ class ChevroletUsaCatalogModel extends CatalogModel{
         FROM major_group, group_usage, group_master
         WHERE group_usage.CATALOG_CODE = :modelCode
         and group_usage.GROUP_ID = group_master.GROUP_ID and group_master.MAJOR_GROUP = major_group.MAJOR_GROUP and group_usage.GROUP_TYPE = 'B'
+        ORDER BY (1)
         ";
 
         $query = $this->conn->prepare($sql);
@@ -238,7 +239,7 @@ class ChevroletUsaCatalogModel extends CatalogModel{
                $schemas[$item['ART_NBR']] = array(
 
                    Constants::NAME => $item['CAPTION_DESC'],
-                   Constants::OPTIONS => array('IMAGE_NAME' => $item['IMAGE_NAME'])
+                   Constants::OPTIONS => array('IMAGE_NAME' => urlencode($item['IMAGE_NAME']))
 
                );
 
@@ -269,26 +270,27 @@ class ChevroletUsaCatalogModel extends CatalogModel{
        {
            $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
 
-           var_dump($modelCode); die;
 
 
            $sql = "
-        SELECT callout_legend.ART_NBR, CAPTION_DESC, callout_legend.IMAGE_NAME
-        FROM callout_legend, category, art, caption
-        WHERE callout_legend.CATALOG_CODE = :modelCode and CAPTION_GROUP = :groupCode
-        and :modificationCode BETWEEN CAPTION_FIRST_YEAR AND CAPTION_LAST_YEAR
-        and category.CATEGORY_ID = art.CATEGORY_ID and art.ART_ID = callout_legend.ART_ID
-        AND caption.ART_NBR = callout_legend.ART_NBR
-        and :modificationCode BETWEEN caption.FIRST_YEAR AND caption.LAST_YEAR
-        AND caption.COUNTRY_LANG = 'EN'
-        AND caption.CATALOG_CODE = callout_legend.CATALOG_CODE
-        GROUP BY callout_legend.ART_NBR
+        SELECT callout_legend.CALLOUT_NBR, part_usage_lang.PART_NAME, callout_legend.IMAGE_NAME
+        FROM callout_legend
+        LEFT JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
+        LEFT JOIN part_usage_lang ON (part_usage_lang.PART_USAGE_LANG_ID = part_usage.PART_USAGE_LANG_ID AND part_usage_lang.COUNTRY_LANG = 'EN')
+        WHERE callout_legend.CATALOG_CODE = :modelCode and callout_legend.CAPTION_GROUP = :groupCode
+        and :modificationCode BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
+        AND callout_legend.ART_NBR = :schemaCode
+        GROUP BY callout_legend.CALLOUT_NBR
         ";
+
+
 
 
            $query = $this->conn->prepare($sql);
            $query->bindValue('modelCode',  $modelCode);
            $query->bindValue('groupCode',  $groupCode);
+           $query->bindValue('regionCode',  $regionCode);
+           $query->bindValue('schemaCode',  $schemaCode);
            $query->bindValue('modificationCode',  $modificationCode);
 
            $query->execute();
@@ -297,44 +299,54 @@ class ChevroletUsaCatalogModel extends CatalogModel{
            $aPncs = $query->fetchAll();
 
 
-            $singleCoords = array();
-            $aCoords = array();
-           $aCoords1 = array();
+
+
 
            foreach ($aPncs as &$aPnc)
            {
-               $singleCoords[$aPnc['tbd_rif']] = explode(';', $aPnc['hotspots']);
+
+               $sqlSchemaLabels = "
+           SELECT x, y
+           FROM coord
+            WHERE coord.IMAGE_NAME_KEY = :IMAGE_NAME
+            AND coord.LABEL_NAME = :pnc
+           ";
+
+               $query = $this->conn->prepare($sqlSchemaLabels);
+               $query->bindValue('IMAGE_NAME',  $aPnc['IMAGE_NAME']);
+               $query->bindValue('pnc',  str_pad($aPnc['CALLOUT_NBR'], 5, "0", STR_PAD_LEFT));
+
+               $query->execute();
+
+               $aPnc['clangjap'] = $query->fetchAll();
+
+
+               unset ($aPnc);
+
            }
-
-
-           foreach ($singleCoords as $index=>$value)
-           {
-               foreach ($value as $index_1=>$value_1) {
-                   $aCoords1[$index_1] = explode(',', $value_1);
-
-                   $aCoords[$index][$index_1] = $aCoords1[$index_1];
-               }
-
-           }
-
-
 
 
 
            $pncs = array();
-           $str = array();
-         foreach ($aPncs as $index=>$value) {
-               {
 
-                   foreach ($aCoords[$value['tbd_rif']] as $item1)
+           foreach ($aPncs as $index=>$value) {
+               {
+                   if (!$value['clangjap'])
                    {
-                   $pncs[$value['tbd_rif']][Constants::OPTIONS][Constants::COORDS][$item1[0]] = array(
-                       Constants::X1 => floor(($item1[0])),
-                       Constants::Y1 => $item1[1],
-                       Constants::X2 => $item1[2],
-                       Constants::Y2 => $item1[3]);
+                       unset ($aPncs[$index]);
+                   }
+
+                   foreach ($value['clangjap'] as $item1)
+                   {
+                       $pncs[($value['CALLOUT_NBR'])][Constants::OPTIONS][Constants::COORDS][($item1['x'])] = array(
+                           Constants::X2 => floor($item1['x'])+20,
+                           Constants::Y2 => $item1['y']+20,
+                           Constants::X1 => floor($item1['x']),
+                           Constants::Y1 => ($item1['y']));
 
                    }
+
+
 
                }
            }
@@ -342,13 +354,11 @@ class ChevroletUsaCatalogModel extends CatalogModel{
 
            foreach ($aPncs as $item) {
 
-
-
-                   $pncs[$item['tbd_rif']][Constants::NAME] = iconv('cp1251', 'utf8', $item['cds_dsc']);
-
-
+               $pncs[$item['CALLOUT_NBR']][Constants::NAME] = strtoupper($item['PART_NAME']);
 
            }
+
+
             return $pncs;
        }
 
