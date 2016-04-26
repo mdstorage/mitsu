@@ -273,14 +273,28 @@ class ChevroletUsaCatalogModel extends CatalogModel{
 
 
            $sql = "
-        SELECT callout_legend.CALLOUT_NBR, part_usage_lang.PART_NAME, callout_legend.IMAGE_NAME
+        SELECT (callout_legend.CALLOUT_NBR) CALLOUT_NBR, part_usage_lang.PART_NAME, callout_legend.IMAGE_NAME
         FROM callout_legend
-        LEFT JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
+        LEFT JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE <> 'Z' AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
         LEFT JOIN part_usage_lang ON (part_usage_lang.PART_USAGE_LANG_ID = part_usage.PART_USAGE_LANG_ID AND part_usage_lang.COUNTRY_LANG = 'EN')
         WHERE callout_legend.CATALOG_CODE = :modelCode and callout_legend.CAPTION_GROUP = :groupCode
         and :modificationCode BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
         AND callout_legend.ART_NBR = :schemaCode
-        GROUP BY callout_legend.CALLOUT_NBR
+
+
+
+        UNION
+        SELECT (callout_legend.CALLOUT_NBR) CALLOUT_NBR, SUBSTRING_INDEX(part_v.part_desc, ',', 1) as PART_NAME, callout_legend.IMAGE_NAME
+        FROM callout_legend
+        LEFT JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE = 'Z' AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
+        LEFT JOIN part_v ON (part_v.PART_NBR = part_usage.PART_NBR AND part_v.COUNTRY_LANG = 'EN' and part_v.CATALOG_CODE = callout_legend.CATALOG_CODE and part_v.COUNTRY_CODE = part_usage.COUNTRY_CODE)
+        WHERE callout_legend.CATALOG_CODE = :modelCode and callout_legend.CAPTION_GROUP = :groupCode
+        and :modificationCode BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
+        AND callout_legend.ART_NBR = :schemaCode
+
+
+
+        ORDER BY (1)
         ";
 
 
@@ -338,9 +352,10 @@ class ChevroletUsaCatalogModel extends CatalogModel{
 
                    foreach ($value['clangjap'] as $item1)
                    {
+                       if ($value['PART_NAME'] != NULL)
                        $pncs[($value['CALLOUT_NBR'])][Constants::OPTIONS][Constants::COORDS][($item1['x'])] = array(
-                           Constants::X2 => floor($item1['x'])+20,
-                           Constants::Y2 => $item1['y']+20,
+                           Constants::X2 => floor($item1['x'])+100,
+                           Constants::Y2 => $item1['y']+100,
                            Constants::X1 => floor($item1['x']),
                            Constants::Y1 => ($item1['y']));
 
@@ -353,6 +368,8 @@ class ChevroletUsaCatalogModel extends CatalogModel{
 
 
            foreach ($aPncs as $item) {
+
+               if ($item['PART_NAME'] != NULL)
 
                $pncs[$item['CALLOUT_NBR']][Constants::NAME] = strtoupper($item['PART_NAME']);
 
