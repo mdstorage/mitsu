@@ -297,7 +297,7 @@ class ChevroletUsaCatalogModel extends CatalogModel{
         SELECT (callout_legend.CALLOUT_NBR) CALLOUT_NBR, callout_model_lang.CALLOUT_NOUN as PART_NAME, callout_legend.IMAGE_NAME
         FROM callout_legend
         INNER JOIN callout_model ON (callout_model.CALLOUT_ID = callout_legend.CALLOUT_ID AND callout_legend.PART_USAGE_ID = 0)
-        INNER JOIN callout_model_lang ON (callout_model_lang.CALLOUT_MODEL_LANG_ID = callout_model_lang.CALLOUT_MODEL_LANG_ID
+        INNER JOIN callout_model_lang ON (callout_model_lang.CALLOUT_MODEL_LANG_ID = callout_model.CALLOUT_MODEL_LANG_ID
          AND callout_model_lang.COUNTRY_LANG = 'EN')
         WHERE callout_legend.CATALOG_CODE = :modelCode and callout_legend.CAPTION_GROUP = :groupCode
         and :modificationCode BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
@@ -485,14 +485,14 @@ $articuls = array();
         AND callout_legend.ART_NBR = :schemaCode AND callout_legend.CALLOUT_NBR = :pnc
 
         UNION
-        SELECT part_v.PART_NBR, callout_model_lang.CALLOUT_DESC PART_DESC, callout_legend.FIRST_YEAR, callout_legend.LAST_YEAR, callout_legend.QUANTITY
+        SELECT NULL AS PART_NBR, callout_model_lang.CALLOUT_DESC PART_DESC, callout_legend.FIRST_YEAR, callout_legend.LAST_YEAR, callout_legend.QUANTITY
         FROM callout_legend
         INNER JOIN callout_model ON (callout_model.CALLOUT_ID = callout_legend.CALLOUT_ID AND callout_legend.PART_USAGE_ID = 0)
-        INNER JOIN callout_model_lang ON (callout_model_lang.CALLOUT_MODEL_LANG_ID = callout_model_lang.CALLOUT_MODEL_LANG_ID
+        INNER JOIN callout_model_lang ON (callout_model_lang.CALLOUT_MODEL_LANG_ID = callout_model.CALLOUT_MODEL_LANG_ID
          AND callout_model_lang.COUNTRY_LANG = 'EN')
         WHERE callout_legend.CATALOG_CODE = :modelCode and callout_legend.CAPTION_GROUP = :groupCode
         and :modificationCode BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
-        AND callout_legend.ART_NBR = :schemaCode
+        AND callout_legend.ART_NBR = :schemaCode AND callout_legend.CALLOUT_NBR = :pnc
 
 
 
@@ -508,11 +508,13 @@ $articuls = array();
         $query->bindValue('regionCode',  $regionCode);
         $query->bindValue('schemaCode',  $schemaCode);
         $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('pnc',  $pncCode);
 
         $query->execute();
 
 
          $aArticuls = $query->fetchAll();
+
 
 $articuls = array();
 
@@ -520,12 +522,12 @@ $articuls = array();
         	 
             
             
-				$articuls[$item['prt_cod']] = array(
-                Constants::NAME => iconv('cp1251', 'utf8', $item['cds_dsc']),
+				$articuls[$item['PART_NBR']] = array(
+                Constants::NAME => $item['PART_DESC'],
                 Constants::OPTIONS => array(
-                    Constants::QUANTITY => $item['tbd_qty'],
-                    Constants::START_DATE => '',
-                    Constants::END_DATE => '',
+                    Constants::QUANTITY => $item['QUANTITY'],
+                    Constants::START_DATE => $item['FIRST_YEAR'],
+                    Constants::END_DATE => $item['LAST_YEAR'],
 
                 )
             );
