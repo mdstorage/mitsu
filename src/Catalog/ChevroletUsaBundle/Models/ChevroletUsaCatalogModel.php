@@ -51,7 +51,7 @@ class ChevroletUsaCatalogModel extends CatalogModel{
         $models = array();
         foreach($aData as $item){ 
         	 
-            $models[$item['CATALOG_CODE'].'_'.$item['MODEL_ID']] = array(Constants::NAME=>strtoupper($item['MODEL_DESC']),
+            $models[$item['MODEL_DESC']] = array(Constants::NAME=>strtoupper($item['MODEL_DESC']),
             Constants::OPTIONS=>array());
       
         }
@@ -61,14 +61,13 @@ class ChevroletUsaCatalogModel extends CatalogModel{
 
     public function getModifications($regionCode, $modelCode)
     {
-        $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
 
         $sql = "
-        SELECT FIRST_YEAR, LAST_YEAR
+        SELECT CATALOG_CODE, FIRST_YEAR, LAST_YEAR
         FROM model
         WHERE MAKE_DESC = 'Chevrolet'
-        AND CATALOG_CODE = :modelCode
-        GROUP BY MODEL_DESC
+        AND MODEL_DESC = :modelCode
+        GROUP BY CATALOG_CODE
         ";
 
         $query = $this->conn->prepare($sql);
@@ -79,18 +78,22 @@ class ChevroletUsaCatalogModel extends CatalogModel{
         $aData = $query->fetchAll();
 
         $modifications = array();
-        foreach($aData as $item){
 
-            foreach(range($item['FIRST_YEAR'], $item['LAST_YEAR'], 1) as $value)
+
+
+
+            foreach($aData as $item)
             {
-                $modifications[$value] = array(
-                    Constants::NAME     => $value,
-                    Constants::OPTIONS  => array());
+                foreach (range($item['FIRST_YEAR'], $item['LAST_YEAR'], 1) as $value)
+                {
+                    $modifications[$item['CATALOG_CODE'].'_'.$value] = array(
+                        Constants::NAME     => $value,
+                        Constants::OPTIONS  => array());
+
+                }
 
             }
 
-
-        }
 
         return $modifications;
     }
@@ -110,18 +113,18 @@ class ChevroletUsaCatalogModel extends CatalogModel{
 
 
 
-        $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
+        $catalogCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
 
         $sql = "
         SELECT major_group.MAJOR_GROUP, major_group.MAJOR_DESC, group_master.GROUP_ID
         FROM major_group, group_usage, group_master
-        WHERE group_usage.CATALOG_CODE = :modelCode
+        WHERE group_usage.CATALOG_CODE = :catalogCode
         and group_usage.GROUP_ID = group_master.GROUP_ID and group_master.MAJOR_GROUP = major_group.MAJOR_GROUP and group_usage.GROUP_TYPE = 'B'
         ORDER BY (1)
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('catalogCode',  $catalogCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -203,17 +206,20 @@ class ChevroletUsaCatalogModel extends CatalogModel{
        {
 
 
-           $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
+           $catalogCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+           $year = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+
+
 
 
            $sql = "
         SELECT callout_legend.ART_NBR, CAPTION_DESC, callout_legend.IMAGE_NAME
         FROM callout_legend, category, art, caption
-        WHERE callout_legend.CATALOG_CODE = :modelCode and CAPTION_GROUP = :groupCode
-        and :modificationCode BETWEEN CAPTION_FIRST_YEAR AND CAPTION_LAST_YEAR
+        WHERE callout_legend.CATALOG_CODE = :catalogCode and CAPTION_GROUP = :groupCode
+        and :year BETWEEN CAPTION_FIRST_YEAR AND CAPTION_LAST_YEAR
         and category.CATEGORY_ID = art.CATEGORY_ID and art.ART_ID = callout_legend.ART_ID
         AND caption.ART_NBR = callout_legend.ART_NBR
-        and :modificationCode BETWEEN caption.FIRST_YEAR AND caption.LAST_YEAR
+        and :year BETWEEN caption.FIRST_YEAR AND caption.LAST_YEAR
         AND caption.COUNTRY_LANG = 'EN'
         AND caption.CATALOG_CODE = callout_legend.CATALOG_CODE
         GROUP BY callout_legend.ART_NBR
@@ -221,9 +227,9 @@ class ChevroletUsaCatalogModel extends CatalogModel{
 
 
            $query = $this->conn->prepare($sql);
-           $query->bindValue('modelCode',  $modelCode);
+           $query->bindValue('catalogCode',  $catalogCode);
            $query->bindValue('groupCode',  $groupCode);
-           $query->bindValue('modificationCode',  $modificationCode);
+           $query->bindValue('year',  $year);
 
            $query->execute();
 
@@ -268,8 +274,8 @@ class ChevroletUsaCatalogModel extends CatalogModel{
 
        public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
        {
-           $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
-
+           $catalogCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+           $year = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
 
            $sql = "
@@ -277,8 +283,8 @@ class ChevroletUsaCatalogModel extends CatalogModel{
         FROM callout_legend
         INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE NOT LIKE 'Z' AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
         LEFT JOIN part_usage_lang ON (part_usage_lang.PART_USAGE_LANG_ID = part_usage.PART_USAGE_LANG_ID AND part_usage_lang.COUNTRY_LANG = 'EN')
-        WHERE callout_legend.CATALOG_CODE = :modelCode and callout_legend.CAPTION_GROUP = :groupCode
-        and :modificationCode BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
+        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
+        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
         AND callout_legend.ART_NBR = :schemaCode
 
 
@@ -289,20 +295,19 @@ class ChevroletUsaCatalogModel extends CatalogModel{
         INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE LIKE 'Z' AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
         INNER JOIN part_v ON (part_v.PART_NBR = part_usage.PART_NBR AND part_v.COUNTRY_LANG = 'EN' and part_v.CATALOG_CODE = callout_legend.CATALOG_CODE and part_v.COUNTRY_CODE = part_usage.COUNTRY_CODE
         and (callout_legend.ORIG_MINOR_GROUP IS NULL OR part_v.MINOR_GROUP = callout_legend.ORIG_MINOR_GROUP))
-        WHERE callout_legend.CATALOG_CODE = :modelCode and callout_legend.CAPTION_GROUP = :groupCode
-        and :modificationCode BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
+        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
+        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
         AND callout_legend.ART_NBR = :schemaCode
 
         UNION
         SELECT (callout_legend.CALLOUT_NBR) CALLOUT_NBR, callout_model_lang.CALLOUT_NOUN as PART_NAME, callout_legend.IMAGE_NAME
         FROM callout_legend
-        INNER JOIN callout_model ON (callout_model.CALLOUT_ID = callout_legend.CALLOUT_ID AND callout_legend.PART_USAGE_ID = 0)
+        INNER JOIN callout_model ON (callout_model.CALLOUT_ID = callout_legend.CALLOUT_ID)
         INNER JOIN callout_model_lang ON (callout_model_lang.CALLOUT_MODEL_LANG_ID = callout_model.CALLOUT_MODEL_LANG_ID
          AND callout_model_lang.COUNTRY_LANG = 'EN')
-        WHERE callout_legend.CATALOG_CODE = :modelCode and callout_legend.CAPTION_GROUP = :groupCode
-        and :modificationCode BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
+        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
+        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
         AND callout_legend.ART_NBR = :schemaCode
-
 
 
         ORDER BY (1)
@@ -312,11 +317,11 @@ class ChevroletUsaCatalogModel extends CatalogModel{
 
 
            $query = $this->conn->prepare($sql);
-           $query->bindValue('modelCode',  $modelCode);
+           $query->bindValue('catalogCode',  $catalogCode);
            $query->bindValue('groupCode',  $groupCode);
            $query->bindValue('regionCode',  $regionCode);
            $query->bindValue('schemaCode',  $schemaCode);
-           $query->bindValue('modificationCode',  $modificationCode);
+           $query->bindValue('year', $year);
 
            $query->execute();
 
@@ -461,7 +466,8 @@ $articuls = array();
 
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $pncCode, $options)
     {
-        $modelCode = substr($modelCode, 0, strpos($modelCode, '_'));
+        $catalogCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+        $year = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
 
 
@@ -470,8 +476,8 @@ $articuls = array();
         FROM callout_legend
         INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE NOT LIKE 'Z' AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
         LEFT JOIN part_usage_lang ON (part_usage_lang.PART_USAGE_LANG_ID = part_usage.PART_USAGE_LANG_ID AND part_usage_lang.COUNTRY_LANG = 'EN')
-        WHERE callout_legend.CATALOG_CODE = :modelCode and callout_legend.CAPTION_GROUP = :groupCode
-        and :modificationCode BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
+        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
+        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
         AND callout_legend.ART_NBR = :schemaCode AND callout_legend.CALLOUT_NBR = :pnc
 
         UNION
@@ -480,18 +486,19 @@ $articuls = array();
         INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE LIKE 'Z' AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
         INNER JOIN part_v ON (part_v.PART_NBR = part_usage.PART_NBR AND part_v.COUNTRY_LANG = 'EN' and part_v.CATALOG_CODE = callout_legend.CATALOG_CODE and part_v.COUNTRY_CODE = part_usage.COUNTRY_CODE
         and (callout_legend.ORIG_MINOR_GROUP IS NULL OR part_v.MINOR_GROUP = callout_legend.ORIG_MINOR_GROUP))
-        WHERE callout_legend.CATALOG_CODE = :modelCode and callout_legend.CAPTION_GROUP = :groupCode
-        and :modificationCode BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
+        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
+        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
         AND callout_legend.ART_NBR = :schemaCode AND callout_legend.CALLOUT_NBR = :pnc
 
         UNION
-        SELECT NULL AS PART_NBR, callout_model_lang.CALLOUT_DESC PART_DESC, callout_legend.FIRST_YEAR, callout_legend.LAST_YEAR, callout_legend.QUANTITY
+        SELECT part_usage.PART_NBR, callout_model_lang.CALLOUT_DESC PART_DESC, callout_legend.FIRST_YEAR, callout_legend.LAST_YEAR, callout_legend.QUANTITY
         FROM callout_legend
-        INNER JOIN callout_model ON (callout_model.CALLOUT_ID = callout_legend.CALLOUT_ID AND callout_legend.PART_USAGE_ID = 0)
+        INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE LIKE 'Z' AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
+        INNER JOIN callout_model ON (callout_model.CALLOUT_ID = callout_legend.CALLOUT_ID)
         INNER JOIN callout_model_lang ON (callout_model_lang.CALLOUT_MODEL_LANG_ID = callout_model.CALLOUT_MODEL_LANG_ID
          AND callout_model_lang.COUNTRY_LANG = 'EN')
-        WHERE callout_legend.CATALOG_CODE = :modelCode and callout_legend.CAPTION_GROUP = :groupCode
-        and :modificationCode BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
+        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
+        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
         AND callout_legend.ART_NBR = :schemaCode AND callout_legend.CALLOUT_NBR = :pnc
 
 
@@ -503,11 +510,11 @@ $articuls = array();
 
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('catalogCode',  $catalogCode);
         $query->bindValue('groupCode',  $groupCode);
         $query->bindValue('regionCode',  $regionCode);
         $query->bindValue('schemaCode',  $schemaCode);
-        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('year',  $year);
         $query->bindValue('pnc',  $pncCode);
 
         $query->execute();
