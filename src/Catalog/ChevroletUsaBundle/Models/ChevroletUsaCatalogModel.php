@@ -19,7 +19,7 @@ class ChevroletUsaCatalogModel extends CatalogModel{
 
 
 
-        $aData = array('US' => 'US');
+        $aData = array('US' => 'US', 'CA' => 'CA');
 
 
 
@@ -39,10 +39,13 @@ class ChevroletUsaCatalogModel extends CatalogModel{
         SELECT CATALOG_CODE, MODEL_ID, MODEL_DESC
         FROM model
         WHERE MAKE_DESC = 'Chevrolet'
+        AND (COUNTRY_CODE = '*' OR COUNTRY_CODE = :regionCode)
         GROUP BY MODEL_DESC
         ";
 
         $query = $this->conn->prepare($sql);
+        $query->bindValue('regionCode',  $regionCode);
+
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -67,11 +70,13 @@ class ChevroletUsaCatalogModel extends CatalogModel{
         FROM model
         WHERE MAKE_DESC = 'Chevrolet'
         AND MODEL_DESC = :modelCode
+        AND (COUNTRY_CODE = '*' OR COUNTRY_CODE = :regionCode)
         GROUP BY CATALOG_CODE
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('regionCode',  $regionCode);
 
         $query->execute();
 

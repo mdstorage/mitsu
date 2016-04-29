@@ -17,24 +17,22 @@ class ChevroletUsaVinModel extends ChevroletUsaCatalogModel {
     public function getVinFinderResult($vin)
     {
 
+
         $sql = "
-        SELECT vin_chassis.mvs, motor, vin_chassis.date, mvs.cat_cod, catalogues.cat_dsc, comm_modgrp.cmg_dsc, brands.title, comm_modgrp.cmg_cod, mvs.mvs_dsc
-        FROM vin_chassis, mvs, catalogues, comm_modgrp, brands
-        WHERE (vin_chassis.vin = :vin or (vin_chassis.chassy = RIGHT(:vin,8) AND SUBSTRING(vin_chassis.mvs, 1, 3) = SUBSTRING(:vin, 4, 3)))
-        AND mvs.mod_cod = SUBSTRING(vin_chassis.mvs, 1, 3)
-        AND mvs.mvs_version = SUBSTRING(vin_chassis.mvs, 4, 3)
-        AND mvs.mvs_serie = SUBSTRING(vin_chassis.mvs, 7, 1)
-        AND catalogues.cat_cod = mvs.cat_cod
-        AND comm_modgrp.cmg_cod = catalogues.cmg_cod
-        AND comm_modgrp.mk2_cod = catalogues.mk2_cod
-        AND comm_modgrp.mk2_cod = brands.eper_submake
+        SELECT *
+        FROM vin_archive2
+        WHERE vin_archive2.VIN_CHAR9 = SUBSTRING(:vin, 1, 9)
+        AND vin_archive2.VIN_CHAR2 = SUBSTRING(:vin, 10, 2)
+        AND vin_archive2.VIN_CHAR6 = SUBSTRING(:vin, 12, 6)
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('vin', $vin);
         $query->execute();
 
-        $aData = $query->fetch();
+        $aData = $query->fetchAll();
+
+        var_dump($aData); die;
 
 
 

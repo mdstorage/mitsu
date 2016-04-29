@@ -16,17 +16,33 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
     public function getArticulRegions($articulCode){
 
 
-        $aData = array('EU' => 'Европа');
+        $sql = "
+        SELECT COUNTRY_CODE FROM part_usage
+        WHERE PART_NBR = :articulCode
+
+        UNION
+
+        SELECT COUNTRY_CODE FROM part_v
+        WHERE PART_NBR = :articulCode
+
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', $articulCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
 
 
 
         $regions = array();
         foreach($aData as $index => $value)
         {
-            $regions[] = $index;
+           $regions[] = $value['COUNTRY_CODE'];
         }
 
-        return $regions;
+
+        return array_unique($regions);
 
     }
 
@@ -34,13 +50,22 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
     {
 
         $sql = "
-        select comm_modgrp.cmg_cod from tbdata, catalogues, comm_modgrp
-        where prt_cod = :articulCode and tbdata.cat_cod = catalogues.cat_cod and catalogues.cmg_cod = comm_modgrp.cmg_cod
-        and catalogues.mk2_cod = comm_modgrp.mk2_cod
+        SELECT CATALOG_CODE, FIRST_YEAR, LAST_YEAR FROM part_usage
+        WHERE PART_NBR = :articulCode
+        AND COUNTRY_CODE = :regionCode
+
+        UNION
+
+        SELECT CATALOG_CODE, FIRST_YEAR, LAST_YEAR FROM part_v
+        WHERE PART_NBR = :articulCode
+        AND COUNTRY_CODE = :regionCode
+
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
+        $query->bindValue('regionCode', $regionCode);
+
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -50,7 +75,11 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
 
         foreach($aData as $item)
         {
-            $models[] = $item['cmg_cod'];
+            foreach (range($item['FIRST_YEAR'], $item['LAST_YEAR'], 1) as $value)
+            {
+                $models[] = $item['cmg_cod'];
+            }
+
 
         }
 
