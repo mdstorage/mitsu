@@ -3,11 +3,15 @@
     {% for modification in oContainer.getActiveModel.getModifications %}
          <div>
             {% block modification %}
+
+             <div class="col-lg-4">
              <div class="row">
                 <a href="{{ path('catalog_chevroletusa_groups', parameters|merge({'modificationCode': modification.getCode})) }}">
                    {{ modification.getRuname }}
                 </a>
              </div>
+             </div>
+
             {% endblock modification %}
         </div>
     {% endfor %}

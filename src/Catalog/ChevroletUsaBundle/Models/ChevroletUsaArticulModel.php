@@ -16,17 +16,33 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
     public function getArticulRegions($articulCode){
 
 
-        $aData = array('EU' => 'Европа');
+        $sql = "
+        SELECT COUNTRY_CODE FROM part_usage
+        WHERE PART_NBR = :articulCode
+
+        UNION
+
+        SELECT COUNTRY_CODE FROM part_v
+        WHERE PART_NBR = :articulCode
+
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', $articulCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
 
 
 
         $regions = array();
         foreach($aData as $index => $value)
         {
-            $regions[] = $index;
+           $regions[] = $value['COUNTRY_CODE'];
         }
 
-        return $regions;
+
+        return array_unique($regions);
 
     }
 
@@ -34,13 +50,26 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
     {
 
         $sql = "
-        select comm_modgrp.cmg_cod from tbdata, catalogues, comm_modgrp
-        where prt_cod = :articulCode and tbdata.cat_cod = catalogues.cat_cod and catalogues.cmg_cod = comm_modgrp.cmg_cod
-        and catalogues.mk2_cod = comm_modgrp.mk2_cod
+        SELECT model.MODEL_DESC
+        FROM part_usage
+        INNER JOIN model ON (model.CATALOG_CODE = part_usage.CATALOG_CODE AND (model.COUNTRY_CODE = part_usage.COUNTRY_CODE OR model.COUNTRY_CODE = '*'))
+        WHERE part_usage.PART_NBR = :articulCode
+        AND part_usage.COUNTRY_CODE = :regionCode
+
+        UNION
+
+        SELECT model.MODEL_DESC
+        FROM part_v
+        INNER JOIN model ON (model.CATALOG_CODE = part_v.CATALOG_CODE AND (model.COUNTRY_CODE = part_v.COUNTRY_CODE OR model.COUNTRY_CODE = '*'))
+        WHERE part_v.PART_NBR = :articulCode
+        AND part_v.COUNTRY_CODE = :regionCode
+
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
+        $query->bindValue('regionCode', $regionCode);
+
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -50,7 +79,9 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
 
         foreach($aData as $item)
         {
-            $models[] = $item['cmg_cod'];
+
+                $models[] = $item['MODEL_DESC'];
+
 
         }
 
@@ -62,12 +93,27 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
         $modelCode = urldecode($modelCode);
 
         $sql = "
-        select catalogues.cat_cod from tbdata, catalogues
-        where tbdata.prt_cod = :articulCode and tbdata.cat_cod = catalogues.cat_cod and catalogues.cmg_cod = :modelCode
+        SELECT model.CATALOG_CODE, model.FIRST_YEAR, model.LAST_YEAR
+        FROM part_usage
+        INNER JOIN model ON (model.CATALOG_CODE = part_usage.CATALOG_CODE
+        AND (model.COUNTRY_CODE = part_usage.COUNTRY_CODE OR model.COUNTRY_CODE = '*') AND model.MODEL_DESC = :modelCode)
+        WHERE part_usage.PART_NBR = :articulCode
+        AND part_usage.COUNTRY_CODE = :regionCode
+
+        UNION
+
+        SELECT model.CATALOG_CODE, model.FIRST_YEAR, model.LAST_YEAR
+        FROM part_v
+        INNER JOIN model ON (model.CATALOG_CODE = part_v.CATALOG_CODE
+        AND (model.COUNTRY_CODE = part_v.COUNTRY_CODE OR model.COUNTRY_CODE = '*') AND model.MODEL_DESC = :modelCode)
+        WHERE part_v.PART_NBR = :articulCode
+        AND part_v.COUNTRY_CODE = :regionCode
+
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
+        $query->bindValue('regionCode', $regionCode);
         $query->bindValue('modelCode', $modelCode);
         $query->execute();
 
@@ -75,7 +121,11 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
 
         foreach($aData as $item)
         {
-            $modifications[] = $item['cat_cod'];
+            foreach (range($item['FIRST_YEAR'], $item['LAST_YEAR'], 1) as $value)
+            {
+                $modifications[] = $item['CATALOG_CODE'].'_'.$value;
+            }
+
 
         }
 
@@ -169,16 +219,34 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
 
+        $catalogCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+        $year = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
         $modelCode = urldecode($modelCode);
 
         $sql = "
-        select grp_cod from tbdata
-        where tbdata.prt_cod = :articulCode and tbdata.cat_cod = :modificationCode
+        SELECT MAJOR_GROUP
+        FROM part_usage
+        WHERE part_usage.PART_NBR = :articulCode
+        AND part_usage.CATALOG_CODE = :catalogCode
+        AND :year BETWEEN FIRST_YEAR AND LAST_YEAR
+        AND part_usage.COUNTRY_CODE = :regionCode
+
+        UNION
+
+        SELECT MAJOR_GROUP
+        FROM part_v
+        WHERE part_v.PART_NBR = :articulCode
+        AND part_v.CATALOG_CODE = :catalogCode
+        AND :year BETWEEN FIRST_YEAR AND LAST_YEAR
+        AND part_v.COUNTRY_CODE = :regionCode
+
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
-        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('catalogCode', $catalogCode);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('year', $year);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -188,7 +256,7 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
         foreach($aData as $item)
 		{
 
-			$groups[]= $item['grp_cod'];
+			$groups[]= $item['MAJOR_GROUP'];
 
 			
 		}
@@ -199,24 +267,14 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
 
     public function getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
-        $sql = "
-        select sgrp_cod from tbdata
-        where tbdata.prt_cod = :articulCode and tbdata.cat_cod = :modificationCode and grp_cod = :groupCode
-        ";
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', $articul);
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('groupCode', $groupCode);
-        $query->execute();
-
-        $aData = $query->fetchAll();
+        $aData =array('1' => '1');
 
     	$subgroups = array();
 
         foreach($aData as $item)
         {
-            $subgroups[]= $groupCode.str_pad($item['sgrp_cod'], 2, "0", STR_PAD_LEFT);
+            $subgroups[]= $item;
 
         }
 
@@ -227,17 +285,50 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
     
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
+        $catalogCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+        $year = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
         $sql = "
-        select variante, sgs_cod from tbdata
-        where tbdata.prt_cod = :articulCode and tbdata.cat_cod = :modificationCode and grp_cod = :groupCode and sgrp_cod = :subGroupCode
+        SELECT callout_legend.ART_NBR
+        FROM callout_legend
+        INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID
+        AND part_usage.PART_TYPE NOT LIKE 'Z'
+        AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*')
+        AND part_usage.PART_NBR = :articulCode
+        AND part_usage.CATALOG_CODE = :catalogCode
+        AND :year BETWEEN part_usage.FIRST_YEAR AND part_usage.LAST_YEAR)
+        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
+        and :year BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
+
+
+
+
+        UNION
+        SELECT callout_legend.ART_NBR
+        FROM callout_legend
+        INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID
+        AND part_usage.PART_TYPE LIKE 'Z'
+        AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*')
+        AND part_usage.PART_NBR = :articulCode
+        AND part_usage.CATALOG_CODE = :catalogCode
+        AND :year BETWEEN part_usage.FIRST_YEAR AND part_usage.LAST_YEAR)
+        INNER JOIN part_v ON (part_v.PART_NBR = part_usage.PART_NBR
+        AND part_v.COUNTRY_LANG = 'EN' and part_v.CATALOG_CODE = callout_legend.CATALOG_CODE
+        AND part_v.COUNTRY_CODE = part_usage.COUNTRY_CODE
+        AND (callout_legend.ORIG_MINOR_GROUP IS NULL OR part_v.MINOR_GROUP = callout_legend.ORIG_MINOR_GROUP))
+        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
+        and :year BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
+
         ";
 
         $query = $this->conn->prepare($sql);
+        $query->bindValue('regionCode', $regionCode);
+
         $query->bindValue('articulCode', $articul);
-        $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('groupCode', $groupCode);
-        $query->bindValue('subGroupCode', str_replace($groupCode,'',$subGroupCode));
+        $query->bindValue('catalogCode', $catalogCode);
+        $query->bindValue('year', $year);
+
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -245,7 +336,7 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
 	   $schemas = array();
         foreach($aData as $item) {
 
-                $schemas[] = $item['variante'].'_'.$item['sgs_cod'];
+                $schemas[] = $item['ART_NBR'];
 
 
         }
@@ -256,22 +347,43 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
      public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
 
-        $sgs_cod = substr($schemaCode, strpos($schemaCode, '_')+1, strlen($schemaCode));
-        $variante = substr($schemaCode, 0, strpos($schemaCode, '_'));
+        $catalogCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+        $year = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+
 
         $sql = "
-        select tbd_rif from tbdata
-        where tbdata.prt_cod = :articulCode and tbdata.cat_cod = :modificationCode and grp_cod = :groupCode and sgrp_cod = :subGroupCode
-        and sgs_cod = :sgs_cod and variante = :variante
+        SELECT (callout_legend.CALLOUT_NBR) CALLOUT_NBR
+        FROM callout_legend
+        INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE NOT LIKE 'Z' AND part_usage.PART_NBR = :articulCode
+        AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
+        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
+        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
+        AND callout_legend.ART_NBR = :schemaCode
+
+
+
+        UNION
+        SELECT (callout_legend.CALLOUT_NBR) CALLOUT_NBR
+        FROM callout_legend
+        INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE LIKE 'Z' AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
+        INNER JOIN part_v ON (part_v.PART_NBR = part_usage.PART_NBR AND part_v.PART_NBR = :articulCode AND part_v.COUNTRY_LANG = 'EN' and part_v.CATALOG_CODE = callout_legend.CATALOG_CODE and part_v.COUNTRY_CODE = part_usage.COUNTRY_CODE
+        and (callout_legend.ORIG_MINOR_GROUP IS NULL OR part_v.MINOR_GROUP = callout_legend.ORIG_MINOR_GROUP))
+        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
+        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
+        AND callout_legend.ART_NBR = :schemaCode
+
+
+
+        ORDER BY (1)
         ";
 
         $query = $this->conn->prepare($sql);
+        $query->bindValue('regionCode', $regionCode);
         $query->bindValue('articulCode', $articul);
-        $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('groupCode', $groupCode);
-        $query->bindValue('subGroupCode', str_replace($groupCode,'',$subGroupCode));
-        $query->bindValue('sgs_cod', $sgs_cod);
-        $query->bindValue('variante', $variante);
+        $query->bindValue('schemaCode', $schemaCode);
+        $query->bindValue('catalogCode', $catalogCode);
+        $query->bindValue('year', $year);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -279,7 +391,7 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
         $pncs = array();
         foreach($aData as $item) {
 
-                $pncs[] = $item['tbd_rif'];
+                $pncs[] = $item['CALLOUT_NBR'];
 
 
         }

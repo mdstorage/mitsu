@@ -11,16 +11,17 @@
 
 {% block complectation %}
 {% endblock complectation %}
+{% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
 
-{% block pncScript %}
+							{% block pncScript %}
                                 <script>
                                     $("#pnc_{{ pnc.getCode }}").on("click", function(){
-                                    	
-                                    	{% block pncClick %}
-                                    	
-                                    	$("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
+
+                                        {% block pncClick %}
+
+                                        $("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
                                         $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
-                                        
+
                                         $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
                                         $.ajax({
                                             type:   'POST',
@@ -31,13 +32,13 @@
                                                 $("#articul_for_pnc{{ pnc.getCode }}").html(data);
                                             }
                                         });
-                                        
+
                                         $.scrollTo("#pnc_{{ pnc.getCode }}", {duration:1500});
-                                        
-                                        
+
+
                                         $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
                                         $("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
-                                        
+
                                         {% endblock pncClick %}
                                     });
                                     $("#pnc_{{ pnc.getCode }}").on("mouseover", function(){
@@ -47,13 +48,14 @@
                                     $("#pnc_{{ pnc.getCode }}").on("mouseout", function(){
                                         $(this).removeClass("btn-info");
                                     });
-   
+
                                 </script>
-{% endblock pncScript %}
+                            {% endblock pncScript %}
 
 {% block image %}
 
-    <img src="{{ asset('bundles/catalogfiat/Imgs/images/'~oContainer.getActiveSchema.getOption('catalog')~'/'~oContainer.getActiveSchema.getOption('picture')) }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+    <img src="{{ asset('bundles/cataloggm/Images/P/060612ZZ06-011.png') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+
 {% endblock image %}
 
 {% block ajaxUrl %}{{ path('vin_chevroletusa_articuls') }}{% endblock ajaxUrl %}

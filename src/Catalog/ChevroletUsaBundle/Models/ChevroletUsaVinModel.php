@@ -17,17 +17,18 @@ class ChevroletUsaVinModel extends ChevroletUsaCatalogModel {
     public function getVinFinderResult($vin)
     {
 
+
         $sql = "
-        SELECT vin_chassis.mvs, motor, vin_chassis.date, mvs.cat_cod, catalogues.cat_dsc, comm_modgrp.cmg_dsc, brands.title, comm_modgrp.cmg_cod, mvs.mvs_dsc
-        FROM vin_chassis, mvs, catalogues, comm_modgrp, brands
-        WHERE (vin_chassis.vin = :vin or (vin_chassis.chassy = RIGHT(:vin,8) AND SUBSTRING(vin_chassis.mvs, 1, 3) = SUBSTRING(:vin, 4, 3)))
-        AND mvs.mod_cod = SUBSTRING(vin_chassis.mvs, 1, 3)
-        AND mvs.mvs_version = SUBSTRING(vin_chassis.mvs, 4, 3)
-        AND mvs.mvs_serie = SUBSTRING(vin_chassis.mvs, 7, 1)
-        AND catalogues.cat_cod = mvs.cat_cod
-        AND comm_modgrp.cmg_cod = catalogues.cmg_cod
-        AND comm_modgrp.mk2_cod = catalogues.mk2_cod
-        AND comm_modgrp.mk2_cod = brands.eper_submake
+        SELECT model.MAKE_DESC, vin_archive2.MODEL_YEAR, catalog_model_string.CATALOG_CODE, model.MODEL_DESC, country.COUNTRY_CODE
+        FROM vin_archive2
+        INNER JOIN catalog_model_string ON (catalog_model_string.MODEL_STRING = vin_archive2.ATTRIBUTE5
+        AND vin_archive2.MODEL_YEAR BETWEEN catalog_model_string.FIRST_YEAR AND catalog_model_string.LAST_YEAR)
+        INNER JOIN model ON (model.CATALOG_CODE = catalog_model_string.CATALOG_CODE)
+        INNER JOIN vin_partition ON (vin_partition.START_POS = 1 AND vin_partition.END_POS = 1)
+        INNER JOIN vin_rule country ON (country.VIN_PARTITION_ID = vin_partition.VIN_PARTITION_ID AND country.MATCH_VALUE = SUBSTRING(:vin, 1, 1))
+        WHERE vin_archive2.VIN_CHAR9 = SUBSTRING(:vin, 1, 9)
+        AND vin_archive2.VIN_CHAR2 = SUBSTRING(:vin, 10, 2)
+        AND vin_archive2.VIN_CHAR6 = SUBSTRING(:vin, 12, 6)
         ";
 
         $query = $this->conn->prepare($sql);
@@ -38,19 +39,16 @@ class ChevroletUsaVinModel extends ChevroletUsaCatalogModel {
 
 
 
+
         $result = array();
 
         if ($aData) {
             $result = array(
-                'brand' => $aData['title'],
-                'model' => $aData['cmg_dsc'],
-                'modif' => $aData['cat_dsc'],
-                'modif_for_group' => $aData['cat_cod'],
-                'model_for_group' => $aData['cmg_cod'],
-                Constants::PROD_DATE => $aData['date'],
-                'region' => 'EU',
-                'motor' => $aData['motor'],
-                'mvs_dsc' => $aData['mvs_dsc']
+                'brand' => $aData['MAKE_DESC'],
+                'model' => $aData['MODEL_DESC'],
+                'modif_for_group' => $aData['CATALOG_CODE'].'_'.$aData['MODEL_YEAR'],
+                Constants::PROD_DATE => $aData['MODEL_YEAR'],
+                'region' => $aData['COUNTRY_CODE'],
                 );
         }
 
