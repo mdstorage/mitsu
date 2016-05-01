@@ -19,8 +19,13 @@ class ChevroletUsaVinModel extends ChevroletUsaCatalogModel {
 
 
         $sql = "
-        SELECT *
+        SELECT model.MAKE_DESC, vin_archive2.MODEL_YEAR, catalog_model_string.CATALOG_CODE, model.MODEL_DESC, country.COUNTRY_CODE
         FROM vin_archive2
+        INNER JOIN catalog_model_string ON (catalog_model_string.MODEL_STRING = vin_archive2.ATTRIBUTE5
+        AND vin_archive2.MODEL_YEAR BETWEEN catalog_model_string.FIRST_YEAR AND catalog_model_string.LAST_YEAR)
+        INNER JOIN model ON (model.CATALOG_CODE = catalog_model_string.CATALOG_CODE)
+        INNER JOIN vin_partition ON (vin_partition.START_POS = 1 AND vin_partition.END_POS = 1)
+        INNER JOIN vin_rule country ON (country.VIN_PARTITION_ID = vin_partition.VIN_PARTITION_ID AND country.MATCH_VALUE = SUBSTRING(:vin, 1, 1))
         WHERE vin_archive2.VIN_CHAR9 = SUBSTRING(:vin, 1, 9)
         AND vin_archive2.VIN_CHAR2 = SUBSTRING(:vin, 10, 2)
         AND vin_archive2.VIN_CHAR6 = SUBSTRING(:vin, 12, 6)
@@ -30,9 +35,8 @@ class ChevroletUsaVinModel extends ChevroletUsaCatalogModel {
         $query->bindValue('vin', $vin);
         $query->execute();
 
-        $aData = $query->fetchAll();
+        $aData = $query->fetch();
 
-        var_dump($aData); die;
 
 
 
@@ -40,15 +44,11 @@ class ChevroletUsaVinModel extends ChevroletUsaCatalogModel {
 
         if ($aData) {
             $result = array(
-                'brand' => $aData['title'],
-                'model' => $aData['cmg_dsc'],
-                'modif' => $aData['cat_dsc'],
-                'modif_for_group' => $aData['cat_cod'],
-                'model_for_group' => $aData['cmg_cod'],
-                Constants::PROD_DATE => $aData['date'],
-                'region' => 'EU',
-                'motor' => $aData['motor'],
-                'mvs_dsc' => $aData['mvs_dsc']
+                'brand' => $aData['MAKE_DESC'],
+                'model' => $aData['MODEL_DESC'],
+                'modif_for_group' => $aData['CATALOG_CODE'].'_'.$aData['MODEL_YEAR'],
+                Constants::PROD_DATE => $aData['MODEL_YEAR'],
+                'region' => $aData['COUNTRY_CODE'],
                 );
         }
 

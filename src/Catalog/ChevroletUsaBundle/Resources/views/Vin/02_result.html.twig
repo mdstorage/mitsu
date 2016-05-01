@@ -18,23 +18,8 @@
                     </tr>
 
                 <tr>
-                    <td>Модификация:</td>
-                    <td>{{ result.modif }}</td>
-                </tr>
-
-                <tr>
-                    <td>Модельный код:</td>
-                    <td>{{ result.modif_for_group }}</td>
-                </tr>
-
-                <tr>
-                    <td>Код двигателя:</td>
-                    <td>{{ result.motor }}</td>
-                </tr>
-
-                <tr>
-                    <td>Описание:</td>
-                    <td>{{ result.mvs_dsc }}</td>
+                    <td>Регион производства:</td>
+                    <td>{{ result.region }}</td>
                 </tr>
 
 
@@ -43,5 +28,5 @@
     </div>
 {% endblock specification %}
 {% block catalogPath %}
-    {{ path('vin_chevroletusa_groups',({'regionCode': result.region, 'modelCode': result.model_for_group, 'modificationCode': result.modif_for_group })) }}
+    {{ path('vin_chevroletusa_groups',({'regionCode': result.region, 'modelCode': result.model, 'modificationCode': result.modif_for_group })) }}
 {% endblock catalogPath %}
