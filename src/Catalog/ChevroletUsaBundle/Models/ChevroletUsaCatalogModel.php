@@ -36,11 +36,17 @@ class ChevroletUsaCatalogModel extends CatalogModel{
     public function getModels($regionCode)
     {
         $sql = "
-        SELECT CATALOG_CODE, MODEL_ID, MODEL_DESC
+        SELECT MODEL_DESC, CATALOG_CODE, MODEL_ID, MAKE_DESC
         FROM model
         WHERE MAKE_DESC = 'Chevrolet'
         AND (COUNTRY_CODE = '*' OR COUNTRY_CODE = :regionCode)
-        GROUP BY MODEL_DESC
+
+        UNION
+        SELECT MODEL_DESC, CATALOG_CODE, MODEL_ID, MAKE_DESC
+        FROM model
+        WHERE MAKE_DESC = 'Lt Truck Chevrolet'
+        AND (COUNTRY_CODE = '*' OR COUNTRY_CODE = :regionCode)
+        ORDER BY (1)
         ";
 
         $query = $this->conn->prepare($sql);
@@ -49,15 +55,35 @@ class ChevroletUsaCatalogModel extends CatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
-              
+
+
+        $a = array();
+        foreach($aData as $item)
+        {
+            $a[(stripos($item['MODEL_DESC'],' '))?substr($item['MODEL_DESC'], 0, stripos($item['MODEL_DESC'],' ')):$item['MODEL_DESC']] = (stripos($item['MODEL_DESC'],' '))?substr($item['MODEL_DESC'], 0, stripos($item['MODEL_DESC'],' ')):$item['MODEL_DESC'];
+        }
+
+
 
         $models = array();
-        foreach($aData as $item){ 
+        foreach($aData as $item){
+
+            foreach($a as $value)
+            {
+                if (strpos($item['MODEL_DESC'], $value) !== false)
+                {
+                    $models[strtoupper($value)] =
+                        array(Constants::NAME=>strtoupper($value),
+                            Constants::OPTIONS=>array('DESC'=>$item['MAKE_DESC']));
+
+                }
+
+
+            }
         	 
-            $models[$item['MODEL_DESC']] = array(Constants::NAME=>strtoupper($item['MODEL_DESC']),
-            Constants::OPTIONS=>array());
-      
+
         }
+
 
         return $models;
     }
@@ -69,18 +95,36 @@ class ChevroletUsaCatalogModel extends CatalogModel{
         SELECT CATALOG_CODE, FIRST_YEAR, LAST_YEAR
         FROM model
         WHERE MAKE_DESC = 'Chevrolet'
-        AND MODEL_DESC = :modelCode
+        AND MODEL_DESC LIKE :modelCode
         AND (COUNTRY_CODE = '*' OR COUNTRY_CODE = :regionCode)
-        GROUP BY CATALOG_CODE
+
+        UNION
+
+        SELECT CATALOG_CODE, FIRST_YEAR, LAST_YEAR
+        FROM model
+        WHERE MAKE_DESC = 'Lt Truck Chevrolet'
+        AND MODEL_DESC LIKE :modelCode
+        AND (COUNTRY_CODE = '*' OR COUNTRY_CODE = :regionCode)
+        ORDER BY (1)
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('modelCode',  '%'.$modelCode.'%');
         $query->bindValue('regionCode',  $regionCode);
 
         $query->execute();
 
         $aData = $query->fetchAll();
+
+        $first_year = array();
+        $last_year = array();
+
+        foreach($aData as $item)
+        {
+            $first_year[] = $item['FIRST_YEAR'];
+            $last_year[] = $item['LAST_YEAR'];
+
+        }
 
         $modifications = array();
 
@@ -89,9 +133,9 @@ class ChevroletUsaCatalogModel extends CatalogModel{
 
             foreach($aData as $item)
             {
-                foreach (range($item['FIRST_YEAR'], $item['LAST_YEAR'], 1) as $value)
+                foreach (range(min($first_year), max($last_year), 1) as $value)
                 {
-                    $modifications[$item['CATALOG_CODE'].'_'.$value] = array(
+                    $modifications[$value] = array(
                         Constants::NAME     => $value,
                         Constants::OPTIONS  => array());
 
@@ -106,7 +150,48 @@ class ChevroletUsaCatalogModel extends CatalogModel{
     public function getComplectations($regionCode, $modelCode, $modificationCode)
    
     {
+
+        $sql = "
+        SELECT CATALOG_CODE, MODEL_DESC
+        FROM model
+        WHERE MAKE_DESC = 'Chevrolet'
+        AND MODEL_DESC LIKE :modelCode
+        AND (COUNTRY_CODE = '*' OR COUNTRY_CODE = :regionCode)
+        AND :modificationCode BETWEEN FIRST_YEAR AND LAST_YEAR
+
+
+        UNION
+
+        SELECT CATALOG_CODE, MODEL_DESC
+        FROM model
+        WHERE MAKE_DESC = 'Lt Truck Chevrolet'
+        AND MODEL_DESC LIKE :modelCode
+        AND (COUNTRY_CODE = '*' OR COUNTRY_CODE = :regionCode)
+        AND :modificationCode BETWEEN FIRST_YEAR AND LAST_YEAR
+        ORDER BY (1)
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('modelCode',  '%'.$modelCode.'%');
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('modificationCode',  $modificationCode);
+
+
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+
+
         $complectations = array();
+
+        foreach($aData as $item){
+
+            $complectations[$item['CATALOG_CODE'].'_'.$item ['MODEL_DESC']] = array(
+                Constants::NAME     => strtoupper($item ['MODEL_DESC']),
+                Constants::OPTIONS => array()
+            );
+        }
 
 
          return $complectations;
@@ -118,7 +203,7 @@ class ChevroletUsaCatalogModel extends CatalogModel{
 
 
 
-        $catalogCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+        $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
 
         $sql = "
         SELECT major_group.MAJOR_GROUP, major_group.MAJOR_DESC, group_master.GROUP_ID
@@ -211,8 +296,8 @@ class ChevroletUsaCatalogModel extends CatalogModel{
        {
 
 
-           $catalogCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
-           $year = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+           $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
+           $year = $modificationCode;
 
 
 
@@ -279,9 +364,8 @@ class ChevroletUsaCatalogModel extends CatalogModel{
 
        public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
        {
-           $catalogCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
-           $year = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-
+           $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
+           $year = $modificationCode;
 
            $sql = "
         SELECT (callout_legend.CALLOUT_NBR) CALLOUT_NBR, part_usage_lang.PART_NAME, callout_legend.IMAGE_NAME
@@ -471,8 +555,10 @@ $articuls = array();
 
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $pncCode, $options)
     {
-        $catalogCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
-        $year = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+        $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
+        $year = $modificationCode;
+
+
 
 
 

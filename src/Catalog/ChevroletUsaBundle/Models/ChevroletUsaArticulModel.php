@@ -52,17 +52,18 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
         $sql = "
         SELECT model.MODEL_DESC
         FROM part_usage
-        INNER JOIN model ON (model.CATALOG_CODE = part_usage.CATALOG_CODE AND (model.COUNTRY_CODE = part_usage.COUNTRY_CODE OR model.COUNTRY_CODE = '*'))
+        INNER JOIN model ON (model.CATALOG_CODE = part_usage.CATALOG_CODE AND (model.COUNTRY_CODE = part_usage.COUNTRY_CODE OR model.COUNTRY_CODE = '*')
+        and (model.MAKE_DESC = 'Chevrolet' OR model.MAKE_DESC = 'Lt Truck Chevrolet'))
         WHERE part_usage.PART_NBR = :articulCode
         AND part_usage.COUNTRY_CODE = :regionCode
 
-        UNION
+     /*   UNION
 
         SELECT model.MODEL_DESC
         FROM part_v
         INNER JOIN model ON (model.CATALOG_CODE = part_v.CATALOG_CODE AND (model.COUNTRY_CODE = part_v.COUNTRY_CODE OR model.COUNTRY_CODE = '*'))
         WHERE part_v.PART_NBR = :articulCode
-        AND part_v.COUNTRY_CODE = :regionCode
+        AND part_v.COUNTRY_CODE = :regionCode*/
 
         ";
 
@@ -90,7 +91,7 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
     
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
-        $modelCode = urldecode($modelCode);
+
 
         $sql = "
         SELECT model.CATALOG_CODE, model.FIRST_YEAR, model.LAST_YEAR
@@ -100,14 +101,14 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
         WHERE part_usage.PART_NBR = :articulCode
         AND part_usage.COUNTRY_CODE = :regionCode
 
-        UNION
+   /*     UNION
 
         SELECT model.CATALOG_CODE, model.FIRST_YEAR, model.LAST_YEAR
         FROM part_v
         INNER JOIN model ON (model.CATALOG_CODE = part_v.CATALOG_CODE
         AND (model.COUNTRY_CODE = part_v.COUNTRY_CODE OR model.COUNTRY_CODE = '*') AND model.MODEL_DESC = :modelCode)
         WHERE part_v.PART_NBR = :articulCode
-        AND part_v.COUNTRY_CODE = :regionCode
+        AND part_v.COUNTRY_CODE = :regionCode*/
 
         ";
 
@@ -261,6 +262,7 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
 			
 		}
 
+
         return array_unique($groups);
     }
 
@@ -291,7 +293,7 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
         $sql = "
         SELECT callout_legend.ART_NBR
         FROM callout_legend
-        INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID
+        INNER JOIN part_usage ON (part_usage.PART_USAGE_ID = callout_legend.PART_USAGE_ID
         AND part_usage.PART_TYPE NOT LIKE 'Z'
         AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*')
         AND part_usage.PART_NBR = :articulCode
@@ -301,8 +303,6 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
         and :year BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
 
 
-
-
         UNION
         SELECT callout_legend.ART_NBR
         FROM callout_legend
@@ -310,12 +310,7 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
         AND part_usage.PART_TYPE LIKE 'Z'
         AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*')
         AND part_usage.PART_NBR = :articulCode
-        AND part_usage.CATALOG_CODE = :catalogCode
-        AND :year BETWEEN part_usage.FIRST_YEAR AND part_usage.LAST_YEAR)
-        INNER JOIN part_v ON (part_v.PART_NBR = part_usage.PART_NBR
-        AND part_v.COUNTRY_LANG = 'EN' and part_v.CATALOG_CODE = callout_legend.CATALOG_CODE
-        AND part_v.COUNTRY_CODE = part_usage.COUNTRY_CODE
-        AND (callout_legend.ORIG_MINOR_GROUP IS NULL OR part_v.MINOR_GROUP = callout_legend.ORIG_MINOR_GROUP))
+        AND part_usage.CATALOG_CODE = :catalogCode)
         WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
         and :year BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
 

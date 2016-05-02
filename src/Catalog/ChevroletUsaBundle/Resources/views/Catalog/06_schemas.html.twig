@@ -3,12 +3,13 @@
 {% block breadcrumbs %}
     <a href="{{ path('catalog_chevroletusa') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('catalog_chevroletusa_complectations', parameters) }}"> Комплектация ({{ oContainer.getActiveComplectation.getRuname }})</a>/
     <a href="{{ path('catalog_chevroletusa_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
     <a href="{{ path('catalog_chevroletusa_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему
 {% endblock breadcrumbs %}
 
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
-{% block complectation %}{% endblock complectation %}
+
 
 {% block schema %}
     {% if schema.getCode is not empty %}

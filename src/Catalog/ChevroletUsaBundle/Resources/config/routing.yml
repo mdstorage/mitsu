@@ -12,19 +12,19 @@ catalog_chevroletusa_complectations:
   defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:complectations}
 
 catalog_chevroletusa_groups:
-  path:         /chevroletusa/catalog/3/{regionCode}/{modelCode}/{modificationCode}
+  path:         /chevroletusa/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
   defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:groups}
 
 catalog_chevroletusa_subgroups:
-  path:         /chevroletusa/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
+  path:         /chevroletusa/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
   defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:subgroups}
 
 catalog_chevroletusa_schemas:
-  path:         /chevroletusa/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
+  path:         /chevroletusa/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
   defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:schemas}
 
 catalog_chevroletusa_schema:
-  path:         /chevroletusa/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  path:         /chevroletusa/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
   defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:schema}
 
 catalog_chevroletusa_articuls:
