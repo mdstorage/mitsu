@@ -584,15 +584,13 @@ $articuls = array();
         UNION
         SELECT part_usage.PART_NBR, callout_model_lang.CALLOUT_DESC PART_DESC, callout_legend.FIRST_YEAR, callout_legend.LAST_YEAR, callout_legend.QUANTITY
         FROM callout_legend
-        INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE LIKE 'Z' AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
+        INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
         INNER JOIN callout_model ON (callout_model.CALLOUT_ID = callout_legend.CALLOUT_ID)
         INNER JOIN callout_model_lang ON (callout_model_lang.CALLOUT_MODEL_LANG_ID = callout_model.CALLOUT_MODEL_LANG_ID
          AND callout_model_lang.COUNTRY_LANG = 'EN')
         WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
         and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
         AND callout_legend.ART_NBR = :schemaCode AND callout_legend.CALLOUT_NBR = :pnc
-
-
 
         ORDER BY (1)
         ";
@@ -606,12 +604,13 @@ $articuls = array();
         $query->bindValue('regionCode',  $regionCode);
         $query->bindValue('schemaCode',  $schemaCode);
         $query->bindValue('year',  $year);
-        $query->bindValue('pnc',  $pncCode);
+        $query->bindValue('pnc', $pncCode);
 
         $query->execute();
 
 
          $aArticuls = $query->fetchAll();
+
 
 
 $articuls = array();

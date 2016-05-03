@@ -5,10 +5,35 @@
 
 
     {% block models %}
+
+        {% set modelsChevListLenght = 0 %}
+
+        {% set modelsTruckListLenght = 0 %}
+
+
+        {% for model in oContainer.getActiveRegion.getModels %}
+
+            {% if model.getOption('DESC')  == 'Chevrolet' %}
+
+                {% set modelsChevListLenght = modelsChevListLenght + 1 %}
+
+            {% endif %}
+
+            {% if model.getOption('DESC')  == 'Lt Truck Chevrolet' %}
+
+                {% set modelsTruckListLenght = modelsTruckListLenght + 1 %}
+
+            {% endif %}
+
+
+        {% endfor %}
+
         <h3>Модельный ряд:</h3>
 
 
         <div class="row">
+
+            {% if modelsChevListLenght  != 0 %}
 
             <div class="col-lg-6">
                 <h4>Легковые а/м:</h4>
@@ -58,9 +83,12 @@
                     {% endfor %}
 
             </div>
+            {% endif %}
 
 
 
+
+            {% if modelsTruckListLenght  != 0 %}
 
             <div class="col-lg-6">
                 <h4>Грузовые и 4x4 а/м:</h4>
@@ -111,6 +139,8 @@
                     {% endfor %}
 
             </div>
+
+            {% endif %}
 
         </div>
 

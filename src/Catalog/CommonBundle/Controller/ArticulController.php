@@ -107,7 +107,7 @@ abstract class ArticulController extends CatalogController{
         $articulModifications = $parameters['articulModifications'];
 
         foreach ($oContainer->getActiveModel()->getModifications() as $modification) {
-            if (!in_array($modification->getCode(), $articulModifications, true)) {
+            if (!in_array($modification->getCode(), $articulModifications)) {
                 $oContainer->getActiveModel()->removeModification($modification->getCode());
             }
         }
