@@ -178,7 +178,7 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
         INNER JOIN model ON (model.CATALOG_CODE = part_usage.CATALOG_CODE
         AND (model.COUNTRY_CODE = part_usage.COUNTRY_CODE OR model.COUNTRY_CODE = '*') AND model.MODEL_DESC LIKE :modelCode AND :modificationCode BETWEEN model.FIRST_YEAR AND model.LAST_YEAR)
         WHERE part_usage.PART_NBR = :articulCode
-        AND part_usage.COUNTRY_CODE = :regionCode
+         AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*')
 
         ";
 
@@ -199,6 +199,7 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
 
         }
 
+
         return array_unique($complectations);
     }
     
@@ -215,7 +216,7 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
         WHERE part_usage.PART_NBR = :articulCode
         AND part_usage.CATALOG_CODE = :catalogCode
         AND :year BETWEEN FIRST_YEAR AND LAST_YEAR
-        AND part_usage.COUNTRY_CODE = :regionCode
+        AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*')
 
         UNION
 
@@ -224,7 +225,7 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
         WHERE part_v.PART_NBR = :articulCode
         AND part_v.CATALOG_CODE = :catalogCode
         AND :year BETWEEN FIRST_YEAR AND LAST_YEAR
-        AND part_v.COUNTRY_CODE = :regionCode
+        AND (part_v.COUNTRY_CODE = :regionCode OR part_v.COUNTRY_CODE = '*')
 
         ";
 

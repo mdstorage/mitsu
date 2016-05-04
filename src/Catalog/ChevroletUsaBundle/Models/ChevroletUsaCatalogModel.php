@@ -459,10 +459,10 @@ class ChevroletUsaCatalogModel extends CatalogModel{
                    {
                      /*  if ($value['PART_NAME'] != NULL)*/
                        $pncs[($value['CALLOUT_NBR'])][Constants::OPTIONS][Constants::COORDS][($item1['x'])] = array(
-                           Constants::X2 => floor($item1['x'])+100,
-                           Constants::Y2 => $item1['y']+100,
-                           Constants::X1 => floor($item1['x']),
-                           Constants::Y1 => ($item1['y']));
+                           Constants::X2 => floor($item1['x'])+30,
+                           Constants::Y2 => $item1['y']+30,
+                           Constants::X1 => floor($item1['x'])-30,
+                           Constants::Y1 => ($item1['y'])-30);
 
                    }
 
@@ -557,9 +557,6 @@ $articuls = array();
     {
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;
-
-
-
 
 
         $sql = "

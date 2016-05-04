@@ -1,0 +1,148 @@
+{% extends 'CatalogCommonBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogCadillacBundle::cadillac.base.html.twig' %}
+{% block regionPath %}{{ path('catalog_cadillac', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+
+
+
+    {% block models %}
+
+        {% set modelsChevListLenght = 0 %}
+
+        {% set modelsTruckListLenght = 0 %}
+
+
+        {% for model in oContainer.getActiveRegion.getModels %}
+
+            {% if model.getOption('DESC')  == 'Cadillac' %}
+
+                {% set modelsChevListLenght = modelsChevListLenght + 1 %}
+
+            {% endif %}
+
+            {% if model.getOption('DESC')  == 'Lt Truck Cadillac' %}
+
+                {% set modelsTruckListLenght = modelsTruckListLenght + 1 %}
+
+            {% endif %}
+
+
+        {% endfor %}
+
+        <h3>Модельный ряд:</h3>
+
+
+        <div class="row">
+
+            {% if modelsChevListLenght  != 0 %}
+
+            <div class="col-lg-6">
+                <h4>Легковые а/м:</h4>
+
+                    {% for model in oContainer.getActiveRegion.getModels %}
+
+
+                            {% block halfList %}
+                    {% if model.getOption('DESC')  == 'Cadillac' %}
+
+
+
+                                {% set modelCode = model.getCode|md5 %}
+                                <div class="model glyphicon-plus" id="{{ modelCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}">
+                                    {{ model.getRuname }}
+                                </div>
+                                <div id="modifications_for_model{{ modelCode }}" class="hidden"></div>
+                            {% block modificationScript %}
+                                <script>
+                                    $("#{{ modelCode }}").on("click", function(){
+                                        $("#modifications_for_model{{ modelCode }}").toggleClass("hidden");
+                                        $(this).toggleClass("glyphicon-plus");
+                                        $.ajax({
+                                            type:   'POST',
+                                            async:  false,
+                                            url:    "{% block ajaxUrl %}{{ path('catalog_cadillac_modifications') }}{% endblock ajaxUrl %}",
+                                            data:   { regionCode: $(this).attr('regionCode'), modelCode: "{{ model.getCode }}" },
+                                            success: function(data) {
+                                                $("#modifications_for_model{{ modelCode }}").html(data);
+                                            }
+                                        });
+                                        $(this).toggleClass("glyphicon-minus");
+                                    });
+                                    $("#{{ modelCode }}").on("mouseover", function(){
+                                        $(this).css("cursor", "pointer");
+                                        $(this).addClass("btn-info");
+                                    });
+                                    $("#{{ modelCode }}").on("mouseout", function(){
+                                        $(this).removeClass("btn-info");
+                                    });
+                                </script>
+                            {% endblock modificationScript %}
+
+                        {% endif %}
+                            {% endblock halfList %}
+
+                    {% endfor %}
+
+            </div>
+            {% endif %}
+
+
+
+
+            {% if modelsTruckListLenght  != 0 %}
+
+            <div class="col-lg-6">
+                <h4>Грузовые и 4x4 а/м:</h4>
+
+                    {% for model in oContainer.getActiveRegion.getModels %}
+
+
+
+                            {% block halfList1 %}
+                                {% if model.getOption('DESC')  == 'Lt Truck Cadillac' %}
+
+
+
+                                    {% set modelCode = model.getCode|md5 %}
+                                    <div class="model glyphicon-plus" id="{{ modelCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}">
+                                        {{ model.getRuname }}
+                                    </div>
+                                    <div id="modifications_for_model{{ modelCode }}" class="hidden"></div>
+                                    {% block modificationScript1 %}
+                                    <script>
+                                        $("#{{ modelCode }}").on("click", function(){
+                                            $("#modifications_for_model{{ modelCode }}").toggleClass("hidden");
+                                            $(this).toggleClass("glyphicon-plus");
+                                            $.ajax({
+                                                type:   'POST',
+                                                async:  false,
+                                                url:    "{% block ajaxUrl1 %}{{ path('catalog_cadillac_modifications') }}{% endblock ajaxUrl1 %}",
+                                                data:   { regionCode: $(this).attr('regionCode'), modelCode: "{{ model.getCode }}" },
+                                                success: function(data) {
+                                                    $("#modifications_for_model{{ modelCode }}").html(data);
+                                                }
+                                            });
+                                            $(this).toggleClass("glyphicon-minus");
+                                        });
+                                        $("#{{ modelCode }}").on("mouseover", function(){
+                                            $(this).css("cursor", "pointer");
+                                            $(this).addClass("btn-info");
+                                        });
+                                        $("#{{ modelCode }}").on("mouseout", function(){
+                                            $(this).removeClass("btn-info");
+                                        });
+                                    </script>
+                                    {% endblock modificationScript1 %}
+                                {% endif %}
+                            {% endblock halfList1 %}
+
+
+                    {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+
+    {% endblock models %}

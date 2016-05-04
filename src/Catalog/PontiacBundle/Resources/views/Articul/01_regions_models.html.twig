@@ -1,0 +1,9 @@
+{% extends 'CatalogPontiacBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogPontiacBundle::pontiac.base.html.twig' %}
+{% block regionPath %}{{ path('articul_pontiac_find', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+{% block ajaxUrl %}{{ path('articul_pontiac_modifications') }}{% endblock ajaxUrl %}
+{% block ajaxUrl1 %}{{ path('articul_pontiac_modifications') }}{% endblock ajaxUrl1 %}
+{% block head %}
+    <h3>Запчасть с таким артикулом найдена в следующих моделях:</h3>
+    {{ parent() }}
+{% endblock head %}

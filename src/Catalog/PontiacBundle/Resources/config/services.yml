@@ -1,0 +1,20 @@
+services:
+#    catalog_pontiac.example:
+#        class: Catalog\PontiacBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  pontiac_date_convertor.extension:
+        class: Catalog\PontiacBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  pontiac.catalog.model:
+    class: Catalog\PontiacBundle\Models\PontiacCatalogModel
+    arguments:  ['@doctrine.dbal.pontiac_connection']
+
+  pontiac.vin.model:
+    class: Catalog\PontiacBundle\Models\PontiacVinModel
+    arguments:  ['@doctrine.dbal.pontiac_connection']
+
+  pontiac.articul.model:
+    class: Catalog\PontiacBundle\Models\PontiacArticulModel
+    arguments:  ['@doctrine.dbal.pontiac_connection']
