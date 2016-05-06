@@ -1,0 +1,120 @@
+catalog_saturn:
+  path:         /saturn/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogSaturnBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_saturn_modifications:
+  path:         /saturn/catalog/1
+  defaults:     {_controller: CatalogSaturnBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_saturn_complectations:
+  path:         /saturn/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogSaturnBundle:Catalog:complectations}
+
+catalog_saturn_groups:
+  path:         /saturn/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogSaturnBundle:Catalog:groups}
+
+catalog_saturn_subgroups:
+  path:         /saturn/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogSaturnBundle:Catalog:subgroups}
+
+catalog_saturn_schemas:
+  path:         /saturn/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSaturnBundle:Catalog:schemas}
+
+catalog_saturn_schema:
+  path:         /saturn/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogSaturnBundle:Catalog:schema}
+
+catalog_saturn_articuls:
+  path:         /saturn/catalog/7
+  defaults:     {_controller: CatalogSaturnBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_saturn_group:
+  path:         /saturn/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSaturnBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_saturn:
+  path:         /saturn/vin/0
+  defaults:     {_controller: CatalogSaturnBundle:Vin:index}
+
+vin_saturn_result:
+  path:         /saturn/vin/1
+  defaults:     {_controller: CatalogSaturnBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_saturn_groups:
+  path:         /saturn/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogSaturnBundle:Vin:groups}
+
+vin_saturn_subgroups:
+  path:         /saturn/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogSaturnBundle:Vin:subgroups}
+
+vin_saturn_schemas:
+  path:         /saturn/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSaturnBundle:Vin:schemas}
+
+vin_saturn_schema:
+  path:         /saturn/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogSaturnBundle:Vin:schema}
+
+vin_saturn_articuls:
+  path:         /saturn/vin/7
+  defaults:     {_controller: CatalogSaturnBundle:Vin:vinarticuls}
+  requirements: {_method: POST}
+
+vin_saturn_group:
+  path:         /saturn/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSaturnBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_saturn:
+  path:         /saturn/articul/0
+  defaults:     {_controller: CatalogSaturnBundle:Articul:index}
+
+articul_saturn_find:
+  path:         /saturn/articul/1/{regionCode}
+  defaults:     {_controller: CatalogSaturnBundle:Articul:findByArticul, regionCode: null}
+
+articul_saturn_modifications:
+  path:         /saturn/articul/3
+  defaults:     {_controller: CatalogSaturnBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_saturn_complectations:
+  path:         /saturn/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogSaturnBundle:Articul:saturnArticulComplectations}
+
+articul_saturn_groups:
+  path:         /saturn/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogSaturnBundle:Articul:saturnArticulgroups}
+
+articul_saturn_subgroups:
+  path:         /saturn/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogSaturnBundle:Articul:saturnArticulSubgroups}
+
+articul_saturn_schemas:
+  path:         /saturn/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSaturnBundle:Articul:saturnArticulSchemas}
+
+articul_saturn_schema:
+  path:         /saturn/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogSaturnBundle:Articul:saturnArticulSchema}
+
+articul_saturn_articuls:
+  path:         /saturn/articul/9
+  defaults:     {_controller: CatalogSaturnBundle:Articul:saturnArticularticuls}
+  requirements: {_method: POST}
+
+articul_saturn_group:
+  path:         /saturn/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogSaturnBundle:Articul:getGroupBySubgroup}
+catalog_saturn_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogSaturnBundle:Default:index }

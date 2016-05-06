@@ -22,6 +22,26 @@ catalog_cadillac:
     resource: "@CatalogCadillacBundle/Resources/config/routing.yml"
     prefix:   /
 
+catalog_buick:
+    resource: "@CatalogBuickBundle/Resources/config/routing.yml"
+    prefix:   /
+
+catalog_hummer:
+    resource: "@CatalogHummerBundle/Resources/config/routing.yml"
+    prefix:   /
+
+catalog_saturn:
+    resource: "@CatalogSaturnBundle/Resources/config/routing.yml"
+    prefix:   /
+
+catalog_gmc:
+    resource: "@CatalogGmcBundle/Resources/config/routing.yml"
+    prefix:   /
+
+catalog_oldsmobile:
+    resource: "@CatalogOldsmobileBundle/Resources/config/routing.yml"
+    prefix:   /
+
 catalog_abarth:
     resource: "@CatalogAbarthBundle/Resources/config/routing.yml"
     prefix:   /

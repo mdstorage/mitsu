@@ -1,0 +1,14 @@
+{% extends 'CatalogCommonBundle:Articul:01_index.html.twig' %}
+{% use 'CatalogHummerBundle::hummer.base.html.twig' %}
+{% block formAction %}{{ path('articul_hummer_find') }}{% endblock formAction %}
+
+{% block articulScript %}
+    <script>
+        $("#articul-button").on('click', function(){
+            if($("#articul").val(). replace(/\s+/g, '').length < 7){
+                alert("Артикул должен содержать не менее 7 знаков!");
+                return;
+            }
+        });
+    </script>
+{% endblock articulScript %}
