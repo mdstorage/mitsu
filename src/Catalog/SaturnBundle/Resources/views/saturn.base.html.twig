@@ -1,0 +1,8 @@
+{% block brand %}Saturn{% endblock brand %}
+{% block catalogPathLogo %}{{ path('catalog_saturn') }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_saturn') }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_saturn') }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_saturn') }}{% endblock articulPath %}
+{% block userStylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/cataloggm/css/common.css') }}" media="all">
+{% endblock userStylesheets %}

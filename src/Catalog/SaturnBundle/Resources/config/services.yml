@@ -1,0 +1,20 @@
+services:
+#    catalog_saturn.example:
+#        class: Catalog\SaturnBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  saturn_date_convertor.extension:
+        class: Catalog\SaturnBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  saturn.catalog.model:
+    class: Catalog\SaturnBundle\Models\SaturnCatalogModel
+    arguments:  ['@doctrine.dbal.saturn_connection']
+
+  saturn.vin.model:
+    class: Catalog\SaturnBundle\Models\SaturnVinModel
+    arguments:  ['@doctrine.dbal.saturn_connection']
+
+  saturn.articul.model:
+    class: Catalog\SaturnBundle\Models\SaturnArticulModel
+    arguments:  ['@doctrine.dbal.saturn_connection']

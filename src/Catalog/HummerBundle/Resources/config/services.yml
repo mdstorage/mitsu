@@ -1,0 +1,20 @@
+services:
+#    catalog_hummer.example:
+#        class: Catalog\HummerBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  hummer_date_convertor.extension:
+        class: Catalog\HummerBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  hummer.catalog.model:
+    class: Catalog\HummerBundle\Models\HummerCatalogModel
+    arguments:  ['@doctrine.dbal.hummer_connection']
+
+  hummer.vin.model:
+    class: Catalog\HummerBundle\Models\HummerVinModel
+    arguments:  ['@doctrine.dbal.hummer_connection']
+
+  hummer.articul.model:
+    class: Catalog\HummerBundle\Models\HummerArticulModel
+    arguments:  ['@doctrine.dbal.hummer_connection']

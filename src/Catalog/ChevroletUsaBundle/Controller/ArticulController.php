@@ -117,6 +117,7 @@ use ChevroletUsaVinFilters;
 
             $articuls = $this->model()->getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $pncCode, json_decode($options, true));
 
+
             $oContainer = Factory::createContainer()
                 ->setActivePnc(Factory::createPnc($pncCode, $pncCode)
                     ->setArticuls(Factory::createCollection($articuls, Factory::createArticul()))

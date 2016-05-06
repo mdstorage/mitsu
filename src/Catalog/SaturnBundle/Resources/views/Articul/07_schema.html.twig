@@ -1,0 +1,100 @@
+{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% use 'CatalogSaturnBundle::saturn.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('articul_saturn_find') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('articul_saturn_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> /
+    <a href="{{ path('articul_saturn_schemas', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveSchema.getRuname }})</a> /
+    Запчасти
+{% endblock breadcrumbs %}
+
+
+{% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
+
+{% block image %}
+    <img src="{{ asset('bundles/cataloggm/Images/B/'~oContainer.getActiveSchema.getOption('IMAGE_NAME')~'.png') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+{% endblock image %}
+
+{% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock commonArticulPath %}
+{% block subGroupPath %}{{ path('articul_saturn_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
+{% block pncScript %}
+    {% if pnc.isActive %}
+        <script>
+            $(document).ready(function(){
+                {% block pncClick %}
+                                    	
+                                    	$("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
+                                        
+                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                                        $.ajax({
+                                            type:   'POST',
+                                            async:  false,
+                                            url:    "{{ path('articul_saturn_articuls') }}",
+                                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', complectationCode: '{{ oContainer.getActiveComplectation.getCode }}', groupCode: '{{ parameters.groupCode }}', subGroupCode: '{{ parameters.subGroupCode }}', schemaCode: '{{ oContainer.getActiveSchema.getCode }}', pncCode: '{{ pnc.getCode }}', options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'  },
+                                            success: function(data) {
+                                                $("#articul_for_pnc{{ pnc.getCode }}").html(data);
+                                            }
+                                        });
+                                        
+                                        $.scrollTo("#pnc_{{ pnc.getCode }}", {duration:1500});
+                                        
+                                        
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
+                                        
+                                        {% endblock pncClick %}
+            });
+        </script>
+
+    {% endif %}
+    {{ parent() }}
+{% endblock pncScript %}
+{% set a = [] %}
+{% for pnc in oContainer.getActiveSchema.getPncs %}
+    {% if pnc.isActive %}
+        {% set a = a|merge([pnc.getCode]) %}
+    {% endif %}
+{% endfor %}
+{% block activeLabel %}{{ a|join(',') }}{% endblock activeLabel %}
+
+{% block summary %}
+    <div class="col-lg-4">
+        <div>
+            {% block region %}
+                <b>Регион:</b> {% block regionRuname %}{{ oContainer.getActiveRegion.getRuname }}{% endblock regionRuname %}
+            {% endblock region %}
+        </div>
+        <div>
+            {% block model %}
+                <b>{% block modelTitle %}Модель:{% endblock modelTitle %}</b> {% block modelRuname %}{{ oContainer.getActiveModel.getRuname }}{% endblock modelRuname %}
+            {% endblock model %}
+        </div>
+        <div>
+            {% block modification %}
+                <b>{% block modificationTitle %}Модификация:{% endblock modificationTitle %}</b> {% block modificationRuname %}{{ oContainer.getActiveModification.getRuname }}{% endblock modificationRuname %}
+            {% endblock modification %}
+        </div>
+        <div>
+            {% block complectation %}
+                <b>Комплектация:</b> {% block complectationRuname %}{{ oContainer.getActiveComplectation.getRuname }}{% endblock complectationRuname %}
+            {% endblock complectation %}
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div>
+            {% block group %}
+                <b>Группа запчастей:</b> {% block groupRuname %}{{ oContainer.getActiveGroup.getRuname }}{% endblock groupRuname %}
+            {% endblock group %}
+        </div>
+        <div>
+            {% block subGroup %}
+            {% endblock subGroup %}
+        </div>
+        <div>
+            {% block schemaSummary%}
+                <b>Подгруппа запчастей:</b> {% block schemaRuname %}{{ oContainer.getActiveSchema.getRuname }}{% endblock schemaRuname %}
+            {% endblock schemaSummary %}
+        </div>
+    </div>
+{% endblock summary%}

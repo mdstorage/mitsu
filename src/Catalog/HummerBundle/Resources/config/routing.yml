@@ -1,0 +1,120 @@
+catalog_hummer:
+  path:         /hummer/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogHummerBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_hummer_modifications:
+  path:         /hummer/catalog/1
+  defaults:     {_controller: CatalogHummerBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_hummer_complectations:
+  path:         /hummer/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogHummerBundle:Catalog:complectations}
+
+catalog_hummer_groups:
+  path:         /hummer/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogHummerBundle:Catalog:groups}
+
+catalog_hummer_subgroups:
+  path:         /hummer/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogHummerBundle:Catalog:subgroups}
+
+catalog_hummer_schemas:
+  path:         /hummer/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHummerBundle:Catalog:schemas}
+
+catalog_hummer_schema:
+  path:         /hummer/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogHummerBundle:Catalog:schema}
+
+catalog_hummer_articuls:
+  path:         /hummer/catalog/7
+  defaults:     {_controller: CatalogHummerBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_hummer_group:
+  path:         /hummer/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHummerBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_hummer:
+  path:         /hummer/vin/0
+  defaults:     {_controller: CatalogHummerBundle:Vin:index}
+
+vin_hummer_result:
+  path:         /hummer/vin/1
+  defaults:     {_controller: CatalogHummerBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_hummer_groups:
+  path:         /hummer/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogHummerBundle:Vin:groups}
+
+vin_hummer_subgroups:
+  path:         /hummer/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogHummerBundle:Vin:subgroups}
+
+vin_hummer_schemas:
+  path:         /hummer/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHummerBundle:Vin:schemas}
+
+vin_hummer_schema:
+  path:         /hummer/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogHummerBundle:Vin:schema}
+
+vin_hummer_articuls:
+  path:         /hummer/vin/7
+  defaults:     {_controller: CatalogHummerBundle:Vin:vinarticuls}
+  requirements: {_method: POST}
+
+vin_hummer_group:
+  path:         /hummer/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHummerBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_hummer:
+  path:         /hummer/articul/0
+  defaults:     {_controller: CatalogHummerBundle:Articul:index}
+
+articul_hummer_find:
+  path:         /hummer/articul/1/{regionCode}
+  defaults:     {_controller: CatalogHummerBundle:Articul:findByArticul, regionCode: null}
+
+articul_hummer_modifications:
+  path:         /hummer/articul/3
+  defaults:     {_controller: CatalogHummerBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_hummer_complectations:
+  path:         /hummer/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogHummerBundle:Articul:hummerArticulComplectations}
+
+articul_hummer_groups:
+  path:         /hummer/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogHummerBundle:Articul:hummerArticulgroups}
+
+articul_hummer_subgroups:
+  path:         /hummer/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogHummerBundle:Articul:hummerArticulSubgroups}
+
+articul_hummer_schemas:
+  path:         /hummer/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHummerBundle:Articul:hummerArticulSchemas}
+
+articul_hummer_schema:
+  path:         /hummer/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogHummerBundle:Articul:hummerArticulSchema}
+
+articul_hummer_articuls:
+  path:         /hummer/articul/9
+  defaults:     {_controller: CatalogHummerBundle:Articul:hummerArticularticuls}
+  requirements: {_method: POST}
+
+articul_hummer_group:
+  path:         /hummer/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogHummerBundle:Articul:getGroupBySubgroup}
+catalog_hummer_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogHummerBundle:Default:index }

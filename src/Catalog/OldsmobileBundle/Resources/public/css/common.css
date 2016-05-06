@@ -1,0 +1,27 @@
+.main{
+    margin-left: 20px;
+}
+
+.model{
+    margin-left: 30px;
+    font-weight: bold;
+}
+
+.complectations{
+    margin-left: 60px;
+}
+.modifications{
+    margin-left: 50px;
+}
+
+.classifications{
+    margin-left: 60px;
+}
+
+.groups{
+    margin-left: 60px;
+}
+.subgroups{
+    margin-left: 60px;
+}
+img.highqual { -ms-interpolation-mode: bicubic; }

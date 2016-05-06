@@ -1,0 +1,20 @@
+services:
+#    catalog_oldsmobile.example:
+#        class: Catalog\OldsmobileBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  oldsmobile_date_convertor.extension:
+        class: Catalog\OldsmobileBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  oldsmobile.catalog.model:
+    class: Catalog\OldsmobileBundle\Models\OldsmobileCatalogModel
+    arguments:  ['@doctrine.dbal.oldsmobile_connection']
+
+  oldsmobile.vin.model:
+    class: Catalog\OldsmobileBundle\Models\OldsmobileVinModel
+    arguments:  ['@doctrine.dbal.oldsmobile_connection']
+
+  oldsmobile.articul.model:
+    class: Catalog\OldsmobileBundle\Models\OldsmobileArticulModel
+    arguments:  ['@doctrine.dbal.oldsmobile_connection']

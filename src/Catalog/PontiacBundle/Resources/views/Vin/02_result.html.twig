@@ -1,0 +1,32 @@
+{% extends 'CatalogCommonBundle:Vin:02_result.html.twig' %}
+{% block specification %}
+    <div class="row">
+        <div class="col-lg-8">
+            <table class="table table-bordered">
+
+                <tr>
+                    <td>Брэнд:</td>
+                    <td>{{ result.brand }}</td>
+                </tr>
+                <tr>
+                    <td>Дата выпуска:</td>
+                    <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|pontiac_vin_date_convertor }}</td>
+                </tr>
+                    <tr>
+                        <td>Модель:</td>
+                        <td>{{ result.model }}</td>
+                    </tr>
+
+                <tr>
+                    <td>Регион производства:</td>
+                    <td>{{ result.region }}</td>
+                </tr>
+
+
+            </table>
+        </div>
+    </div>
+{% endblock specification %}
+{% block catalogPath %}
+    {{ path('vin_pontiac_groups',({'regionCode': result.region, 'modelCode': result.model, 'modificationCode': result.modif_for_group, 'complectationCode': result.complectation })) }}
+{% endblock catalogPath %}

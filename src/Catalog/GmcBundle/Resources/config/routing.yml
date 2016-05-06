@@ -1,0 +1,120 @@
+catalog_gmc:
+  path:         /gmc/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogGmcBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_gmc_modifications:
+  path:         /gmc/catalog/1
+  defaults:     {_controller: CatalogGmcBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_gmc_complectations:
+  path:         /gmc/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogGmcBundle:Catalog:complectations}
+
+catalog_gmc_groups:
+  path:         /gmc/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogGmcBundle:Catalog:groups}
+
+catalog_gmc_subgroups:
+  path:         /gmc/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogGmcBundle:Catalog:subgroups}
+
+catalog_gmc_schemas:
+  path:         /gmc/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogGmcBundle:Catalog:schemas}
+
+catalog_gmc_schema:
+  path:         /gmc/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogGmcBundle:Catalog:schema}
+
+catalog_gmc_articuls:
+  path:         /gmc/catalog/7
+  defaults:     {_controller: CatalogGmcBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_gmc_group:
+  path:         /gmc/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogGmcBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_gmc:
+  path:         /gmc/vin/0
+  defaults:     {_controller: CatalogGmcBundle:Vin:index}
+
+vin_gmc_result:
+  path:         /gmc/vin/1
+  defaults:     {_controller: CatalogGmcBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_gmc_groups:
+  path:         /gmc/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogGmcBundle:Vin:groups}
+
+vin_gmc_subgroups:
+  path:         /gmc/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogGmcBundle:Vin:subgroups}
+
+vin_gmc_schemas:
+  path:         /gmc/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogGmcBundle:Vin:schemas}
+
+vin_gmc_schema:
+  path:         /gmc/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogGmcBundle:Vin:schema}
+
+vin_gmc_articuls:
+  path:         /gmc/vin/7
+  defaults:     {_controller: CatalogGmcBundle:Vin:vinarticuls}
+  requirements: {_method: POST}
+
+vin_gmc_group:
+  path:         /gmc/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogGmcBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_gmc:
+  path:         /gmc/articul/0
+  defaults:     {_controller: CatalogGmcBundle:Articul:index}
+
+articul_gmc_find:
+  path:         /gmc/articul/1/{regionCode}
+  defaults:     {_controller: CatalogGmcBundle:Articul:findByArticul, regionCode: null}
+
+articul_gmc_modifications:
+  path:         /gmc/articul/3
+  defaults:     {_controller: CatalogGmcBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_gmc_complectations:
+  path:         /gmc/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogGmcBundle:Articul:gmcArticulComplectations}
+
+articul_gmc_groups:
+  path:         /gmc/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogGmcBundle:Articul:gmcArticulgroups}
+
+articul_gmc_subgroups:
+  path:         /gmc/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogGmcBundle:Articul:gmcArticulSubgroups}
+
+articul_gmc_schemas:
+  path:         /gmc/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogGmcBundle:Articul:gmcArticulSchemas}
+
+articul_gmc_schema:
+  path:         /gmc/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogGmcBundle:Articul:gmcArticulSchema}
+
+articul_gmc_articuls:
+  path:         /gmc/articul/9
+  defaults:     {_controller: CatalogGmcBundle:Articul:gmcArticularticuls}
+  requirements: {_method: POST}
+
+articul_gmc_group:
+  path:         /gmc/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogGmcBundle:Articul:getGroupBySubgroup}
+catalog_gmc_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogGmcBundle:Default:index }

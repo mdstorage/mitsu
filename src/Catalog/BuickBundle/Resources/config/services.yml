@@ -1,0 +1,20 @@
+services:
+#    catalog_buick.example:
+#        class: Catalog\BuickBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  buick_date_convertor.extension:
+        class: Catalog\BuickBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  buick.catalog.model:
+    class: Catalog\BuickBundle\Models\BuickCatalogModel
+    arguments:  ['@doctrine.dbal.buick_connection']
+
+  buick.vin.model:
+    class: Catalog\BuickBundle\Models\BuickVinModel
+    arguments:  ['@doctrine.dbal.buick_connection']
+
+  buick.articul.model:
+    class: Catalog\BuickBundle\Models\BuickArticulModel
+    arguments:  ['@doctrine.dbal.buick_connection']

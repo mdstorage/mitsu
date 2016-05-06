@@ -1,0 +1,20 @@
+services:
+#    catalog_gmc.example:
+#        class: Catalog\GmcBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  gmc_date_convertor.extension:
+        class: Catalog\GmcBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  gmc.catalog.model:
+    class: Catalog\GmcBundle\Models\GmcCatalogModel
+    arguments:  ['@doctrine.dbal.gmc_connection']
+
+  gmc.vin.model:
+    class: Catalog\GmcBundle\Models\GmcVinModel
+    arguments:  ['@doctrine.dbal.gmc_connection']
+
+  gmc.articul.model:
+    class: Catalog\GmcBundle\Models\GmcArticulModel
+    arguments:  ['@doctrine.dbal.gmc_connection']

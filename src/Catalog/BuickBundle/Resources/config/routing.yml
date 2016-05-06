@@ -1,0 +1,120 @@
+catalog_buick:
+  path:         /buick/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogBuickBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_buick_modifications:
+  path:         /buick/catalog/1
+  defaults:     {_controller: CatalogBuickBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_buick_complectations:
+  path:         /buick/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogBuickBundle:Catalog:complectations}
+
+catalog_buick_groups:
+  path:         /buick/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogBuickBundle:Catalog:groups}
+
+catalog_buick_subgroups:
+  path:         /buick/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogBuickBundle:Catalog:subgroups}
+
+catalog_buick_schemas:
+  path:         /buick/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogBuickBundle:Catalog:schemas}
+
+catalog_buick_schema:
+  path:         /buick/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogBuickBundle:Catalog:schema}
+
+catalog_buick_articuls:
+  path:         /buick/catalog/7
+  defaults:     {_controller: CatalogBuickBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_buick_group:
+  path:         /buick/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogBuickBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_buick:
+  path:         /buick/vin/0
+  defaults:     {_controller: CatalogBuickBundle:Vin:index}
+
+vin_buick_result:
+  path:         /buick/vin/1
+  defaults:     {_controller: CatalogBuickBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_buick_groups:
+  path:         /buick/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogBuickBundle:Vin:groups}
+
+vin_buick_subgroups:
+  path:         /buick/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogBuickBundle:Vin:subgroups}
+
+vin_buick_schemas:
+  path:         /buick/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogBuickBundle:Vin:schemas}
+
+vin_buick_schema:
+  path:         /buick/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogBuickBundle:Vin:schema}
+
+vin_buick_articuls:
+  path:         /buick/vin/7
+  defaults:     {_controller: CatalogBuickBundle:Vin:vinarticuls}
+  requirements: {_method: POST}
+
+vin_buick_group:
+  path:         /buick/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogBuickBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_buick:
+  path:         /buick/articul/0
+  defaults:     {_controller: CatalogBuickBundle:Articul:index}
+
+articul_buick_find:
+  path:         /buick/articul/1/{regionCode}
+  defaults:     {_controller: CatalogBuickBundle:Articul:findByArticul, regionCode: null}
+
+articul_buick_modifications:
+  path:         /buick/articul/3
+  defaults:     {_controller: CatalogBuickBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_buick_complectations:
+  path:         /buick/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogBuickBundle:Articul:buickArticulComplectations}
+
+articul_buick_groups:
+  path:         /buick/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogBuickBundle:Articul:buickArticulgroups}
+
+articul_buick_subgroups:
+  path:         /buick/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogBuickBundle:Articul:buickArticulSubgroups}
+
+articul_buick_schemas:
+  path:         /buick/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogBuickBundle:Articul:buickArticulSchemas}
+
+articul_buick_schema:
+  path:         /buick/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogBuickBundle:Articul:buickArticulSchema}
+
+articul_buick_articuls:
+  path:         /buick/articul/9
+  defaults:     {_controller: CatalogBuickBundle:Articul:buickArticularticuls}
+  requirements: {_method: POST}
+
+articul_buick_group:
+  path:         /buick/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogBuickBundle:Articul:getGroupBySubgroup}
+catalog_buick_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogBuickBundle:Default:index }
