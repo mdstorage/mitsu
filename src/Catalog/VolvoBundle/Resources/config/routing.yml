@@ -1,0 +1,120 @@
+catalog_volvo:
+  path:         /volvo/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogVolvoBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_volvo_modifications:
+  path:         /volvo/catalog/1
+  defaults:     {_controller: CatalogVolvoBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_volvo_complectations:
+  path:         /volvo/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogVolvoBundle:Catalog:complectations}
+
+catalog_volvo_groups:
+  path:         /volvo/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogVolvoBundle:Catalog:groups}
+
+catalog_volvo_subgroups:
+  path:         /volvo/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogVolvoBundle:Catalog:subgroups}
+
+catalog_volvo_schemas:
+  path:         /volvo/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogVolvoBundle:Catalog:schemas}
+
+catalog_volvo_schema:
+  path:         /volvo/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogVolvoBundle:Catalog:schema}
+
+catalog_volvo_articuls:
+  path:         /volvo/catalog/7
+  defaults:     {_controller: CatalogVolvoBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_volvo_group:
+  path:         /volvo/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogVolvoBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_volvo:
+  path:         /volvo/vin/0
+  defaults:     {_controller: CatalogVolvoBundle:Vin:index}
+
+vin_volvo_result:
+  path:         /volvo/vin/1
+  defaults:     {_controller: CatalogVolvoBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_volvo_groups:
+  path:         /volvo/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogVolvoBundle:Vin:groups}
+
+vin_volvo_subgroups:
+  path:         /volvo/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogVolvoBundle:Vin:subgroups}
+
+vin_volvo_schemas:
+  path:         /volvo/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogVolvoBundle:Vin:schemas}
+
+vin_volvo_schema:
+  path:         /volvo/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogVolvoBundle:Vin:schema}
+
+vin_volvo_articuls:
+  path:         /volvo/vin/7
+  defaults:     {_controller: CatalogVolvoBundle:Vin:vinarticuls}
+  requirements: {_method: POST}
+
+vin_volvo_group:
+  path:         /volvo/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogVolvoBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_volvo:
+  path:         /volvo/articul/0
+  defaults:     {_controller: CatalogVolvoBundle:Articul:index}
+
+articul_volvo_find:
+  path:         /volvo/articul/1/{regionCode}
+  defaults:     {_controller: CatalogVolvoBundle:Articul:findByArticul, regionCode: null}
+
+articul_volvo_modifications:
+  path:         /volvo/articul/3
+  defaults:     {_controller: CatalogVolvoBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_volvo_complectations:
+  path:         /volvo/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogVolvoBundle:Articul:volvoArticulComplectations}
+
+articul_volvo_groups:
+  path:         /volvo/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogVolvoBundle:Articul:volvoArticulgroups}
+
+articul_volvo_subgroups:
+  path:         /volvo/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogVolvoBundle:Articul:volvoArticulSubgroups}
+
+articul_volvo_schemas:
+  path:         /volvo/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogVolvoBundle:Articul:volvoArticulSchemas}
+
+articul_volvo_schema:
+  path:         /volvo/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogVolvoBundle:Articul:volvoArticulSchema}
+
+articul_volvo_articuls:
+  path:         /volvo/articul/9
+  defaults:     {_controller: CatalogVolvoBundle:Articul:volvoArticularticuls}
+  requirements: {_method: POST}
+
+articul_volvo_group:
+  path:         /volvo/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  defaults:     {_controller: CatalogVolvoBundle:Articul:getGroupBySubgroup}
+catalog_volvo_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogVolvoBundle:Default:index }

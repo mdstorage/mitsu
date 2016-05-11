@@ -1,0 +1,20 @@
+services:
+#    catalog_volvo.example:
+#        class: Catalog\VolvoBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  volvo_date_convertor.extension:
+        class: Catalog\VolvoBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  volvo.catalog.model:
+    class: Catalog\VolvoBundle\Models\VolvoCatalogModel
+    arguments:  ['@doctrine.dbal.volvo_connection']
+
+  volvo.vin.model:
+    class: Catalog\VolvoBundle\Models\VolvoVinModel
+    arguments:  ['@doctrine.dbal.volvo_connection']
+
+  volvo.articul.model:
+    class: Catalog\VolvoBundle\Models\VolvoArticulModel
+    arguments:  ['@doctrine.dbal.volvo_connection']
