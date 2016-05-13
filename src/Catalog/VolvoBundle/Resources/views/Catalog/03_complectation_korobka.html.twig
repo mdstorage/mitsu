@@ -1,0 +1,17 @@
+{% block complectations %}
+    <div class="row">
+
+        <div class="complectations"><hr />
+
+            <div class="form-group control-group">
+                <form action="{{ path('catalog_volvo_groups', parameters|merge({'complectationCode': oContainer.getActiveModification.getComplectations|first.getCode})) }}">
+                    <div class="col-sm-4">   {{ form_widget(form) }} </div>
+
+                    <div class="col-sm-10"> <input type="submit" class="btn btn-primary" value="Далее" /></div>
+                </form>
+            </div>
+
+
+        </div>
+    </div>
+{% endblock complectations %}

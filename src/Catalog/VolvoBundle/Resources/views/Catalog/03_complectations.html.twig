@@ -1,30 +1,80 @@
 {% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
 {% use 'CatalogVolvoBundle::volvo.base.html.twig' %}
 {% block breadcrumbs %}
-	<a href="{{ path('catalog_ford') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
-		{{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getCode }})</a> / Комплектация
+	<a href="{{ path('catalog_volvo') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+		{{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / Комплектация
 {% endblock breadcrumbs %}
 
 {% block body %}
-	{% block head %}<h3>Выбрать комплектацию:</h3>{% endblock head %}
-
+	{% block head %}<h3>Положение руля:</h3>{% endblock head %}
 	{% block complectations %}
 		<div class="row">
 
-			<div class="complectations"><hr />
+			<div class="complectations">
 
-				<div class="form-group control-group">
-					<form action="{{ path('catalog_volvo_groups', parameters|merge({'complectationCode': oContainer.getActiveModification.getComplectations|first.getCode})) }}">
-						<div class="col-sm-4">   {{ form_widget(form) }} </div>
+				<div class="col-lg-4">
 
-						<div class="col-sm-10"> <input type="submit" class="btn btn-primary" value="Далее" /></div>
-					</form>
+					<select class="form-control" name="optionsRadios" id="optionsRadios">
+
+
+						{% for complectation in oContainer.getActiveModification.getComplectations %}
+
+							<option value="{{ complectation.getCode }}">{{ complectation.getRuname }}</option>
+
+						{% endfor %}
+
+
+
+					</select>
+
+					<script>
+						$("#optionsRadios").on('change', function(){
+							$.ajax({
+								type:   'POST',
+								async:  false,
+								url:    "{{ path('catalog_volvo_complectation_korobka') }}",
+								data:   { engine: $("#optionsRadios").val(), modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+									regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+									modelCode: '{{ oContainer.getActiveModel.getCode }}'},
+								success: function(data) {
+									$("#vin-result").html(data);
+								}
+							});
+						});
+
+
+					</script>
+
+
 				</div>
-
-
 			</div>
 		</div>
+		<div class="row">
+			<div id="vin-result"></div>
+		</div>
+
+		{% for complectation in oContainer.getActiveModification.getComplectations %}
+			{% block vinScript %}
+				<script>
+
+
+					$(document).ready(function(){
+						var count = $('.radio').size();
+						if (count == 1) {$("#optionsRadios").prop("checked", true);
+							$("#optionsRadios").trigger('change');
+						}
+						{#$('#optionsRadiosM').trigger('change');#}
+
+					});
+				</script>
+
+			{% endblock vinScript %}
+		{% endfor %}
+		{#
+                            <input type="button" class="btn btn-info" value="Удалить статью" id="vin-button{{ post.id }}"/>
+                       <div id="vin-result"></div>
+
+
+                    #}
 	{% endblock complectations %}
-
-
 {% endblock body %}

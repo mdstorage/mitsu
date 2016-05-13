@@ -161,6 +161,107 @@ class VolvoCatalogModel extends CatalogModel{
      
     }
 
+    public function getEngine($regionCode, $modelCode, $modificationCode)
+
+    {
+        $sql = "
+        SELECT DISTINCT ENG.Id, ENG.Cid, ENG.Description
+        FROM engine ENG
+        INNER JOIN vehicleprofile VP ON ENG.Id = VP.fkEngine
+        WHERE VP.fkPartnerGroup = :regionCode
+        AND VP.fkVehicleModel = :modelCode
+        AND VP.fkModelYear IN (:modificationCode) ORDER BY ENG.Description
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('modificationCode',  $modificationCode);
+        $query->execute();
+
+        $engine = array();
+        $aData = $query->fetchAll();
+
+
+        foreach ($aData as &$item) {
+
+
+            $engine[$item['Id']] = array(
+                Constants::NAME => $item['Description'],
+                Constants::OPTIONS => array()
+            );
+        }
+
+
+        return $engine;
+
+    }
+
+    public function getComplectationsKorobka($regionCode, $modelCode, $modificationCode, $engine)
+    {
+
+
+        $sql = "
+        SELECT DISTINCT TRANS.Id tid, TRANS.Cid tcid, TRANS.Description
+        FROM  transmission TRANS
+        INNER JOIN vehicleprofile VP ON (TRANS.Id = VP.fkTransmission)
+        WHERE VP.fkPartnerGroup = :regionCode
+        AND VP.fkVehicleModel = :modelCode
+        AND VP.fkModelYear IN (:modificationCode)
+        AND VP.fkEngine = :engine
+        ";
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('engine', $engine);
+        $query->execute();
+
+        $complectations = array();
+        $aData = $query->fetchAll();
+
+
+        $sqldtr = "
+        SELECT DISTINCT STR.Id sid, STR.Cid scid, STR.Description sd, BS.Id bid, BS.Cid bcid, BS.Description bd,
+        SPV.Id spvid, SPV.Cid spvcid, SPV.Description spvd
+        from vehicleprofile VP
+        LEFT JOIN steering STR ON STR.Id = VP.fkSteering
+        LEFT JOIN bodystyle BS  ON BS.Id = VP.fkBodyStyle
+        LEFT JOIN specialvehicle SPV ON SPV.Id = VP.fkSpecialVehicle
+        WHERE VP.fkPartnerGroup = :regionCode
+        AND VP.fkVehicleModel = :modelCode
+        AND VP.fkModelYear IN (:modificationCode)
+        ";
+        $query = $this->conn->prepare($sqldtr);
+        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('modificationCode',  $modificationCode);
+        $query->execute();
+
+        $aDatadtr = $query->fetchAll();
+        $aDatadtrUnique = array();
+
+        foreach ($aDatadtr as $item)
+        {
+            if ($item['sid'] != null)
+            $aDatadtrUnique[$item['sid']] = $item['sd'];
+        }
+
+
+            var_dump($aDatadtrUnique); die;
+
+        foreach ($aData as $item) {
+
+            $complectations[$item['Id']] = array(
+                Constants::NAME => $item['Description'],
+                Constants::OPTIONS => array()
+            );
+        }
+
+        return $complectations;
+
+    }
+
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
 
