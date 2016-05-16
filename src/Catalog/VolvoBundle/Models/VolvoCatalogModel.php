@@ -202,7 +202,7 @@ class VolvoCatalogModel extends CatalogModel{
 
 
         $sql = "
-        SELECT DISTINCT TRANS.Id tid, TRANS.Cid tcid, TRANS.Description
+        SELECT DISTINCT TRANS.Id tid, TRANS.Cid tcid, TRANS.Description td
         FROM  transmission TRANS
         INNER JOIN vehicleprofile VP ON (TRANS.Id = VP.fkTransmission)
         WHERE VP.fkPartnerGroup = :regionCode
@@ -218,7 +218,16 @@ class VolvoCatalogModel extends CatalogModel{
         $query->execute();
 
         $complectations = array();
+        $result = array();
         $aData = $query->fetchAll();
+        $aDataTrans = array();
+
+        foreach ($aData as $item)
+        {
+            if ($item['tid'] != null)
+                $aDataTrans[$item['tid']] = $item['td'];
+        }
+
 
 
         $sqldtr = "
@@ -238,23 +247,48 @@ class VolvoCatalogModel extends CatalogModel{
         $query->bindValue('modificationCode',  $modificationCode);
         $query->execute();
 
-        $aDatadtr = $query->fetchAll();
-        $aDatadtrUnique = array();
+        $aDataAll = $query->fetchAll();
+        $aDataRole = array();
+        $aDataKuzov = array();
+        $aDataSpec = array();
 
-        foreach ($aDatadtr as $item)
+        foreach ($aDataAll as $item)
         {
             if ($item['sid'] != null)
-            $aDatadtrUnique[$item['sid']] = $item['sd'];
+            $aDataRole[$item['sid']] = $item['sd'];
+
+            if ($item['bid'] != null)
+                $aDataKuzov[$item['bid']] = $item['bd'];
+
+            if ($item['spvid'] != null)
+                $aDataSpec[$item['spvid']] = $item['spvd'];
+
         }
 
 
-            var_dump($aDatadtrUnique); die;
 
-        foreach ($aData as $item) {
+        if ($aDataTrans)
+            $result['KP'] = $aDataTrans;
 
-            $complectations[$item['Id']] = array(
-                Constants::NAME => $item['Description'],
-                Constants::OPTIONS => array()
+        if ($aDataRole)
+            $result['RU'] = $aDataRole;
+
+        if (($aDataKuzov))
+            $result['TK'] = $aDataKuzov;
+
+        if ($aDataSpec)
+            $result['ST'] = $aDataSpec;
+
+
+
+
+
+
+        foreach ($result as $index => $value) {
+
+            $complectations[($index)] = array(
+                Constants::NAME => $value,
+                Constants::OPTIONS => array('option1'=>$value)
             );
         }
 

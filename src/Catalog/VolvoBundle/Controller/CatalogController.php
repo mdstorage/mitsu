@@ -7,6 +7,7 @@ use Catalog\CommonBundle\Components\Interfaces\CommonInterface;
 use Catalog\CommonBundle\Controller\CatalogController as BaseController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Catalog\VolvoBundle\Form\ComplectationType;
 
 class CatalogController extends BaseController{
 
@@ -166,10 +167,18 @@ class CatalogController extends BaseController{
                      $Positive_Territories = $form->get('title')->getData();*/
 
 
-        $complectationCode = base64_encode(implode('|',$request->get('ComplectationType')));
+
+
 
 
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+
+        $engine = array('titleEN', $parameters['complectationCode']);
+
+        $complectationCode = base64_decode(base64_encode(implode('|',(array_merge($request->get('ComplectationType'), $engine)))));
+
+        var_dump($complectationCode); die;
+
         $parameters['complectationCode'] = $complectationCode;
 
         $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);

@@ -12,14 +12,25 @@ class ComplectationType extends AbstractType{
     {
         foreach ($options['data'] as $index=>$value) {
 
+            switch ($index)
+            {
+                case 'KP': $label = 'Коробка передач';break;
+                case 'RU': $label = 'Рулевое управление';break;
+                case 'TK': $label = 'Тип кузова';break;
+                default: $label = 'Спецтранспорт';
+
+            }
+
+
 
 
                 $builder
                     ->add('title' . $index, 'choice', array(
-                        'label' => str_replace('_', ' ', $index),
+                        'label' => $label,
                         'choices' => $value['name'],
                         'attr' => array(
                             'class' => 'form-control',
+                            'placeholder' => 'Содержание статьи',
 
                         )
                     ));
