@@ -173,11 +173,10 @@ class CatalogController extends BaseController{
 
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
-        $engine = array('titleEN', $parameters['complectationCode']);
+        $engine = array('titleEN' => $parameters['complectationCode']);
 
-        $complectationCode = base64_decode(base64_encode(implode('|',(array_merge($request->get('ComplectationType'), $engine)))));
+        $complectationCode = base64_encode(json_encode(array_merge($engine, $request->get('ComplectationType'))));
 
-        var_dump($complectationCode); die;
 
         $parameters['complectationCode'] = $complectationCode;
 

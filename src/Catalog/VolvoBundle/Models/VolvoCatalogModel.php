@@ -300,8 +300,8 @@ class VolvoCatalogModel extends CatalogModel{
     {
 
 
+        $complectationCode = json_decode(base64_decode($complectationCode), true);
 
-        $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
 
         $sql = "
         SELECT major_group.MAJOR_GROUP, major_group.MAJOR_DESC, group_master.GROUP_ID
