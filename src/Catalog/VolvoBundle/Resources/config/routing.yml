@@ -9,7 +9,7 @@ catalog_volvo_modifications:
 
 catalog_volvo_complectations:
   path:         /volvo/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogVolvoBundle:Catalog:complectations1}
+  defaults:     {_controller: CatalogVolvoBundle:Catalog:complectations}
 
 catalog_volvo_complectation_korobka:
   path:         /bmw/catalog/12

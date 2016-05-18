@@ -14,6 +14,7 @@ class ComplectationType extends AbstractType{
 
             switch ($index)
             {
+                case 'EN': $label = 'Тип двигателя';break;
                 case 'KP': $label = 'Коробка передач';break;
                 case 'RU': $label = 'Рулевое управление';break;
                 case 'TK': $label = 'Тип кузова';break;

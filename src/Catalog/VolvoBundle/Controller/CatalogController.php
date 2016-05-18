@@ -109,8 +109,11 @@ class CatalogController extends BaseController{
 
     public function complectation_korobkaAction(Request $request)
     {
+
         if ($request->isXmlHttpRequest()) {
 
+
+            $priznak = $request->get('priznak_agregata');
             $engine = $request->get('engine');
             $modificationCode = $request->get('modificationCode');
             $regionCode = $request->get('regionCode');
@@ -120,6 +123,7 @@ class CatalogController extends BaseController{
                 'regionCode' => $regionCode,
                 'modelCode' => $modelCode,
                 'modificationCode' => $modificationCode,
+                'priznak' => $priznak,
                 'engine' => $engine
             );
 
@@ -130,7 +134,7 @@ class CatalogController extends BaseController{
             $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
             $modifications = $this->model()->getModifications($regionCode, $modelCode);
             $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
-            $complectations = $this->model()->getComplectationsKorobka($regionCode, $modelCode, $modificationCode, $engine);
+            $complectations = $this->model()->getComplectationsKorobka($regionCode, $modelCode, $modificationCode, $priznak, $engine);
 
             $form = $this->createForm(new ComplectationType(), $complectations);
 
@@ -148,7 +152,7 @@ class CatalogController extends BaseController{
 
 
 
-            return $this->render($this->bundle().':03_complectation_korobka.html.twig', array(
+            return $this->render($this->bundle() . ':03_complectations.html.twig', array(
                 'oContainer' => $oContainer,
                 'parameters' => $parameters,
                 'form' => $form->createView()

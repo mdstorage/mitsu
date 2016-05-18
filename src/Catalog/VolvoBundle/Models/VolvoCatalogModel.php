@@ -115,49 +115,104 @@ class VolvoCatalogModel extends CatalogModel{
     {
 
         $sql = "
-        SELECT CATALOG_CODE, MODEL_DESC
-        FROM model
-        WHERE MAKE_DESC = 'Volvo'
-        AND MODEL_DESC LIKE :modelCode
-        AND (COUNTRY_CODE = '*' OR COUNTRY_CODE = :regionCode)
-        AND :modificationCode BETWEEN FIRST_YEAR AND LAST_YEAR
-
-
-        UNION
-
-        SELECT CATALOG_CODE, MODEL_DESC
-        FROM model
-        WHERE MAKE_DESC = 'Lt Truck Volvo'
-        AND MODEL_DESC LIKE :modelCode
-        AND (COUNTRY_CODE = '*' OR COUNTRY_CODE = :regionCode)
-        AND :modificationCode BETWEEN FIRST_YEAR AND LAST_YEAR
-        ORDER BY (1)
+        SELECT DISTINCT ENG.Id eid, ENG.Cid ecid, ENG.Description ed, TRANS.Id tid, TRANS.Cid tcid, TRANS.Description td
+        FROM vehicleprofile VP
+        INNER JOIN engine ENG ON ENG.Id = VP.fkEngine
+        INNER JOIN transmission TRANS ON (TRANS.Id = VP.fkTransmission)
+        WHERE VP.fkPartnerGroup = :regionCode
+        AND VP.fkVehicleModel = :modelCode
+        AND VP.fkModelYear IN (:modificationCode)
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modelCode',  '%'.$modelCode.'%');
+        $query->bindValue('modelCode',  $modelCode);
         $query->bindValue('regionCode',  $regionCode);
         $query->bindValue('modificationCode',  $modificationCode);
-
-
         $query->execute();
 
         $aData = $query->fetchAll();
 
+        $aDataTrans = array();
+        $aDataEng = array();
+        $result = array();
 
+        foreach ($aData as $item)
+        {
+            if ($item['tid'] != null)
+                $aDataTrans[$item['tid']] = $item['td'];
 
-        $complectations = array();
-
-        foreach($aData as $item){
-
-            $complectations[$item['CATALOG_CODE'].'_'.$item ['MODEL_DESC']] = array(
-                Constants::NAME     => strtoupper($item ['MODEL_DESC']),
-                Constants::OPTIONS => array()
-            );
+            if ($item['eid'] != null)
+                $aDataEng[$item['eid']] = $item['ed'];
         }
 
 
-         return $complectations;
+
+        $sqldtr = "
+        SELECT DISTINCT STR.Id sid, STR.Cid scid, STR.Description sd, BS.Id bid, BS.Cid bcid, BS.Description bd,
+        SPV.Id spvid, SPV.Cid spvcid, SPV.Description spvd
+        from vehicleprofile VP
+        LEFT JOIN steering STR ON STR.Id = VP.fkSteering
+        LEFT JOIN bodystyle BS  ON BS.Id = VP.fkBodyStyle
+        LEFT JOIN specialvehicle SPV ON SPV.Id = VP.fkSpecialVehicle
+        WHERE VP.fkPartnerGroup = :regionCode
+        AND VP.fkVehicleModel = :modelCode
+        AND VP.fkModelYear IN (:modificationCode)
+        ";
+        $query = $this->conn->prepare($sqldtr);
+        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('modificationCode',  $modificationCode);
+        $query->execute();
+
+        $aDataAll = $query->fetchAll();
+        $aDataRole = array();
+        $aDataKuzov = array();
+        $aDataSpec = array();
+
+        foreach ($aDataAll as $item)
+        {
+            if ($item['sid'] != null)
+                $aDataRole[$item['sid']] = $item['sd'];
+
+            if ($item['bid'] != null)
+                $aDataKuzov[$item['bid']] = $item['bd'];
+
+            if ($item['spvid'] != null)
+                $aDataSpec[$item['spvid']] = $item['spvd'];
+
+        }
+
+        if ($aDataEng)
+            $result['EN'] = $aDataEng;
+
+        if ($aDataTrans)
+            $result['KP'] = $aDataTrans;
+
+        if ($aDataRole)
+            $result['RU'] = $aDataRole;
+
+        if (($aDataKuzov))
+            $result['TK'] = $aDataKuzov;
+
+        if ($aDataSpec)
+            $result['ST'] = $aDataSpec;
+
+
+
+
+
+
+        foreach ($result as $index => $value) {
+
+            $complectations[($index)] = array(
+                Constants::NAME => $value,
+                Constants::OPTIONS => array('option1'=>$value)
+            );
+        }
+
+        return $complectations;
+
+
      
     }
 
@@ -165,12 +220,12 @@ class VolvoCatalogModel extends CatalogModel{
 
     {
         $sql = "
-        SELECT DISTINCT ENG.Id, ENG.Cid, ENG.Description
+        SELECT DISTINCT ENG.Id eid, ENG.Cid ecid, ENG.Description ed
         FROM engine ENG
         INNER JOIN vehicleprofile VP ON ENG.Id = VP.fkEngine
         WHERE VP.fkPartnerGroup = :regionCode
         AND VP.fkVehicleModel = :modelCode
-        AND VP.fkModelYear IN (:modificationCode) ORDER BY ENG.Description
+        AND VP.fkModelYear IN (:modificationCode)
         ";
 
         $query = $this->conn->prepare($sql);
@@ -183,11 +238,13 @@ class VolvoCatalogModel extends CatalogModel{
         $aData = $query->fetchAll();
 
 
+
+
         foreach ($aData as &$item) {
 
 
-            $engine[$item['Id']] = array(
-                Constants::NAME => $item['Description'],
+            $engine[$item['eid']] = array(
+                Constants::NAME => $item['ed'],
                 Constants::OPTIONS => array()
             );
         }
@@ -197,8 +254,32 @@ class VolvoCatalogModel extends CatalogModel{
 
     }
 
-    public function getComplectationsKorobka($regionCode, $modelCode, $modificationCode, $engine)
+    public function getComplectationsKorobka($regionCode, $modelCode, $modificationCode, $priznak, $engine)
     {
+
+        $sqleng = "
+        SELECT DISTINCT ENG.Id eid, ENG.Cid ecid, ENG.Description ed, TRANS.Id tid, TRANS.Cid tcid, TRANS.Description td
+        FROM vehicleprofile VP
+        INNER JOIN engine ENG ON ENG.Id = VP.fkEngine
+        INNER JOIN transmission TRANS ON (TRANS.Id = VP.fkTransmission)
+        WHERE VP.fkPartnerGroup = :regionCode
+        AND VP.fkVehicleModel = :modelCode
+        AND VP.fkModelYear IN (:modificationCode)
+        ";
+
+        $query = $this->conn->prepare($sqleng);
+        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('modificationCode',  $modificationCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        foreach ($aData as $item)
+        {
+            if ($item['eid'] != null)
+                $aDataEng[$item['eid']] = $item['ed'];
+        }
 
 
         $sql = "
@@ -266,6 +347,9 @@ class VolvoCatalogModel extends CatalogModel{
         }
 
 
+
+        if ($aDataEng)
+            $result['EN'] = $aDataEng;
 
         if ($aDataTrans)
             $result['KP'] = $aDataTrans;
