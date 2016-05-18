@@ -136,27 +136,8 @@ class CatalogController extends BaseController{
             $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
             $complectations = $this->model()->getComplectationsKorobka($regionCode, $modelCode, $modificationCode, $priznak, $engine);
 
-            $form = $this->createForm(new ComplectationType(), $complectations);
 
-            if(empty($complectations))
-                return $this->error($request, 'Комплектации не найдены.');
-
-            $oContainer = Factory::createContainer()
-                ->setActiveRegion($regionsCollection[$regionCode])
-                ->setActiveModel($modelsCollection[$modelCode])
-                ->setActiveModification($modificationsCollection[$modificationCode]
-                    ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
-            unset($complectations);
-            $this->filter($oContainer);
-
-
-
-
-            return $this->render($this->bundle() . ':03_complectations.html.twig', array(
-                'oContainer' => $oContainer,
-                'parameters' => $parameters,
-                'form' => $form->createView()
-            ));
+            return new Response(json_encode($complectations));
         }
     }
 

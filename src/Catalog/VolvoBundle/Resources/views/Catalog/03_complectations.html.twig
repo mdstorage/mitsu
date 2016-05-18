@@ -54,25 +54,25 @@
 									data:   { priznak_agregata: selector.substr(-2) ,engine: $(selector).val(), modificationCode: '{{ oContainer.getActiveModification.getCode }}',
 										regionCode: '{{ oContainer.getActiveRegion.getCode }}',
 										modelCode: '{{ oContainer.getActiveModel.getCode }}'},
-									success: function(){
-										$(selector).empty();
+								 	success: function(data){
 
-										var objSel = document.getElementById("ComplectationType_titleKP");
-										objSel.options[objSel.options.length] = new Option("текст", "значение");
+										var selector1 = (selector.substr(-2) === 'EN')?selector.substr(0, selector.indexOf(selector.substr(-2))).concat('KP'):selector.substr(0, selector.indexOf(selector.substr(-2))).concat('EN');
 
+										$(selector1).empty();
+
+										var objSel = document.getElementById(selector1.substr(1,selector1.length));
+										$.each(JSON.parse(data), function(key, value) {
+											objSel.options[objSel.options.length] = new Option(value, key, true, true);
+										});
 
 									}
+									{#success: function(data) {
+										$("#content").html(data);
+									}#}
 								});
 							});
 						}
 
-		/*				function filter(selector, query) {
-							query =	$.trim(query);
-							$(selector).each(function() {
-								($(this).text().search(new RegExp(query, "i")) < 0)
-										? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
-							});
-						}*/
 
 
 					</script>
