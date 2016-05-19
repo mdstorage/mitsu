@@ -311,7 +311,40 @@ class VolvoCatalogModel extends CatalogModel{
 
 
         $complectationCode = json_decode(base64_decode($complectationCode), true);
-        var_dump($complectationCode); die;
+
+
+        $sql = "
+        SELECT DISTINCT st.Id stid, pg.Id pgid, en.Id enid, tr.Id trid, ru.Id ruid, tk.Id tkid
+        FROM vehicleprofile VP
+        LEFT JOIN vehicleprofile st ON (st.fkSpecialVehicle = :titleST AND st.fkVehicleModel = VP.fkVehicleModel AND st.fkModelYear = VP.fkModelYear AND st.FolderLevel = VP.FolderLevel)
+        LEFT JOIN vehicleprofile pg ON (pg.fkPartnerGroup = :regionCode AND pg.fkVehicleModel = VP.fkVehicleModel AND pg.fkModelYear = VP.fkModelYear AND pg.FolderLevel = VP.FolderLevel)
+        LEFT JOIN vehicleprofile en ON (en.fkEngine = :titleEN AND en.fkVehicleModel = VP.fkVehicleModel AND en.fkModelYear = VP.fkModelYear AND en.FolderLevel = VP.FolderLevel)
+        LEFT JOIN vehicleprofile tr ON (tr.fkTransmission = :titleKP AND tr.fkVehicleModel = VP.fkVehicleModel AND tr.fkModelYear = VP.fkModelYear AND tr.FolderLevel = VP.FolderLevel)
+        LEFT JOIN vehicleprofile ru ON (ru.fkSteering = :titleRU AND ru.fkVehicleModel = VP.fkVehicleModel AND ru.fkModelYear = VP.fkModelYear AND ru.FolderLevel = VP.FolderLevel)
+        LEFT JOIN vehicleprofile tk ON (tk.fkBodyStyle = :titleTK AND tk.fkVehicleModel = VP.fkVehicleModel AND tk.fkModelYear = VP.fkModelYear AND tk.FolderLevel = VP.FolderLevel)
+
+        WHERE VP.fkVehicleModel = :modelCode
+        AND VP.fkModelYear IN (:modificationCode)
+        AND VP.FolderLevel = 3
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('titleST', $complectationCode['titleST']);
+        $query->bindValue('titleEN', $complectationCode['titleEN']);
+        $query->bindValue('titleKP', $complectationCode['titleKP']);
+        $query->bindValue('titleRU', $complectationCode['titleRU']);
+        $query->bindValue('titleTK', $complectationCode['titleTK']);
+
+        $query->execute();
+
+        $aData = $query->fetch();
+
+
+        var_dump($aData); die;
+
 
 
         $sql = "

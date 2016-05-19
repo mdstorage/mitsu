@@ -56,19 +56,33 @@
 										modelCode: '{{ oContainer.getActiveModel.getCode }}'},
 								 	success: function(data){
 
-										var selector1 = (selector.substr(-2) === 'EN')?selector.substr(0, selector.indexOf(selector.substr(-2))).concat('KP'):selector.substr(0, selector.indexOf(selector.substr(-2))).concat('EN');
+										if (selector.substr(-2) === 'EN')
+											var selector1 = selector.substr(0, selector.indexOf(selector.substr(-2))).concat('KP');
+
+										if (selector.substr(-2) === 'KP')
+											 selector1 = selector.substr(0, selector.indexOf(selector.substr(-2))).concat('EN');
+
+
+										var objSel = document.getElementById(selector1.substr(1,selector1.length));
+
+										var optSel = objSel.options[objSel.selectedIndex].value;
 
 										$(selector1).empty();
 
-										var objSel = document.getElementById(selector1.substr(1,selector1.length));
 										$.each(JSON.parse(data), function(key, value) {
-											objSel.options[objSel.options.length] = new Option(value, key, true, true);
+											objSel.options[objSel.options.length] = new Option(value, key, true);
+
 										});
 
+										for (var i = objSel.options.length-1; i >= 0; i--)
+										{
+											if (objSel.options[i].value == optSel)
+
+												objSel.options[i].selected = true;
+										}
+
 									}
-									{#success: function(data) {
-										$("#content").html(data);
-									}#}
+
 								});
 							});
 						}
