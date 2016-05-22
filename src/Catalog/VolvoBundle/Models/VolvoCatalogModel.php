@@ -332,35 +332,70 @@ class VolvoCatalogModel extends CatalogModel{
         $query->bindValue('regionCode',  $regionCode);
         $query->bindValue('modelCode',  $modelCode);
         $query->bindValue('modificationCode',  $modificationCode);
-        $query->bindValue('titleST', $complectationCode['titleST']);
-        $query->bindValue('titleEN', $complectationCode['titleEN']);
-        $query->bindValue('titleKP', $complectationCode['titleKP']);
-        $query->bindValue('titleRU', $complectationCode['titleRU']);
-        $query->bindValue('titleTK', $complectationCode['titleTK']);
+        $query->bindValue('titleST', array_key_exists('titleST', $complectationCode)?$complectationCode['titleST']:NULL);
+        $query->bindValue('titleEN', array_key_exists('titleEN', $complectationCode)?$complectationCode['titleEN']:NULL);
+        $query->bindValue('titleKP', array_key_exists('titleKP', $complectationCode)?$complectationCode['titleKP']:NULL);
+        $query->bindValue('titleRU', array_key_exists('titleRU', $complectationCode)?$complectationCode['titleRU']:NULL);
+        $query->bindValue('titleTK', array_key_exists('titleTK', $complectationCode)?$complectationCode['titleTK']:NULL);
 
         $query->execute();
 
         $aData = $query->fetch();
+        $aDatagr = array();
+
+        foreach ($aData as $item)
+        {
+
+            $aDatagr[] = $item;
+        }
 
 
-        var_dump($aData); die;
 
 
 
-        $sql = "
-        SELECT major_group.MAJOR_GROUP, major_group.MAJOR_DESC, group_master.GROUP_ID
-        FROM major_group, group_usage, group_master
-        WHERE group_usage.CATALOG_CODE = :catalogCode
-        and group_usage.GROUP_ID = group_master.GROUP_ID and group_master.MAJOR_GROUP = major_group.MAJOR_GROUP and group_usage.GROUP_TYPE = 'B'
-        ORDER BY (1)
+        $sqlGroups = "
+Select
+  DISTINCT cataloguecomponents.Id AS ComponentId,
+  lexicon.Description,
+  cataloguecomponents.TypeId AS DATATYPE,
+  cataloguecomponents.PSCode AS PSCode,
+  cataloguecomponents.Code AS Code,
+  cataloguecomponents.ComponentPath AS ComponentPath,
+  cataloguecomponents.fkPartItem AS ItemNumber,
+  cataloguecomponents.AssemblyLevel AS AssemblyLevel,
+  cataloguecomponents.ParentComponentId AS ParentComponentId,
+  cataloguecomponents.Quantity AS Quantity,
+  cataloguecomponents.HotspotKey AS HotspotKey,
+  cataloguecomponents.SequenceId AS SequenceId,
+  '' AS ProfileId,
+  cataloguecomponents.FunctionGroupPath AS FunctionGroupPath,
+  '' AS StructuredNoteId,
+  cataloguecomponents.TargetComponentId AS TargetComponentId,
+  cataloguecomponents.VersionUpdate AS VersionUpdate
+
+  from cataloguecomponents
+  INNER JOIN lexicon
+  ON lexicon.DescriptionId = cataloguecomponents.DescriptionId AND lexicon.fkLanguage = '11'
+  INNER JOIN  virtualtoshared
+  on cataloguecomponents.Id = SUBSTRING_INDEX(virtualtoshared.AlternateComponentPath, ',', 1)
+  INNER JOIN componentconditions
+  ON (virtualtoshared.fkCatalogueComponent = componentconditions.fkCatalogueComponent and componentconditions.fkProfile LIKE
+  ('0b00c8af838ba0c0','0b00c8af838ba0bd','0b00c8af838ba0b9','0b00c8af838ba0c3','0b00c8af838ba0b6','0b00c8af838ba0bc',
+  '0c00c8af80205920', '0b00c8af80209adf', '0b00c8af8020ad4d', '0b00c8af8020ad4f', '0b00c8af8020ad51'))
+  Where  cataloguecomponents.TypeId = 2
+  ORDER BY cataloguecomponents.TypeId DESC
         ";
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('catalogCode',  $catalogCode);
+        /*0c00c8af80205920 добавлено из 'select id from VehicleProfile where FolderLevel = 0';
+'0b00c8af80209adf', '0b00c8af8020ad4d', '0b00c8af8020ad4f', '0b00c8af8020ad51' из 'select id from VehicleProfile where Description = all models'*/
+
+        $query = $this->conn->prepare($sqlGroups);
+
         $query->execute();
 
-        $aData = $query->fetchAll();
+        $aDataGroups = $query->fetchAll();
 
+        var_dump($aDataGroups); die;
 
         $groups = array();
 
