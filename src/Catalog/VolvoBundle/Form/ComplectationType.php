@@ -29,9 +29,9 @@ class ComplectationType extends AbstractType{
                     ->add('title' . $index, 'choice', array(
                         'label' => $label,
                         'choices' => $value['name'],
+
                         'attr' => array(
                             'class' => 'form-control',
-                            'placeholder' => 'Содержание статьи',
 
                         )
                     ));

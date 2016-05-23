@@ -37,8 +37,7 @@ class CatalogController extends BaseController{
         $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
         $modifications = $this->model()->getModifications($regionCode, $modelCode);
         $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
-        $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
-
+        $complectations = $this->model()->getComplectations1($regionCode, $modelCode, $modificationCode);
 
         $form = $this->createForm(new ComplectationType(), $complectations);
 
@@ -143,25 +142,15 @@ class CatalogController extends BaseController{
 
     public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
     {
-        /*   $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
-
-
-          $form = $this->createForm(new ComplectationType(), $complectations);
-           $form->handleRequest($this->get('request'));
-                $username = $form->get('title')->getData();
-                     $Positive_Territories = $form->get('title')->getData();*/
-
-
-
-
-
 
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
-        $engine = array('titleEN' => $parameters['complectationCode']);
+        $a = array();
+        $a = $request->get('ComplectationType');
+        unset($a['_token']);
 
-        $complectationCode = base64_encode(json_encode(array_merge($engine, $request->get('ComplectationType'))));
 
+        $complectationCode = base64_encode(json_encode($a));
 
         $parameters['complectationCode'] = $complectationCode;
 
@@ -178,7 +167,7 @@ class CatalogController extends BaseController{
         $modifications = $this->model()->getModifications($regionCode, $modelCode);
         $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
         if ($complectationCode) {
-            $complectations = $this->model()->getComplectation($complectationCode);
+            $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
             $complectationsCollection = Factory::createCollection($complectations, Factory::createComplectation())->getCollection();
             $oContainer->setActiveComplectation($complectationsCollection[$complectationCode]);
         }
