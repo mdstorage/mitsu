@@ -332,23 +332,29 @@ class VolvoCatalogModel extends CatalogModel{
         $query->bindValue('regionCode',  $regionCode);
         $query->bindValue('modelCode',  $modelCode);
         $query->bindValue('modificationCode',  $modificationCode);
-        $query->bindValue('titleST', $complectationCode['titleST']);
-        $query->bindValue('titleEN', $complectationCode['titleEN']);
-        $query->bindValue('titleKP', $complectationCode['titleKP']);
-        $query->bindValue('titleRU', $complectationCode['titleRU']);
-        $query->bindValue('titleTK', $complectationCode['titleTK']);
+        $query->bindValue('titleST', array_key_exists('titleST', $complectationCode)?$complectationCode['titleST']:NULL);
+        $query->bindValue('titleEN', array_key_exists('titleEN', $complectationCode)?$complectationCode['titleEN']:NULL);
+        $query->bindValue('titleKP', array_key_exists('titleKP', $complectationCode)?$complectationCode['titleKP']:NULL);
+        $query->bindValue('titleRU', array_key_exists('titleRU', $complectationCode)?$complectationCode['titleRU']:NULL);
+        $query->bindValue('titleTK', array_key_exists('titleTK', $complectationCode)?$complectationCode['titleTK']:NULL);
 
         $query->execute();
 
         $aData = $query->fetch();
+        $aDatagr = array();
+
+        foreach ($aData as $item)
+        {
+
+            $aDatagr[] = $item;
+        }
 
 
-        var_dump($aData); die;
 
 
 
-        $sql = "
-        Select
+        $sqlGroups = "
+  Select
   DISTINCT cataloguecomponents.Id AS ComponentId,
   lexicon.Description,
   cataloguecomponents.FunctionGroupLabel + ' ' + lexicon.Description
@@ -369,22 +375,29 @@ class VolvoCatalogModel extends CatalogModel{
   cataloguecomponents.TargetComponentId AS TargetComponentId,
   cataloguecomponents.VersionUpdate AS VersionUpdate
 
-  FROM cataloguecomponents
+  from cataloguecomponents
   INNER JOIN lexicon
-  ON lexicon.DescriptionId = cataloguecomponents.DescriptionId  AND  lexicon.fkLanguage = '11'
-  INNER JOIN   componentconditions
-  ON '71278789' = componentconditions.fkCatalogueComponent
-  WHERE  cataloguecomponents.TypeId = 2
-  AND componentconditions.fkProfile IN ('0b00c8af838ba0c0','0b00c8af838ba0bd','0b00c8af838ba0b9','0b00c8af838ba0c3','0b00c8af838ba0b6','0b00c8af838ba0bc')
+  ON lexicon.DescriptionId = cataloguecomponents.DescriptionId AND lexicon.fkLanguage = '11'
+  INNER JOIN  virtualtoshared
+  on cataloguecomponents.Id = SUBSTRING_INDEX(virtualtoshared.AlternateComponentPath, ',', 1)
+  INNER JOIN componentconditions
+  ON (virtualtoshared.fkCatalogueComponent = componentconditions.fkCatalogueComponent and componentconditions.fkProfile LIKE
+  ('0b00c8af838ba0c0','0b00c8af838ba0bd','0b00c8af838ba0b9','0b00c8af838ba0c3','0b00c8af838ba0b6','0b00c8af838ba0bc',
+  '0c00c8af80205920', '0b00c8af80209adf', '0b00c8af8020ad4d', '0b00c8af8020ad4f', '0b00c8af8020ad51'))
+  Where  cataloguecomponents.TypeId = 2
   ORDER BY cataloguecomponents.TypeId DESC
         ";
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('catalogCode',  $catalogCode);
+        /*0c00c8af80205920 добавлено из 'select id from VehicleProfile where FolderLevel = 0';
+'0b00c8af80209adf', '0b00c8af8020ad4d', '0b00c8af8020ad4f', '0b00c8af8020ad51' из 'select id from VehicleProfile where Description = all models'*/
+
+        $query = $this->conn->prepare($sqlGroups);
+
         $query->execute();
 
-        $aData = $query->fetchAll();
+        $aDataGroups = $query->fetchAll();
 
+        var_dump($aDataGroups); die;
 
         $groups = array();
 
