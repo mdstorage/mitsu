@@ -348,11 +348,35 @@ class VolvoCatalogModel extends CatalogModel{
 
 
         $sql = "
-        SELECT major_group.MAJOR_GROUP, major_group.MAJOR_DESC, group_master.GROUP_ID
-        FROM major_group, group_usage, group_master
-        WHERE group_usage.CATALOG_CODE = :catalogCode
-        and group_usage.GROUP_ID = group_master.GROUP_ID and group_master.MAJOR_GROUP = major_group.MAJOR_GROUP and group_usage.GROUP_TYPE = 'B'
-        ORDER BY (1)
+        Select
+  DISTINCT cataloguecomponents.Id AS ComponentId,
+  lexicon.Description,
+  cataloguecomponents.FunctionGroupLabel + ' ' + lexicon.Description
+  AS title,
+  cataloguecomponents.TypeId AS DATATYPE,
+  cataloguecomponents.PSCode AS PSCode,
+  cataloguecomponents.Code AS Code,
+  cataloguecomponents.ComponentPath AS ComponentPath,
+  cataloguecomponents.fkPartItem AS ItemNumber,
+  cataloguecomponents.AssemblyLevel AS AssemblyLevel,
+  cataloguecomponents.ParentComponentId AS ParentComponentId,
+  cataloguecomponents.Quantity AS Quantity,
+  cataloguecomponents.HotspotKey AS HotspotKey,
+  cataloguecomponents.SequenceId AS SequenceId,
+  '' AS ProfileId,
+  cataloguecomponents.FunctionGroupPath AS FunctionGroupPath,
+  '' AS StructuredNoteId,
+  cataloguecomponents.TargetComponentId AS TargetComponentId,
+  cataloguecomponents.VersionUpdate AS VersionUpdate
+
+  FROM cataloguecomponents
+  INNER JOIN lexicon
+  ON lexicon.DescriptionId = cataloguecomponents.DescriptionId  AND  lexicon.fkLanguage = '11'
+  INNER JOIN   componentconditions
+  ON '71278789' = componentconditions.fkCatalogueComponent
+  WHERE  cataloguecomponents.TypeId = 2
+  AND componentconditions.fkProfile IN ('0b00c8af838ba0c0','0b00c8af838ba0bd','0b00c8af838ba0b9','0b00c8af838ba0c3','0b00c8af838ba0b6','0b00c8af838ba0bc')
+  ORDER BY cataloguecomponents.TypeId DESC
         ";
 
         $query = $this->conn->prepare($sql);
