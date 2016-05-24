@@ -635,21 +635,23 @@ class VolvoCatalogModel extends CatalogModel{
 
         $complectationCode = json_decode(base64_decode($complectationCode), true);
 
-
-        $sql = "
-        SELECT DISTINCT st.Id stid, pg.Id pgid, en.Id enid, tr.Id trid, ru.Id ruid, tk.Id tkid
+     /*   $sql = "
+        SELECT VP.Id VPid
         FROM vehicleprofile VP
-        LEFT JOIN vehicleprofile st ON (st.fkSpecialVehicle = :titleST AND st.fkVehicleModel = VP.fkVehicleModel AND st.fkModelYear = VP.fkModelYear AND st.FolderLevel = VP.FolderLevel)
-        LEFT JOIN vehicleprofile pg ON (pg.fkPartnerGroup = :regionCode AND pg.fkVehicleModel = VP.fkVehicleModel AND pg.fkModelYear = VP.fkModelYear AND pg.FolderLevel = VP.FolderLevel)
-        LEFT JOIN vehicleprofile en ON (en.fkEngine = :titleEN AND en.fkVehicleModel = VP.fkVehicleModel AND en.fkModelYear = VP.fkModelYear AND en.FolderLevel = VP.FolderLevel)
-        LEFT JOIN vehicleprofile tr ON (tr.fkTransmission = :titleKP AND tr.fkVehicleModel = VP.fkVehicleModel AND tr.fkModelYear = VP.fkModelYear AND tr.FolderLevel = VP.FolderLevel)
-        LEFT JOIN vehicleprofile ru ON (ru.fkSteering = :titleRU AND ru.fkVehicleModel = VP.fkVehicleModel AND ru.fkModelYear = VP.fkModelYear AND ru.FolderLevel = VP.FolderLevel)
-        LEFT JOIN vehicleprofile tk ON (tk.fkBodyStyle = :titleTK AND tk.fkVehicleModel = VP.fkVehicleModel AND tk.fkModelYear = VP.fkModelYear AND tk.FolderLevel = VP.FolderLevel)
-
-        WHERE VP.fkVehicleModel = :modelCode
+        WHERE
+        (VP.fkSpecialVehicle = :titleST OR VP.fkSpecialVehicle IS NULL) AND
+        (VP.fkPartnerGroup = :regionCode OR VP.fkPartnerGroup IS NULL) AND
+        (VP.fkEngine = :titleEN OR VP.fkEngine IS NULL) AND
+        (VP.fkTransmission = :titleKP OR VP.fkTransmission IS NULL) AND
+        (VP.fkSteering = :titleRU OR VP.fkSteering IS NULL) AND
+        (VP.fkBodyStyle = :titleTK OR VP.fkBodyStyle IS NULL) AND
+        VP.fkVehicleModel = :modelCode
         AND VP.fkModelYear IN (:modificationCode)
-        AND VP.FolderLevel = 3
+        AND (VP.FolderLevel = 4 OR VP.FolderLevel = 3)
+        GROUP BY VPid
+
         ";
+
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('regionCode',  $regionCode);
@@ -663,18 +665,22 @@ class VolvoCatalogModel extends CatalogModel{
 
         $query->execute();
 
-        $aData = $query->fetch();
+        $aData = $query->fetchAll();
+
         $aDatagr = array();
 
         foreach ($aData as $item)
         {
-            $aDatagr[] = $item;
-        }
+
+            $aDatagr[] = $item['VPid'];
+        }*/
 
 
 
 
-        $sqlGroups = "
+
+
+            $sqlGroups = "
   Select
   DISTINCT cataloguecomponents.Id AS ComponentId,
   lexicon.Description,
@@ -703,8 +709,23 @@ class VolvoCatalogModel extends CatalogModel{
   on cataloguecomponents.Id = SUBSTRING_INDEX(SUBSTRING_INDEX(virtualtoshared.AlternateComponentPath, ',', 2), ',', -1)
   INNER JOIN componentconditions
   ON (virtualtoshared.fkCatalogueComponent = componentconditions.fkCatalogueComponent and componentconditions.fkProfile IN
-  (:stid, :pgid, :enid, :trid, :ruid, :tkid)
+  (
 
+  SELECT VP.Id VPid
+        FROM vehicleprofile VP
+        WHERE
+        (VP.fkSpecialVehicle = :titleST OR VP.fkSpecialVehicle IS NULL) AND
+        (VP.fkPartnerGroup = :regionCode OR VP.fkPartnerGroup IS NULL) AND
+        (VP.fkEngine = :titleEN OR VP.fkEngine IS NULL) AND
+        (VP.fkTransmission = :titleKP OR VP.fkTransmission IS NULL) AND
+        (VP.fkSteering = :titleRU OR VP.fkSteering IS NULL) AND
+        (VP.fkBodyStyle = :titleTK OR VP.fkBodyStyle IS NULL) AND
+        VP.fkVehicleModel = :modelCode
+        AND VP.fkModelYear IN (:modificationCode)
+        AND (VP.FolderLevel IN (2,3,4))
+
+
+  )
   )
   Where  cataloguecomponents.TypeId = 2
   AND SUBSTRING(cataloguecomponents.FunctionGroupLabel + ' ' + lexicon.Description, 1, 1) = :groupCode
@@ -753,46 +774,52 @@ class VolvoCatalogModel extends CatalogModel{
 
         ";
 
-        /*0c00c8af80205920 добавлено из 'select id from VehicleProfile where FolderLevel = 0';
-'0b00c8af80209adf', '0b00c8af8020ad4d', '0b00c8af8020ad4f', '0b00c8af8020ad51' из 'select id from VehicleProfile where Description = all models'
-        SELECT *
-FROM componentconditions
-INNER JOIN virtualtoshared ON ( virtualtoshared.fkCatalogueComponent = componentconditions.fkCatalogueComponent
-AND virtualtoshared.AlternateComponentPath LIKE '%8,40%' )
-WHERE componentconditions.ModelCid = '275'
-LIMIT 0 , 30
+            /*0c00c8af80205920 добавлено из 'select id from VehicleProfile where FolderLevel = 0';
+    '0b00c8af80209adf', '0b00c8af8020ad4d', '0b00c8af8020ad4f', '0b00c8af8020ad51' из 'select id from VehicleProfile where Description = all models'
+            SELECT *
+    FROM componentconditions
+    INNER JOIN virtualtoshared ON ( virtualtoshared.fkCatalogueComponent = componentconditions.fkCatalogueComponent
+    AND virtualtoshared.AlternateComponentPath LIKE '%8,40%' )
+    WHERE componentconditions.ModelCid = '275'
+    LIMIT 0 , 30
 
-        */
+            */
 
-        $query = $this->conn->prepare($sqlGroups);
-        $query->bindValue('stid',  $aData['stid']);
-        $query->bindValue('pgid',  $aData['pgid']);
-        $query->bindValue('enid',  $aData['enid']);
-        $query->bindValue('trid',  $aData['trid']);
-        $query->bindValue('ruid',  $aData['ruid']);
-        $query->bindValue('tkid',  $aData['tkid']);
-        $query->bindValue('groupCode',  $groupCode);
+            $query = $this->conn->prepare($sqlGroups);
+            $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('titleST', array_key_exists('titleST', $complectationCode)?$complectationCode['titleST']:NULL);
+        $query->bindValue('titleEN', array_key_exists('titleEN', $complectationCode)?$complectationCode['titleEN']:NULL);
+        $query->bindValue('titleKP', array_key_exists('titleKP', $complectationCode)?$complectationCode['titleKP']:NULL);
+        $query->bindValue('titleRU', array_key_exists('titleRU', $complectationCode)?$complectationCode['titleRU']:NULL);
+        $query->bindValue('titleTK', array_key_exists('titleTK', $complectationCode)?$complectationCode['titleTK']:NULL);
+
+
+
 
         $query->execute();
 
-        $aDataGroups = $query->fetchAll();
+            $aDataGroups = $query->fetchAll();
 
 
 
         $subgroups = array();
 
 
-        foreach($aDataGroups as $item){
+        foreach($aDataGroups as $item) {
 
-            $subgroups[$item['title']] = array(
-                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item['Description']),'utf8'),
-                Constants::OPTIONS => array()
-            );
+                $subgroups[$item['title']] = array(
+                    Constants::NAME => mb_strtoupper(iconv('cp1251', 'utf8', $item['Description']), 'utf8'),
+                    Constants::OPTIONS => array()
+                );
         }
 
 
         return $subgroups;
     }
+
 
        public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
        {
