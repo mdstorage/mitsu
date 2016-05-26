@@ -675,7 +675,7 @@ class VolvoCatalogModel extends CatalogModel{
             $aDatagr[] = $item['VPid'];
         }
 
-var_dump($aDatagr); die;
+
 
 
 
