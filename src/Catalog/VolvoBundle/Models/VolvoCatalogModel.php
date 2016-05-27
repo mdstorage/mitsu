@@ -680,7 +680,7 @@ class VolvoCatalogModel extends CatalogModel{
 
 
 
-            $sqlGroups = "
+            $sqlSubgroups = "
   Select
   DISTINCT cataloguecomponents.Id AS ComponentId,
   lexicon.Description,
@@ -722,7 +722,7 @@ class VolvoCatalogModel extends CatalogModel{
         (VP.fkBodyStyle = :titleTK OR VP.fkBodyStyle IS NULL) AND
         VP.fkVehicleModel = :modelCode
         AND VP.fkModelYear IN (:modificationCode)
-        AND (VP.FolderLevel IN (1,2,3,4))
+        AND (VP.FolderLevel IN (1,2,3,4,5,6,7,8))
 
 
   )
@@ -731,7 +731,7 @@ class VolvoCatalogModel extends CatalogModel{
   AND SUBSTRING(cataloguecomponents.FunctionGroupLabel + ' ' + lexicon.Description, 1, 1) = :groupCode
 
 
-  UNION
+  /*UNION
 
   Select
   DISTINCT cataloguecomponents.Id AS ComponentId,
@@ -769,7 +769,7 @@ class VolvoCatalogModel extends CatalogModel{
   )
   )
   Where  cataloguecomponents.TypeId = 2
-  AND SUBSTRING(cataloguecomponents.FunctionGroupLabel + ' ' + lexicon.Description, 1, 1) =:groupCode
+  AND SUBSTRING(cataloguecomponents.FunctionGroupLabel + ' ' + lexicon.Description, 1, 1) =:groupCode*/
   ORDER BY (3)
 
         ";
@@ -785,8 +785,8 @@ class VolvoCatalogModel extends CatalogModel{
 
             */
 
-            $query = $this->conn->prepare($sqlGroups);
-            $query->bindValue('groupCode', $groupCode);
+        $query = $this->conn->prepare($sqlSubgroups);
+        $query->bindValue('groupCode', $groupCode);
         $query->bindValue('regionCode',  $regionCode);
         $query->bindValue('modelCode',  $modelCode);
         $query->bindValue('modificationCode',  $modificationCode);
@@ -801,16 +801,14 @@ class VolvoCatalogModel extends CatalogModel{
 
         $query->execute();
 
-            $aDataGroups = $query->fetchAll();
-
-
+        $aDataGroups = $query->fetchAll();
 
         $subgroups = array();
 
 
         foreach($aDataGroups as $item) {
 
-                $subgroups[$item['title']] = array(
+                $subgroups[$item['title'].'_'.$item['ComponentId']] = array(
                     Constants::NAME => mb_strtoupper(iconv('cp1251', 'utf8', $item['Description']), 'utf8'),
                     Constants::OPTIONS => array()
                 );
@@ -822,42 +820,25 @@ class VolvoCatalogModel extends CatalogModel{
 
 
        public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
+
        {
 
-
            $complectationCode = json_decode(base64_decode($complectationCode), true);
-
+           $componentId = substr($subGroupCode, strpos($subGroupCode, '_')+1, strlen($subGroupCode));
+           $subGroupCode = substr($subGroupCode, 0, strpos($subGroupCode, '_'));
 
            $sql = "
-        SELECT   DISTINCT
-  cataloguecomponents.Id AS ComponentId,
+          Select
+  DISTINCT CC.Id AS ComponentId,
   lexicon.Description,
-  cataloguecomponents.TypeId AS DATATYPE,
-  cataloguecomponents.PSCode,
-  cataloguecomponents.Code,
-  virtualtoshared.AlternateComponentPath AS ComponentPath,
-  cataloguecomponents.fkPartItem AS ItemNumber,
-  cataloguecomponents.AssemblyLevel,
-  virtualtoshared.fkCatalogueComponent_Parent AS ParentComponentId,
-  cataloguecomponents.Quantity,
-  cataloguecomponents.HotspotKey,
-  cataloguecomponents.SequenceId,
+  CC.FunctionGroupLabel + ' ' + lexicon.Description
+  AS title
 
-  componentconditions.fkProfile AS ProfileId,
-  cataloguecomponents.FunctionGroupLabel + ' ' + lexicon.Description AS title,
-  cataloguecomponents.FunctionGroupPath,
-  '' AS StructuredNoteId,
-  cataloguecomponents.TargetComponentId,
-  cataloguecomponents.VersionUpdate
-
-  FROM cataloguecomponents
+  from cataloguecomponents CC
   INNER JOIN lexicon
-  ON lexicon.DescriptionId = cataloguecomponents.DescriptionId
-  AND lexicon.fkLanguage = '11'
-  INNER JOIN  virtualtoshared
-  on cataloguecomponents.Id = SUBSTRING_INDEX(SUBSTRING_INDEX(virtualtoshared.AlternateComponentPath,',',-1),',',1)
+  ON lexicon.DescriptionId = CC.DescriptionId AND lexicon.fkLanguage = '11'
   INNER JOIN componentconditions
-  ON (virtualtoshared.fkCatalogueComponent = componentconditions.fkCatalogueComponent and componentconditions.fkProfile IN
+  ON (componentconditions.fkProfile IN
   (
 
   SELECT VP.Id VPid
@@ -869,61 +850,24 @@ class VolvoCatalogModel extends CatalogModel{
         (VP.fkTransmission = :titleKP OR VP.fkTransmission IS NULL) AND
         (VP.fkSteering = :titleRU OR VP.fkSteering IS NULL) AND
         (VP.fkBodyStyle = :titleTK OR VP.fkBodyStyle IS NULL) AND
-        (VP.fkVehicleModel = :modelCode or  VP.fkVehicleModel IS NULL) AND
-        (VP.fkModelYear IN (:modificationCode) or VP.fkModelYear IS NULL) AND
-        (VP.FolderLevel IN (1,2,3,4,5,6))
-
+        VP.fkVehicleModel = :modelCode
+        AND VP.fkModelYear IN (:modificationCode)
+        AND (VP.FolderLevel IN (1,2,3,4))
 
   )
   )
-  WHERE     ((virtualtoshared.fkCatalogueComponent_Parent = '87')
-  or cataloguecomponents.ParentComponentId = '87')
 
-  UNION
-
-  SELECT   DISTINCT
-  cataloguecomponents.Id AS ComponentId,
-  lexicon.Description,
-  cataloguecomponents.TypeId AS DATATYPE,
-  cataloguecomponents.PSCode,
-  cataloguecomponents.Code,
-  virtualtoshared.AlternateComponentPath AS ComponentPath,
-  cataloguecomponents.fkPartItem AS ItemNumber,
-  cataloguecomponents.AssemblyLevel,
-  virtualtoshared.fkCatalogueComponent_Parent AS ParentComponentId,
-  cataloguecomponents.Quantity,
-  cataloguecomponents.HotspotKey,
-  cataloguecomponents.SequenceId,
-
-  componentconditions.fkProfile AS ProfileId,
-  cataloguecomponents.FunctionGroupLabel + ' ' + lexicon.Description AS title,
-  cataloguecomponents.FunctionGroupPath,
-  '' AS StructuredNoteId,
-  cataloguecomponents.TargetComponentId,
-  cataloguecomponents.VersionUpdate
-
-  FROM cataloguecomponents
-  INNER JOIN lexicon
-  ON lexicon.DescriptionId = cataloguecomponents.DescriptionId
-  AND lexicon.fkLanguage = '11'
-    INNER JOIN  virtualtoshared
-  on cataloguecomponents.Id = SUBSTRING_INDEX(SUBSTRING_INDEX(virtualtoshared.AlternateComponentPath,',',-1),',',1)
-  INNER JOIN componentconditions
-  ON (virtualtoshared.fkCatalogueComponent = componentconditions.fkCatalogueComponent and componentconditions.fkProfile IN
-  (
-  select id
-  from vehicleprofile
-  where vehicleprofile.Description = 'All Models*'
-  )
-  )
-  WHERE     ((virtualtoshared.fkCatalogueComponent_Parent = '87')
-  or cataloguecomponents.ParentComponentId = '87')
+  Where  CC.TypeId = 2
+  AND SUBSTRING(CC.FunctionGroupLabel + ' ' + lexicon.Description, 1, 2) = :subgroupCode
+  AND CC.ParentComponentId = :componentId
 
   ORDER BY (3)
         ";
 
 
            $query = $this->conn->prepare($sql);
+           $query->bindValue('subgroupCode', $subGroupCode);
+           $query->bindValue('componentId', $componentId);
            $query->bindValue('regionCode',  $regionCode);
            $query->bindValue('modelCode',  $modelCode);
            $query->bindValue('modificationCode',  $modificationCode);
