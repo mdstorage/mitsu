@@ -829,16 +829,18 @@ class VolvoCatalogModel extends CatalogModel{
 
            $sql = "
           Select
-  DISTINCT CC.Id AS ComponentId,
+  DISTINCT AA.Id AS ComponentId,
   lexicon.Description,
-  CC.FunctionGroupLabel + ' ' + lexicon.Description
-  AS title
+  volvo2013d.getProfileNavTitle(AoAo.fkProfile)
+  AS title,
+
+  attachmentdata.URL AS imageName,
+  attachmentdata.MIME AS imageExtension
 
   from cataloguecomponents CC
-  INNER JOIN lexicon
-  ON lexicon.DescriptionId = CC.DescriptionId AND lexicon.fkLanguage = '11'
-  INNER JOIN componentconditions
-  ON (componentconditions.fkProfile IN
+
+  INNER JOIN componentconditions CoCo
+  ON (CoCo.fkProfile IN
   (
 
   SELECT VP.Id VPid
@@ -857,9 +859,38 @@ class VolvoCatalogModel extends CatalogModel{
   )
   )
 
+
+  INNER JOIN  virtualtoshared
+  on virtualtoshared.fkCatalogueComponent_Parent = CC.Id
+  INNER JOIN componentconditions AoAo
+  ON (virtualtoshared.fkCatalogueComponent = AoAo.fkCatalogueComponent and AoAo.fkProfile IN
+  (
+
+  SELECT VP.Id VPid
+        FROM vehicleprofile VP
+        WHERE
+        (VP.fkSpecialVehicle = :titleST OR VP.fkSpecialVehicle IS NULL) AND
+        (VP.fkPartnerGroup = :regionCode OR VP.fkPartnerGroup IS NULL) AND
+        (VP.fkEngine = :titleEN OR VP.fkEngine IS NULL) AND
+        (VP.fkTransmission = :titleKP OR VP.fkTransmission IS NULL) AND
+        (VP.fkSteering = :titleRU OR VP.fkSteering IS NULL) AND
+        (VP.fkBodyStyle = :titleTK OR VP.fkBodyStyle IS NULL) AND
+        VP.fkVehicleModel = :modelCode
+        AND VP.fkModelYear IN (:modificationCode)
+        AND (VP.FolderLevel IN (1,2,3,4))
+
+  )
+  )
+  INNER JOIN cataloguecomponents AA ON (AA.Id = SUBSTRING_INDEX(virtualtoshared.AlternateComponentPath,',',-1))
+  INNER JOIN componentattachments
+  ON AA.Id = componentattachments.fkCatalogueComponent
+  INNER JOIN attachmentdata ON componentattachments.fkAttachmentData = attachmentdata.Id
+  INNER JOIN lexicon
+  ON lexicon.DescriptionId = AA.DescriptionId AND lexicon.fkLanguage = '11'
   Where  CC.TypeId = 2
   AND SUBSTRING(CC.FunctionGroupLabel + ' ' + lexicon.Description, 1, 2) = :subgroupCode
   AND CC.ParentComponentId = :componentId
+
 
   ORDER BY (3)
         ";
