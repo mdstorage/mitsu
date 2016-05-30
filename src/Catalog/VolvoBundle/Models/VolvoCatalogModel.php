@@ -831,8 +831,16 @@ class VolvoCatalogModel extends CatalogModel{
           Select
   DISTINCT AA.Id AS ComponentId,
   lexicon.Description,
-  volvo2013d.getProfileNavTitle(AoAo.fkProfile)
-  AS title,
+  volvo2013d.getProfileNavTitle(AoAo.fkProfile),
+  CASE WHEN volvo2013d.getProfileNavTitle(AoAo.fkProfile)
+  IS NOT NULL THEN AoAo.fkProfile ELSE '' END AS ProfileId,
+
+  concat(CASE WHEN AA.TypeId = 3
+  THEN volvo2013d.getSectionDescription(AA.Id, '11', '')
+  ELSE concat(AA.FunctionGroupLabel, ' ', lexicon.Description) END, CASE
+  WHEN volvo2013d.getProfileNavTitle(AoAo.fkProfile) IS NOT NULL
+  and AA.TypeId != 2 THEN concat(', ', volvo2013d.getProfileNavTitle(AoAo.fkProfile)) ELSE '' END) AS TITLE,
+  volvo2013d.getSectionDescription(AA.Id, '11', '') as test,
 
   attachmentdata.URL AS imageName,
   attachmentdata.MIME AS imageExtension
