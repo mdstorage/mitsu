@@ -1,0 +1,8 @@
+{% block brand %}Toyota{% endblock brand %}
+{% block catalogPathLogo %}{{ path('catalog_toyota') }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_toyota') }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_toyota') }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_toyota') }}{% endblock articulPath %}
+{% block userStylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/catalogtoyota/css/common.css') }}" media="all">
+{% endblock userStylesheets %}

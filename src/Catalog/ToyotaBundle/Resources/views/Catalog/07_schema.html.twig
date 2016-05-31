@@ -1,0 +1,106 @@
+{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% use 'CatalogToyotaBundle::toyota.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('catalog_toyota') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('catalog_toyota_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a>/
+    <a href="{{ path('catalog_toyota_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
+    <a href="{{ path('catalog_toyota_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
+    <a href="{{ path('catalog_toyota_schemas', parameters) }}">Схема</a> / Запчасти
+{% endblock breadcrumbs %}
+
+
+{% block pnc %}
+    <div class="pnc glyphicon-plus small" id="pnc_{{ pnc.getCode }}">
+        ({{ pnc.getCode }}) {{ pnc.getRuname }}
+    </div>
+    {% block pncScript %}
+        <script>
+            $(addslashes("#pnc_{{ pnc.getCode }}")).on("click", function(){
+                {% block pncClick %}
+                $(addslashes("#articul_for_pnc{{ pnc.getCode }}")).toggleClass("hidden");
+                $(addslashes("#pnc_{{ pnc.getCode }}")).toggleClass("glyphicon-plus");
+                $(addslashes("#articul_for_pnc{{ pnc.getCode }}")).html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                $.ajax({
+                    type:   'POST',
+                    async:  false,
+                    url:    "{% block ajaxUrl %}{{ path('catalog_toyota_articuls') }}{% endblock ajaxUrl %}",
+                    data:   { {% block ajaxData %}
+                        regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                        modelCode: '{{ oContainer.getActiveModel.getCode }}',
+                        modificationCode: '{{ oContainer.getActiveModification.getRuname }}',
+                        complectationCode: '{{ oContainer.getActiveComplectation.getCode}}',
+                        groupCode: '{{ oContainer.getActiveGroup.getCode}}',
+                        subgroupCode: '{{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getCode }}',
+                        pncCode: '{{ pnc.getCode }}',
+                        options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'
+                        {% endblock ajaxData %} },
+                    success: function(data) {
+                        $(addslashes("#articul_for_pnc{{ pnc.getCode }}")).html(data);
+                    }
+                });
+                $(addslashes("#pnc_{{ pnc.getCode }}")).toggleClass("glyphicon-minus");
+                $(addslashes("#pnc_{{ pnc.getCode }}")).toggleClass("small btn-default");
+                {% endblock pncClick %}
+            });
+            $(addslashes("#pnc_{{ pnc.getCode }}")).on("mouseover", function(){
+                $(this).css("cursor", "pointer");
+                $(this).addClass("btn-info");
+            });
+            $(addslashes("#pnc_{{ pnc.getCode }}")).on("mouseout", function(){
+                $(this).removeClass("btn-info");
+            });
+            function addslashes(string) {
+                return string.replace(/\+/g, '\\+');
+
+            }
+        </script>
+    {% endblock pncScript %}
+    {% for coords in pnc.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
+        <area shape="rect" coords="
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}
+                                    " href="#" id="{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" data-name="{% block dataName %}{{ pnc.getCode }}{% endblock dataName %}"/>
+        {% block pncAreaScript %}
+            <script>
+                $(addslashes("area#{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}")).on("click", function(){
+                    {{ block('pncClick') }}
+                });
+                function addslashes(string) {
+                    return string.replace(/\+/g, '\\+');
+
+                }
+            </script>
+        {% endblock pncAreaScript %}
+    {% endfor %}
+{% endblock pnc %}
+
+{% block commonArticul %}
+    <div id="articul_{{ commonArticul.getCode }}">
+        <a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}" target="_blank">{{ commonArticul.getCode }}</a>
+    </div>
+    {% for coords in commonArticul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
+        <area shape="rect" coords="
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}
+                                    " target="_blank" href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}" id="{{ commonArticul.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" data-name="{% block dataNameCommonArticul %}{{ commonArticul.getCode }}{% endblock dataNameCommonArticul %}"/>
+    {% endfor %}
+{% endblock commonArticul %}
+
+
+
+
+
+{% block image %}
+ 
+    <img src="{{ asset('bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/SECIMG/'~oContainer.getActiveSchema.getCode~'.gif') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+
+{% endblock image %}
+
+
+{% block subGroupPath %}{{ path('catalog_toyota_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
+

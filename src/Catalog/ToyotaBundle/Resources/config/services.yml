@@ -1,0 +1,20 @@
+services:
+#    catalog_toyota.example:
+#        class: Catalog\ToyotaBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  toyota_date_convertor.extension:
+        class: Catalog\ToyotaBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  toyota.catalog.model:
+    class: Catalog\ToyotaBundle\Models\ToyotaCatalogModel
+    arguments:  ['@doctrine.dbal.toyota_connection']
+
+  toyota.vin.model:
+    class: Catalog\ToyotaBundle\Models\ToyotaVinModel
+    arguments:  ['@doctrine.dbal.toyota_connection']
+
+  toyota.articul.model:
+    class: Catalog\ToyotaBundle\Models\ToyotaArticulModel
+    arguments:  ['@doctrine.dbal.toyota_connection']
