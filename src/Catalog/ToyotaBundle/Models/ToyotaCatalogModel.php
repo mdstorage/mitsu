@@ -110,34 +110,49 @@ class ToyotaCatalogModel extends CatalogModel{
    
     {
         $sql = "
-        SELECT engine1, engine2, body, grade, atm_mtm, trans, f1, f2, f3
+        SELECT johokt.engine1 as f1, johokt.engine2 as f2, johokt.body as f3, johokt.grade as f4, johokt.atm_mtm as f5, johokt.trans as f6, johokt.f1 as f7, johokt.f2 as f8, johokt.f3 as f9, compl_code, model_code, prod_start, prod_end,
+        kig1.desc_en ken1,
+        kig2.desc_en ken2,
+        kig3.desc_en ken3,
+        kig4.desc_en ken4,
+        kig5.desc_en ken5,
+        kig6.desc_en ken6,
+        kig7.desc_en ken7,
+        kig8.desc_en ken8,
+
+        tkm1.desc_en ten1,
+        tkm2.desc_en ten2,
+        tkm3.desc_en ten3,
+        tkm4.desc_en ten4,
+        tkm5.desc_en ten5,
+        tkm6.desc_en ten6,
+        tkm7.desc_en ten7,
+        tkm8.desc_en ten8
+
+
         FROM johokt
+        LEFT JOIN kig kig1 ON (kig1.catalog = johokt.catalog AND kig1.catalog_code = johokt.catalog_code AND kig1.type = '01' AND kig1.sign = johokt.engine1)
+        LEFT JOIN kig kig2 ON (kig2.catalog = johokt.catalog AND kig2.catalog_code = johokt.catalog_code AND kig2.type = '02' AND kig2.sign = johokt.engine2)
+        LEFT JOIN kig kig3 ON (kig3.catalog = johokt.catalog AND kig3.catalog_code = johokt.catalog_code AND kig3.type = '03' AND kig3.sign = johokt.body)
+        LEFT JOIN kig kig4 ON (kig4.catalog = johokt.catalog AND kig4.catalog_code = johokt.catalog_code AND kig4.type = '04' AND kig4.sign = johokt.grade)
+        LEFT JOIN kig kig5 ON (kig5.catalog = johokt.catalog AND kig5.catalog_code = johokt.catalog_code AND kig5.type = '05' AND kig5.sign = johokt.atm_mtm)
+        LEFT JOIN kig kig6 ON (kig6.catalog = johokt.catalog AND kig6.catalog_code = johokt.catalog_code AND kig6.type = '06' AND kig6.sign = johokt.trans)
+        LEFT JOIN kig kig7 ON (kig7.catalog = johokt.catalog AND kig7.catalog_code = johokt.catalog_code AND kig7.type = '07' AND kig7.sign = johokt.f1)
+        LEFT JOIN kig kig8 ON (kig8.catalog = johokt.catalog AND kig8.catalog_code = johokt.catalog_code AND kig8.type = '08' AND kig8.sign = johokt.f2)
+
+        LEFT JOIN tkm tkm1 ON (tkm1.catalog = kig1.catalog AND tkm1.catalog_code = kig1.catalog_code AND tkm1.type = kig1.type)
+        LEFT JOIN tkm tkm2 ON (tkm2.catalog = kig2.catalog AND tkm2.catalog_code = kig2.catalog_code AND tkm2.type = kig2.type)
+        LEFT JOIN tkm tkm3 ON (tkm3.catalog = kig3.catalog AND tkm3.catalog_code = kig3.catalog_code AND tkm3.type = kig3.type)
+        LEFT JOIN tkm tkm4 ON (tkm4.catalog = kig4.catalog AND tkm4.catalog_code = kig4.catalog_code AND tkm4.type = kig4.type)
+        LEFT JOIN tkm tkm5 ON (tkm5.catalog = kig5.catalog AND tkm5.catalog_code = kig5.catalog_code AND tkm5.type = kig5.type)
+        LEFT JOIN tkm tkm6 ON (tkm6.catalog = kig6.catalog AND tkm6.catalog_code = kig6.catalog_code AND tkm6.type = kig6.type)
+        LEFT JOIN tkm tkm7 ON (tkm7.catalog = kig7.catalog AND tkm7.catalog_code = kig7.catalog_code AND tkm7.type = kig7.type)
+        LEFT JOIN tkm tkm8 ON (tkm8.catalog = kig8.catalog AND tkm8.catalog_code = kig8.catalog_code AND tkm8.type = kig8.type)
+
         WHERE johokt.catalog = :regionCode
         AND johokt.catalog_code = :modificationCode
         ";
 
-    /*    $sql = "
-        SELECT DATA21, DATA22, DATA23, DATA24, DATA25, DATA26, DATA27, DATA28, destcnt.ShashuCD,
-         VARIATION1, VARIATION2, VARIATION3, VARIATION4, VARIATION5, VARIATION6, VARIATION7, VARIATION8, NNO, posname.FROM_DATE, posname.UPTO_DATE, posname.DATA1, abbrev1.DESCRIPTION ABBREV1, abbrev2.DESCRIPTION ABBREV2, abbrev3.DESCRIPTION ABBREV3,
-         abbrev4.DESCRIPTION ABBREV4, abbrev5.DESCRIPTION ABBREV5, abbrev6.DESCRIPTION ABBREV6, abbrev7.DESCRIPTION ABBREV7, abbrev8.DESCRIPTION ABBREV8, posname.MDLDIR
-
-        FROM cdindex
-        LEFT JOIN destcnt ON (destcnt.CATALOG = cdindex.CATALOG AND destcnt.SHASHU = cdindex.SHASHU)
-        LEFT JOIN posname ON (posname.CATALOG = destcnt.CATALOG AND posname.MDLDIR = destcnt.ShashuCD)
-        LEFT JOIN appname abbrev1 ON (abbrev1.CATALOG = posname.CATALOG and abbrev1.MDLDIR = posname.MDLDIR AND abbrev1.MDLDIR = posname.MDLDIR AND abbrev1.VARIATION = posname.VARIATION1)
-        LEFT JOIN appname abbrev2 ON (abbrev2.CATALOG = posname.CATALOG and abbrev2.MDLDIR = posname.MDLDIR AND abbrev2.MDLDIR = posname.MDLDIR AND abbrev2.VARIATION = posname.VARIATION2)
-        LEFT JOIN appname abbrev3 ON (abbrev3.CATALOG = posname.CATALOG and abbrev3.MDLDIR = posname.MDLDIR AND abbrev3.MDLDIR = posname.MDLDIR AND abbrev3.VARIATION = posname.VARIATION3)
-        LEFT JOIN appname abbrev4 ON (abbrev4.CATALOG = posname.CATALOG and abbrev4.MDLDIR = posname.MDLDIR AND abbrev4.MDLDIR = posname.MDLDIR AND abbrev4.VARIATION = posname.VARIATION4)
-        LEFT JOIN appname abbrev5 ON (abbrev5.CATALOG = posname.CATALOG and abbrev5.MDLDIR = posname.MDLDIR AND abbrev5.MDLDIR = posname.MDLDIR AND abbrev5.VARIATION = posname.VARIATION5)
-        LEFT JOIN appname abbrev6 ON (abbrev6.CATALOG = posname.CATALOG and abbrev6.MDLDIR = posname.MDLDIR AND abbrev6.MDLDIR = posname.MDLDIR AND abbrev6.VARIATION = posname.VARIATION6)
-        LEFT JOIN appname abbrev7 ON (abbrev7.CATALOG = posname.CATALOG and abbrev7.MDLDIR = posname.MDLDIR AND abbrev7.MDLDIR = posname.MDLDIR AND abbrev7.VARIATION = posname.VARIATION7)
-        LEFT JOIN appname abbrev8 ON (abbrev8.CATALOG = posname.CATALOG and abbrev8.MDLDIR = posname.MDLDIR AND abbrev8.MDLDIR = posname.MDLDIR AND abbrev8.VARIATION = posname.VARIATION8)
-
-
-
-        WHERE cdindex.CATALOG = :regionCode
-        AND cdindex.SHASHU = :modificationCode
-        ";*/
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('regionCode',  $regionCode);
@@ -148,88 +163,85 @@ class ToyotaCatalogModel extends CatalogModel{
 
 
 
-        foreach($aData as $item)
+
+ /*       $aDataCompl = array();
+        $arr = array('compl_code', 'model_code', 'prod_start', 'prod_end');
+
+
+
+        foreach($aData as &$item)
         {
+
             $aDataChisl = array();
 
-            foreach($item as $index=>$value)
+            foreach($item as $index1=>$value1)
             {
-                $aDataChisl[] = $value;
+
+                {
+                    $aDataChisl[] = $value1;
+                }
+
+
+            foreach($aDataChisl as $index=>$value)
+            {
+                $sql = "
+                SELECT tkm.desc_en ten, kig.desc_en ken
+                FROM kig
+                LEFT JOIN tkm ON (tkm.catalog = kig.catalog AND tkm.catalog_code = kig.catalog_code AND tkm.type = :index)
+                WHERE kig.type = :index
+                AND kig.sign = :value
+                AND kig.catalog = :regionCode
+                AND kig.catalog_code = :modificationCode
+                        ";
+                $query = $this->conn->prepare($sql);
+                $query->bindValue('value',  $value);
+                $query->bindValue('index',  str_pad($index+1, 2, "0", STR_PAD_LEFT));
+                $query->bindValue('regionCode',  $regionCode);
+                $query->bindValue('modificationCode',  $modificationCode);
+                $query->execute();
+
+                $aData1 = $query->fetch();
+
+
+
+
+                if (!in_array($index1, $arr))
+
+                $item[$index1] = $aData1['ten'].': ('.$value.') '.$aData1['ken'];
 
             }
-
-            var_dump($aDataChisl); die;
-
-        }
+            }
 
 
-
-
-
+            unset ($item);
+        }*/
 
 
         $complectations = array();
         $trans = array();
 
 
-        foreach($aData as $item)
-        {
-            for ($i = 1;$i<9;$i++)
-            {
-                if (($item['DATA2'.$i]=='TRANS') || ($item['DECSEN'.$i]=='TRANS'))
-                {
-                    $trans[] = $item['VARIATION'.$i];
-                }
-            }
 
-
-        }
 
         foreach($aData as $item){
 
-            if ($regionCode != 'JP') {
-                $complectations[str_pad($item['MDLDIR'], 3, "0", STR_PAD_LEFT) . '_' . $item['NNO']. '_' .$item['DATA1']] = array(
-                    Constants::NAME => $item['NNO'],
+
+                $complectations[$item['compl_code']] = array(
+                    Constants::NAME => $item['model_code'],
                     Constants::OPTIONS => array(
-                        'OPTION1' => $item['DATA21'] . ': (' . $item['VARIATION1'] . ') ' . $item['ABBREV1'],
-                        'OPTION2' => $item['DATA22'] . ': (' . $item['VARIATION2'] . ') ' . $item['ABBREV2'],
-                        'OPTION3' => ($item['VARIATION3']) ? ($item['DATA23'] . ': (' . $item['VARIATION3'] . ') ' . $item['ABBREV3']) : '',
-                        'OPTION4' => ($item['VARIATION4']) ? ($item['DATA24'] . ': (' . $item['VARIATION4'] . ') ' . $item['ABBREV4']) : '',
-                        'OPTION5' => ($item['VARIATION5']) ? ($item['DATA25'] . ': (' . $item['VARIATION5'] . ') ' . $item['ABBREV5']) : '',
-                        'OPTION6' => ($item['VARIATION6']) ? ($item['DATA26'] . ': (' . $item['VARIATION6'] . ') ' . $item['ABBREV6']) : '',
-                        'OPTION7' => ($item['VARIATION7']) ? ($item['DATA27'] . ': (' . $item['VARIATION7'] . ') ' . $item['ABBREV7']) : '',
-                        'OPTION8' => ($item['VARIATION8']) ? ($item['DATA28'] . ': (' . $item['VARIATION8'] . ') ' . $item['ABBREV8']) : '',
-                        'trans' => (count(array_unique($trans))>1)?array_unique($trans):'',
-                        'FROMDATE' => $item['FROM_DATE'],
-                        'UPTODATE' => $item['UPTO_DATE'],
-                        'OPTION9' => $item['VARIATION1'].'.'.$item['VARIATION2'].'.'.$item['VARIATION3'].'.'.$item['VARIATION4'].'.'.
-                            $item['VARIATION5'].'.'.$item['VARIATION6'].'.'.$item['VARIATION7'].'.'.$item['VARIATION8'],
+                        'FROMDATE' => $item['prod_start'],
+                        'UPTODATE' => $item['prod_end'],
+                        'OPTION1' => $item['f1']?$item['ten1'].': ('.$item['f1'].') '.$item['ken1']:'',
+                        'OPTION2' => $item['f2']?$item['ten2'].': ('.$item['f2'].') '.$item['ken2']:'',
+                        'OPTION3' => $item['f3']?$item['ten3'].': ('.$item['f3'].') '.$item['ken3']:'',
+                        'OPTION4' => $item['f4']?$item['ten4'].': ('.$item['f4'].') '.$item['ken4']:'',
+                        'OPTION5' => $item['f5']?$item['ten5'].': ('.$item['f5'].') '.$item['ken5']:'',
+                        'OPTION6' => $item['f6']?$item['ten6'].': ('.$item['f6'].') '.$item['ken6']:'',
+                        'OPTION7' => $item['f7']?$item['ten7'].': ('.$item['f7'].') '.$item['ken7']:'',
+                        'OPTION8' => $item['f8']?$item['ten8'].': ('.$item['f8'].') '.$item['ken8']:'',
+                        'trans' => ''
+                                            ));
 
-
-                    ));
-            }
-            else
-            {
-                $complectations[str_pad($item['MDLDIR'], 3, "0", STR_PAD_LEFT) . '_' . $item['NNO']. '_' .$item['DATA1']] = array(
-                    Constants::NAME => $item['NNO'],
-                    Constants::OPTIONS => array(
-                        'OPTION1' => $item['DECSEN1'] . ': (' . $item['VARIATION1'] . ') ' . $item['ABBREV1'],
-                        'OPTION2' => $item['DECSEN2'] . ': (' . $item['VARIATION2'] . ') ' . $item['ABBREV2'],
-                        'OPTION3' => ($item['VARIATION3']) ? ($item['DECSEN3'] . ': (' . $item['VARIATION3'] . ') ' . $item['ABBREV3']) : '',
-                        'OPTION4' => ($item['VARIATION4']) ? ($item['DECSEN4'] . ': (' . $item['VARIATION4'] . ') ' . $item['ABBREV4']) : '',
-                        'OPTION5' => ($item['VARIATION5']) ? ($item['DECSEN5'] . ': (' . $item['VARIATION5'] . ') ' . $item['ABBREV5']) : '',
-                        'OPTION6' => ($item['VARIATION6']) ? ($item['DECSEN6'] . ': (' . $item['VARIATION6'] . ') ' . $item['ABBREV6']) : '',
-                        'OPTION7' => ($item['VARIATION7']) ? ($item['DECSEN7'] . ': (' . $item['VARIATION7'] . ') ' . $item['ABBREV7']) : '',
-                        'OPTION8' => ($item['VARIATION8']) ? ($item['DECSEN8'] . ': (' . $item['VARIATION8'] . ') ' . $item['ABBREV8']) : '',
-                        'trans' => (count(array_unique($trans))>1)?array_unique($trans):'',
-                        'FROMDATE' => $item['FROM_DATE'],
-                        'UPTODATE' => $item['UPTO_DATE'],
-                        'OPTION9' => $item['VARIATION1'].'.'.$item['VARIATION2'].'.'.$item['VARIATION3'].'.'.$item['VARIATION4'].'.'.
-                            $item['VARIATION5'].'.'.$item['VARIATION6'].'.'.$item['VARIATION7'].'.'.$item['VARIATION8']
-
-                    ));
-
-            }
 
         }
 
@@ -240,33 +252,7 @@ class ToyotaCatalogModel extends CatalogModel{
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
 
-        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
-        $table = 'genloc_all';
 
-        $what = 'PICGROUP';
-        $k = 1;
-
-        if ($regionCode != 'JP')
-        {
-            $sql = "
-        SELECT $what, PARTNAME_E, PIMGSTR, X_LT, Y_LT
-        FROM $table
-        WHERE CATALOG = :regionCode
-        and MDLDIR = :MDLDIR
-        ";
-
-            $query = $this->conn->prepare($sql);
-            $query->bindValue('regionCode',  $regionCode);
-            $query->bindValue('MDLDIR',  $MDLDIR);
-
-            $query->execute();
-            $aData = $query->fetchAll();
-            $k = 2;
-
-        }
-
-        else
-        {
             $sql = "
         SELECT emoloc_jp.PICGROUP, emoloc_jp.PIMGSTR, '1' AS X_LT, '1' AS Y_LT
         FROM emoloc_jp
@@ -282,24 +268,7 @@ class ToyotaCatalogModel extends CatalogModel{
             $query->execute();
             $aData = $query->fetchAll();
 
-            foreach($aData as &$item)
-            {
-                switch (substr($item['PICGROUP'],0,1))
-                {
-                    case 'V': $item['PARTNAME_E'] = 'ACCESSORY. PART'.substr($item['PICGROUP'],1,1); unset($item);break;
-                    case 'W': $item['PARTNAME_E'] = 'ELECTRICAL. PART'.substr($item['PICGROUP'],1,1); unset($item);break;
-                    case 'X': $item['PARTNAME_E'] = 'CHASIS,POWER TRAIN,BRAKE. PART'.substr($item['PICGROUP'],1,1);unset($item);break;
-                    case 'Y': $item['PARTNAME_E'] = 'BODY,TRIM. PART'.substr($item['PICGROUP'],1,1);unset($item);break;
-                    case 'Z': $item['PARTNAME_E'] = 'ENGINE,FUEL. PART'.substr($item['PICGROUP'],1,1);unset($item);break;
 
-
-
-                }
-            }
-
-
-
-        }
 
         $groups = array();
 

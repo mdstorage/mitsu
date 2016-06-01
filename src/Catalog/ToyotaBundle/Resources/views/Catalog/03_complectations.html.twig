@@ -71,8 +71,10 @@
         
     <b>    {{ complectation.getOption('FROMDATE')|toyota_date_convertor }} - {{ complectation.getOption('UPTODATE')|toyota_date_convertor }} </b>
       </a> <br/>
-                {{ complectation.getOption('OPTION1')}}<br/>
-                {{ complectation.getOption('OPTION2')}}<br/>
+                {{ complectation.getOption('OPTION1')|replace({' 1': ''})}}<br/>
+                {% if complectation.getOption('OPTION2') %}
+                    {{ complectation.getOption('OPTION2')}}<br/>
+                {% endif %}
 
                 {% if complectation.getOption('OPTION3') %}
                 {{ complectation.getOption('OPTION3')}}<br/>
