@@ -3,25 +3,20 @@
 {% block breadcrumbs %}
     <a href="{{ path('catalog_toyota') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
-    <a href="{{ path('catalog_toyota_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a>/
-    <a href="{{ path('catalog_toyota_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getCode}})</a> /
+    <a href="{{ path('catalog_toyota_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> /
+    <a href="{{ path('catalog_toyota_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> /
     Подгруппа запчастей
 {% endblock breadcrumbs %}
 
-{% set a = 'EMOIMG' %}
-{% if oContainer.getActiveRegion.getCode != "JP"  %}
-    {% set a = 'GRPIMG' %}
-{% endif %}
 
-{% block subgroupImage %}
-    <div class="col-lg-8">
-        <img src="{{ asset('bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/'~a~'/'~oContainer.getActiveGroup.getOption('picture')~'.gif') }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
-
+{% block subgroupImage %}{% endblock subgroupImage %}
+{% block subgroupItem %}
+    <div id="subgroup{{ subgroup.getCode }}">
+        <a href="{{ path('catalog_toyota_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
     </div>
-{% endblock subgroupImage %}
+{% endblock subgroupItem %}
+ {% block area %}
+ {% endblock area %}
+{% block cycleScript %}
+{% endblock cycleScript %}
 
-
-
-{% block pathToSchemas %}
-    {{ path('catalog_toyota_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}
-{% endblock pathToSchemas %}

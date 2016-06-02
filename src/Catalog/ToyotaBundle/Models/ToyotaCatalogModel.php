@@ -253,36 +253,34 @@ class ToyotaCatalogModel extends CatalogModel{
     {
 
 
-            $sql = "
-        SELECT emoloc_jp.PICGROUP, emoloc_jp.PIMGSTR, '1' AS X_LT, '1' AS Y_LT
-        FROM emoloc_jp
-        WHERE emoloc_jp.CATALOG = :regionCode
-        and emoloc_jp.MDLDIR = :MDLDIR
-        ORDER by emoloc_jp.PICGROUP
+        $sql = "
+        SELECT SUBSTRING(emi.part_group, 1, 1) groupCodes
+        FROM emi
+        WHERE emi.catalog = :regionCode
+        AND emi.catalog_code = :modificationCode
+        GROUP BY SUBSTRING(part_group, 1, 1)
         ";
 
             $query = $this->conn->prepare($sql);
             $query->bindValue('regionCode',  $regionCode);
-            $query->bindValue('MDLDIR',  $MDLDIR);
+            $query->bindValue('modificationCode',  $modificationCode);
 
             $query->execute();
             $aData = $query->fetchAll();
 
 
 
+        $aDataGroups = array('ИНСТРУМЕНТЫ', 'ДВИГАТЕЛЬ', 'ТОПЛИВНАЯ СИСТЕМА', 'ТРАНСМИССИЯ, ПОДВЕСКА, ТОРМОЗНАЯ СИСТЕМА', 'КУЗОВНЫЕ ДЕТАЛИ, ЭКСТЕРЬЕР, ИНТЕРЬЕР', 'ЭЛЕКТРИКА, КЛИМАТ-КОНТРОЛЬ');
+
+
         $groups = array();
 
 
-        foreach($aData as $item){
+        foreach($aDataGroups as $index => $value){
 
-            $groups[$item['PICGROUP']] = array(
-                Constants::NAME     =>$item ['PARTNAME_E'],
-                Constants::OPTIONS => array('picture' => strtoupper($item ['PIMGSTR']),
-                    Constants::X1 => floor($item['X_LT']/$k),
-                    Constants::X2 => floor($item['X_LT']/$k)+30,
-                    Constants::Y1 => floor($item['Y_LT']/$k)-2,
-                    Constants::Y2 => floor($item['Y_LT']/$k)+30,
-                )
+            $groups[$index+1] = array(
+                Constants::NAME     =>$value,
+                Constants::OPTIONS => array()
             );
         }
 
@@ -334,51 +332,54 @@ class ToyotaCatalogModel extends CatalogModel{
 
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
-        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
-
-
-
-        if ($regionCode != 'JP')
-        {
-            $sql = "
-        SELECT id, FIGURE, PARTNAME_E, X_LT, Y_LT
-        FROM gsecloc_all
-        WHERE PICGROUP = :groupCode
-        AND MDLDIR = :MDLDIR
-        AND CATALOG = :regionCode
-        ORDER BY FIGURE
-        ";
-
-            $nameSubgroup = 'PARTNAME_E';
-            $k = 2;
-        }
-
-        else
-        {
-            $sql = "
-        SELECT id, FIGURE, PARTNAME, X_LT, Y_LT
-        FROM esecloc_jp
-        WHERE PICGROUP = :groupCode
-        AND MDLDIR = :MDLDIR
-        AND CATALOG = :regionCode
-        ORDER BY FIGURE
-        ";
-
-            $nameSubgroup = 'PARTNAME';
-            $k = 2.5;
+        switch ($groupCode){
+            case 1:
+                $min = 0;
+                $max = 0;
+                break;
+            case 2:
+                $min = 1;
+                $max = 1;
+                break;
+            case 3:
+                $min = 2;
+                $max = 2;
+                break;
+            case 4:
+                $min = 3;
+                $max = 4;
+                break;
+            case 5:
+                $min = 5;
+                $max = 7;
+                break;
+            case 6:
+                $min = 8;
+                $max = 9;
+                break;
         }
 
 
+
+            $sql = "
+        SELECT emi.part_group, emi.pic_code, figmei.desc_en
+        FROM emi
+        INNER JOIN figmei ON (figmei.catalog = emi.catalog and figmei.part_group = emi.part_group)
+        WHERE emi.catalog = :regionCode
+        AND emi.catalog_code = :modificationCode
+        AND SUBSTRING(emi.part_group, 1, 1) BETWEEN :min1 AND :max1
+        ORDER BY emi.part_group
+        ";
 
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('groupCode',  $groupCode);
         $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('MDLDIR',  $MDLDIR);
+        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('min1',  $min);
+        $query->bindValue('max1',  $max);
         $query->execute();
 
         $aData = $query->fetchAll();
-
 
 
            $subgroups = array();
@@ -387,17 +388,11 @@ class ToyotaCatalogModel extends CatalogModel{
            foreach($aData as $item)
            {
 
+               $subgroups[$item['part_group']] = array(
 
-
-
-               $subgroups[$item['FIGURE']] = array(
-
-               Constants::NAME => $item[$nameSubgroup],
+               Constants::NAME => $item['desc_en'],
                    Constants::OPTIONS => array(
-                       Constants::X1 => floor($item['X_LT']/$k),
-                       Constants::X2 => floor($item['X_LT']/$k)+30,
-                       Constants::Y1 => floor($item['Y_LT']/$k),
-                       Constants::Y2 => floor($item['Y_LT']/$k)+20,
+                       'picture' => $item['pic_code']
                    )
 
                );
@@ -409,81 +404,29 @@ class ToyotaCatalogModel extends CatalogModel{
 
        public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
        {
-           $datas = array();
-           $datas = explode('_', $complectationCode);
-
-           $complectation = $this->getComplForSchemas($regionCode, ltrim($datas[0],'0'), $datas[1], $datas[2]);
-
-
-
-
-           $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
-
 
            $sql = "
-           SELECT *
-           FROM illnote
-           WHERE illnote.CATALOG= :regionCode
-           and  illnote.MDLDIR = :MDLDIR
-           and illnote.FIGURE LIKE :subGroupCode
+           SELECT bzi.illust_no, bzi.pic_code, images.disk, inm.desc_en, bzi.ipic_code
+           FROM kpt
+           INNER JOIN bzi ON (bzi.catalog = kpt.catalog AND bzi.catalog_code = kpt.catalog_code AND bzi.ipic_code = kpt.ipic_code AND bzi.part_group = :subGroupCode)
+           INNER JOIN images ON (images.catalog = bzi.catalog AND images.pic_code = bzi.pic_code)
+           INNER JOIN inm ON (inm.catalog = bzi.catalog AND inm.catalog_code = bzi.catalog_code AND inm.pic_desc_code = bzi.pic_desc_code
+           AND inm.op1 = bzi.op1 AND inm.op2 = bzi.op2 AND inm.op3 = bzi.op3)
+           WHERE kpt.catalog = :regionCode
+           AND kpt.catalog_code = :modificationCode
+           AND kpt.compl_code = :complectationCode
            ";
 
            $query = $this->conn->prepare($sql);
            $query->bindValue('regionCode',  $regionCode);
-           $query->bindValue('MDLDIR',  $MDLDIR);
-           $query->bindValue('subGroupCode',  '%'.$subGroupCode.'%');
+           $query->bindValue('modificationCode',  $modificationCode);
+           $query->bindValue('complectationCode',  $complectationCode);
+           $query->bindValue('subGroupCode',  $subGroupCode);
            $query->execute();
 
            $aData = $query->fetchAll();
-           $schemaOptions = array();
-           $plus = array();
 
-           if ($regionCode != 'JP') {
-
-               foreach ($aData as $index => $value) {
-                   $ct = 0;
-                   $schemaOptions = $this->multiexplode(array('+', ' +', '+ '), $value['REC3']);
-
-
-                   foreach ($schemaOptions as $item) {
-
-                       $item = trim($item, ('*()'));
-                       if (strpos($item, ".")) {
-                           $plus = explode('.', $item);
-
-
-                           if (count($plus) == count(array_intersect($plus, $complectation[0]))) {
-                               $ct = $ct + 1;
-                           }
-
-
-                       } else {
-
-                           foreach ($complectation[0] as $indexCo => $valueCo)
-                           {
-
-                               if (stripos($valueCo, $item) !== false) {
-                                   $ct = $ct + 1;
-                               }
-
-                           }
-
-
-
-                       }
-
-
-                   }
-
-
-
-
-                   if ($ct === 0) {
-                       unset ($aData[$index]);
-                   }
-
-               }
-           }
+           var_dump($aData); die;
 
 
 
