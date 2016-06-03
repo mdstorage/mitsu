@@ -11,10 +11,6 @@
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
 
 
-{% set a = 'SECIMG' %}
-{% if oContainer.getActiveRegion.getCode != "JP"  %}
-    {% set a = 'SECIMG' %}
-{% endif %}
 
 {% block schema %}
     {% if schema.getCode is not empty %}
@@ -22,22 +18,20 @@
         <a href="{{ path('catalog_toyota_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
 
-                    <div class="row">
-                        {{ schema.getOption('FROMDATE')|toyota_date_convertor }} - {{ schema.getOption('UPTODATE')|toyota_date_convertor }}
-                    </div>
 
                     <div class="row">
-                        {{ schema.getRuname }}
+                         {{ schema.getOption('desc')}}
                     </div>
 
 
 
                     <div class="row">
-                        <img src="{{ asset('bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/'~a~'/'~schema.getCode~'.gif') }}" width="300" alt="{{ schema.getRuname }}"/>
+                        <img src="{{ asset('bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~schema.getOption('disk')~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getCode }}"/>
                     </div>
 
 
         </a>
             </div>
     {% endif %}
+
 {% endblock schema %}
