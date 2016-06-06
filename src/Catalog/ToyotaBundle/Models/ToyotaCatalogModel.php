@@ -362,24 +362,29 @@ class ToyotaCatalogModel extends CatalogModel{
 
 
         $sql = "
-        SELECT emi.part_group, emi.pic_code, figmei.desc_en
-        FROM emi
-        INNER JOIN figmei ON (figmei.catalog = emi.catalog and figmei.part_group = emi.part_group)
-        WHERE emi.catalog = :regionCode
-        AND emi.catalog_code = :modificationCode
-        AND SUBSTRING(emi.part_group, 1, 1) BETWEEN :min1 AND :max1
+        SELECT bzi.part_group, emi.pic_code, figmei.desc_en
+        FROM kpt
+        INNER JOIN bzi ON (bzi.catalog = kpt.catalog AND bzi.catalog_code = kpt.catalog_code AND bzi.ipic_code = kpt.ipic_code AND SUBSTRING(bzi.part_group, 1, 1) BETWEEN :min1 AND :max1)
+        INNER JOIN emi ON (emi.catalog = bzi.catalog AND emi.catalog_code = bzi.catalog_code AND emi.part_group = bzi.part_group)
+        INNER JOIN figmei ON (figmei.catalog = bzi.catalog and figmei.part_group = bzi.part_group)
+
+        WHERE kpt.catalog = :regionCode
+        AND kpt.catalog_code = :modificationCode
+        AND kpt.compl_code = :complectationCode
         ORDER BY emi.part_group
         ";
-
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('regionCode',  $regionCode);
         $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('complectationCode',  $complectationCode);
         $query->bindValue('min1',  $min);
         $query->bindValue('max1',  $max);
         $query->execute();
 
         $aData = $query->fetchAll();
+
+
 
 
            $subgroups = array();
@@ -714,10 +719,11 @@ class ToyotaCatalogModel extends CatalogModel{
                 foreach ($value['clangjap'] as $item1)
                 {
                     $pncs[$value['number']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
-                        Constants::X2 => floor((($item1['x2']))),
+                        Constants::X2 => $item1['x2'],
                         Constants::Y2 => $item1['y2'],
-                        Constants::X1 => floor($item1['x1']),
-                        Constants::Y1 => $item1['y1']);
+                        Constants::X1 => $item1['x1'],
+                        Constants::Y1 => $item1['y1']
+                    );
 
                 }
 
@@ -746,30 +752,23 @@ class ToyotaCatalogModel extends CatalogModel{
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, $options)
     {
 
-        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
-        $FIGURE_PREFIX = substr($options['figure'],-1);
+
+        $sqlArticuls = "
+            SELECT hnb_desc.quantity, hnb_desc.start_date, hnb_desc.end_date, hnb_desc.add_desc, hnb_desc.part_code, hnb_desc.hnb_id
+            FROM kpt
+            INNER JOIN hnb hnb_code ON (hnb_code.catalog = kpt.catalog and hnb_code.catalog_code = kpt.catalog_code AND hnb_code.pnc = :pnc AND hnb_code.add_desc LIKE CONCAT('%', kpt.ipic_code, '%'))
+            INNER JOIN hnb hnb_desc ON (hnb_desc.catalog = kpt.catalog and hnb_desc.catalog_code = kpt.catalog_code AND hnb_desc.hnb_id = hnb_code.hnb_id +1)
+            WHERE kpt.catalog = :regionCode
+            AND kpt.catalog_code = :modificationCode
+            AND kpt.compl_code = :complectationCode
+            ";
 
 
-        $datas = array();
-        $datas = explode('_', $complectationCode);
-
-        $complectation = $this->getComplForSchemas($regionCode, ltrim($datas[0],'0'), $datas[1], $datas[2]);
-
-
-        $sqlPnc = "
-         SELECT OEMCODE, FROM_DATE, UPTO_DATE, PER_COUNT, REC3, REP_OEM, REC1, abbrev.DESCRSTR
-          FROM catalog
-          LEFT JOIN abbrev ON (abbrev.CATALOG = catalog.CATALOG and abbrev.MDLDIR = catalog.MDLDIR AND (abbrev.ABBRSTR = CONCAT('C', catalog.REC1) OR abbrev.ABBRSTR = catalog.REC1))
-          WHERE catalog.CATALOG = :regionCode
-          AND catalog.MDLDIR = :MDLDIR
-          AND catalog.PARTCODE = :pncCode
-         ";
-
-         $query = $this->conn->prepare($sqlPnc);
-         $query->bindValue('regionCode',  $regionCode);
-         $query->bindValue('MDLDIR',  $MDLDIR);
-         $query->bindValue('pncCode',  $pncCode);
-
+        $query = $this->conn->prepare($sqlArticuls);
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('complectationCode',  $complectationCode);
+        $query->bindValue('pnc', $pncCode);
 
         $query->execute();
 
@@ -778,68 +777,19 @@ class ToyotaCatalogModel extends CatalogModel{
 
 
 
-
-        $plus = array();
-
-
-       if ($regionCode != 'JP') {
-
-
-           foreach ($aArticuls as $index => $value) {
-               $ct = 0;
-               $schemaOptions = $this->multiexplode(array('+', ' +', '+ '), $value['REC3']);
-
-
-               foreach ($schemaOptions as $item) {
-
-                   $item = trim($item, ('*()'));
-                   if (strpos($item, ".")) {
-                       $plus = explode('.', $item);
-
-
-                       if (count($plus) == count(array_intersect($plus, $complectation[0]))) {
-                           $ct = $ct + 1;
-                       }
-
-
-                   } else {
-
-                       if (in_array($item, $complectation[0])) {
-                           $ct = $ct + 1;
-                       }
-
-                   }
-
-
-               }
-
-
-               if ($ct === 0) {
-                   unset ($aArticuls[$index]);
-               }
-
-           }
-       }
-
-
 $articuls = array();
 
         foreach ($aArticuls as $item) {
         	 
             
             
-				$articuls[$item['OEMCODE']] = array(
-                Constants::NAME => $item['OEMCODE'],
+				$articuls[$item['hnb_id']] = array(
+                Constants::NAME => $item['part_code'],
                 Constants::OPTIONS => array(
-                    Constants::QUANTITY => $item['PER_COUNT'],
-                    Constants::START_DATE => $item['FROM_DATE'],
-                    Constants::END_DATE => $item['UPTO_DATE'],
-                    'DESCR' => $item['REC3'],
-                    'REPLACE' => $item['REP_OEM'],
-                    'COLOR' => ($item['REC1'])?'('.$item['REC1'].') '.$item['DESCRSTR']:'',
-                    'ColorCode' => $item['REC1']
-
-
+                    Constants::QUANTITY => $item['quantity'],
+                    Constants::START_DATE => $item['start_date'],
+                    Constants::END_DATE => $item['end_date'],
+                    'DESC' => $item['add_desc']
                 )
             );
             

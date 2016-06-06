@@ -2,7 +2,7 @@
 {% use 'CatalogToyotaBundle::toyota.base.html.twig' %}
 {% block breadcrumbs %}
    <a href="{{ path('catalog_toyota') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
-   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getCode }})</a> / Комплектация                    
+   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / Комплектация
 {% endblock breadcrumbs %}
 
 {% block body %}

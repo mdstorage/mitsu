@@ -21,7 +21,7 @@ class DateConvertorExtension extends Twig_Extension{
     }
 
     public function dateToyotaConvertor($str) {
-        if ($str && $str != 65535){
+        if ($str && $str != 999999){
             $str = str_pad($str, 4, "0", STR_PAD_LEFT);
 
 

@@ -12,12 +12,12 @@
     <tbody>
     {% for articul in oContainer.getActivePnc.getArticuls %}
         <tr>
-            <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a>
-                <br/> {% if articul.getOption('REPLACE') %} Замена: {{ articul.getOption('REPLACE') }} {% endif %} </td>
+            <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getRuname }}" target="_blank">{% block articulItem %}{{ articul.getRuname }}{% endblock articulItem %}</a>
+              {#  <br/> {% if articul.getOption('REPLACE') %} Замена: {{ articul.getOption('REPLACE') }} {% endif %}#} </td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|toyota_date_convertor }} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|toyota_date_convertor }}</td>
             <td> {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }} </td>
-            <td>{% autoescape false %}{{ articul.getOption('DESCR') }}{% endautoescape %}<br/>
-                {% if articul.getOption('COLOR') %} {{ articul.getOption('COLOR') }} {% endif %} </td>
+            <td>{% autoescape false %}{{ articul.getOption('DESC') }}{% endautoescape %}
+                </td>
             
         </tr>
     {% endfor %}
