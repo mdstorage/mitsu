@@ -231,7 +231,7 @@ class ToyotaCatalogModel extends CatalogModel{
                     Constants::OPTIONS => array(
                         'FROMDATE' => $item['prod_start'],
                         'UPTODATE' => $item['prod_end'],
-                        'OPTION1' => $item['f1']?$item['ten1'].': ('.$item['f1'].') '.$item['ken1']:'',
+                        'OPTION1' => $item['f1']?str_replace(' 1', '', $item['ten1']).': ('.$item['f1'].') '.$item['ken1']:'',
                         'OPTION2' => $item['f2']?$item['ten2'].': ('.$item['f2'].') '.$item['ken2']:'',
                         'OPTION3' => $item['f3']?$item['ten3'].': ('.$item['f3'].') '.$item['ken3']:'',
                         'OPTION4' => $item['f4']?$item['ten4'].': ('.$item['f4'].') '.$item['ken4']:'',

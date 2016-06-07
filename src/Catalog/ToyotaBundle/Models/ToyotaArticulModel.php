@@ -17,13 +17,13 @@ class ToyotaArticulModel extends ToyotaCatalogModel{
 
 
 
-        $sqlPnc = "
-         SELECT CATALOG
-          FROM catalog
-          WHERE catalog.OEMCODE = :articulCode
+        $sql = "
+         SELECT *
+          FROM hnb
+          WHERE hnb.part_code = :articulCode
          ";
 
-        $query = $this->conn->prepare($sqlPnc);
+        $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode',  $articulCode);
         $query->execute();
 
@@ -32,7 +32,7 @@ class ToyotaArticulModel extends ToyotaCatalogModel{
         $regions = array();
         foreach($aData as $index => $value)
         {
-            $regions[] = $value['CATALOG'];
+            $regions[] = $value['catalog'];
         }
 
         return $regions;
@@ -43,33 +43,16 @@ class ToyotaArticulModel extends ToyotaCatalogModel{
     {
 
 
-        if ($regionCode !== 'JP')
-        {
-            $sql = "
-        SELECT catalog.CATALOG, cdindex.SHASHU, cdindex.SHASHUKO
-        FROM catalog
-        INNER JOIN destcnt ON (destcnt.CATALOG = catalog.CATALOG AND destcnt.ShashuCD = catalog.MDLDIR)
-        INNER JOIN cdindex ON (cdindex.CATALOG = catalog.CATALOG AND cdindex.SHASHU = destcnt.SHASHU)
-        WHERE catalog.OEMCODE = :articulCode
-        and catalog.CATALOG = :regionCode
-        ORDER by SHASHUKO
-        ";
-        }
 
-        else
-        {
-            $sql = "
-        SELECT cdindex.SHASHU, cdindex_jp_en.SHASHUKO
-        FROM catalog
-        LEFT JOIN destcnt ON (destcnt.CATALOG = catalog.CATALOG AND destcnt.ShashuCD = catalog.MDLDIR)
-        LEFT JOIN cdindex ON (cdindex.CATALOG = catalog.CATALOG AND cdindex.SHASHU = destcnt.SHASHU)
-        LEFT JOIN cdindex_jp_en ON (cdindex.SHASHU = cdindex_jp_en.SHASHU)
-        WHERE catalog.OEMCODE = :articulCode
-        and catalog.CATALOG = :regionCode
-        ORDER by SHASHUKO
+        $sql = "
+         SELECT shamei.model_name
+          FROM hnb
+          INNER JOIN shamei ON (shamei.catalog = hnb.catalog AND shamei.catalog_code = hnb.catalog_code)
 
-        ";
-        }
+          WHERE hnb.part_code = :articulCode
+          AND hnb.catalog = :regionCode
+         ";
+
 
 
         $query = $this->conn->prepare($sql);
@@ -85,7 +68,7 @@ class ToyotaArticulModel extends ToyotaCatalogModel{
 
         foreach($aData as $item)
         {
-            $models[] = urlencode($item['SHASHUKO']);
+            $models[] = urlencode($item['model_name']);
 
         }
 
@@ -96,42 +79,19 @@ class ToyotaArticulModel extends ToyotaCatalogModel{
     {
         $modelCode = urldecode($modelCode);
 
-        if ($regionCode !== 'JP')
-        {
-            $sql = "
-        SELECT cdindex.SHASHU
-        FROM catalog
-        LEFT JOIN destcnt ON (destcnt.CATALOG = catalog.CATALOG AND destcnt.ShashuCD = catalog.MDLDIR)
-        LEFT JOIN cdindex ON (cdindex.CATALOG = catalog.CATALOG AND cdindex.SHASHU = destcnt.SHASHU and cdindex.SHASHUKO = :modelCode)
-        WHERE catalog.OEMCODE = :articulCode
-        and catalog.CATALOG = :regionCode
-        ORDER by SHASHUKO
-        ";
+        $sql = "
+         SELECT shamei.catalog_code
+          FROM hnb
+          INNER JOIN shamei ON (shamei.catalog = hnb.catalog AND shamei.catalog_code = hnb.catalog_code AND shamei.model_name = :modelCode)
+          WHERE hnb.part_code = :articulCode
+          AND hnb.catalog = :regionCode
 
-            $query = $this->conn->prepare($sql);
+         ";
+
+        $query = $this->conn->prepare($sql);
             $query->bindValue('articulCode', $articul);
             $query->bindValue('regionCode', $regionCode);
             $query->bindValue('modelCode', $modelCode);
-        }
-
-        else
-        {
-            $sql = "
-        SELECT catalog.CATALOG, cdindex.SHASHU
-        FROM catalog
-        left JOIN destcnt ON (destcnt.CATALOG = catalog.CATALOG AND destcnt.ShashuCD = catalog.MDLDIR)
-        left JOIN cdindex ON (cdindex.CATALOG = catalog.CATALOG AND cdindex.SHASHU = destcnt.SHASHU)
-        WHERE catalog.OEMCODE = :articulCode
-        and catalog.CATALOG = :regionCode
-        ORDER by SHASHU
-
-        ";
-            $query = $this->conn->prepare($sql);
-            $query->bindValue('articulCode', $articul);
-            $query->bindValue('regionCode', $regionCode);
-
-        }
-
 
 
         $query->execute();
@@ -141,7 +101,7 @@ class ToyotaArticulModel extends ToyotaCatalogModel{
 
         foreach($aData as $item)
         {
-            $modifications[] = $item['SHASHU'];
+            $modifications[] = $item['catalog_code'];
 
         }
 
@@ -153,19 +113,26 @@ class ToyotaArticulModel extends ToyotaCatalogModel{
     public function getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode)
     {
 
+        $modelCode = urldecode($modelCode);
+
         $sql = "
-        SELECT posname.NNO, posname.MDLDIR, posname.DATA1
-        FROM catalog
-        LEFT JOIN posname ON (posname.CATALOG = catalog.CATALOG AND posname.MDLDIR = catalog.MDLDIR)
-        WHERE catalog.OEMCODE = :articulCode
-        and catalog.CATALOG = :regionCode
+         SELECT kpt.compl_code
+          FROM hnb
+          INNER JOIN shamei ON (shamei.catalog = hnb.catalog AND shamei.catalog_code = hnb.catalog_code AND shamei.model_name = :modelCode)
+          INNER JOIN kpt ON (kpt.catalog = hnb.catalog AND kpt.catalog_code = hnb.catalog_code AND hnb.add_desc LIKE CONCAT('%', kpt.ipic_code, '%'))
+          WHERE hnb.part_code = :articulCode
+          AND hnb.catalog = :regionCode
+          AND hnb.catalog_code = :modificationCode
+          AND hnb.field_type = 1
 
-
-        ";
+         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
         $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modelCode', $modelCode);
+        $query->bindValue('modificationCode', $modificationCode);
+
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -177,7 +144,7 @@ class ToyotaArticulModel extends ToyotaCatalogModel{
 
             foreach ($aData as $item) {
 
-                    $complectations[] = str_pad($item['MDLDIR'], 3, "0", STR_PAD_LEFT) . '_' . $item['NNO']. '_' .$item['DATA1'];
+                    $complectations[] = $item['compl_code'];
 
             }
 
@@ -188,43 +155,32 @@ class ToyotaArticulModel extends ToyotaCatalogModel{
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
 
-        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
+        $modelCode = urldecode($modelCode);
 
+        $sql = "
+         SELECT bzi.part_group
+          FROM hnb
+          INNER JOIN shamei ON (shamei.catalog = hnb.catalog AND shamei.catalog_code = hnb.catalog_code AND shamei.model_name = :modelCode)
+          INNER JOIN img_nums ON (img_nums.catalog = hnb.catalog and img_nums.disk = shamei.rec_num AND img_nums.number = hnb.pnc)
+          INNER JOIN bzi ON (bzi.catalog = img_nums.catalog AND bzi.catalog_code = hnb.catalog_code AND bzi.pic_code = img_nums.pic_code)
+          WHERE hnb.part_code = :articulCode
+          AND hnb.catalog = :regionCode
+          AND hnb.catalog_code = :modificationCode
+          AND hnb.field_type = 1
 
-        if ($regionCode != 'JP')
-        {
-            $sql = "
-        SELECT gsecloc_all.PICGROUP
-        FROM catalog
-        left JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
-        left JOIN gsecloc_all ON (gsecloc_all.CATALOG = catalog.CATALOG AND gsecloc_all.MDLDIR = catalog.MDLDIR and gsecloc_all.FIGURE = SUBSTRING(pcodenes.FIGURE,1,3))
-        WHERE catalog.CATALOG = :regionCode
-        AND catalog.OEMCODE = :articulCode
-        and catalog.MDLDIR = :MDLDIR
-        ";
-
-        }
-
-        else{
-            $sql = "
-        SELECT esecloc_jp.PICGROUP
-        FROM catalog
-        left JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
-        left JOIN esecloc_jp ON (esecloc_jp.CATALOG = catalog.CATALOG AND esecloc_jp.MDLDIR = catalog.MDLDIR and esecloc_jp.FIGURE = SUBSTRING(pcodenes.FIGURE,1,3))
-        WHERE catalog.CATALOG = :regionCode
-        AND catalog.OEMCODE = :articulCode
-        and catalog.MDLDIR = :MDLDIR
-        ";
-
-        }
+         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
         $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('MDLDIR', $MDLDIR);
+        $query->bindValue('modelCode', $modelCode);
+        $query->bindValue('modificationCode', $modificationCode);
+
         $query->execute();
 
         $aData = $query->fetchAll();
+
+        var_dump($aData); die;
 
 
 
@@ -372,34 +328,4 @@ class ToyotaArticulModel extends ToyotaCatalogModel{
         return array_unique($pncs);
     }
 
-    public function getArticulDesc($articul, $regionCode, $modelCode, $modificationCode)
-    {
-
-
-
-
-            $sql = "
-        SELECT catalog.REC3
-        FROM catalog
-        INNER JOIN cdindex ON (cdindex.CATALOG = catalog.CATALOG AND cdindex.SHASHU = :modificationCode)
-        INNER JOIN destcnt ON (destcnt.CATALOG = catalog.CATALOG AND destcnt.SHASHU = cdindex.SHASHU and destcnt.ShashuCD = catalog.MDLDIR)
-        WHERE catalog.OEMCODE = :articulCode
-        and catalog.CATALOG = :regionCode
-
-        ";
-
-
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', $articul);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('modificationCode', $modificationCode);
-
-        $query->execute();
-
-        $aData = $query->fetchAll();
-
-
-
-        return $aData;
-    }
 } 

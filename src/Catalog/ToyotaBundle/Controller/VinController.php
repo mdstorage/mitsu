@@ -103,11 +103,23 @@ class VinController extends BaseController{
     }
 
 
-    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode)
+    public function vinGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode)
     {
-        $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode);
+        
+        $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode);
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
-        return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
+
+        return $this->redirect(
+            $this->generateUrl(
+                str_replace('group', 'schemas', $this->get('request')->get('_route')),
+                array_merge($parameters, array(
+                        'groupCode' => $groupCode
+                    )
+                )
+            ), 301
+        );
+
 
     }
     public function vinarticulsAction(Request $request)
@@ -146,4 +158,6 @@ class VinController extends BaseController{
             ));
         }
     }
+
+
 } 

@@ -30,7 +30,7 @@ trait ToyotaArticulFilters {
     public function CFilter($oContainer, $parameters)
     {
 
-        $articulDesc = $this->model()->getArticulDesc($parameters['articul'], $parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode']);
+     /*   $articulDesc = $this->model()->getArticulDesc($parameters['articul'], $parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode']);
 
         $complectations = $oContainer->getActiveModification()->getComplectations();
 
@@ -40,12 +40,12 @@ trait ToyotaArticulFilters {
         $aAllarticulDesc = array();
 
 
-        $minLen = 10;
+        $minLen = 10;*/
 
         /*если имеют место разные ограничения для одного и того же артикула,
         то все они объединяются в один массив и учитывается каждое из них*/
 
-        foreach ($articulDesc as $index => $value)
+      /*  foreach ($articulDesc as $index => $value)
         {
             $aAll[] = $value['REC3'];
 
@@ -61,7 +61,7 @@ trait ToyotaArticulFilters {
 
 
 
-        foreach ($complectations as $indexC => $valueC) {
+      /*  foreach ($complectations as $indexC => $valueC) {
 
             $ct = 0;
             $schemaOptions = $this->model()->multiexplode(array(' +'), $aAllarticulDesc);
@@ -113,7 +113,7 @@ trait ToyotaArticulFilters {
             }
 
 
-        }
+        }*/
 
 
         return $oContainer;

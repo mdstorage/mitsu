@@ -70,7 +70,7 @@ vin_toyota_articuls:
 
 vin_toyota_group:
   path:         /toyota/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogToyotaBundle:Vin:getGroupBySubgroup}
+  defaults:     {_controller: CatalogToyotaBundle:Vin:vinGroupBySubgroup}
 
 #---------------------------------------------------------------------------------------------
 

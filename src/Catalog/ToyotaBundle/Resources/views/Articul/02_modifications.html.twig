@@ -5,7 +5,7 @@
                 {% block modification %}
                     <div class="row">
                         <a href="{{ path('articul_toyota_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
-                            {{ modification.getRuname }}
+                            {{ modification.getOption('models_codes') }}
                             ({{ modification.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|toyota_date_convertor }} -
                             {{ modification.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|toyota_date_convertor }})
                         </a>

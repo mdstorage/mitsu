@@ -29,27 +29,6 @@ trait ToyotaVinFilters {
 
     {
 
-        $color = array($parameters['color'], 'C'.$parameters['color']);
-        $complectations = $this->model()->getComplectations($parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode']);
-        $aComplOptions = explode('.', $complectations[$parameters['complectationCode']]['options']['OPTION9']);
-
-        foreach ($oContainer->getActivePnc()->getArticuls() as $articul)
-        {
-            /*  $aArticulOptions = explode('.', $articul->getOption('DESCR'));
-
-              if (count($aArticulOptions) != count(array_intersect($aArticulOptions, $aComplOptions)))
-              {
-                  $oContainer->getActivePnc()->removeArticul($articul->getCode());
-              }
-
-              if (($articul->getOption('ColorCode')) && (!in_array($articul->getOption('ColorCode'), $color)))
-              {
-                  $oContainer->getActivePnc()->removeArticul($articul->getCode());
-              }*/
-
-
-        }
-
         return $oContainer; 
     }
 
