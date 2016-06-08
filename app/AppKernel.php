@@ -53,6 +53,11 @@ class AppKernel extends Kernel
             new Catalog\NissanBundle\CatalogNissanBundle(),
             new Catalog\InfinitiBundle\CatalogInfinitiBundle(),
             new Catalog\LandRoverBundle\CatalogLandRoverBundle(),
+            new Catalog\VolvoBundle\CatalogVolvoBundle(),
+            new Catalog\ToyotaBundle\CatalogToyotaBundle(),
+            new Catalog\LexusBundle\CatalogLexusBundle(),
+
+
 
         );
 

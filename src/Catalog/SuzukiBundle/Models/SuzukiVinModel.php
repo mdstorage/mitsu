@@ -11,6 +11,7 @@ namespace Catalog\SuzukiBundle\Models;
 use Catalog\CommonBundle\Components\Constants;
 
 use Catalog\SuzukiBundle\Components\SuzukiConstants;
+use Symfony\Component\Validator\Constraints\Null;
 
 class SuzukiVinModel extends SuzukiCatalogModel {
 
@@ -105,8 +106,8 @@ class SuzukiVinModel extends SuzukiCatalogModel {
 			}
 			
 		}
-		
-		if ($aDataModelAndType[$a]['MODEL']!='')
+
+		if ($aDataModelAndType[$a]['MODEL']!= Null)
 		{
 		$sqlModel = "
         SELECT MODEL
@@ -120,7 +121,7 @@ class SuzukiVinModel extends SuzukiCatalogModel {
 
         $aModel = $query->fetch();
         
-        $model = $aModel['MODEL']; 
+        $model = $aModel['MODEL'];
         
         $sqlModif = "
         SELECT *
@@ -152,8 +153,8 @@ class SuzukiVinModel extends SuzukiCatalogModel {
         $query->execute();
 
         $aDataCatalog = $query->fetch();
-        
-        
+
+
 		}
 		
 		else
@@ -189,20 +190,23 @@ class SuzukiVinModel extends SuzukiCatalogModel {
     		return (strlen($a) > strlen($b)) ? -1 : 1;
 			}
 
-		
+
         
          foreach ($aSort as $index => $value)
          {
-         	foreach ($aModelDesc as $index1 => $value1)
-         	{
-         		if (substr_count(strtolower(trim($value1)), strtolower(trim($value))))
-         		
-				{
-				$CATKEY = trim($value);
-				}
-			}
+             foreach (explode(',', $value) as $index2 => $value2) {
+
+                 foreach ($aModelDesc as $index1 => $value1) {
+                     if ((substr_count(strtolower(trim($value1)), strtolower(trim($value2))))){
+                         $CATKEY = trim($value);
+                     }
+                 }
+             }
 		 	
 		 }
+
+
+
 		
 		$sqlCatalog = "
         SELECT *
@@ -232,6 +236,7 @@ class SuzukiVinModel extends SuzukiCatalogModel {
 
         $aDataCatalog = $query->fetch();
 		}
+
 			
 			
         
@@ -240,14 +245,14 @@ class SuzukiVinModel extends SuzukiCatalogModel {
         FROM model_series
         WHERE CATNAME = :CATNAME
         AND CATCODE = :CATCODE
-        AND E_CODES LIKE :E_CODES
+
         AND ABBREV <> 'AR'
         ";
         
         $query = $this->conn->prepare($sqlModif);
         $query->bindValue('CATNAME', $aDataCatalog['CATNAME']);
         $query->bindValue('CATCODE', $aData['CATALOG']);
-        $query->bindValue('E_CODES', '%'.substr($aData['model_code'], -2).'%');
+       /* $query->bindValue('E_CODES', '%'.substr($aData['model_code'], -2).'%');*/
         $query->execute();
         $aModif = $query->fetch();
         $modif = $CATKEY.' E '.$aModif['E_CODES'];
@@ -267,9 +272,9 @@ class SuzukiVinModel extends SuzukiCatalogModel {
 
         $aModel = $query->fetch(); $model = $aModel['MODEL'];
 			
-		} 
-		
-		
+		}
+
+
 		
 		
 		$sqlCountry = "

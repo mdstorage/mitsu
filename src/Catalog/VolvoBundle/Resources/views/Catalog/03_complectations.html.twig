@@ -1,0 +1,125 @@
+{% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
+{% use 'CatalogVolvoBundle::volvo.base.html.twig' %}
+{% block breadcrumbs %}
+	<a href="{{ path('catalog_volvo') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+		{{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / Комплектация
+{% endblock breadcrumbs %}
+
+{% block body %}
+	{% block head %}<h3>Выбрать комплектацию:</h3>{% endblock head %}
+	{% block complectations %}
+
+
+
+
+
+						<div class="row">
+
+							<div class="complectations">
+
+								<div class="form-group control-group">
+									<form action="{{ path('catalog_volvo_groups', parameters|merge({'complectationCode': '1'})) }}">
+										<div class="col-sm-4">   {{ form_widget(form) }}
+
+
+											<br>
+											<input type="submit" class="btn btn-primary" value="Далее" />
+										</div>
+									</form>
+								</div>
+
+
+							</div>
+						</div>
+
+
+
+					<script>
+
+
+						$('select.form-control').on('change', function(){
+
+							filter('#'.concat($(this).attr('id')));
+
+						});
+
+
+						function filter(selector) {
+							$(selector).each(function() {
+								if ($(selector).val() == '1') location.reload();
+								$.ajax({
+									type:   'POST',
+									async:  false,
+									url:    "{{ path('catalog_volvo_complectation_korobka') }}",
+									data:   { priznak_agregata: selector.substr(-2) ,engine: $(selector).val(), modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+										regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+										modelCode: '{{ oContainer.getActiveModel.getCode }}'},
+								 	success: function(data){
+
+										if (selector.substr(-2) === 'EN')
+											var selector1 = selector.substr(0, selector.indexOf(selector.substr(-2))).concat('KP');
+
+										if (selector.substr(-2) === 'KP')
+											 selector1 = selector.substr(0, selector.indexOf(selector.substr(-2))).concat('EN');
+
+
+										var objSel = document.getElementById(selector1.substr(1,selector1.length));
+
+										var optSel = objSel.options[objSel.selectedIndex].value;
+
+										$(selector1).empty();
+
+										$.each(JSON.parse(data), function(key, value) {
+											objSel.options[objSel.options.length] = new Option(value, key, true);
+
+										});
+
+										for (var i = objSel.options.length-1; i >= 0; i--)
+										{
+											if (objSel.options[i].value == optSel)
+
+												objSel.options[i].selected = true;
+										}
+
+									}
+
+								});
+							});
+						}
+
+
+
+					</script>
+
+
+                <div class="row">
+                    <div id="content"></div>
+                </div>
+
+
+{#
+                {% for complectation in oContainer.getActiveModification.getComplectations %}
+                    {% block vinScript %}
+                        <script>
+
+
+                            $(document).ready(function(){
+                                var count = $('.radio').size();
+                                if (count == 1) {$("#optionsRadios").prop("checked", true);
+                                    $("#optionsRadios").trigger('change');
+                                }
+                                $('#optionsRadiosM').trigger('change');
+
+                            });
+                        </script>
+
+                    {% endblock vinScript %}
+                {% endfor %}
+
+                                    <input type="button" class="btn btn-info" value="Удалить статью" id="vin-button{{ post.id }}"/>
+                               <div id="vin-result"></div>
+
+
+                            #}
+	{% endblock complectations %}
+{% endblock body %}

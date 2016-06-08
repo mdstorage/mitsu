@@ -1,0 +1,8 @@
+{% extends 'CatalogLexusBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogLexusBundle::lexus.base.html.twig' %}
+{% block regionPath %}{{ path('articul_lexus_find', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+{% block ajaxUrl %}{{ path('articul_lexus_modifications') }}{% endblock ajaxUrl %}
+{% block head %}
+    <h3>Запчасть с таким артикулом найдена в следующих моделях:</h3>
+    {{ parent() }}
+{% endblock head %}

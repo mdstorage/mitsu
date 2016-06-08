@@ -1,0 +1,78 @@
+{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% use 'CatalogToyotaBundle::toyota.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('vin_toyota') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
+   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('vin_toyota_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> /
+    <a href="{{ path('vin_toyota_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
+    <a href="{{ path('vin_toyota_schemas', parameters) }}">Cхема</a> / Запчасти
+{% endblock breadcrumbs %}
+
+
+
+{% block refGroupsHead %}<h4>Связанные подгруппы</h4>{% endblock refGroupsHead %}
+
+							{% block pncScript %}
+                                <script>
+                                    $("#pnc_{{ pnc.getCode }}").on("click", function(){
+
+                                        {% block pncClick %}
+
+                                        $("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
+
+                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                                        $.ajax({
+                                            type:   'POST',
+                                            async:  false,
+                                            url:    "{{ path('vin_toyota_articuls') }}",
+                                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', complectationCode: '{{ oContainer.getActiveComplectation.getCode }}', groupCode: '{{ oContainer.getActiveGroup.getCode }}',
+                                                subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}', options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'  },
+                                            success: function(data) {
+                                                $("#articul_for_pnc{{ pnc.getCode }}").html(data);
+                                            }
+                                        });
+
+                                        $.scrollTo("#pnc_{{ pnc.getCode }}", {duration:1500});
+
+
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
+
+                                        {% endblock pncClick %}
+                                    });
+                                    $("#pnc_{{ pnc.getCode }}").on("mouseover", function(){
+                                        $(this).css("cursor", "pointer");
+                                        $(this).addClass("btn-info");
+                                    });
+                                    $("#pnc_{{ pnc.getCode }}").on("mouseout", function(){
+                                        $(this).removeClass("btn-info");
+                                    });
+
+                                </script>
+                            {% endblock pncScript %}
+
+{% block image %}
+
+    <img src="{{ asset('bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveSchema.getOption('disk')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="600px" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+
+{% endblock image %}
+
+
+
+{% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock commonArticulPath %}
+
+
+{% block refGroup %}
+    <div>
+        <a href="{{ path('vin_toyota_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}">({{ refGroup.getCode }}) {{ refGroup.getRuname }}</a>
+    </div>
+    {% for coords in refGroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
+        <area shape="rect" coords="
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}
+                                    " href="{{ path('vin_toyota_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}" id="{{ refGroup.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" data-name="{% block dataNamerefGroup %}{{ refGroup.getCode }}{% endblock dataNamerefGroup %}"/>
+    {% endfor %}
+{% endblock refGroup %}

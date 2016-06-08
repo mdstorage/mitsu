@@ -1,0 +1,77 @@
+{% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
+{% use 'CatalogVolvoBundle::volvo.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('articul_volvo_find') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / Комплектация
+{% endblock breadcrumbs %}
+
+{% block body %}
+    {% block head %}<h3>Выбрать комплектацию:</h3>{% endblock head %}
+
+    {% block complectations %}
+        <div class="row">
+
+            <div class="complectations">
+
+
+
+
+                {% for complectation in oContainer.getActiveModification.getComplectations %}
+                    {% block complectationItem %}
+                        <div class="row">
+
+                            <a href="{{ path('articul_volvo_groups', parameters|merge({'complectationCode': complectation.getCode})) }}">
+
+                                {{ complectation.getRuname }}
+                            </a>
+
+
+                        </div>
+                    {% endblock complectationItem %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endblock complectations %}
+
+
+    <script>
+
+        $(document).ready(function() {
+            $('#filter-search').show();
+
+            $('#filter-query').keyup(function(event){
+
+                if (event.keyCode == 27 || $(this).val() == '') {
+                    $(this).val('');
+                    $('.col-lg-4').removeClass('visible').show().addClass('visible');
+                }
+                else {
+                    filter('.col-lg-4', $(this).val());
+                }
+            });
+            $('#filter-query2').keyup(function(event){
+
+                if (event.keyCode == 27 || $(this).val() == '') {
+                    $(this).val('');
+                    $('.col-lg-4').removeClass('visible').show().addClass('visible');
+                }
+                else {
+                    filter('.col-lg-4', $(this).val());
+                }
+            });
+        });
+        function filter(selector, query) {
+            query =	$.trim(query);
+            $(selector).each(function() {
+                (($(this).text().search(new RegExp(query.substr(0,query.indexOf("+")), "i")) < 0) ||
+                ($(this).text().search(new RegExp(query.substr(query.indexOf("+")+1,query.length), "i")) < 0))
+                        ? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
+            });
+        }
+        function repeatact(){
+            filter('.col-lg-4', $('#filter-query2').val());
+        }
+
+    </script>
+
+{% endblock body %}

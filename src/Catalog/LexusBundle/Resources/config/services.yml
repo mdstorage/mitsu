@@ -1,0 +1,20 @@
+services:
+#    catalog_lexus.example:
+#        class: Catalog\LexusBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  lexus_date_convertor.extension:
+        class: Catalog\LexusBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  lexus.catalog.model:
+    class: Catalog\LexusBundle\Models\LexusCatalogModel
+    arguments:  ['@doctrine.dbal.lexus_connection']
+
+  lexus.vin.model:
+    class: Catalog\LexusBundle\Models\LexusVinModel
+    arguments:  ['@doctrine.dbal.lexus_connection']
+
+  lexus.articul.model:
+    class: Catalog\LexusBundle\Models\LexusArticulModel
+    arguments:  ['@doctrine.dbal.lexus_connection']

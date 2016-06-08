@@ -1,0 +1,9 @@
+{% extends 'CatalogLexusBundle:Catalog:08_articuls.html.twig' %}
+{% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getRuname }}{% endblock commonArticulPath %}
+{% block articulItem %}
+    {% if articul.getRuname == app.request.cookies.get(constant('Catalog\\CommonBundle\\Components\\Constants::ARTICUL')) %}
+        <b style=" color: red; ">{{ articul.getRuname }}</b>
+    {% else %}
+        {{ articul.getRuname }}
+    {% endif %}
+{% endblock articulItem %}
