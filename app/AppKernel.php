@@ -55,6 +55,8 @@ class AppKernel extends Kernel
             new Catalog\LandRoverBundle\CatalogLandRoverBundle(),
             new Catalog\VolvoBundle\CatalogVolvoBundle(),
             new Catalog\ToyotaBundle\CatalogToyotaBundle(),
+            new Catalog\LexusBundle\CatalogLexusBundle(),
+
 
 
         );

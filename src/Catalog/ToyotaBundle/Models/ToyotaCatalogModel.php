@@ -20,6 +20,7 @@ class ToyotaCatalogModel extends CatalogModel{
         $sql = "
         SELECT catalog
         FROM shamei
+        WHERE shamei.model_name NOT LIKE CONCAT('%', 'lexus', '%')
         GROUP BY catalog
 
         ";
@@ -29,10 +30,33 @@ class ToyotaCatalogModel extends CatalogModel{
 
         $aData = $query->fetchAll();
 
+
+
+        $name = array();
         $regions = array();
+
+        foreach($aData as $item) {
+            switch ($item['catalog']) {
+                case 'EU':
+                    $name[$item['catalog']] = 'ЕВРОПА';
+                    break;
+                case 'US':
+                    $name[$item['catalog']] = 'США';
+                    break;
+                case 'JP':
+                    $name[$item['catalog']] = 'ЯПОНИЯ';
+                    break;
+                case 'GR':
+                    $name[$item['catalog']] = 'БЛИЖНИЙ ВОСТОК';
+                    break;
+
+            }
+        }
+
+
         foreach($aData as $item)
         {
-            $regions[$item['catalog']] = array(Constants::NAME=>$item['catalog'], Constants::OPTIONS=>array());
+            $regions[$item['catalog']] = array(Constants::NAME=>$name[$item['catalog']], Constants::OPTIONS=>array());
         }
 
         return $regions;
@@ -47,6 +71,7 @@ class ToyotaCatalogModel extends CatalogModel{
         SELECT model_name
         FROM shamei
         WHERE shamei.catalog = :regionCode
+        and shamei.model_name NOT LIKE CONCAT('%', 'lexus', '%')
         ORDER by model_name
         ";
 

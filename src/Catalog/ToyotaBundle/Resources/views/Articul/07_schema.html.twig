@@ -11,10 +11,11 @@
 
 
 
-{% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
+{% block refGroupsHead %}<h4>Связанные подгруппы</h4>{% endblock refGroupsHead %}
 
 {% block image %}
-    <img src="{{ asset('bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/SECIMG/'~oContainer.getActiveSchema.getCode~'.gif') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>{% endblock image %}
+    <img src="{{ asset('bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveSchema.getOption('disk')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="600px" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+{% endblock image %}
 
 {% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{{ path('articul_toyota_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
@@ -23,29 +24,24 @@
         <script>
             $(document).ready(function(){
                 {% block pncClick %}
-                $(addslashes("#articul_for_pnc{{ pnc.getCode }}")).toggleClass("hidden");
-                $(addslashes("#pnc_{{ pnc.getCode }}")).toggleClass("glyphicon-plus");
-                $(addslashes("#articul_for_pnc{{ pnc.getCode }}")).html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                $("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
+                $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
+
+                $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
                 $.ajax({
                     type:   'POST',
                     async:  false,
                     url:    "{% block ajaxUrl %}{{ path('articul_toyota_articuls') }}{% endblock ajaxUrl %}",
-                    data:   { {% block ajaxData %}
-                        regionCode: '{{ oContainer.getActiveRegion.getCode }}',
-                        modelCode: '{{ oContainer.getActiveModel.getCode }}',
-                        modificationCode: '{{ oContainer.getActiveModification.getRuname }}',
-                        complectationCode: '{{ oContainer.getActiveComplectation.getCode}}',
-                        groupCode: '{{ oContainer.getActiveGroup.getCode}}',
-                        subgroupCode: '{{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getCode }}',
-                        pncCode: '{{ pnc.getCode }}',
-                        options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'
-                        {% endblock ajaxData %} },
+                    data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', complectationCode: '{{ oContainer.getActiveComplectation.getCode }}', groupCode: '{{ oContainer.getActiveGroup.getCode }}',
+                        subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}', options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'  },
                     success: function(data) {
-                        $(addslashes("#articul_for_pnc{{ pnc.getCode }}")).html(data);
+                        $("#articul_for_pnc{{ pnc.getCode }}").html(data);
                     }
                 });
-                $(addslashes("#pnc_{{ pnc.getCode }}")).toggleClass("glyphicon-minus");
-                $(addslashes("#pnc_{{ pnc.getCode }}")).toggleClass("small btn-default");
+                $.scrollTo("#pnc_{{ pnc.getCode }}", {duration:1500});
+
+                $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
+                $("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
                 {% endblock pncClick %}
             });
         </script>

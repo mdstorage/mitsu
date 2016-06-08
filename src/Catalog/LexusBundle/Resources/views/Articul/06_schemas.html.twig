@@ -1,0 +1,32 @@
+{% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
+{% use 'CatalogLexusBundle::lexus.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('articul_lexus_find') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_lexus_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('articul_lexus_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
+{% endblock breadcrumbs %}
+
+{% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
+
+
+{% block schema %}
+    {% if schema.getCode is not empty %}
+        <div style=" height: 500px; " class="col-sm-4 col-sm-offset-5 col-md-4 col-md-offset-0">
+            <a href="{{ path('articul_lexus_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+
+
+
+                <div class="row">
+                    {{ schema.getOption('desc')}}
+                </div>
+
+
+
+                <div class="row">
+                    <img src="{{ asset('bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~schema.getOption('disk')~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getCode }}"/>
+                </div>
+
+
+            </a>
+        </div>
+    {% endif %}
+
+{% endblock schema %}

@@ -55,6 +55,7 @@ use ToyotaArticulFilters;
       
         $articulGroups = $this->model()->getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode);
 
+
         $this->addFilter('articulGroupsFilter', array(
             'articulGroups' => $articulGroups
         ));

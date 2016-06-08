@@ -65,16 +65,18 @@
                       
             {% for complectation in oContainer.getActiveModification.getComplectations %}
                 {% block complectationItem %}
-            <div class="col-lg-3">
+            <div style=" height: 250px; " class="col-lg-3">
            
                              <a href="{{ path('catalog_toyota_groups', parameters|merge({'complectationCode': complectation.getCode})) }}">
-        
-    <b>    {{ complectation.getOption('FROMDATE')|toyota_date_convertor }} - {{ complectation.getOption('UPTODATE')|toyota_date_convertor }} </b>
-      </a> <br/>
 
-                {% autoescape %}
+                                 <b>{{ complectation.getRuname}}<br/>
+        
+        {{ complectation.getOption('FROMDATE')|toyota_date_convertor }} - {{ complectation.getOption('UPTODATE')|toyota_date_convertor }} </b>
+      </a><br/>
+
+
                     {{ complectation.getOption('OPTION1')|replace({' 1': ''})}}
-                {% endautoescape %}
+
 
                 <br/>
 
@@ -101,7 +103,7 @@
                     {{ complectation.getOption('OPTION8')}}<br/>
                 {% endif %}
 
-      <hr />
+      <hr/>
                            
                 </div>
                 {% endblock complectationItem %}

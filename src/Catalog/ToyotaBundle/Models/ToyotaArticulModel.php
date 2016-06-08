@@ -180,76 +180,91 @@ class ToyotaArticulModel extends ToyotaCatalogModel{
 
         $aData = $query->fetchAll();
 
-        var_dump($aData); die;
+        $groupCode = array();
+
+        foreach ($aData as $item) {
+
+            switch (substr($item['part_group'], 0, 1)) {
+                case 0:
+                    $groupCode[] = '1';
+                    break;
+                case 1:
+                    $groupCode[] = '2';
+                    break;
+                case 2:
+                    $groupCode[] = '3';
+                    break;
+                case 3:
+                    $groupCode[] = '4';
+                    break;
+                case 4:
+                    $groupCode[] = '4';
+                    break;
+                case 5:
+                    $groupCode[] = '5';
+                    break;
+                case 6:
+                    $groupCode[] = '5';
+                    break;
+                case 7:
+                    $groupCode[] = '5';
+                    break;
+                case 8:
+                    $groupCode[] = '6';
+                    break;
+                case 9:
+                    $groupCode[] = '6';
+                    break;
+
+            }
+        }
 
 
-
-        $groups = array();
-
-        foreach($aData as $item)
-		{
-
-			$groups[]= $item['PICGROUP'];
-
-		}
-
-
-        return array_unique($groups);
+        return array_unique($groupCode);
     }
 
 
     public function getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
-        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
+        $modelCode = urldecode($modelCode);
 
-        if ($regionCode != 'JP')
-        {
-            $sql = "
-        SELECT gsecloc_all.FIGURE
-        FROM catalog
-        LEFT JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
-        LEFT JOIN gsecloc_all ON (gsecloc_all.CATALOG = catalog.CATALOG AND gsecloc_all.MDLDIR = catalog.MDLDIR and gsecloc_all.FIGURE = SUBSTRING(pcodenes.FIGURE,1,3)
-        AND gsecloc_all.PICGROUP = :groupCode)
-        WHERE catalog.CATALOG = :regionCode
-        AND catalog.OEMCODE = :articulCode
-        and catalog.MDLDIR = :MDLDIR
+        $sql = "
+         SELECT bzi.part_group
+          FROM hnb
+          INNER JOIN shamei ON (shamei.catalog = hnb.catalog AND shamei.catalog_code = hnb.catalog_code AND shamei.model_name = :modelCode)
+          INNER JOIN img_nums ON (img_nums.catalog = hnb.catalog and img_nums.disk = shamei.rec_num AND img_nums.number = hnb.pnc)
+          INNER JOIN bzi ON (bzi.catalog = img_nums.catalog AND bzi.catalog_code = hnb.catalog_code AND bzi.pic_code = img_nums.pic_code
+          AND bzi.ipic_code IN
+          (SELECT ipic_code
+          FROM kpt
+          WHERE kpt.catalog = hnb.catalog AND kpt.catalog_code = hnb.catalog_code AND kpt.compl_code = :complectationCode)
+          )
+          WHERE hnb.part_code = :articulCode
+          AND hnb.catalog = :regionCode
+          AND hnb.catalog_code = :modificationCode
+          AND hnb.field_type = 1
 
-        ";
-        }
-
-        else{
-            $sql = "
-        SELECT esecloc_jp.FIGURE
-        FROM catalog
-        LEFT JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
-        LEFT JOIN esecloc_jp ON (esecloc_jp.CATALOG = catalog.CATALOG AND esecloc_jp.MDLDIR = catalog.MDLDIR and esecloc_jp.FIGURE = SUBSTRING(pcodenes.FIGURE,1,3)
-        AND esecloc_jp.PICGROUP = :groupCode)
-        WHERE catalog.CATALOG = :regionCode
-        AND catalog.OEMCODE = :articulCode
-        and catalog.MDLDIR = :MDLDIR
-
-        ";
-        }
-
-
+         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
         $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('groupCode', $groupCode);
-        $query->bindValue('MDLDIR', $MDLDIR);
+        $query->bindValue('modelCode', $modelCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('complectationCode', $complectationCode);
+
 
         $query->execute();
 
         $aData = $query->fetchAll();
+
     	$subgroups = array();
 
         foreach($aData as $item)
         {
-            $subgroups[]= $item['FIGURE'];
+            $subgroups[]= $item['part_group'];
 
         }
-
 
 
         return array_unique($subgroups);
@@ -259,73 +274,97 @@ class ToyotaArticulModel extends ToyotaCatalogModel{
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
 
-        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
-
+        $modelCode = urldecode($modelCode);
 
         $sql = "
-        SELECT illnote.PIMGSTR
-        FROM catalog
-        LEFT JOIN pcodenes ON (pcodenes.CATALOG = catalog.CATALOG and pcodenes.MDLDIR = catalog.MDLDIR and pcodenes.PARTCODE = catalog.PARTCODE)
-        LEFT JOIN illnote ON (illnote.CATALOG = catalog.CATALOG AND illnote.MDLDIR = catalog.MDLDIR and illnote.FIGURE = pcodenes.FIGURE AND illnote.SECNO = pcodenes.SECNO)
-        WHERE catalog.CATALOG = :regionCode
-        AND catalog.OEMCODE = :articulCode
-        and catalog.MDLDIR = :MDLDIR
-        ";
+          SELECT bzi.pic_code
+          FROM hnb
+          INNER JOIN shamei ON (shamei.catalog = hnb.catalog AND shamei.catalog_code = hnb.catalog_code AND shamei.model_name = :modelCode)
+          INNER JOIN img_nums ON (img_nums.catalog = hnb.catalog and img_nums.disk = shamei.rec_num AND img_nums.number = hnb.pnc)
+          INNER JOIN bzi ON (bzi.catalog = img_nums.catalog AND bzi.catalog_code = hnb.catalog_code AND bzi.pic_code = img_nums.pic_code AND bzi.part_group = :subGroupCode
+          AND bzi.ipic_code IN
+          (SELECT ipic_code
+          FROM kpt
+          WHERE kpt.catalog = hnb.catalog AND kpt.catalog_code = hnb.catalog_code AND kpt.compl_code = :complectationCode)
+          )
+          WHERE hnb.part_code = :articulCode
+          AND hnb.catalog = :regionCode
+          AND hnb.catalog_code = :modificationCode
+          AND hnb.field_type = 1
+
+         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
         $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('MDLDIR', $MDLDIR);
+        $query->bindValue('modelCode', $modelCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('complectationCode', $complectationCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
 
         $query->execute();
 
         $aData = $query->fetchAll();
+
 
 	   
 	   $schemas = array();
         foreach($aData as $item) {
 
-                $schemas[] = strtoupper($item['PIMGSTR']);
-
+                $schemas[] = strtoupper($item['pic_code']);
 
         }
 
-		   
         return array_unique($schemas);
     }
          
      public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
-    {
 
+     {
 
-        $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
+         $modelCode = urldecode($modelCode);
 
-        $sql = "
-        SELECT PARTCODE
-        FROM catalog
-        WHERE catalog.CATALOG = :regionCode
-        AND catalog.OEMCODE = :articulCode
-        and catalog.MDLDIR = :MDLDIR
-        ";
+         $sql = "
+          SELECT hnb.pnc
+          FROM hnb
+          INNER JOIN shamei ON (shamei.catalog = hnb.catalog AND shamei.catalog_code = hnb.catalog_code AND shamei.model_name = :modelCode)
+          INNER JOIN img_nums ON (img_nums.catalog = hnb.catalog and img_nums.disk = shamei.rec_num AND img_nums.number = hnb.pnc AND img_nums.pic_code = :schemaCode)
+          INNER JOIN bzi ON (bzi.catalog = img_nums.catalog AND bzi.catalog_code = hnb.catalog_code AND bzi.pic_code = img_nums.pic_code AND bzi.part_group = :subGroupCode
+          AND bzi.ipic_code IN
+          (
+          SELECT ipic_code
+          FROM kpt
+          WHERE kpt.catalog = hnb.catalog AND kpt.catalog_code = hnb.catalog_code AND kpt.compl_code = :complectationCode
+          )
+          )
+          WHERE hnb.part_code = :articulCode
+          AND hnb.catalog = :regionCode
+          AND hnb.catalog_code = :modificationCode
+          AND hnb.field_type = 1
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', $articul);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('MDLDIR', $MDLDIR);
+         ";
 
-        $query->execute();
+         $query = $this->conn->prepare($sql);
+         $query->bindValue('articulCode', $articul);
+         $query->bindValue('regionCode', $regionCode);
+         $query->bindValue('modelCode', $modelCode);
+         $query->bindValue('modificationCode', $modificationCode);
+         $query->bindValue('complectationCode', $complectationCode);
+         $query->bindValue('subGroupCode', $subGroupCode);
+         $query->bindValue('schemaCode', $schemaCode);
 
-        $aData = $query->fetchAll();
+         $query->execute();
+
+         $aData = $query->fetchAll();
 
         $pncs = array();
         foreach($aData as $item) {
 
-                $pncs[] = $item['PARTCODE'];
-
+                $pncs[] = $item['pnc'];
 
         }
 
         return array_unique($pncs);
-    }
+     }
 
 } 

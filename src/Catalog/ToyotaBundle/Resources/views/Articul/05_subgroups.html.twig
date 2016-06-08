@@ -7,17 +7,20 @@
     Подгруппа запчастей
 {% endblock breadcrumbs %}
 
-{% block complectation %}{% endblock complectation %}
+{% block subgroupImage %}{% endblock subgroupImage %}
 
-{% block subgroupImage %}
-    <div class="col-lg-8">
-        <img src="{{ asset('bundles/catalogtoyota/Imgs/images/L_EPERFIG/'~oContainer.getActiveGroup.getOption('catalog')~'/'~oContainer.getActiveGroup.getOption('picture')) }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
 
+{% block subgroupItem %}
+    <div id="subgroup{{ subgroup.getCode }}">
+        <a href="{{ path('articul_toyota_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
     </div>
-{% endblock subgroupImage %}
+{% endblock subgroupItem %}
+
+ {% block area %}
+ {% endblock area %}
+{% block cycleScript %}
+{% endblock cycleScript %}
 
 
 
-{% block pathToSchemas %}
-    {{ path('articul_toyota_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}
-{% endblock pathToSchemas %}
+
