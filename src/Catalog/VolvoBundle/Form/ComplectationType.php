@@ -10,7 +10,7 @@ class ComplectationType extends AbstractType{
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        foreach ($options['data'] as $index=>$value) {
+        foreach ($options['data'] as $index=>$value) {var_dump($value['name']); die;
 
             switch ($index)
             {
@@ -21,6 +21,7 @@ class ComplectationType extends AbstractType{
                 default: $label = 'Спецтранспорт';
 
             }
+
 
 
 

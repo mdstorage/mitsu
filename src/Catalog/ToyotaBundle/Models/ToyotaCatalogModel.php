@@ -131,7 +131,7 @@ class ToyotaCatalogModel extends CatalogModel{
         return $modifications;
     }
 
-    public function getComplectations($regionCode, $modelCode, $modificationCode)
+    public function getComplectations1($regionCode, $modelCode, $modificationCode)
    
     {
         $sql = "
@@ -187,59 +187,242 @@ class ToyotaCatalogModel extends CatalogModel{
         $aData = $query->fetchAll();
 
 
+        $complectations = array();
+        $trans = array();
+        $af1 = array();
+        $af2 = array();
+        $af3 = array();
+        $af4 = array();
+        $af5 = array();
+        $af6 = array();
+        $af7 = array();
+        $af8 = array();
 
 
- /*       $aDataCompl = array();
-        $arr = array('compl_code', 'model_code', 'prod_start', 'prod_end');
 
 
+        $result = array();
+        $psevd = array();
 
-        foreach($aData as &$item)
+
+        foreach($aData as $item)
+        {
+            if ($item['f1'])
+            {
+                $af1[$item['f1']] = '('.$item['f1'].') '.$item['ken1'];
+
+            }
+
+            if ($item['f2'])
+            {
+                $af2[$item['f2']] = '('.$item['f2'].') '.$item['ken2'];
+
+            }
+            if ($item['f3'])
+            {
+                $af3[$item['f3']] = '('.$item['f3'].') '.$item['ken3'];
+
+            }
+            if ($item['f4'])
+            {
+                $af4[$item['f4']] = '('.$item['f4'].') '.$item['ken4'];
+
+            }
+            if ($item['f5'])
+            {
+                $af5[$item['f5']] = '('.$item['f5'].') '.$item['ken5'];
+
+            }
+            if ($item['f6'])
+            {
+                $af6[$item['f6']] = '('.$item['f6'].') '.$item['ken6'];
+
+            }
+            if ($item['f7'])
+            {
+                $af7[$item['f7']] = '('.$item['f7'].') '.$item['ken7'];
+
+            }
+            if ($item['f8'])
+            {
+                $af8[$item['f8']] = '('.$item['f8'].') '.$item['ken8'];
+
+            }
+
+
+        }
+
+        foreach($aData as $item)
         {
 
-            $aDataChisl = array();
-
-            foreach($item as $index1=>$value1)
+            if ($af1)
             {
-
-                {
-                    $aDataChisl[] = $value1;
-                }
-
-
-            foreach($aDataChisl as $index=>$value)
-            {
-                $sql = "
-                SELECT tkm.desc_en ten, kig.desc_en ken
-                FROM kig
-                LEFT JOIN tkm ON (tkm.catalog = kig.catalog AND tkm.catalog_code = kig.catalog_code AND tkm.type = :index)
-                WHERE kig.type = :index
-                AND kig.sign = :value
-                AND kig.catalog = :regionCode
-                AND kig.catalog_code = :modificationCode
-                        ";
-                $query = $this->conn->prepare($sql);
-                $query->bindValue('value',  $value);
-                $query->bindValue('index',  str_pad($index+1, 2, "0", STR_PAD_LEFT));
-                $query->bindValue('regionCode',  $regionCode);
-                $query->bindValue('modificationCode',  $modificationCode);
-                $query->execute();
-
-                $aData1 = $query->fetch();
-
-
-
-
-                if (!in_array($index1, $arr))
-
-                $item[$index1] = $aData1['ten'].': ('.$value.') '.$aData1['ken'];
-
-            }
+                $result['f1'] = $af1;
+                $psevd['f1'] = $item['ten1'];
             }
 
+            if ($af2)
+            {
+                $result['f2'] = $af2;
+                $psevd['f2'] = $item['ten2'];
+            }
+            if ($af3)
+            {
+                $result['f3'] = $af3;
+                $psevd['f3'] = $item['ten3'];
+            }
+            if ($af4)
+            {
+                $result['f4'] = $af4;
+                $psevd['f4'] = $item['ten4'];
+            }
+            if ($af5)
+            {
+                $result['f5'] = $af5;
+                $psevd['f5'] = $item['ten5'];
+            }
+            if ($af6)
+            {
+                $result['f6'] = $af6;
+                $psevd['f6'] = $item['ten6'];
+            }
+            if ($af7)
+            {
+                $result['f7'] = $af7;
+                $psevd['f7'] = $item['ten7'];
+            }
+            if ($af8)
+            {
+                $result['f8'] = $af8;
+                $psevd['f8'] = $item['ten8'];
+            }
 
-            unset ($item);
-        }*/
+
+        }
+
+
+
+
+        foreach ($result as $index => $value) {
+
+            $complectations[($index)] = array(
+                Constants::NAME => $value,
+                Constants::OPTIONS => array('option1'=>$psevd)
+            );
+        }
+
+
+        return $complectations;
+     
+    }
+
+    public function getComplectationsKorobka($regionCode, $modelCode, $modificationCode, $priznak, $engine)
+    {
+        var_dump($priznak); die;
+
+        if ($priznak == 'KP')
+        {
+            $sql = "
+        SELECT DISTINCT ENG.Id eid, ENG.Cid ecid, ENG.Description ed
+        FROM engine ENG
+        INNER JOIN vehicleprofile VP ON ENG.Id = VP.fkEngine
+        WHERE VP.fkPartnerGroup = :regionCode
+        AND VP.fkVehicleModel = :modelCode
+        AND VP.fkModelYear IN (:modificationCode)
+        AND VP.fkTransmission = :engine
+        ";
+        }
+
+        else
+        {
+            $sql = "
+        SELECT DISTINCT TRANS.Id eid, TRANS.Cid ecid, TRANS.Description ed
+        FROM  transmission TRANS
+        INNER JOIN vehicleprofile VP ON (TRANS.Id = VP.fkTransmission)
+        WHERE VP.fkPartnerGroup = :regionCode
+        AND VP.fkVehicleModel = :modelCode
+        AND VP.fkModelYear IN (:modificationCode)
+        AND VP.fkEngine = :engine
+        ";
+        }
+
+
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('engine', $engine);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+        $aDataAgr = array();
+
+        foreach ($aData as $item)
+        {
+            if ($item['eid'] != null)
+                $aDataAgr[$item['eid']] = $item['ed'];
+        }
+
+
+        return $aDataAgr;
+
+    }
+
+    public function getComplectations($regionCode, $modelCode, $modificationCode)
+
+    {
+        $sql = "
+        SELECT johokt.engine1 as f1, johokt.engine2 as f2, johokt.body as f3, johokt.grade as f4, johokt.atm_mtm as f5, johokt.trans as f6, johokt.f1 as f7, johokt.f2 as f8, johokt.f3 as f9, compl_code, model_code, prod_start, prod_end,
+        kig1.desc_en ken1,
+        kig2.desc_en ken2,
+        kig3.desc_en ken3,
+        kig4.desc_en ken4,
+        kig5.desc_en ken5,
+        kig6.desc_en ken6,
+        kig7.desc_en ken7,
+        kig8.desc_en ken8,
+
+        tkm1.desc_en ten1,
+        tkm2.desc_en ten2,
+        tkm3.desc_en ten3,
+        tkm4.desc_en ten4,
+        tkm5.desc_en ten5,
+        tkm6.desc_en ten6,
+        tkm7.desc_en ten7,
+        tkm8.desc_en ten8
+
+
+        FROM johokt
+        LEFT JOIN kig kig1 ON (kig1.catalog = johokt.catalog AND kig1.catalog_code = johokt.catalog_code AND kig1.type = '01' AND kig1.sign = johokt.engine1)
+        LEFT JOIN kig kig2 ON (kig2.catalog = johokt.catalog AND kig2.catalog_code = johokt.catalog_code AND kig2.type = '02' AND kig2.sign = johokt.engine2)
+        LEFT JOIN kig kig3 ON (kig3.catalog = johokt.catalog AND kig3.catalog_code = johokt.catalog_code AND kig3.type = '03' AND kig3.sign = johokt.body)
+        LEFT JOIN kig kig4 ON (kig4.catalog = johokt.catalog AND kig4.catalog_code = johokt.catalog_code AND kig4.type = '04' AND kig4.sign = johokt.grade)
+        LEFT JOIN kig kig5 ON (kig5.catalog = johokt.catalog AND kig5.catalog_code = johokt.catalog_code AND kig5.type = '05' AND kig5.sign = johokt.atm_mtm)
+        LEFT JOIN kig kig6 ON (kig6.catalog = johokt.catalog AND kig6.catalog_code = johokt.catalog_code AND kig6.type = '06' AND kig6.sign = johokt.trans)
+        LEFT JOIN kig kig7 ON (kig7.catalog = johokt.catalog AND kig7.catalog_code = johokt.catalog_code AND kig7.type = '07' AND kig7.sign = johokt.f1)
+        LEFT JOIN kig kig8 ON (kig8.catalog = johokt.catalog AND kig8.catalog_code = johokt.catalog_code AND kig8.type = '08' AND kig8.sign = johokt.f2)
+
+        LEFT JOIN tkm tkm1 ON (tkm1.catalog = kig1.catalog AND tkm1.catalog_code = kig1.catalog_code AND tkm1.type = kig1.type)
+        LEFT JOIN tkm tkm2 ON (tkm2.catalog = kig2.catalog AND tkm2.catalog_code = kig2.catalog_code AND tkm2.type = kig2.type)
+        LEFT JOIN tkm tkm3 ON (tkm3.catalog = kig3.catalog AND tkm3.catalog_code = kig3.catalog_code AND tkm3.type = kig3.type)
+        LEFT JOIN tkm tkm4 ON (tkm4.catalog = kig4.catalog AND tkm4.catalog_code = kig4.catalog_code AND tkm4.type = kig4.type)
+        LEFT JOIN tkm tkm5 ON (tkm5.catalog = kig5.catalog AND tkm5.catalog_code = kig5.catalog_code AND tkm5.type = kig5.type)
+        LEFT JOIN tkm tkm6 ON (tkm6.catalog = kig6.catalog AND tkm6.catalog_code = kig6.catalog_code AND tkm6.type = kig6.type)
+        LEFT JOIN tkm tkm7 ON (tkm7.catalog = kig7.catalog AND tkm7.catalog_code = kig7.catalog_code AND tkm7.type = kig7.type)
+        LEFT JOIN tkm tkm8 ON (tkm8.catalog = kig8.catalog AND tkm8.catalog_code = kig8.catalog_code AND tkm8.type = kig8.type)
+
+        WHERE johokt.catalog = :regionCode
+        AND johokt.catalog_code = :modificationCode
+        ";
+
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('modificationCode',  $modificationCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
 
 
         $complectations = array();
@@ -251,27 +434,27 @@ class ToyotaCatalogModel extends CatalogModel{
         foreach($aData as $item){
 
 
-                $complectations[$item['compl_code']] = array(
-                    Constants::NAME => $item['model_code'],
-                    Constants::OPTIONS => array(
-                        'FROMDATE' => $item['prod_start'],
-                        'UPTODATE' => $item['prod_end'],
-                        'OPTION1' => $item['f1']?str_replace(' 1', '', $item['ten1']).': ('.$item['f1'].') '.$item['ken1']:'',
-                        'OPTION2' => $item['f2']?$item['ten2'].': ('.$item['f2'].') '.$item['ken2']:'',
-                        'OPTION3' => $item['f3']?$item['ten3'].': ('.$item['f3'].') '.$item['ken3']:'',
-                        'OPTION4' => $item['f4']?$item['ten4'].': ('.$item['f4'].') '.$item['ken4']:'',
-                        'OPTION5' => $item['f5']?$item['ten5'].': ('.$item['f5'].') '.$item['ken5']:'',
-                        'OPTION6' => $item['f6']?$item['ten6'].': ('.$item['f6'].') '.$item['ken6']:'',
-                        'OPTION7' => $item['f7']?$item['ten7'].': ('.$item['f7'].') '.$item['ken7']:'',
-                        'OPTION8' => $item['f8']?$item['ten8'].': ('.$item['f8'].') '.$item['ken8']:'',
-                        'trans' => ''
-                                            ));
+            $complectations[$item['compl_code']] = array(
+                Constants::NAME => $item['model_code'],
+                Constants::OPTIONS => array(
+                    'FROMDATE' => $item['prod_start'],
+                    'UPTODATE' => $item['prod_end'],
+                    'OPTION1' => $item['f1']?str_replace(' 1', '', $item['ten1']).': ('.$item['f1'].') '.$item['ken1']:'',
+                    'OPTION2' => $item['f2']?$item['ten2'].': ('.$item['f2'].') '.$item['ken2']:'',
+                    'OPTION3' => $item['f3']?$item['ten3'].': ('.$item['f3'].') '.$item['ken3']:'',
+                    'OPTION4' => $item['f4']?$item['ten4'].': ('.$item['f4'].') '.$item['ken4']:'',
+                    'OPTION5' => $item['f5']?$item['ten5'].': ('.$item['f5'].') '.$item['ken5']:'',
+                    'OPTION6' => $item['f6']?$item['ten6'].': ('.$item['f6'].') '.$item['ken6']:'',
+                    'OPTION7' => $item['f7']?$item['ten7'].': ('.$item['f7'].') '.$item['ken7']:'',
+                    'OPTION8' => $item['f8']?$item['ten8'].': ('.$item['f8'].') '.$item['ken8']:'',
+                    'trans' => ''
+                ));
 
 
         }
 
-         return $complectations;
-     
+        return $complectations;
+
     }
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)

@@ -11,6 +11,11 @@ catalog_toyota_complectations:
   path:         /toyota/catalog/2/{regionCode}/{modelCode}/{modificationCode}
   defaults:     {_controller: CatalogToyotaBundle:Catalog:complectations}
 
+catalog_toyota_complectation_korobka:
+  path:         /toyota/catalog/12
+  defaults:     {_controller: CatalogToyotaBundle:Catalog:complectation_korobka}
+  requirements: {_method: POST}
+
 catalog_toyota_groups:
   path:         /toyota/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
   defaults:     {_controller: CatalogToyotaBundle:Catalog:groups}
