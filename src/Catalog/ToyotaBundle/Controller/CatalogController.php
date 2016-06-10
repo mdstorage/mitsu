@@ -104,6 +104,8 @@ class CatalogController extends BaseController{
             $complectations = $this->model()->getComplectationsKorobka($regionCode, $modelCode, $modificationCode, $priznak, $engine);
 
 
+
+
             return new Response(json_encode($complectations));
         }
     }

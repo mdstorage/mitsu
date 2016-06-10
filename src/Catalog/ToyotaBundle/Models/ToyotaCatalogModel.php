@@ -301,8 +301,6 @@ class ToyotaCatalogModel extends CatalogModel{
         }
 
 
-
-
         foreach ($result as $index => $value) {
 
             $complectations[($index)] = array(
@@ -311,62 +309,152 @@ class ToyotaCatalogModel extends CatalogModel{
             );
         }
 
-
         return $complectations;
      
     }
 
     public function getComplectationsKorobka($regionCode, $modelCode, $modificationCode, $priznak, $engine)
     {
-        var_dump($priznak); die;
 
-        if ($priznak == 'KP')
-        {
             $sql = "
-        SELECT DISTINCT ENG.Id eid, ENG.Cid ecid, ENG.Description ed
-        FROM engine ENG
-        INNER JOIN vehicleprofile VP ON ENG.Id = VP.fkEngine
-        WHERE VP.fkPartnerGroup = :regionCode
-        AND VP.fkVehicleModel = :modelCode
-        AND VP.fkModelYear IN (:modificationCode)
-        AND VP.fkTransmission = :engine
+        SELECT *
+        FROM Descriptions
+        WHERE $priznak = :engine
+        AND Descriptions.catalog = :regionCode
+        AND Descriptions.catalog_code = :modificationCode
         ";
-        }
-
-        else
-        {
-            $sql = "
-        SELECT DISTINCT TRANS.Id eid, TRANS.Cid ecid, TRANS.Description ed
-        FROM  transmission TRANS
-        INNER JOIN vehicleprofile VP ON (TRANS.Id = VP.fkTransmission)
-        WHERE VP.fkPartnerGroup = :regionCode
-        AND VP.fkVehicleModel = :modelCode
-        AND VP.fkModelYear IN (:modificationCode)
-        AND VP.fkEngine = :engine
-        ";
-        }
-
 
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modelCode',  $modelCode);
+
         $query->bindValue('regionCode',  $regionCode);
         $query->bindValue('modificationCode',  $modificationCode);
         $query->bindValue('engine', $engine);
         $query->execute();
 
         $aData = $query->fetchAll();
-        $aDataAgr = array();
 
-        foreach ($aData as $item)
+
+
+        $complectations = array();
+        $trans = array();
+        $af1 = array();
+        $af2 = array();
+        $af3 = array();
+        $af4 = array();
+        $af5 = array();
+        $af6 = array();
+        $af7 = array();
+        $af8 = array();
+
+
+
+
+        $result = array();
+        $psevd = array();
+
+        foreach($aData as $item)
         {
-            if ($item['eid'] != null)
-                $aDataAgr[$item['eid']] = $item['ed'];
+            if ($item['f1'])
+            {
+                $af1[$item['f1']] = '('.$item['f1'].') '.$item['ken1'];
+
+            }
+
+            if ($item['f2'])
+            {
+                $af2[$item['f2']] = '('.$item['f2'].') '.$item['ken2'];
+
+            }
+            if ($item['f3'])
+            {
+                $af3[$item['f3']] = '('.$item['f3'].') '.$item['ken3'];
+
+            }
+            if ($item['f4'])
+            {
+                $af4[$item['f4']] = '('.$item['f4'].') '.$item['ken4'];
+
+            }
+            if ($item['f5'])
+            {
+                $af5[$item['f5']] = '('.$item['f5'].') '.$item['ken5'];
+
+            }
+            if ($item['f6'])
+            {
+                $af6[$item['f6']] = '('.$item['f6'].') '.$item['ken6'];
+
+            }
+            if ($item['f7'])
+            {
+                $af7[$item['f7']] = '('.$item['f7'].') '.$item['ken7'];
+
+            }
+            if ($item['f8'])
+            {
+                $af8[$item['f8']] = '('.$item['f8'].') '.$item['ken8'];
+
+            }
+
+
+        }
+
+        foreach($aData as $item)
+        {
+
+            if ($af1)
+            {
+                $result['f1'] = $af1;
+                $psevd['f1'] = $item['ten1'];
+            }
+
+            if ($af2)
+            {
+                $result['f2'] = $af2;
+                $psevd['f2'] = $item['ten2'];
+            }
+            if ($af3)
+            {
+                $result['f3'] = $af3;
+                $psevd['f3'] = $item['ten3'];
+            }
+            if ($af4)
+            {
+                $result['f4'] = $af4;
+                $psevd['f4'] = $item['ten4'];
+            }
+            if ($af5)
+            {
+                $result['f5'] = $af5;
+                $psevd['f5'] = $item['ten5'];
+            }
+            if ($af6)
+            {
+                $result['f6'] = $af6;
+                $psevd['f6'] = $item['ten6'];
+            }
+            if ($af7)
+            {
+                $result['f7'] = $af7;
+                $psevd['f7'] = $item['ten7'];
+            }
+            if ($af8)
+            {
+                $result['f8'] = $af8;
+                $psevd['f8'] = $item['ten8'];
+            }
+
+
         }
 
 
-        return $aDataAgr;
+        foreach ($result as $index => $value) {
 
+            $complectations[($index)] = $value;
+        }
+
+        return $complectations;
     }
 
     public function getComplectations($regionCode, $modelCode, $modificationCode)

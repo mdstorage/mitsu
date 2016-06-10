@@ -56,9 +56,8 @@
                         data:   { priznak_agregata: selector.substr(-2) ,engine: $(selector).val(), modificationCode: '{{ oContainer.getActiveModification.getCode }}',
                             regionCode: '{{ oContainer.getActiveRegion.getCode }}',
                             modelCode: '{{ oContainer.getActiveModel.getCode }}'},
-                        success: function(data){document.write(data);
-
-                            if (selector.substr(-2) === 'EN')
+                        success: function(data){
+                            {#   if (selector.substr(-2) === 'EN')
                                 var selector1 = selector.substr(0, selector.indexOf(selector.substr(-2))).concat('KP');
 
                             if (selector.substr(-2) === 'KP')
@@ -69,11 +68,19 @@
 
                             var optSel = objSel.options[objSel.selectedIndex].value;
 
-                            $(selector1).empty();
+                            $(selector1).empty();#}
+
+
 
                             $.each(JSON.parse(data), function(key, value) {
+
+                                $.each((value), function(key1, value1) {
+
+                                document.write(value1);
+
                                 objSel.options[objSel.options.length] = new Option(value, key, true);
 
+                            })
                             });
 
                             for (var i = objSel.options.length-1; i >= 0; i--)
