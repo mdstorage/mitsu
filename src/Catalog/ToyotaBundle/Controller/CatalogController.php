@@ -84,7 +84,7 @@ class CatalogController extends BaseController{
             $engine = $request->get('engine');
             $modificationCode = $request->get('modificationCode');
             $regionCode = $request->get('regionCode');
-            $modelCode = $request->get('modelCode');
+            $modelCode = urldecode($request->get('modelCode'));
 
             $parameters = array(
                 'regionCode' => $regionCode,
@@ -102,8 +102,6 @@ class CatalogController extends BaseController{
             $modifications = $this->model()->getModifications($regionCode, $modelCode);
             $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
             $complectations = $this->model()->getComplectationsKorobka($regionCode, $modelCode, $modificationCode, $priznak, $engine);
-
-
 
 
             return new Response(json_encode($complectations));

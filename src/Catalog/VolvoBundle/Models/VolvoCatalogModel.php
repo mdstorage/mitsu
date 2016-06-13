@@ -921,7 +921,7 @@ class VolvoCatalogModel extends CatalogModel{
 
            $aData = $query->fetchAll();
 
-           var_dump($aData); die;
+
 
 
            $schemas = array();

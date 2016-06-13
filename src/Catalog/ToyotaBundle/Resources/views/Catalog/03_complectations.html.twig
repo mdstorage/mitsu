@@ -57,6 +57,7 @@
                             regionCode: '{{ oContainer.getActiveRegion.getCode }}',
                             modelCode: '{{ oContainer.getActiveModel.getCode }}'},
                         success: function(data){
+
                             {#   if (selector.substr(-2) === 'EN')
                                 var selector1 = selector.substr(0, selector.indexOf(selector.substr(-2))).concat('KP');
 
@@ -70,66 +71,75 @@
 
                             $(selector1).empty();#}
 
+                            objSel = new Object();
+                            selector1 = new Object();
+
 
 
                             $.each(JSON.parse(data), function(key, value) {
 
+
+                                selector1[key] = selector.substr(0, selector.indexOf(selector.substr(-2))).concat(key);
+
+                                objSel[key] = document.getElementById(selector1[key].substr(1,selector1[key].length));
+
+                                $(selector1[key]).empty();
                                 $.each((value), function(key1, value1) {
 
-                                document.write(key1);
-
-                                objSel.options[objSel.options.length] = new Option(value, key, true);
+                                    objSel[key].options[objSel[key].options.length] = new Option(value1, key1, true);
 
                             })
                             });
 
-                            for (var i = objSel.options.length-1; i >= 0; i--)
-                            {
-                                if (objSel.options[i].value == optSel)
+            {#
+            for (var i = objSel.options.length-1; i >= 0; i--)
+            {
+                if (objSel.options[i].value == optSel)
 
-                                    objSel.options[i].selected = true;
-                            }
+                    objSel.options[i].selected = true;
+            }
+            #}
 
+        }
+
+    });
+});
+}
+
+
+
+</script>
+
+
+<div class="row">
+<div id="content"></div>
+</div>
+
+
+{#
+        {% for complectation in oContainer.getActiveModification.getComplectations %}
+            {% block vinScript %}
+                <script>
+
+
+                    $(document).ready(function(){
+                        var count = $('.radio').size();
+                        if (count == 1) {$("#optionsRadios").prop("checked", true);
+                            $("#optionsRadios").trigger('change');
                         }
+                        $('#optionsRadiosM').trigger('change');
 
                     });
-                });
-            }
+                </script>
+
+            {% endblock vinScript %}
+        {% endfor %}
+
+                            <input type="button" class="btn btn-info" value="Удалить статью" id="vin-button{{ post.id }}"/>
+                       <div id="vin-result"></div>
 
 
-
-        </script>
-
-
-        <div class="row">
-            <div id="content"></div>
-        </div>
-
-
-        {#
-                        {% for complectation in oContainer.getActiveModification.getComplectations %}
-                            {% block vinScript %}
-                                <script>
-
-
-                                    $(document).ready(function(){
-                                        var count = $('.radio').size();
-                                        if (count == 1) {$("#optionsRadios").prop("checked", true);
-                                            $("#optionsRadios").trigger('change');
-                                        }
-                                        $('#optionsRadiosM').trigger('change');
-
-                                    });
-                                </script>
-
-                            {% endblock vinScript %}
-                        {% endfor %}
-
-                                            <input type="button" class="btn btn-info" value="Удалить статью" id="vin-button{{ post.id }}"/>
-                                       <div id="vin-result"></div>
-
-
-                                    #}
+                    #}
     {% endblock complectations %}
 {% endblock body %}
 {#-{% block body %}
