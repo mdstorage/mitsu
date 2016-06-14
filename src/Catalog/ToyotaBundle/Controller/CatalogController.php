@@ -108,6 +108,78 @@ class CatalogController extends BaseController{
         }
     }
 
+    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
+    {
+
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+
+        $a = array();
+        $aForm = array();
+        $a = $request->get('ComplectationType');
+        unset($a['_token']);
+
+        foreach ($a as $index => $value)
+        {
+            $aForm[substr($index, -2)] = $value;
+        }
+
+        $complectationCode = $this->model()->getComplectationCodeFromFormaData($aForm, $regionCode, $modificationCode);
+
+
+
+
+        $parameters['complectationCode'] = $complectationCode;
+
+
+        $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);
+
+        if(empty($groups))
+            return $this->error($request, 'Группы не найдены.');
+
+        $oContainer = Factory::createContainer();
+        $regions = $this->model()->getRegions();
+        $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
+        $models = $this->model()->getModels($regionCode);
+        $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
+        $modifications = $this->model()->getModifications($regionCode, $modelCode);
+        $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
+        if ($complectationCode) {
+            $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
+            $complectationsCollection = Factory::createCollection($complectations, Factory::createComplectation())->getCollection();
+            $oContainer->setActiveComplectation($complectationsCollection[$complectationCode]);
+        }
+
+        $oContainer
+            ->setActiveRegion($regionsCollection[$regionCode])
+            ->setActiveModel($modelsCollection[$modelCode])
+            ->setActiveModification($modificationsCollection[$modificationCode])
+            ->setGroups(Factory::createCollection($groups, Factory::createGroup()));
+
+        if (($filterResult = $this->filter($oContainer)) instanceof RedirectResponse) {
+            return $filterResult;
+        };
+
+        $groupsKeys = array_keys($oContainer->getGroups());
+        if (1 == count($groupsKeys)) {
+            return $this->redirect(
+                $this->generateUrl(
+                    str_replace('groups', 'subgroups', $this->get('request')->get('_route')),
+                    array_merge($parameters, array(
+                            'groupCode' => $groupsKeys[0]
+                        )
+                    )
+                ), 301
+            );
+        };
+
+        return $this->render($this->bundle() . ':04_groups.html.twig', array(
+            'oContainer' => $oContainer,
+            'parameters' => $parameters
+        ));
+    }
+
+
+
     
 
     public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode)
