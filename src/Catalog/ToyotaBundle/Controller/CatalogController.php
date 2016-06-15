@@ -39,7 +39,11 @@ class CatalogController extends BaseController{
         $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
         $complectations = $this->model()->getComplectations1($regionCode, $modelCode, $modificationCode);
 
-        $form = $this->createForm(new ComplectationType(), $complectations);
+
+
+        $complectationsForForm = $this->model()->getComplectationsForForm($complectations);
+
+        $form = $this->createForm(new ComplectationType(), $complectationsForForm);
 
 
         if(empty($complectations))
@@ -120,14 +124,13 @@ class CatalogController extends BaseController{
 
         foreach ($a as $index => $value)
         {
-            $aForm[substr($index, -2)] = $value;
+            $aForm[substr($index, strpos($index, 'f'), strlen($index))] = $value;
         }
 
         $complectationCode = $this->model()->getComplectationCodeFromFormaData($aForm, $regionCode, $modificationCode);
 
-
-
-
+        if(empty($complectationCode))
+            return $this->error($request, 'Комплектация не найдена.');
         $parameters['complectationCode'] = $complectationCode;
 
 

@@ -185,6 +185,7 @@ class ToyotaCatalogModel extends CatalogModel{
 
         WHERE johokt.catalog = :regionCode
         AND johokt.catalog_code = :modificationCode
+        ORDER BY compl_code
         ";
 
 
@@ -197,6 +198,7 @@ class ToyotaCatalogModel extends CatalogModel{
 
 
         $complectations = array();
+        $com = array();
 
 
         $result = array();
@@ -210,22 +212,69 @@ class ToyotaCatalogModel extends CatalogModel{
                     $af[$i][$item['f' . $i]] = '(' . $item['f' . $i] . ') ' . $item['ken' . $i];
                     $result['f'.$i] = $af[$i];
                     $psevd['f'.$i] = str_replace('ENGINE 1', 'ENGINE', $item['ten' . $i]);
+
                 }
             }
-        }
 
 
-        foreach ($result as $index => $value) {
-
-            $complectations[($index)] = array(
-                Constants::NAME => $value,
+            $com[$item['compl_code']] = array(
+                Constants::NAME => $result,
                 Constants::OPTIONS => array('option1'=>$psevd)
             );
         }
 
-        return $complectations;
+
+
+ /*       foreach ($result as $index => $value) {
+
+            $complectations[$index] = array(
+                Constants::NAME => $value,
+                Constants::OPTIONS => array('option1'=>$psevd)
+            );
+        }*/
+
+
+
+        return $com;
      
     }
+
+    public function getComplectationsForForm($complectations)
+    {
+        $result = array();
+
+
+
+        foreach ($complectations as $index => $value) {
+
+            for ($i = 1; $i < 11; $i++) {
+
+                if (!empty($value['name']['f' . $i])) {
+                    foreach ($value['name']['f' . $i] as $ind => $val) {
+                        $result['f' . $i]['name'][$ind] = $val;
+                    }
+                }
+
+
+                if (!empty($value['options']['option1']['f' . $i])) {
+                    foreach ($value['options']['option1'] as $ind => $val) {
+                        $result['f' . $i]['options']['option1'][$ind] = $val;
+                    }
+                }
+
+
+            }
+
+
+            unset($value);
+        }
+
+        return ($result);
+
+
+    }
+
+
 
     public function getComplectationsKorobka($regionCode, $modelCode, $modificationCode, $priznak, $engine)
     {
