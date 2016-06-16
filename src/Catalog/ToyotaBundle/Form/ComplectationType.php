@@ -1,5 +1,5 @@
 <?php
-namespace Catalog\VolvoBundle\Form;
+namespace Catalog\ToyotaBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -12,23 +12,10 @@ class ComplectationType extends AbstractType{
     {
         foreach ($options['data'] as $index=>$value) {
 
-            switch ($index)
-            {
-                case 'EN': $label = 'Тип двигателя';break;
-                case 'KP': $label = 'Коробка передач';break;
-                case 'RU': $label = 'Рулевое управление';break;
-                case 'TK': $label = 'Тип кузова';break;
-                default: $label = 'Спецтранспорт';
-
-            }
-
-
-
-
 
                 $builder
-                    ->add('title' . $index, 'choice', array(
-                        'label' => $label,
+                    ->add('title'.$index, 'choice', array(
+                        'label' => $value['options']['option1'][$index],
                         'choices' => $value['name'],
 
                         'attr' => array(

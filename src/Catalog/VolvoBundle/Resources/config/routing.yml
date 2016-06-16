@@ -12,7 +12,7 @@ catalog_volvo_complectations:
   defaults:     {_controller: CatalogVolvoBundle:Catalog:complectations}
 
 catalog_volvo_complectation_korobka:
-  path:         /bmw/catalog/12
+  path:         /volvo/catalog/12
   defaults:     {_controller: CatalogVolvoBundle:Catalog:complectation_korobka}
   requirements: {_method: POST}
 
