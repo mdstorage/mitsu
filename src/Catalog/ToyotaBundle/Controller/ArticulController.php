@@ -6,6 +6,7 @@ use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Controller\ArticulController as BaseController;
 use Symfony\Component\HttpFoundation\Request;
 use Catalog\ToyotaBundle\Controller\Traits\ToyotaArticulFilters;
+use Catalog\ToyotaBundle\Form\ComplectationType;
 
 class ArticulController extends BaseController{
 use ToyotaArticulFilters;
@@ -36,23 +37,87 @@ use ToyotaArticulFilters;
     {
        $articul = $request->cookies->get(Constants::ARTICUL);
 
-        $parameters = array();
 
-        $this->addFilter('CFilter', array(
-            'regionCode' => $regionCode,
-            'modelCode' => $modelCode,
-            'modificationCode' => $modificationCode,
-            'articul' => $articul
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+
+        $regions = $this->model()->getRegions();
+        $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
+        $models = $this->model()->getModels($regionCode);
+        $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
+        $modifications = $this->model()->getModifications($regionCode, $modelCode);
+        $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
+        $complectations = $this->model()->getComplectations1($regionCode, $modelCode, $modificationCode);
+
+
+        $articulComplectations = $this->model()->getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode);
+
+        $this->addFilter('articulComplectationsFilter', array(
+            'articulComplectations' => $articulComplectations
         ));
 
 
-        return parent::complectationsAction($request, $regionCode, $modelCode, $modificationCode);
+
+        $complectationsForForm = $this->model()->getComplectationsForForm(array_intersect_key($complectations, array_flip($articulComplectations)));
+
+        $form = $this->createForm(new ComplectationType(), $complectationsForForm);
+
+
+        if(empty($complectations))
+            return $this->error($request, 'Комплектации не найдены.');
+
+        $oContainer = Factory::createContainer()
+            ->setActiveRegion($regionsCollection[$regionCode])
+            ->setActiveModel($modelsCollection[$modelCode])
+            ->setActiveModification($modificationsCollection[$modificationCode]
+                ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
+        unset($complectations);
+        $this->filter($oContainer);
+
+
+        $complectationsKeys = array_keys($oContainer->getActiveModification()->getComplectations());
+
+
+        if (1 == count($complectationsKeys)) {
+            return $this->redirect(
+                $this->generateUrl(
+                    str_replace('complectations', 'groups', $this->get('request')->get('_route')),
+                    array_merge($parameters, array(
+                            'complectationCode' => $complectationsKeys[0]
+                        )
+                    )
+                ), 301
+            );
+        };
+
+        return $this->render($this->bundle() . ':03_complectations.html.twig', array(
+            'oContainer' => $oContainer,
+            'parameters' => $parameters,
+            'form' => $form->createView()
+        ));
     }
 
     public function toyotaArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
-      
+
+
+        $a = array();
+        $aForm = array();
+        $a = $request->get('ComplectationType');
+        unset($a['_token']);
+
+        foreach ($a as $index => $value)
+        {
+            $aForm[substr($index, strpos($index, 'f'), strlen($index))] = $value;
+        }
+
+        $complectationCode = $this->model()->getComplectationCodeFromFormaData($aForm, $regionCode, $modificationCode);
+
+        if(empty($complectationCode))
+            return $this->error($request, 'Комплектация не найдена.');
+        $parameters['complectationCode'] = $complectationCode;
+
+
         $articulGroups = $this->model()->getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode);
 
 

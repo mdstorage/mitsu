@@ -34,6 +34,13 @@ class ToyotaVinModel extends ToyotaCatalogModel {
         $aData = $query->fetchAll();
 
 
+        if (empty($aData))
+        {
+            print_r('Ничего не найдено');die;
+        }
+
+
+
 
 
 

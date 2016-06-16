@@ -29,6 +29,7 @@ class CatalogController extends BaseController{
 
     public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
     {
+
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
         $regions = $this->model()->getRegions();

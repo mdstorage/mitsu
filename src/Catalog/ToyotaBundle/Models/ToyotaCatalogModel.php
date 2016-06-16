@@ -576,6 +576,7 @@ class ToyotaCatalogModel extends CatalogModel{
 
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
+
         switch ($groupCode){
             case 1:
                 $min = 0;
