@@ -1,3 +1,7 @@
+acme_billing:
+    resource: "@AcmeBillingBundle/Resources/config/routing.yml"
+    prefix:   /
+
 catalog_lexus:
     resource: "@CatalogLexusBundle/Resources/config/routing.yml"
     prefix:   /
@@ -100,6 +104,10 @@ catalog_saab:
 
 acme_task:
     resource: "@AcmeTaskBundle/Resources/config/routing.php"
+    prefix:   /
+
+acme_billing:
+    resource: "@AcmeBillingBundle/Resources/config/routing.yml"
     prefix:   /
 
 catalog_subaru:

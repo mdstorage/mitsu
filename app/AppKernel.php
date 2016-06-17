@@ -56,9 +56,7 @@ class AppKernel extends Kernel
             new Catalog\VolvoBundle\CatalogVolvoBundle(),
             new Catalog\ToyotaBundle\CatalogToyotaBundle(),
             new Catalog\LexusBundle\CatalogLexusBundle(),
-
-
-
+            new Acme\BillingBundle\AcmeBillingBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
