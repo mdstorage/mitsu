@@ -724,52 +724,11 @@ class VolvoCatalogModel extends CatalogModel{
         AND VP.fkModelYear IN (:modificationCode)
         AND (VP.FolderLevel IN (1,2,3,4,5,6,7,8))
 
-
   )
   )
   Where  cataloguecomponents.TypeId = 2
   AND SUBSTRING(cataloguecomponents.FunctionGroupLabel + ' ' + lexicon.Description, 1, 1) = :groupCode
 
-
-  /*UNION
-
-  Select
-  DISTINCT cataloguecomponents.Id AS ComponentId,
-  lexicon.Description,
-  cataloguecomponents.FunctionGroupLabel + ' ' + lexicon.Description
-  AS title,
-  cataloguecomponents.TypeId AS DATATYPE,
-  cataloguecomponents.PSCode AS PSCode,
-  cataloguecomponents.Code AS Code,
-  cataloguecomponents.ComponentPath AS ComponentPath,
-  cataloguecomponents.fkPartItem AS ItemNumber,
-  cataloguecomponents.AssemblyLevel AS AssemblyLevel,
-  cataloguecomponents.ParentComponentId AS ParentComponentId,
-  cataloguecomponents.Quantity AS Quantity,
-  cataloguecomponents.HotspotKey AS HotspotKey,
-  cataloguecomponents.SequenceId AS SequenceId,
-  '' AS ProfileId,
-  cataloguecomponents.FunctionGroupPath AS FunctionGroupPath,
-  '' AS StructuredNoteId,
-  cataloguecomponents.TargetComponentId AS TargetComponentId,
-  cataloguecomponents.VersionUpdate AS VersionUpdate
-
-  from cataloguecomponents
-  INNER JOIN lexicon
-  ON lexicon.DescriptionId = cataloguecomponents.DescriptionId AND lexicon.fkLanguage = '11'
-  INNER JOIN  virtualtoshared
-  on cataloguecomponents.Id = SUBSTRING_INDEX(SUBSTRING_INDEX(virtualtoshared.AlternateComponentPath, ',', 2), ',', -1)
-  INNER JOIN componentconditions
-  ON (virtualtoshared.fkCatalogueComponent = componentconditions.fkCatalogueComponent and
-  componentconditions.fkProfile IN
-  (
-  select id
-  from vehicleprofile
-  where vehicleprofile.Description = 'All Models*'
-  )
-  )
-  Where  cataloguecomponents.TypeId = 2
-  AND SUBSTRING(cataloguecomponents.FunctionGroupLabel + ' ' + lexicon.Description, 1, 1) =:groupCode*/
   ORDER BY (3)
 
         ";
