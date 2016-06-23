@@ -10,12 +10,12 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        $request = new Request();
+        $request = Request::createFromGlobals();
 
 
         $ch = curl_init("http://billing.iauto.by/get/?token=32ab744a0b-03ac221d423c593-65ec873");
 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $data = json_decode(curl_exec($ch), true);
 
@@ -31,7 +31,7 @@ class DefaultController extends Controller
         {
             return $this->redirect(
                 $this->generateUrl(
-                    'acme_task_homepage',
+                    'catalog_bmw',
                     array_merge($parameters, array(
                             'token' => $data['token']
                         )
