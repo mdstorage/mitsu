@@ -1,3 +1,7 @@
 acme_billing_homepage:
     path:     /billing
     defaults: { _controller: AcmeBillingBundle:Default:index }
+
+acme_billing_output:
+    path:     /billing/output
+    defaults: { _controller: AcmeBillingBundle:Default:output }
