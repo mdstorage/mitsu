@@ -25,16 +25,14 @@ class DefaultController extends Controller
 
         $request = Request::createFromGlobals();
         $outData = array('token' => '32ab744a0b-03ac221d423c593-65ec873', 'SERVER' => $_SERVER);
-
+        $curl = curl_init();
 
         if($curl = curl_init()) {
-            curl_setopt($curl, CURLOPT_URL, $router->generate(
-                'acme_billing_output'
-            ));
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER,true);
+            curl_setopt($curl, CURLOPT_URL, $this->generateUrl('acme_billing_output'));
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($outData));
             $out = curl_exec($curl);
-            var_dump($out); die;
+
             curl_close($curl);
         }
 
