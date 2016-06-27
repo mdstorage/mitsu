@@ -11,34 +11,25 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        /*$request = Request::createFromGlobals();
-
-        $ch = curl_init("http://billing.iauto.by/get/?token=32ab744a0b-03ac221d423c593-65ec873");
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $data = json_decode(curl_exec($ch), true);
-
-        curl_close($ch);*/
-
-
 
         $request = Request::createFromGlobals();
-        $outData = array('token' => '32ab744a0b-03ac221d423c593-65ec873', 'SERVER' => $_SERVER);
-        $curl = curl_init();
+
+        $token = $request->query->all()['token'];
+
+       /* $token = '32ab744a0b-03ac221d423c593-65ec873';*/
+        $outData = array('token' => $token, 'SERVER' => $_SERVER);
 
         if($curl = curl_init()) {
-            curl_setopt($curl, CURLOPT_URL, $this->generateUrl('acme_billing_output'));
+            curl_setopt($curl, CURLOPT_URL, "http://billing.iauto.by/get/?token=".$token);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_POST, true);
             curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($outData));
-            $out = curl_exec($curl);
+            $data = json_decode(curl_exec($curl), true);
 
             curl_close($curl);
         }
 
-
-
-        $parameters = array();
+        $headers = $request->server->getHeaders();
 
         if(empty($data['status'])){
             return $this->error($request, 'Сервис не оплачен');
@@ -47,10 +38,7 @@ class DefaultController extends Controller
         else
         {
             return $this->redirect(
-                $this->generateUrl(
-                    'catalog_bmw',
-                    array('token' => $data['token'])
-                ), 301
+                $headers['REFERER'], 301
             );
         }
 
@@ -61,22 +49,9 @@ class DefaultController extends Controller
         $headers = $request->server->getHeaders();
         return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array(
             'message' => $message,
-            'referer' => 'http://billing.iauto.by/get/?token=32ab744a0b-03ac221d423c593-65ec872'
+            'referer' => $headers['REFERER']
         ));
     }
 
-    public function outputAction()
-    {
 
-        $ch = curl_init('acme_billing_homepage');
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $data = json_decode(curl_exec($ch), true);
-
-        curl_close($ch);
-
-        var_dump($data); die;
-
-    }
 }

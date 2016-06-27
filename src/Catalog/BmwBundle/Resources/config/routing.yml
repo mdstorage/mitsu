@@ -1,6 +1,10 @@
+catalog_bmw_enter:
+  path:         /bmw/catalog/{token}
+  defaults:     {_controller: CatalogBmwBundle:Catalog:bmwBilling}
+
 catalog_bmw:
-  path:         /bmw/catalog/0/{regionCode}
-  defaults:     {_controller: CatalogBmwBundle:Catalog:regionsModelsBilling, regionCode: null}
+  path:         /bmw/catalog/0/{regionCode}/{token}
+  defaults:     {_controller: CatalogBmwBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_bmw_modifications:
   path:         /bmw/catalog/1

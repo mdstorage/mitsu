@@ -46,6 +46,68 @@ class CatalogController extends BaseController{
         
     }
 
+    public function bmwBillingAction(Request $request, $token = null)
+    {
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+        return $this->redirect($this->generateUrl('acme_billing_homepage', $parameters), 301);
+
+    }
+
+    public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
+    {
+
+        /**
+         * Выборка регионов из базы данных для конкретного артикула
+         */
+        $aRegions = $this->model()->getRegions();
+
+
+        if(empty($aRegions)){
+            return $this->error($request, 'Регионы не найдены.');
+        } else {
+            $oActiveRegion = Factory::createRegion();
+            /**
+             * Если регионы найдены, они помещаются в контейнер
+             */
+            $regionsCollection = Factory::createCollection($aRegions, $oActiveRegion);
+            $oContainer = Factory::createContainer()
+                ->setRegions($regionsCollection);
+            unset($aRegions);
+            /**
+             * Если пользователь задал регион, то этот регион становится активным
+             */
+            $regionsList = $regionsCollection->getCollection();
+            if (!is_null($regionCode)){
+                $oActiveRegion = $regionsList[$regionCode];
+            } else{
+                /*
+                 * Если пользователь не задавал регион, то в качестве активного выбирается первый из списка регионов объект
+                 */
+                $oActiveRegion = reset($regionsList);
+            }
+
+            /**
+             * Выборка моделей из базы для данного артикула и региона
+             */
+
+            $models = $this->model()->getModels($oActiveRegion->getCode());
+
+            if(empty($models)){
+                return $this->error($request, 'Модели не найдены.');
+            } else {
+                $oActiveRegion->setModels(Factory::createCollection($models, Factory::createModel()));
+            }
+
+            $oContainer->setActiveRegion($oActiveRegion);
+
+            $this->filter($oContainer);
+        }
+
+        return $this->render($this->bundle() . ':01_regions_models.html.twig', array(
+            'oContainer' => $oContainer
+        ));
+    }
+
     public function complectations1Action(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
