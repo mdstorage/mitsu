@@ -33,7 +33,7 @@
                                     type:   'POST',
                                     async:  false,
                                     url:    "{% block ajaxUrl %}{{ path('catalog_bmw_modifications') }}{% endblock ajaxUrl %}",
-                                    data:   { regionCode: $(this).attr('regionCode'), modelCode: "{{ model.getCode }}" },
+                                    data:   { regionCode: $(this).attr('regionCode'), modelCode: "{{ model.getCode }}", token: "{{ token }}" },
                                     success: function(data) {
                                         $("#modifications_for_model{{ modelCode }}").html(data);
                                     }
@@ -101,4 +101,4 @@
     </div>
 
 {% endblock models %}
-{% block regionPath %}{{ path('catalog_bmw', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+{% block regionPath %}{{ path('catalog_bmw', {'token': token, 'regionCode': region.getCode}) }}{% endblock regionPath %}

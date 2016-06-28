@@ -104,13 +104,48 @@ class CatalogController extends BaseController{
         }
 
         return $this->render($this->bundle() . ':01_regions_models.html.twig', array(
-            'oContainer' => $oContainer
+            'oContainer' => $oContainer,
+            'token' => $token
+
         ));
     }
 
-    public function complectations1Action(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
+
+    public function modificationsAction(Request $request)
     {
-        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+        if ($request->isXmlHttpRequest()) {
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+            $token = $request->get('token');
+            $parameters = array(
+                'regionCode' => $regionCode,
+                'modelCode' => $modelCode,
+                'token' => $token
+            );
+
+            $modifications = $this->model()->getModifications($regionCode, $modelCode);
+
+            if(empty($modifications))
+                return $this->error($request, 'Модификации не найдены.');
+
+            $oContainer = Factory::createContainer()
+                ->setActiveModel(Factory::createModel($modelCode)
+                    ->setModifications(Factory::createCollection($modifications, Factory::createModification())
+                    )
+                );
+
+            $this->filter($oContainer);
+
+            return $this->render($this->bundle() . ':02_modifications.html.twig', array(
+                'oContainer' => $oContainer,
+                'parameters' => $parameters
+            ));
+        }
+    }
+
+    public function complectations1Action(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $token = null)
+    {
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());var_dump($parameters); die;
 
         $regions = $this->model()->getRegions();
         $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();

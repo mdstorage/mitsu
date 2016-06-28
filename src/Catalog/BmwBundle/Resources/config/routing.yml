@@ -1,10 +1,6 @@
-catalog_bmw_enter:
-  path:         /bmw/catalog/{token}
-  defaults:     {_controller: CatalogBmwBundle:Catalog:bmwBilling}
-
 catalog_bmw:
-  path:         /bmw/catalog/0/{regionCode}/{token}
-  defaults:     {_controller: CatalogBmwBundle:Catalog:regionsModels, regionCode: null}
+  path:         /bmw/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogBmwBundle:Catalog:regionsModels, token: null, regionCode: null}
 
 catalog_bmw_modifications:
   path:         /bmw/catalog/1
@@ -12,7 +8,7 @@ catalog_bmw_modifications:
   requirements: {_method: POST}
 
 catalog_bmw_complectations:
-  path:         /bmw/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  path:         /bmw/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
   defaults:     {_controller: CatalogBmwBundle:Catalog:complectations1}
 
 catalog_bmw_complectation_korobka:
