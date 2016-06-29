@@ -22,7 +22,8 @@ class DefaultController extends Controller
 
         $headers = $request->server->getHeaders();
 
-        $data = $this->getDataToken($token);
+        $data = array();
+        $data = $this->get('my_token_info')->getDataToken($token);
 
 
         /*catalog_bmw:
@@ -48,28 +49,6 @@ class DefaultController extends Controller
         }
 
     }
-    public function getDataToken($token)
-    {
-
-        $aData = array();
-        $outData = array('token' => $token, 'SERVER' => $_SERVER);
-
-        if($curl = curl_init()) {
-            curl_setopt($curl, CURLOPT_URL, "http://billing.iauto.by/get/?token=".$token);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_POST, true);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($outData));
-            $aData = json_decode(curl_exec($curl), true);
-
-            curl_close($curl);
-        }
-
-        return $aData;
-
-    }
-
-
-
 
     protected function error(Request $request, $message)
     {

@@ -27,19 +27,19 @@ catalog_bmw_complectation_month:
   requirements: {_method: POST}
 
 catalog_bmw_groups:
-  path:         /bmw/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  path:         /bmw/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
   defaults:     {_controller: CatalogBmwBundle:Catalog:groups}
 
 catalog_bmw_subgroups:
-  path:         /bmw/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  path:         /bmw/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
   defaults:     {_controller: CatalogBmwBundle:Catalog:subgroups}
 
 catalog_bmw_schemas:
-  path:         /bmw/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  path:         /bmw/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogBmwBundle:Catalog:schemas}
 
 catalog_bmw_schema:
-  path:         /bmw/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  path:         /bmw/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
   defaults:     {_controller: CatalogBmwBundle:Catalog:schema}
 
 catalog_bmw_articuls:

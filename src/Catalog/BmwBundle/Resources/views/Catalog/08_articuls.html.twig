@@ -14,7 +14,7 @@
     {% for articul in oContainer.getActivePnc.getArticuls %}
         {% if articul.getOption('kommavor')  not in [' '] %}<tr><td colspan="4">{{ articul.getOption('kommavor')}}</td></tr>{% endif %}
         <tr>
-            <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a></td>
+            <td><a href="{{ parameters.redirectAdress|replace({ '{article}': articul.getCode }) }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a></td>
             <td>{{ articul.getRuname }}</td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }}</td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|bmw_date_convertor}} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|bmw_date_convertor}}</td>

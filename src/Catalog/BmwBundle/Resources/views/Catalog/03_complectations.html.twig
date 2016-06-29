@@ -11,6 +11,7 @@
         <div class="row">
 
             <div class="complectations">
+                {% set token = parameters['token']%}
 
                 <div class="col-lg-4">
 
@@ -34,7 +35,8 @@
                              url:    "{{ path('catalog_bmw_complectation_korobka') }}",
                              data:   { role: $("#optionsRadios{{ complectation.getCode }}").val(), modificationCode: '{{ oContainer.getActiveModification.getCode }}',
                                  regionCode: '{{ oContainer.getActiveRegion.getCode }}',
-                                 modelCode: '{{ oContainer.getActiveModel.getCode }}'},
+                                 modelCode: '{{ oContainer.getActiveModel.getCode }}',
+                                 token: '{{ token }}'},
                              success: function(data) {
                                  $("#vin-result").html(data);
                              }
