@@ -11,6 +11,7 @@
             {% set modelCode = parameters['modelCode']%}
             {% set regionCode = parameters['regionCode']%}
             {% set korobka = parameters['korobka']%}
+            {% set token = parameters['token']%}
 
         <div class="model glyphicon-plus" id="{{ res_name }}">
 
@@ -31,6 +32,7 @@
                             modelCode: "{{ modelCode }}",
                             regionCode: "{{ regionCode }}",
                             korobka: "{{ korobka }}",
+                            token: "{{ token }}"
                         },
 
                         success: function(data) {

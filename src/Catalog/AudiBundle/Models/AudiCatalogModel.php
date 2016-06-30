@@ -267,6 +267,7 @@ class AudiCatalogModel extends CatalogModel{
             /*    $ObDvig[] = $aDataSub[$item['bildtafel2']]['tsbem'];*/
            }
         $sDataLitr = array();
+        $sDataLitr0 = array();
 
         foreach($ObDvig as $index=>&$value)
                     {

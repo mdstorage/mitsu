@@ -5,7 +5,6 @@ namespace Catalog\BmwBundle\Controller;
 use Catalog\CommonBundle\Components\Factory;
 use Catalog\CommonBundle\Components\Interfaces\CommonInterface;
 use Catalog\CommonBundle\Controller\CatalogController as BaseController;
-use Acme\BillingBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -47,12 +46,6 @@ class CatalogController extends BaseController{
         
     }
 
-    public function bmwBillingAction(Request $request, $token = null)
-    {
-        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
-        return $this->redirect($this->generateUrl('acme_billing_homepage', $parameters), 301);
-
-    }
 
     public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
     {

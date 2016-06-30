@@ -44,9 +44,41 @@ use BmwArticulFilters;
 
 
     }
+
+    public function modificationsAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+            $token = $request->get('token');
+            $parameters = array(
+                'regionCode' => $regionCode,
+                'modelCode' => $modelCode,
+                'token' => $token
+            );
+
+            $modifications = $this->model()->getModifications($regionCode, $modelCode);
+
+            if(empty($modifications))
+                return $this->error($request, 'Модификации не найдены.');
+
+            $oContainer = Factory::createContainer()
+                ->setActiveModel(Factory::createModel($modelCode)
+                    ->setModifications(Factory::createCollection($modifications, Factory::createModification())
+                    )
+                );
+
+            $this->filter($oContainer);
+
+            return $this->render($this->bundle() . ':02_modifications.html.twig', array(
+                'oContainer' => $oContainer,
+                'parameters' => $parameters
+            ));
+        }
+    }
     
        
-    public function bmwArticulcomplectations1Action(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
+    public function bmwArticulcomplectations1Action(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $token = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
@@ -88,12 +120,14 @@ use BmwArticulFilters;
             $modificationCode = $request->get('modificationCode');
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
+            $token = $request->get('token');
 
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modelCode' => $modelCode,
                 'modificationCode' => $modificationCode,
-                'role' => $role
+                'role' => $role,
+                'token' => $token
             );
 
             $regions = $this->model()->getRegions();
@@ -136,13 +170,15 @@ use BmwArticulFilters;
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
             $korobka= $request->get('korobka');
+            $token = $request->get('token');
 
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modelCode' => $modelCode,
                 'modificationCode' => $modificationCode,
                 'role' => $role,
-                'korobka' => $korobka
+                'korobka' => $korobka,
+                'token' => $token
             );
 
 
@@ -168,12 +204,14 @@ use BmwArticulFilters;
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
             $korobka = $request->get('korobka');
+            $token = $request->get('token');
 
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modelCode' => $modelCode,
                 'modificationCode' => $modificationCode,
-                'korobka' => $korobka
+                'korobka' => $korobka,
+                'token' => $token
             );
 
 
@@ -214,7 +252,7 @@ use BmwArticulFilters;
 
 
 
-    public function bmwArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
+    public function bmwArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $token = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
       
@@ -224,7 +262,7 @@ use BmwArticulFilters;
             'articulGroups' => $articulGroups
         ));
 
-        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
+        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $token);
     }
 
     public function bmwArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
