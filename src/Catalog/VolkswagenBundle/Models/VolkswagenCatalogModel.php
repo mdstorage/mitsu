@@ -80,12 +80,12 @@ class VolkswagenCatalogModel extends CatalogModel{
         $modelCode = urldecode($modelCode);
 
         $sql = "
-        SELECT einsatz, epis_typ
+        SELECT einsatz, epis_typ, bezeichnung
         FROM all_overview
         WHERE all_overview.catalog = 'vw'
         and markt = :regionCode
         and modell = :modelCode
-        and bezeichnung = ''
+        and epis_typ NOT LIKE '0'
         ";
 
         $query = $this->conn->prepare($sql);
@@ -98,7 +98,7 @@ class VolkswagenCatalogModel extends CatalogModel{
         $modifications = array();
         foreach($aData as $item){
             $modifications[$item['einsatz'].'_'.$item['epis_typ']] = array(
-                Constants::NAME     => $item['einsatz'],
+                Constants::NAME     => $item['einsatz'].' '.$item['bezeichnung'],
                 Constants::OPTIONS  => array());
 
         }
@@ -127,7 +127,7 @@ class VolkswagenCatalogModel extends CatalogModel{
         and markt = :regionCode
         and modell = :modelCode
         and einsatz = :modificationCode
-        and bezeichnung = ''
+        and epis_typ NOT LIKE '0'
         ";
 
         $query = $this->conn->prepare($sql);
