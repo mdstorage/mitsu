@@ -13,25 +13,17 @@ class DefaultController extends Controller
     {
         $parameters = array();
 
-        $request = Request::createFromGlobals();
-
         $token = $this->get('request')->get('token');
 
 
        /* $token = '32ab744a0b-03ac221d423c593-65ec873';*/
 
-        $headers = $request->server->getHeaders();
 
         $data = array();
         $data = $this->get('my_token_info')->getDataToken($token);
 
-
-        /*catalog_bmw:
-  path:         /bmw/catalog/0/{regionCode}/{token}
-  defaults:     {_controller: CatalogBmwBundle:Catalog:regionsModels, regionCode: null, token: null}*/
-
         if(empty($data['status'])){
-            return $this->error($request, 'Сервис не оплачен');
+            return $this->error($this->get('request'), 'Сервис не оплачен');
         }
 
         else
