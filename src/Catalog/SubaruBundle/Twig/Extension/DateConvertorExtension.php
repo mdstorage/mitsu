@@ -22,6 +22,6 @@ class DateConvertorExtension extends Twig_Extension{
         if ($str == "" || $str == "00000000" || $str == "99999999") {
             return "...";
         }
-        return (substr( $str, 0, 4)."/".substr($str, 4, 2)."/".substr($str, 6, 2));
+        return (substr( $str, 0, 4)."/".substr($str, 4, 2));
     }
 } 

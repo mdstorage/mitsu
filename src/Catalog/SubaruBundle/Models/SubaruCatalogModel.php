@@ -18,9 +18,13 @@ class SubaruCatalogModel extends CatalogModel{
     public function getRegions(){
 
         $sql = "
-        SELECT catalog
+        SELECT models.catalog
         FROM models
-        GROUP BY catalog";
+        UNION
+        SELECT models_jp.catalog
+        FROM models_jp
+        GROUP BY 1
+        ";
 
         $query = $this->conn->query($sql);
 
@@ -40,9 +44,17 @@ class SubaruCatalogModel extends CatalogModel{
         $sql = "
         SELECT *
         FROM models
+        WHERE models.catalog = :regionCode
+        UNION
+        SELECT *
+        FROM models_jp
+        WHERE models_jp.catalog = :regionCode
+
         ";
 
-        $query = $this->conn->query($sql);
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('regionCode', $regionCode);
+        $query->execute();
 
         $aData = $query->fetchAll();
 
@@ -56,9 +68,21 @@ class SubaruCatalogModel extends CatalogModel{
 
     public function getModifications($regionCode, $modelCode)
     {
+        if ($regionCode == 'JP'){
+            $table = 'model_changes_jp';
+            $lang = 'jp';
+        }
+        else
+        {
+            $table = 'model_changes';
+            $lang = 'en';
+        }
+
+
+
         $sql = "
-        SELECT desc_en, change_abb, sdate, edate
-        FROM model_changes
+        SELECT desc_$lang, change_abb, sdate, edate
+        FROM $table
         WHERE model_code = :modelCode
         ";
 
@@ -67,12 +91,11 @@ class SubaruCatalogModel extends CatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
-        
 
         $modifications = array();
         foreach($aData as $item){
-            $modifications[$item['change_abb'].$item['desc_en']] = array(
-                Constants::NAME     => $item['change_abb'].' '.$item['desc_en'],
+            $modifications[$item['change_abb'].$item['desc_'.$lang]] = array(
+                Constants::NAME     => $item['change_abb'].' '.$item['desc_'.$lang],
                 Constants::OPTIONS  => array(
                     Constants::START_DATE   => $item['sdate'],
                     Constants::END_DATE   => $item['edate'],
