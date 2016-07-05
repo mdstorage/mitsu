@@ -11,6 +11,11 @@ catalog_subaru_complectations:
   path:         /subaru/catalog/2/{regionCode}/{modelCode}/{modificationCode}
   defaults:     {_controller: CatalogSubaruBundle:Catalog:complectations}
 
+catalog_subaru_complectation_korobka:
+  path:         /subaru/catalog/12
+  defaults:     {_controller: CatalogSubaruBundle:Catalog:complectation_korobka}
+  requirements: {_method: POST}
+
 catalog_subaru_groups:
   path:         /subaru/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
   defaults:     {_controller: CatalogSubaruBundle:Catalog:groups}

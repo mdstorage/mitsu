@@ -18,10 +18,10 @@ class SubaruCatalogModel extends CatalogModel{
     public function getRegions(){
 
         $sql = "
-        SELECT models.catalog
+        SELECT models.catalog, sub_wheel
         FROM models
         UNION
-        SELECT models_jp.catalog
+        SELECT models_jp.catalog, sub_wheel
         FROM models_jp
         GROUP BY 1
         ";
@@ -32,7 +32,7 @@ class SubaruCatalogModel extends CatalogModel{
 
         $regions = array();
         foreach($aData as $item){
-            $regions[$item['catalog']] = array(Constants::NAME=>$item['catalog'], Constants::OPTIONS=>array());
+            $regions[$item['catalog'].'_'.$item['sub_wheel']] = array(Constants::NAME=>$item['catalog'], Constants::OPTIONS=>array());
         }
 
         return $regions;
@@ -41,6 +41,9 @@ class SubaruCatalogModel extends CatalogModel{
 
     public function getModels($regionCode)
     {
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
+
         $sql = "
         SELECT *
         FROM models
@@ -68,6 +71,9 @@ class SubaruCatalogModel extends CatalogModel{
 
     public function getModifications($regionCode, $modelCode)
     {
+
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
         if ($regionCode == 'JP'){
             $table = 'model_changes_jp';
             $lang = 'jp';
@@ -107,14 +113,62 @@ class SubaruCatalogModel extends CatalogModel{
         return $modifications;
     }
 
-    public function getComplectations($regionCode, $modelCode, $modificationCode)
-    {        
+    public function getComplectations1($regionCode, $modelCode, $modificationCode)
+    {
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
+
+        if ($regionCode == 'JP'){
+            $table = 'model_desc_jp';
+            $models = 'models_jp';
+            $lang = 'jp';
+        }
+        else
+        {
+            $table = 'model_desc';
+            $models = 'models';
+            $lang = 'en';
+        }
+
+
         $sql = "
-        SELECT *
-        FROM body
-        WHERE catalog = :regionCode
-        AND model_code =:model_code 
-        AND SUBSTR(body, 4, 1) = :modificationCode
+        SELECT body_desc.f1 as compl_code,
+        body_desc.body p1,
+        body_desc.engine1 p2,
+        body_desc.train p3,
+        body_desc.trans p4,
+        body_desc.grade p5,
+        body_desc.sus p6,
+        body_desc.f2 p7,
+        body_desc.f3 p8,
+
+        kig1.param_name ken1,
+        kig2.param_name ken2,
+        kig3.param_name ken3,
+        kig4.param_name ken4,
+        kig5.param_name ken5,
+        kig6.param_name ken6,
+        kig7.param_name ken7,
+        kig8.param_name ken8
+
+
+        FROM body_desc
+        left JOIN body ON (body.catalog = :regionCode AND body.model_code = :model_code AND SUBSTR(body.body, 4, 1) = :modificationCode AND body.body_desc_id = body_desc.id)
+
+        LEFT JOIN $table kig1 ON (kig1.catalog = body_desc.catalog AND kig1.model_code = body_desc.model_code AND kig1.param_abb = body_desc.body)
+        LEFT JOIN $table kig2 ON (kig2.catalog = body_desc.catalog AND kig2.model_code = body_desc.model_code AND kig2.param_abb = body_desc.engine1)
+        LEFT JOIN $table kig3 ON (kig3.catalog = body_desc.catalog AND kig3.model_code = body_desc.model_code AND kig3.param_abb = body_desc.train)
+        LEFT JOIN $table kig4 ON (kig4.catalog = body_desc.catalog AND kig4.model_code = body_desc.model_code AND kig4.param_abb = body_desc.trans)
+        LEFT JOIN $table kig5 ON (kig5.catalog = body_desc.catalog AND kig5.model_code = body_desc.model_code AND kig5.param_abb = body_desc.grade)
+        LEFT JOIN $table kig6 ON (kig6.catalog = body_desc.catalog AND kig6.model_code = body_desc.model_code AND kig6.param_abb = body_desc.sus)
+        LEFT JOIN $table kig7 ON (kig7.catalog = body_desc.catalog AND kig7.model_code = body_desc.model_code AND kig7.param_abb = body_desc.f2)
+        LEFT JOIN $table kig8 ON (kig8.catalog = body_desc.catalog AND kig8.model_code = body_desc.model_code AND kig8.param_abb = body_desc.f3)
+
+
+
+        WHERE body_desc.catalog = :regionCode
+        AND body_desc.model_code = :model_code
         ";
 
         $query = $this->conn->prepare($sql);
@@ -124,77 +178,336 @@ class SubaruCatalogModel extends CatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
-        
-       
-         
-       foreach($aData as $item) 
-       {
-       	 
-        $sqlDesc = "
-        SELECT *
-        FROM body_desc
-        WHERE model_code = :model_code
-        AND
-        id = :body_desc_id
+
+
+        $sql = "
+        SELECT dif_code, dif_fields
+        FROM $models
+        WHERE $models.catalog = :regionCode
+        AND $models.model_code =:model_code
+        AND $models.sub_wheel = :wheel
         ";
 
-        $query = $this->conn->prepare($sqlDesc);
-        $query->bindValue('model_code', $item['model_code']);
-        $query->bindValue('body_desc_id', trim($item['body_desc_id']));
-        $query->execute();
-        $aData1[$item['body']] = $query->fetchAll();
-     
-        }
-        
-        $complectations = array();
-        
-       $ch = array();
-        
-        foreach($aData1 as $item){
-        	
-         foreach($item[0] as $index =>$value )	
-        {	
-        	$sqlAbb = "
-        SELECT param_name
-        FROM model_desc
-        WHERE catalog = :regionCode
-        AND model_code = :model_code 
-        AND param_abb = :item1
-        ";
-
-        $query = $this->conn->prepare($sqlAbb);
+        $query = $this->conn->prepare($sql);
         $query->bindValue('regionCode', $regionCode);
         $query->bindValue('model_code', $modelCode);
-        $query->bindValue('item1', $value);
+        $query->bindValue('wheel', $wheel);
         $query->execute();
 
-        $sDesc[$index] = $query->fetch();
-       
-         $ch[$index] ='('.$value.') '.$sDesc[$index]['param_name'];
-         		
-		}
-       	   
-        
-        	
-        	
-        	
-            $complectations[$item[0]['f1']] = array(
-                Constants::NAME     => $item[0]['f1'],
-                Constants::OPTIONS  => array('option1'=> $ch['body'],
-                							 'option2'=> $ch['engine1'],
-                							 'option3'=> $ch['train'],
-                							 'option4'=> $ch['trans'],
-                							 'option5'=> $ch['grade'],
-                							 'option6'=> $ch['sus'],)
-            );  
-      }
+        $aAgregateNames = $query->fetchAll();
+
+        $aAgregateData = array();
+
+        foreach ($aAgregateNames as $aAgregateName)
+        {
+            $aAgregateData = array_combine(str_split($aAgregateName['dif_code']) , array_diff(explode(' ', $aAgregateName['dif_fields']), array('')));
+        }
+
+
+
+        $com = array();
+
+
+        $result = array();
+        $psevd = array();
+
+        $af = array();
+
+        foreach($aData as $item) {
+            for ($i = 1; $i < 9; $i++) {
+                if ($item['p' . $i]) {
+                    $af[$i][$item['p' . $i]] = '(' . $item['p' . $i] . ') ' . $item['ken' . $i];
+                    $result['p'.$i] = $af[$i];
+                    $psevd['p'.$i] = str_replace('ENGINE 1', 'ENGINE', $aAgregateData[$i]);
+
+                }
+            }
+
+
+            $com[$item['compl_code']] = array(
+                Constants::NAME => $result,
+                Constants::OPTIONS => array('option1'=>$psevd)
+            );
+        }
+
+
+     return $com;
       
-     return $complectations;
-      
+    }
+
+    public function getComplectationsForForm($complectations)
+    {
+        $result = array();
+
+
+
+        foreach ($complectations as $index => $value) {
+
+            for ($i = 1; $i < 9; $i++) {
+
+                if (!empty($value['name']['p' . $i])) {
+                    foreach ($value['name']['p' . $i] as $ind => $val) {
+                        $result['p' . $i]['name'][$ind] = $val;
+                    }
+                }
+
+
+                if (!empty($value['options']['option1']['p' . $i])) {
+                    foreach ($value['options']['option1'] as $ind => $val) {
+                        $result['p' . $i]['options']['option1'][$ind] = $val;
+                    }
+                }
+
+
+            }
+
+
+            unset($value);
+        }
+
+        return ($result);
+
+
+    }
+
+    public function getComplectationsKorobka($regionCode, $modelCode, $modificationCode, $priznak, $engine)
+    {
+
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
+
+        if ($regionCode == 'JP'){
+            $table = 'model_desc_jp';
+            $models = 'models_jp';
+            $lang = 'jp';
+        }
+        else
+        {
+            $table = 'model_desc';
+            $models = 'models';
+            $lang = 'en';
+        }
+
+        switch($priznak)
+
+        {
+            case ('p1'): $pole = 'body_desc.body';break;
+            case ('p2'): $pole = 'body_desc.engine1';break;
+            case ('p3'): $pole = 'body_desc.train';break;
+            case ('p4'): $pole = 'body_desc.trans';break;
+            case ('p5'): $pole = 'body_desc.grade';break;
+            case ('p6'): $pole = 'body_desc.sus';break;
+            case ('p7'): $pole = 'body_desc.f2';break;
+            case ('p8'): $pole = 'body_desc.f3';break;
+
+        }
+
+        $sql = "
+        SELECT body_desc.f1 as compl_code,
+        body_desc.body p1,
+        body_desc.engine1 p2,
+        body_desc.train p3,
+        body_desc.trans p4,
+        body_desc.grade p5,
+        body_desc.sus p6,
+        body_desc.f2 p7,
+        body_desc.f3 p8,
+
+        kig1.param_name ken1,
+        kig2.param_name ken2,
+        kig3.param_name ken3,
+        kig4.param_name ken4,
+        kig5.param_name ken5,
+        kig6.param_name ken6,
+        kig7.param_name ken7,
+        kig8.param_name ken8
+
+
+        FROM body_desc
+        left JOIN body ON (body.catalog = :regionCode AND body.model_code = :model_code AND SUBSTR(body.body, 4, 1) = :modificationCode AND body.body_desc_id = body_desc.id)
+
+        LEFT JOIN $table kig1 ON (kig1.catalog = body_desc.catalog AND kig1.model_code = body_desc.model_code AND kig1.param_abb = body_desc.body)
+        LEFT JOIN $table kig2 ON (kig2.catalog = body_desc.catalog AND kig2.model_code = body_desc.model_code AND kig2.param_abb = body_desc.engine1)
+        LEFT JOIN $table kig3 ON (kig3.catalog = body_desc.catalog AND kig3.model_code = body_desc.model_code AND kig3.param_abb = body_desc.train)
+        LEFT JOIN $table kig4 ON (kig4.catalog = body_desc.catalog AND kig4.model_code = body_desc.model_code AND kig4.param_abb = body_desc.trans)
+        LEFT JOIN $table kig5 ON (kig5.catalog = body_desc.catalog AND kig5.model_code = body_desc.model_code AND kig5.param_abb = body_desc.grade)
+        LEFT JOIN $table kig6 ON (kig6.catalog = body_desc.catalog AND kig6.model_code = body_desc.model_code AND kig6.param_abb = body_desc.sus)
+        LEFT JOIN $table kig7 ON (kig7.catalog = body_desc.catalog AND kig7.model_code = body_desc.model_code AND kig7.param_abb = body_desc.f2)
+        LEFT JOIN $table kig8 ON (kig8.catalog = body_desc.catalog AND kig8.model_code = body_desc.model_code AND kig8.param_abb = body_desc.f3)
+
+
+
+        WHERE body_desc.catalog = :regionCode
+        AND body_desc.model_code = :model_code
+        AND $pole = :engine
+        ";
+
+        $query = $this->conn->prepare($sql);
+
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('model_code', $modelCode);
+        $query->bindValue('modificationCode', substr($modificationCode, 0, 1));
+        $query->bindValue('engine', $engine);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $complectations = array();
+        $result = array();
+
+        $af = array();
+
+        foreach($aData as $item) {
+            for ($i = 1; $i < 9; $i++) {
+                if ($item['p' . $i]) {
+                    $af[$i][$item['p' . $i]] = '(' . $item['p' . $i] . ') ' . $item['ken' . $i];
+                    $result['p'.$i] = $af[$i];
+                }
+            }
+        }
+
+
+        foreach ($result as $index => $value) {
+
+            $complectations[($index)] = $value;
+        }
+
+        return $complectations;
+    }
+
+    public function getComplectationCodeFromFormaData($aDataFromForm, $regionCode, $modelCode)
+
+    {
+
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
+
+        if ($regionCode == 'JP'){
+            $table = 'model_desc_jp';
+            $models = 'models_jp';
+            $lang = 'jp';
+        }
+        else
+        {
+            $table = 'model_desc';
+            $models = 'models';
+            $lang = 'en';
+        }
+
+        $pole = array();
+        $pole['body'] = '';
+        $pole['engine1'] = '';
+        $pole['train'] = '';
+        $pole['trans'] = '';
+        $pole['grade'] = '';
+        $pole['sus'] = '';
+        $pole['f2'] = '';
+        $pole['f3'] = '';
+
+        foreach ($aDataFromForm as $index => $value)
+        {
+            switch($index)
+
+            {
+                case ('p1'): $pole['body'] = $value;break;
+                case ('p2'): $pole['engine1'] = $value;break;
+                case ('p3'): $pole['train'] = $value;break;
+                case ('p4'): $pole['trans'] = $value;break;
+                case ('p5'): $pole['grade'] = $value;break;
+                case ('p6'): $pole['sus'] = $value;break;
+                case ('p7'): $pole['f2'] = $value;break;
+                case ('p8'): $pole['f3'] = $value;break;
+
+            }
+        }
+
+
+
+        $sql = "
+        SELECT body_desc.f1
+        FROM body_desc
+        WHERE body_desc.catalog = :regionCode
+        AND body_desc.model_code = :modelCode
+        AND body_desc.body = :body
+        AND body_desc.engine1 = :engine1
+        AND body_desc.train = :train
+        AND body_desc.trans = :trans
+        AND body_desc.grade = :grade
+        AND body_desc.sus = :sus
+        AND body_desc.f2 = :f2
+        AND body_desc.f3 = :f3
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('body',  $pole['body']);
+        $query->bindValue('engine1',  $pole['engine1']);
+        $query->bindValue('train',  $pole['train']);
+        $query->bindValue('trans',  $pole['trans']);
+        $query->bindValue('grade',  $pole['grade']);
+        $query->bindValue('trans',  $pole['trans']);
+        $query->bindValue('sus',  $pole['sus']);
+        $query->bindValue('f2',  $pole['f2']);
+        $query->bindValue('f3',  $pole['f3']);
+
+
+        $query->execute();
+
+        $aData = $query->fetch();
+
+        $complectation = $aData['f1'];
+
+
+        return $complectation;
+
+    }
+
+    public function getComplectations($regionCode, $modelCode, $modificationCode)
+
+    {
+
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
+        $sql = "
+        SELECT body_desc.f1
+        FROM body_desc
+        WHERE body_desc.catalog = :regionCode
+        AND body_desc.model_code = :modelCode
+        ";
+
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('modelCode',  $modelCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $complectations = array();
+
+        foreach($aData as $item){
+
+
+            $complectations[$item['f1']] = array(
+                Constants::NAME => $item['f1'],
+                Constants::OPTIONS => array());
+
+        }
+
+        return $complectations;
+
     }
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
+
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
         $sql = "
         SELECT `id`, `desc_en`
         FROM pri_groups
@@ -221,6 +534,9 @@ class SubaruCatalogModel extends CatalogModel{
 
     public function getGroupSchemas($regionCode, $modelCode, $modificationCode, $groupCode)
     {
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
         $sqlNumPrigroup = "
         SELECT *
         FROM pri_groups_full
@@ -264,6 +580,10 @@ class SubaruCatalogModel extends CatalogModel{
 
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
+
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
     	$sqlNumPrigroup = "
         SELECT num_image
         FROM pri_groups_full
@@ -333,6 +653,10 @@ class SubaruCatalogModel extends CatalogModel{
 
     public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
+
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
         $sqlSchemas = "
         SELECT *
         FROM part_images
@@ -370,6 +694,9 @@ class SubaruCatalogModel extends CatalogModel{
 
     public function getSchema($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
+
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
     	 
         $sqlSchema = "
         SELECT *
@@ -409,6 +736,10 @@ class SubaruCatalogModel extends CatalogModel{
 
     public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
+
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
     	$sqlSchemaLabels = "
         SELECT *
         FROM labels
@@ -426,79 +757,6 @@ class SubaruCatalogModel extends CatalogModel{
         $query->execute();
 
         $aDataLabels = $query->fetchAll();
-     /*   $sqlSchemaLabels = "
-        SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
-        FROM pictures p
-        WHERE p.catalog = :regionCode
-          AND p.cd = :cd
-          AND p.pic_name = :schemaCode
-          AND p.XC26ECHK = 1
-        ";
-
-        $query = $this->conn->prepare($sqlSchemaLabels);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('cd', $cd);
-        $query->bindValue('schemaCode', $schemaCode);
-        $query->execute();
-
-        $aDataLabels = $query->fetchAll();
-
-        $sqlSchemaLabelsDescr = "
-        SELECT pn.id, pn.descr
-        FROM print_names pn
-        WHERE pn.catalog = ?
-          AND pn.cd = ?
-          AND pn.lang = 1
-          AND pn.id IN (?)
-        ";
-
-        $query = $this->conn->executeQuery($sqlSchemaLabelsDescr, array(
-            $regionCode,
-            $cd,
-            array_column($aDataLabels, 'part_code')
-        ), array(
-            \PDO::PARAM_STR,
-            \PDO::PARAM_STR,
-            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
-        ));
-
-        $aDataDescr = $query->fetchAll();
-
-        $sqlGroupPncs = "
-        SELECT pc.dcod
-        FROM part_catalog pc
-        WHERE pc.catalog = :regionCode
-          AND pc.cd = :cd
-          AND pc.catalog_number = :modificationCode
-          AND pc.sgroup = :subGroupCode
-        GROUP BY pc.dcod
-        ";
-
-        $query = $this->conn->prepare($sqlGroupPncs);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('cd', $cd);
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('subGroupCode', $subGroupCode);
-        $query->execute();
-
-        $aDataGroupPncs = $query->fetchAll();
-
-        $pncs = array();
-        foreach ($aDataLabels as $item) {
-            if (in_array($item['part_code'], array_column($aDataGroupPncs, 'dcod'))){
-                $pncs[$item['part_code']][Constants::OPTIONS][Constants::COORDS][] = array(
-                    Constants::X1 => $item['xs'],
-                    Constants::Y1 => $item['ys'],
-                    Constants::X2 => $item['xe'],
-                    Constants::Y2 => $item['ye'],);
-            }
-        }
-
-        foreach ($aDataDescr as $item) {
-            $pncs[$item['id']][Constants::NAME] = $item['descr'];
-        }
-        */
-        
        
         $pncs = array();
         foreach ($aDataLabels as $item) {
@@ -520,40 +778,16 @@ class SubaruCatalogModel extends CatalogModel{
 
     public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
-     /*   $sqlSchemaLabels = "
-        SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
-        FROM pictures p
-        WHERE p.catalog = :regionCode
-          AND p.cd = :cd
-          AND p.pic_name = :schemaCode
-          AND p.XC26ECHK = 2
-        ";
-
-        $query = $this->conn->prepare($sqlSchemaLabels);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('cd', $cd);
-        $query->bindValue('schemaCode', $schemaCode);
-        $query->execute();
-
-        $aDataLabels = $query->fetchAll();
 
         $articuls = array();
-        foreach ($aDataLabels as $item) {
-            $articuls[$item['part_code']][Constants::NAME] = $item['part_code'];
-
-            $articuls[$item['part_code']][Constants::OPTIONS][Constants::COORDS][] = array(
-                Constants::X1 => $item['xs'],
-                Constants::Y1 => $item['ys'],
-                Constants::X2 => $item['xe'],
-                Constants::Y2 => $item['ye'],
-            );
-        }*/
-$articuls = array();
         return $articuls;
     }
 
     public function getReferGroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
         $sqlSchemaLabels = "
         SELECT *
         FROM refer_to_fig
@@ -604,12 +838,16 @@ $articuls = array();
 
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode)
     {
+
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
         $sqlArticuls = "
         SELECT *
         FROM part_catalog
         WHERE catalog = :regionCode
           AND model_code = :model_code
-          AND f8 = :modificationCode
+          AND (f8 = :modificationCode OR f8 = '')
           AND sec_group = :subGroupCode
           AND part_code = :pncCode
         ";
@@ -625,32 +863,6 @@ $articuls = array();
         $aData = $query->fetchAll();
        
 
-    /*    $sqlArticulsDescr = "
-        SELECT pd.id, GROUP_CONCAT(pd.descr SEPARATOR '; ') as descr
-        FROM part_descs pd
-        WHERE pd.catalog = ?
-          AND pd.cd = ?
-          AND pd.catalog_number = ?
-          AND pd.lang = 1
-          AND pd.id IN (?)
-        GROUP BY pd.id
-        ";
-
-        $query = $this->conn->executeQuery($sqlArticulsDescr, array(
-            $regionCode,
-            $cd,
-            $modificationCode,
-            array_column($aData, 'desc_id')
-        ), array(
-            \PDO::PARAM_STR,
-            \PDO::PARAM_STR,
-            \PDO::PARAM_STR,
-            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
-        ));
-
-        $aDataDescr = $query->fetchAll();
-        $aDataDescr = array_combine(array_column($aDataDescr, 'id'), array_column($aDataDescr, 'descr'));
-*/
         $sql = "
         SELECT *
         FROM body_desc
@@ -670,14 +882,7 @@ $articuls = array();
         $articuls = array();
       
         foreach ($aData as $item) {
-        	 
-        	/*if ((substr_count($item['model_restrictions'], $aCompl['body'])>0) ||
-            (substr_count($item['model_restrictions'], $aCompl['engine1'])>0)||
-            (substr_count($item['model_restrictions'], $aCompl['train'])>0)||
-            (substr_count($item['model_restrictions'], $aCompl['trans'])>0)||
-            (substr_count($item['model_restrictions'], $aCompl['grade'])>0)||
-            (substr_count($item['model_restrictions'], $aCompl['sus'])>0)
-            )*/
+
             
             $articuls[$item['part_number']] = array(
                 Constants::NAME =>$item['model_restrictions'],
@@ -694,6 +899,9 @@ $articuls = array();
 
     public function getGroupBySubgroup($regionCode, $modelCode, $subGroupCode)
     {
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
         $sqlGroup = "
         SELECT pri_group
         FROM sec_groups
