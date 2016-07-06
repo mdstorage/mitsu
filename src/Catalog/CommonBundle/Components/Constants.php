@@ -15,7 +15,6 @@ class Constants {
     const END_DATE = 'end_date';
     const PROD_DATE = 'PROD_DATE';
     const ARTICUL = 'ARTICUL';
-    const TOKEN = 'TOKEN';
 
     const X1 = 'x1';
     const X2 = 'x2';
@@ -24,5 +23,8 @@ class Constants {
 
     const VIN = 'VIN';
 
-    const FIND_PATH = 'http://autoasia.by/search/number/?article=';
+    const FIND_PATH = 'http://autoasia.by/search/number/?article={article}';
+
+    const TOKEN = 'TOKEN';
+    const REFERER = 'http://vincat.ru/origin';
 } 

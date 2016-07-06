@@ -16,8 +16,13 @@ abstract class CatalogController extends BaseController{
      * @param string $regionCode Код региона (нужен для поиска модели)
      *
      */
-    public function regionsModelsAction(Request $request, $regionCode = null)
+    public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
     {
+        $data = $this->get('my_token_info')->getStatus($token);
+
+        if(empty($data) & !empty($token)){
+            return $this->errorBilling('Сервис не оплачен');
+        }
         /**
          * Выборка регионов из базы данных для конкретного артикула
          */
@@ -75,9 +80,11 @@ abstract class CatalogController extends BaseController{
         if ($request->isXmlHttpRequest()) {
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
+            $token = $request->get('token');
             $parameters = array(
                 'regionCode' => $regionCode,
-                'modelCode' => $modelCode
+                'modelCode' => $modelCode,
+                'token' => $token
             );
 
             $modifications = $this->model()->getModifications($regionCode, $modelCode);
@@ -100,8 +107,13 @@ abstract class CatalogController extends BaseController{
         }
     }
 
-    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
+    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $token = null)
     {
+        $data = $this->get('my_token_info')->getStatus($token);
+
+        if(empty($data) & !empty($token)){
+            return $this->errorBilling('Сервис не оплачен');
+        }
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
         $regions = $this->model()->getRegions();
@@ -142,8 +154,13 @@ abstract class CatalogController extends BaseController{
         ));
     }
 
-    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
+    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $token = null)
     {
+        $data = $this->get('my_token_info')->getStatus($token);
+
+        if(empty($data) & !empty($token)){
+            return $this->errorBilling('Сервис не оплачен');
+        }
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
         $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);
@@ -194,8 +211,13 @@ abstract class CatalogController extends BaseController{
         ));
     }
 
-    public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
+    public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $token = null)
     {
+        $data = $this->get('my_token_info')->getStatus($token);
+
+        if(empty($data) & !empty($token)){
+            return $this->errorBilling('Сервис не оплачен');
+        }
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
         $oContainer = Factory::createContainer();
         $regions = $this->model()->getRegions();
@@ -251,8 +273,13 @@ abstract class CatalogController extends BaseController{
         ));
     }
 
-    public function schemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null)
+    public function schemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $token = null)
     {
+        $data = $this->get('my_token_info')->getStatus($token);
+
+        if(empty($data) & !empty($token)){
+            return $this->errorBilling('Сервис не оплачен');
+        }
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
         $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);
@@ -308,8 +335,13 @@ abstract class CatalogController extends BaseController{
         ));
     }
 
-    public function schemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null)
+    public function schemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null, $token = null)
     {
+        $data = $this->get('my_token_info')->getStatus($token);
+
+        if(empty($data) & !empty($token)){
+            return $this->errorBilling('Сервис не оплачен');
+        }
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
         $oContainer = Factory::createContainer();
@@ -370,13 +402,30 @@ abstract class CatalogController extends BaseController{
             $subGroupCode = $request->get('subGroupCode');
             $pncCode = $request->get('pncCode');
             $options = $request->get('options');
+            $token = $request->get('token');
+
+
+            if (!empty($token))
+            {
+                $aDataToken = array();
+                $aDataToken = $this->get('my_token_info')->getDataToken($token);
+
+                $redirectAdress = $aDataToken['url'];
+            }
+            else
+            {
+                $redirectAdress = Constants::FIND_PATH;
+            }
+
+
 
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modificationCode' => $modificationCode,
                 'options' => json_decode($options, true),
                 'subGroupCode' => $subGroupCode,
-                'pncCode' => $pncCode
+                'pncCode' => $pncCode,
+                'redirectAdress' => $redirectAdress
             );
 
             $articuls = $this->model()->getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, json_decode($options, true));

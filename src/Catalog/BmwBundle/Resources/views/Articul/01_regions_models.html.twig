@@ -1,6 +1,17 @@
 {% extends 'CatalogBmwBundle:Catalog:01_regions_models.html.twig' %}
 {% use 'CatalogBmwBundle::bmw.base.html.twig' %}
-{% block regionPath %}{{ path('articul_bmw_find', {'regionCode': region.getCode, 'token': app.request.get('token')}) }}{% endblock regionPath %}
+{% block regionPath %}
+
+    {% if app.request.get('token') %}
+        {{ path('articul_bmw_find_token', {'regionCode': region.getCode, 'token': app.request.get('token')}) }}
+
+    {% else %}
+
+        {{ path('articul_bmw_find', {'regionCode': region.getCode}) }}
+
+    {% endif %}
+
+{% endblock regionPath %}
 {% block ajaxUrl %}{{ path('articul_bmw_modifications') }}{% endblock ajaxUrl %}
 {% block head %}
     <h3>Запчасть с таким артикулом найдена в следующих моделях:</h3>

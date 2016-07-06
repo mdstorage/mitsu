@@ -115,7 +115,7 @@ abstract class ArticulController extends CatalogController{
         return $oContainer;
     }
 
-    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
+    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $token = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulComplectations = $this->model()->getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode);
@@ -124,7 +124,7 @@ abstract class ArticulController extends CatalogController{
             'articulComplectations' => $articulComplectations
         ));
 
-        return parent::complectationsAction($request, $regionCode, $modelCode, $modificationCode);
+        return parent::complectationsAction($request, $regionCode, $modelCode, $modificationCode, $token);
     }
 
     public function articulComplectationsFilter($oContainer, $parameters)

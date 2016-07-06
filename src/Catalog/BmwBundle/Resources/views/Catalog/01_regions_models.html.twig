@@ -101,4 +101,16 @@
     </div>
 
 {% endblock models %}
-{% block regionPath %}{{ path('catalog_bmw', {'token': token, 'regionCode': region.getCode}) }}{% endblock regionPath %}
+
+{% block regionPath %}
+    {% if app.request.get('token') %}
+        {{ path('catalog_bmw_token', {'token': app.request.get('token'), 'regionCode': region.getCode}) }}
+
+        {% else %}
+
+        {{ path('catalog_bmw', {'regionCode': region.getCode}) }}
+
+    {% endif %}
+
+
+{% endblock regionPath %}

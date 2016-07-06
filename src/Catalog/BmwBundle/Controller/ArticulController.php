@@ -45,9 +45,10 @@ use BmwArticulFilters;
 
     }
 
-    public function modificationsAction(Request $request)
+   /* public function modificationsAction(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
+            $articul = $request->cookies->get(Constants::ARTICUL);
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
             $token = $request->get('token');
@@ -57,7 +58,7 @@ use BmwArticulFilters;
                 'token' => $token
             );
 
-            $modifications = $this->model()->getModifications($regionCode, $modelCode);
+            $modifications = $this->model()->getArticulModifications($articul, $regionCode, $modelCode);
 
             if(empty($modifications))
                 return $this->error($request, 'Модификации не найдены.');
@@ -75,7 +76,7 @@ use BmwArticulFilters;
                 'parameters' => $parameters
             ));
         }
-    }
+    }*/
     
        
     public function bmwArticulcomplectations1Action(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $token = null)
@@ -265,7 +266,7 @@ use BmwArticulFilters;
         return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $token);
     }
 
-    public function bmwArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
+    public function bmwArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $token = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL); 
         $articulSubGroups = $this->model()->getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
@@ -274,11 +275,11 @@ use BmwArticulFilters;
             'articulSubGroups' => $articulSubGroups
         ));
 
-        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $token);
         
     }
 
-    public function bmwArticulSchemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null)
+    public function bmwArticulSchemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $token = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulSchemas = $this->model()->getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
@@ -288,10 +289,10 @@ use BmwArticulFilters;
             'articulSchemas' => $articulSchemas
         ));
 
-        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
+        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $token);
     }
 
-    public function bmwArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null)
+    public function bmwArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null, $token = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulPncs = $this->model()->getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode);
@@ -300,6 +301,6 @@ use BmwArticulFilters;
             'articulPncs' => $articulPncs
         ));
 
-        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode);
+        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $token);
     }
 } 
