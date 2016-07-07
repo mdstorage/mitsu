@@ -136,7 +136,7 @@ class ToyotaCatalogModel extends CatalogModel{
     {
         $sql = "
         SELECT johokt.engine1 as f1, johokt.engine2 as f2, johokt.body as f3, johokt.grade as f4, johokt.atm_mtm as f5, johokt.trans as f6,
-        johokt.f1 as f7, johokt.f2 as f8, johokt.f3 as f9, johokt.f4 as f10, compl_code, model_code, prod_start, prod_end,
+        johokt.f1 as f7, johokt.f2 as f8, johokt.f3 as f9, johokt.f4 as f10, johokt.f5 as f11, compl_code, model_code, prod_start, prod_end,
         kig1.desc_en ken1,
         kig2.desc_en ken2,
         kig3.desc_en ken3,
@@ -147,6 +147,7 @@ class ToyotaCatalogModel extends CatalogModel{
         kig8.desc_en ken8,
         kig9.desc_en ken9,
         kig10.desc_en ken10,
+        kig11.desc_en ken11,
 
         tkm1.desc_en ten1,
         tkm2.desc_en ten2,
@@ -157,7 +158,8 @@ class ToyotaCatalogModel extends CatalogModel{
         tkm7.desc_en ten7,
         tkm8.desc_en ten8,
         tkm9.desc_en ten9,
-        tkm10.desc_en ten10
+        tkm10.desc_en ten10,
+        tkm11.desc_en ten11
 
 
         FROM johokt
@@ -171,6 +173,7 @@ class ToyotaCatalogModel extends CatalogModel{
         LEFT JOIN kig kig8 ON (kig8.catalog = johokt.catalog AND kig8.catalog_code = johokt.catalog_code AND kig8.type = '08' AND kig8.sign = johokt.f2)
         LEFT JOIN kig kig9 ON (kig9.catalog = johokt.catalog AND kig9.catalog_code = johokt.catalog_code AND kig9.type = '09' AND kig9.sign = johokt.f3)
         LEFT JOIN kig kig10 ON (kig10.catalog = johokt.catalog AND kig10.catalog_code = johokt.catalog_code AND kig10.type = '10' AND kig10.sign = johokt.f4)
+        LEFT JOIN kig kig11 ON (kig11.catalog = johokt.catalog AND kig11.catalog_code = johokt.catalog_code AND kig11.type = '11' AND kig11.sign = johokt.f5)
 
         LEFT JOIN tkm tkm1 ON (tkm1.catalog = kig1.catalog AND tkm1.catalog_code = kig1.catalog_code AND tkm1.type = kig1.type)
         LEFT JOIN tkm tkm2 ON (tkm2.catalog = kig2.catalog AND tkm2.catalog_code = kig2.catalog_code AND tkm2.type = kig2.type)
@@ -182,6 +185,7 @@ class ToyotaCatalogModel extends CatalogModel{
         LEFT JOIN tkm tkm8 ON (tkm8.catalog = kig8.catalog AND tkm8.catalog_code = kig8.catalog_code AND tkm8.type = kig8.type)
         LEFT JOIN tkm tkm9 ON (tkm9.catalog = kig9.catalog AND tkm9.catalog_code = kig9.catalog_code AND tkm9.type = kig9.type)
         LEFT JOIN tkm tkm10 ON (tkm10.catalog = kig10.catalog AND tkm10.catalog_code = kig10.catalog_code AND tkm10.type = kig10.type)
+        LEFT JOIN tkm tkm11 ON (tkm11.catalog = kig11.catalog AND tkm11.catalog_code = kig11.catalog_code AND tkm11.type = kig11.type)
 
         WHERE johokt.catalog = :regionCode
         AND johokt.catalog_code = :modificationCode
@@ -207,7 +211,7 @@ class ToyotaCatalogModel extends CatalogModel{
         $af = array();
 
         foreach($aData as $item) {
-            for ($i = 1; $i < 11; $i++) {
+            for ($i = 1; $i < 12; $i++) {
                 if ($item['f' . $i]) {
                     $af[$i][$item['f' . $i]] = '(' . $item['f' . $i] . ') ' . $item['ken' . $i];
                     $result['f'.$i] = $af[$i];
@@ -247,7 +251,7 @@ class ToyotaCatalogModel extends CatalogModel{
 
         foreach ($complectations as $index => $value) {
 
-            for ($i = 1; $i < 11; $i++) {
+            for ($i = 1; $i < 12; $i++) {
 
                 if (!empty($value['name']['f' . $i])) {
                     foreach ($value['name']['f' . $i] as $ind => $val) {
@@ -292,11 +296,12 @@ class ToyotaCatalogModel extends CatalogModel{
             case ('f8'): $pole = 'johokt.f2';break;
             case ('f9'): $pole = 'johokt.f3';break;
             case ('f10'): $pole = 'johokt.f4';break;
+            case ('f11'): $pole = 'johokt.f5';break;
         }
 
         $sql = "
         SELECT johokt.engine1 as f1, johokt.engine2 as f2, johokt.body as f3, johokt.grade as f4, johokt.atm_mtm as f5, johokt.trans as f6,
-        johokt.f1 as f7, johokt.f2 as f8, johokt.f3 as f9, johokt.f4 as f10, compl_code, model_code, prod_start, prod_end,
+        johokt.f1 as f7, johokt.f2 as f8, johokt.f3 as f9, johokt.f4 as f10, johokt.f5 as f11, compl_code, model_code, prod_start, prod_end,
         kig1.desc_en ken1,
         kig2.desc_en ken2,
         kig3.desc_en ken3,
@@ -307,6 +312,7 @@ class ToyotaCatalogModel extends CatalogModel{
         kig8.desc_en ken8,
         kig9.desc_en ken9,
         kig10.desc_en ken10,
+        kig11.desc_en ken11,
 
         tkm1.desc_en ten1,
         tkm2.desc_en ten2,
@@ -317,7 +323,8 @@ class ToyotaCatalogModel extends CatalogModel{
         tkm7.desc_en ten7,
         tkm8.desc_en ten8,
         tkm9.desc_en ten9,
-        tkm10.desc_en ten10
+        tkm10.desc_en ten10,
+        tkm11.desc_en ten11
 
 
         FROM johokt
@@ -331,6 +338,7 @@ class ToyotaCatalogModel extends CatalogModel{
         LEFT JOIN kig kig8 ON (kig8.catalog = johokt.catalog AND kig8.catalog_code = johokt.catalog_code AND kig8.type = '08' AND kig8.sign = johokt.f2)
         LEFT JOIN kig kig9 ON (kig9.catalog = johokt.catalog AND kig9.catalog_code = johokt.catalog_code AND kig9.type = '09' AND kig9.sign = johokt.f3)
         LEFT JOIN kig kig10 ON (kig10.catalog = johokt.catalog AND kig10.catalog_code = johokt.catalog_code AND kig10.type = '10' AND kig10.sign = johokt.f4)
+        LEFT JOIN kig kig11 ON (kig11.catalog = johokt.catalog AND kig11.catalog_code = johokt.catalog_code AND kig11.type = '11' AND kig11.sign = johokt.f5)
 
         LEFT JOIN tkm tkm1 ON (tkm1.catalog = kig1.catalog AND tkm1.catalog_code = kig1.catalog_code AND tkm1.type = kig1.type)
         LEFT JOIN tkm tkm2 ON (tkm2.catalog = kig2.catalog AND tkm2.catalog_code = kig2.catalog_code AND tkm2.type = kig2.type)
@@ -342,6 +350,7 @@ class ToyotaCatalogModel extends CatalogModel{
         LEFT JOIN tkm tkm8 ON (tkm8.catalog = kig8.catalog AND tkm8.catalog_code = kig8.catalog_code AND tkm8.type = kig8.type)
         LEFT JOIN tkm tkm9 ON (tkm9.catalog = kig9.catalog AND tkm9.catalog_code = kig9.catalog_code AND tkm9.type = kig9.type)
         LEFT JOIN tkm tkm10 ON (tkm10.catalog = kig10.catalog AND tkm10.catalog_code = kig10.catalog_code AND tkm10.type = kig10.type)
+        LEFT JOIN tkm tkm11 ON (tkm11.catalog = kig11.catalog AND tkm11.catalog_code = kig11.catalog_code AND tkm11.type = kig11.type)
 
         WHERE johokt.catalog = :regionCode
     AND johokt.catalog_code = :modificationCode
@@ -363,7 +372,7 @@ class ToyotaCatalogModel extends CatalogModel{
         $af = array();
 
         foreach($aData as $item) {
-            for ($i = 1; $i < 11; $i++) {
+            for ($i = 1; $i < 12; $i++) {
                 if ($item['f' . $i]) {
                     $af[$i][$item['f' . $i]] = '(' . $item['f' . $i] . ') ' . $item['ken' . $i];
                     $result['f'.$i] = $af[$i];
@@ -429,6 +438,7 @@ class ToyotaCatalogModel extends CatalogModel{
                 $pole['f2'] = '';
                 $pole['f3'] = '';
                 $pole['f4'] = '';
+                $pole['f5'] = '';
 
         foreach ($aDataFromForm as $index => $value)
         {
@@ -445,6 +455,7 @@ class ToyotaCatalogModel extends CatalogModel{
                 case ('f8'): $pole['f2'] = $value;break;
                 case ('f9'): $pole['f3'] = $value;break;
                 case ('f10'): $pole['f4'] = $value;break;
+                case ('f11'): $pole['f5'] = $value;break;
             }
         }
 
@@ -454,7 +465,7 @@ class ToyotaCatalogModel extends CatalogModel{
         WHERE johokt.catalog = :regionCode
         AND johokt.catalog_code = :modificationCode
         AND johokt.engine1 = :engine1
-        AND johokt.engine2 = :engine2
+        AND johokt.engine2 = :engine2 OR johokt.engine2 = ''
         AND johokt.body = :body
         AND johokt.grade = :grade
         AND johokt.atm_mtm = :atm_mtm
@@ -463,6 +474,7 @@ class ToyotaCatalogModel extends CatalogModel{
         AND johokt.f2 = :f2
         AND johokt.f3 = :f3
         AND johokt.f4 = :f4
+        AND johokt.f5 = :f5
 
         ";
 
@@ -479,6 +491,7 @@ class ToyotaCatalogModel extends CatalogModel{
             $query->bindValue('f2',  $pole['f2']);
             $query->bindValue('f3',  $pole['f3']);
             $query->bindValue('f4',  $pole['f4']);
+            $query->bindValue('f5',  $pole['f5']);
 
 
 

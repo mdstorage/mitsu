@@ -50,5 +50,5 @@
     </div>
 {% endblock specification %}
 {% block catalogPath %}
-    {{ path('vin_toyota_groups',({'regionCode': result.region, 'modelCode': result.model, 'modificationCode': result.kod_modifikacii, 'complectationCode': result.kod_complektacii })) }}
+    {{ path('vin_toyota_groups',({'regionCode': result.region, 'modelCode': result.model, 'modificationCode': result.kod_modifikacii, 'complectationCode': result.kod_complektacii, 'token': app.request.get('token') })) }}
 {% endblock catalogPath %}

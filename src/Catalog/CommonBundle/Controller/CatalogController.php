@@ -385,6 +385,22 @@ abstract class CatalogController extends BaseController{
 
         $this->filter($oContainer);
 
+        if (!empty($token))
+        {
+            $aDataToken = array();
+            $aDataToken = $this->get('my_token_info')->getDataToken($token);
+
+            $redirectAdress = $aDataToken['url'];
+        }
+        else
+        {
+            $redirectAdress = Constants::FIND_PATH;
+        }
+
+        $parameters = array_merge($parameters, array(
+            'redirectAdress' => $redirectAdress
+        ));
+
         return $this->render($this->bundle() . ':07_schema.html.twig', array(
             'oContainer' => $oContainer,
             'parameters' => $parameters

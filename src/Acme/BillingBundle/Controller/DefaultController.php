@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing;
+use Catalog\CommonBundle\Components\Constants;
 
 class DefaultController extends Controller
 {
@@ -23,7 +24,7 @@ class DefaultController extends Controller
         $data = $this->get('my_token_info')->getDataToken($token);
 
         if(empty($data['status'])){
-            return $this->error($this->get('request'), 'Сервис не оплачен');
+            return $this->errorBilling('Сервис не оплачен');
         }
 
         else
@@ -48,6 +49,14 @@ class DefaultController extends Controller
         return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array(
             'message' => $message,
             'referer' => "http://vincat.ru/origin"
+        ));
+    }
+
+    public function errorBilling($message)
+    {
+        return $this->render('AcmeBillingBundle:Default:errorBilling.html.twig', array(
+            'message' => $message,
+            'referer' => Constants::REFERER
         ));
     }
 
