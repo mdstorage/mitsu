@@ -99,7 +99,7 @@ articul_bmw:
 
 articul_bmw_find_token:
   path:         /bmw/articul/1/{token}/{regionCode}
-  defaults:     {_controller: CatalogBmwBundle:Articul:findByArticul, token: null, regionCode: null}
+  defaults:     {_controller: CatalogBmwBundle:Articul:findByArticul, regionCode: null}
 
 articul_bmw_find:
   path:         /bmw/articul/01/{regionCode}
@@ -128,7 +128,6 @@ articul_bmw_complectation_month:
   path:         /bmw/articul/11
   defaults:     {_controller: CatalogBmwBundle:Articul:bmwArticulcomplectation_month}
   requirements: {_method: POST}
-
 
 articul_bmw_groups:
   path:         /bmw/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}

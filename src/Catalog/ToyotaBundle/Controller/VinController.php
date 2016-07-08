@@ -28,7 +28,7 @@ class VinController extends BaseController{
     }
 
     public function resultAction(Request $request)
-    {var_dump($request); die;
+    {
         if ($request->isXmlHttpRequest()) {
 
             $vin = $request->get('vin');

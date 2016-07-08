@@ -10,11 +10,12 @@ abstract class ArticulController extends CatalogController{
 
     public function indexAction($error_message = null)
     {
+        $parameters = array();
         setcookie(Constants::ARTICUL, "");
         return $this->render($this->bundle().':01_index.html.twig', array('error_message' => $error_message));
     }
 
-    public function findByArticulAction(Request $request, $regionCode = null)
+  /*  public function findByArticulAction(Request $request, $regionCode = null)
     {
         if (!$articul = $request->cookies->get(Constants::ARTICUL)) {
             if ($articul = trim($request->get('articul'))) {
@@ -47,6 +48,41 @@ abstract class ArticulController extends CatalogController{
         ));
 
         return $this->regionsModelsAction($request, $regionCode);
+    }*/
+
+    public function findByArticulAction(Request $request, $regionCode = null, $token = null)
+    {
+        if (!$articul = $request->cookies->get(Constants::ARTICUL)) {
+            if ($articul = trim($request->get('articul'))) {
+                setcookie(Constants::ARTICUL, $articul);
+            } else {
+                return $this->indexAction('Запчасть с таким артикулом не найдена.');
+            }
+        }
+        if (strlen($articul)<7)
+        {
+            return $this->indexAction('Запчасть с таким артикулом не найдена.');
+        }
+        $articulRegions = $this->model()->getArticulRegions($articul);
+
+        if (empty($articulRegions)) {
+            setcookie(Constants::ARTICUL, "");
+            return $this->indexAction('Запчасть с таким артикулом не найдена.');
+        }
+
+        if (is_null($regionCode)){
+            $regionCode = $articulRegions[0];
+        }
+
+        $articulModels  = $this->model()->getArticulModels($articul, $regionCode);
+
+        $this->addFilter('articulRegionModelsFilter', array(
+            'articulRegions' => $articulRegions,
+            'articulModels'  => $articulModels,
+            'regionCode' => $regionCode
+        ));
+
+        return $this->regionsModelsAction($request, $regionCode, $token);
     }
 
     public function articulRegionModelsFilter($oContainer, $parameters)
