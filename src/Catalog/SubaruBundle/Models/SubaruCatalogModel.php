@@ -45,13 +45,13 @@ class SubaruCatalogModel extends CatalogModel{
 
 
         $sql = "
-        SELECT *
+        SELECT model_code, desc_en
         FROM models
         WHERE models.catalog = :regionCode
         UNION
-        SELECT *
-        FROM models_jp
-        WHERE models_jp.catalog = :regionCode
+        SELECT model_code, desc_en
+        FROM models_jp_translate
+        WHERE models_jp_translate.catalog = :regionCode
 
         ";
 
@@ -75,8 +75,8 @@ class SubaruCatalogModel extends CatalogModel{
         $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
 
         if ($regionCode == 'JP'){
-            $table = 'model_changes_jp';
-            $lang = 'jp';
+            $table = 'model_changes_jp_translate';
+            $lang = 'en';
         }
         else
         {

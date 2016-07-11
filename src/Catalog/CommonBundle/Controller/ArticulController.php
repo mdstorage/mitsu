@@ -125,7 +125,7 @@ abstract class ArticulController extends CatalogController{
     public function modificationsAction(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
-            $articul = $request->cookies->get(Constants::ARTICUL);
+            $articul = $request->cookies->get(Constants::ARTICUL_TOKEN);
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
             $articulModifications = $this->model()->getArticulModifications($articul, $regionCode, $modelCode);
@@ -153,7 +153,7 @@ abstract class ArticulController extends CatalogController{
 
     public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+        $articul = $request->cookies->get(Constants::ARTICUL_TOKEN);
         $articulComplectations = $this->model()->getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode);
 
         $this->addFilter('articulComplectationsFilter', array(

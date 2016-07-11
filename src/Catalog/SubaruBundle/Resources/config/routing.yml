@@ -1,5 +1,9 @@
+catalog_subaru_token:
+  path:         /subaru/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogSubaruBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_subaru:
-  path:         /subaru/catalog/0/{regionCode}
+  path:         /subaru/catalog/00/{regionCode}
   defaults:     {_controller: CatalogSubaruBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_subaru_modifications:
@@ -8,8 +12,8 @@ catalog_subaru_modifications:
   requirements: {_method: POST}
 
 catalog_subaru_complectations:
-  path:         /subaru/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogSubaruBundle:Catalog:complectations}
+  path:         /subaru/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogSubaruBundle:Catalog:complectations, token: null}
 
 catalog_subaru_complectation_korobka:
   path:         /subaru/catalog/12
@@ -17,20 +21,20 @@ catalog_subaru_complectation_korobka:
   requirements: {_method: POST}
 
 catalog_subaru_groups:
-  path:         /subaru/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogSubaruBundle:Catalog:groups}
+  path:         /subaru/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogSubaruBundle:Catalog:groups, token: null}
 
 catalog_subaru_subgroups:
-  path:         /subaru/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogSubaruBundle:Catalog:subgroups}
+  path:         /subaru/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogSubaruBundle:Catalog:subgroups, token: null}
 
 catalog_subaru_schemas:
-  path:         /subaru/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogSubaruBundle:Catalog:schemas}
+  path:         /subaru/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogSubaruBundle:Catalog:schemas, token: null}
 
 catalog_subaru_schema:
-  path:         /subaru/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogSubaruBundle:Catalog:schema}
+  path:         /subaru/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogSubaruBundle:Catalog:schema, token: null}
 
 catalog_subaru_articuls:
   path:         /subaru/catalog/7
@@ -38,9 +42,8 @@ catalog_subaru_articuls:
   requirements: {_method: POST}
 
 catalog_subaru_group:
-  path:         /subaru/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogSubaruBundle:Catalog:getGroupBySubgroup}
-
+  path:         /subaru/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogSubaruBundle:Catalog:getGroupBySubgroup, token: null}
 #------------------------------------------------------------------------------
 
 vin_subaru:
