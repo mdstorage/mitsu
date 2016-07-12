@@ -32,7 +32,8 @@ class SubaruCatalogModel extends CatalogModel{
 
         $regions = array();
         foreach($aData as $item){
-            $regions[$item['catalog'].'_'.$item['sub_wheel']] = array(Constants::NAME=>$item['catalog'], Constants::OPTIONS=>array());
+
+            $regions[$item['catalog'].'_'.$item['sub_wheel']] = array(Constants::NAME=>$item['catalog'].'_'.$item['sub_wheel'], Constants::OPTIONS=>array());
         }
 
         return $regions;
@@ -41,6 +42,7 @@ class SubaruCatalogModel extends CatalogModel{
 
     public function getModels($regionCode)
     {
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
         $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
 
 
@@ -48,22 +50,25 @@ class SubaruCatalogModel extends CatalogModel{
         SELECT model_code, desc_en
         FROM models
         WHERE models.catalog = :regionCode
+        AND models.sub_wheel = :wheel
         UNION
         SELECT model_code, desc_en
         FROM models_jp_translate
         WHERE models_jp_translate.catalog = :regionCode
+        AND models_jp_translate.sub_wheel = :wheel
 
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('wheel', $wheel);
         $query->execute();
 
         $aData = $query->fetchAll();
 
         $models = array();
         foreach($aData as $item){
-            $models[$item['model_code']] = array(Constants::NAME=>'('.$item['model_code'].') '.$item['desc_en'], Constants::OPTIONS=>array());
+            $models[urldecode($item['model_code'])] = array(Constants::NAME=>'('.$item['model_code'].') '.$item['desc_en'], Constants::OPTIONS=>array());
         }
 
         return $models;
@@ -71,12 +76,13 @@ class SubaruCatalogModel extends CatalogModel{
 
     public function getModifications($regionCode, $modelCode)
     {
+        $modelCode = urldecode($modelCode);
 
         $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
 
         if ($regionCode == 'JP'){
-            $table = 'model_changes_jp_translate';
-            $lang = 'en';
+            $table = 'model_changes_jp';
+            $lang = 'jp';
         }
         else
         {
@@ -115,6 +121,7 @@ class SubaruCatalogModel extends CatalogModel{
 
     public function getComplectations1($regionCode, $modelCode, $modificationCode)
     {
+        $modelCode = urldecode($modelCode);
         $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
         $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
 
@@ -184,7 +191,7 @@ class SubaruCatalogModel extends CatalogModel{
         SELECT dif_code, dif_fields
         FROM $models
         WHERE $models.catalog = :regionCode
-        AND $models.model_code =:model_code
+        AND $models.model_code = :model_code
         AND $models.sub_wheel = :wheel
         ";
 
@@ -202,7 +209,6 @@ class SubaruCatalogModel extends CatalogModel{
         {
             $aAgregateData = array_combine(str_split($aAgregateName['dif_code']) , array_diff(explode(' ', $aAgregateName['dif_fields']), array('')));
         }
-
 
 
         $com = array();
@@ -511,7 +517,11 @@ class SubaruCatalogModel extends CatalogModel{
         $sql = "
         SELECT `id`, `desc_en`
         FROM pri_groups
-        WHERE catalog = :regionCode AND model_code =:model_code
+        WHERE pri_groups.catalog = :regionCode AND pri_groups.model_code =:model_code
+        UNION
+        SELECT `id`, `desc_en`
+        FROM pri_groups_jp_translate
+        WHERE pri_groups_jp_translate.catalog = :regionCode AND pri_groups_jp_translate.model_code = :model_code
         ";
 
         $query = $this->conn->prepare($sql);
@@ -537,12 +547,30 @@ class SubaruCatalogModel extends CatalogModel{
         $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
         $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
 
+
+        if ($regionCode == 'JP'){
+            $table = 'pri_groups_full_jp_translate';
+            $imagestable = 'part_images_jp_translate';
+            $lang = 'jp';
+
+        }
+        else
+        {
+            $table = 'pri_groups_full';
+            $imagestable = 'part_images';
+            $lang = 'en';
+
+        }
+
+
         $sqlNumPrigroup = "
-        SELECT *
-        FROM pri_groups_full
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-            AND pri_group = :groupCode
+        SELECT $table.num_image, $table.catalog, $table.sub_dir, $table.sub_wheel, $imagestable.num_model
+        FROM $table
+        INNER JOIN $imagestable ON ($imagestable.catalog = $table.catalog AND $imagestable.model_code = $table.model_code)
+        WHERE $table.catalog = :regionCode
+            AND $table.model_code =:model_code
+            AND $table.pri_group = :groupCode
+        GROUP BY $imagestable.num_model
         ";
     	$query = $this->conn->prepare($sqlNumPrigroup);
         $query->bindValue('regionCode', $regionCode);
@@ -550,7 +578,7 @@ class SubaruCatalogModel extends CatalogModel{
         $query->bindValue('groupCode', $groupCode);
         $query->execute();
 
-        $aData = $query->fetch();  
+        $aData = $query->fetch();
        
         $sqlNumModel = "
         SELECT num_model
@@ -569,12 +597,14 @@ class SubaruCatalogModel extends CatalogModel{
         $groupSchemas = array();
     /*    foreach ($aData as $item)*/ {
             $groupSchemas[$aData['num_image']] = array(Constants::NAME => $aData['num_image'], Constants::OPTIONS => array(
-              Constants::CD => $aData['catalog'].$aData['sub_dir'].$aData['sub_wheel'],
-                    	'num_model' => $aNumModel['num_model'],
+              Constants::CD => $aData['catalog'],
+                        'sub_dir' => $aData['sub_dir'],
+                        'sub_wheel' => $aData['sub_wheel'],
+                    	'num_model' => $aData['num_model'],
                         'num_image' => $aData['num_image']
                 ));
         }
-		
+
         return $groupSchemas;
     }
 
@@ -584,40 +614,23 @@ class SubaruCatalogModel extends CatalogModel{
         $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
         $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
 
-    	$sqlNumPrigroup = "
-        SELECT num_image
-        FROM pri_groups_full
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-            AND pri_group = :groupCode
-        ";
-    	$query = $this->conn->prepare($sqlNumPrigroup);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('model_code', $modelCode);
-        $query->bindValue('groupCode', $groupCode);
-        $query->execute();
 
-        $aNumImage = $query->fetch();
-       
-        $sqlNumModel = "
-        SELECT num_model
-        FROM part_images
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-        GROUP BY num_model
-        ";
-    	$query = $this->conn->prepare($sqlNumModel);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('model_code', $modelCode);
-        $query->execute();
+        if ($regionCode == 'JP'){
+            $table = 'sec_groups_full_jp_translate';
+            $lang = 'jp';
 
-        $aNumModel = $query->fetch();
-        
-     
+        }
+        else
+        {
+            $table = 'sec_groups_full';
+            $lang = 'en';
+
+        }
+
 
         $sqlSubgroups = "
         SELECT *
-        FROM sec_groups_full
+        FROM $table
         WHERE catalog = :regionCode
             AND model_code =:model_code
             AND pri_group = :groupCode
@@ -635,15 +648,12 @@ class SubaruCatalogModel extends CatalogModel{
         $subgroups = array();
         foreach($aData as $item){
             $subgroups[$item['sec_group']] = array(
-                Constants::NAME => $item['desc_en'],
+                Constants::NAME => ($item['desc_en'])?$item['desc_en']:$item['desc_'.$lang],
                 Constants::OPTIONS => array(
                     Constants::X1 => floor($item['x']/2),
                     Constants::X2 => $item['x']/2+50,
                     Constants::Y1 => $item['y']/2-5,
-                    Constants::Y2 => $item['y']/2+20,
-                    Constants::CD => $item['catalog'].$item['sub_dir'].$item['sub_wheel'],
-                    	'num_model' => $aNumModel['num_model'],
-                        'num_image' => $aNumImage['num_image']
+                    Constants::Y2 => $item['y']/2+20
                 )
             );
         }
