@@ -12,7 +12,7 @@
     <tbody>
     {% for articul in oContainer.getActivePnc.getArticuls %}
         <tr>
-            <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getRuname }}" target="_blank">{% block articulItem %}{{ articul.getRuname }}{% endblock articulItem %}</a>
+            <td><a href="{{ parameters.redirectAdress|replace({ '{article}': articul.getRuname }) }}" target="_blank">{% block articulItem %}{{ articul.getRuname }}{% endblock articulItem %}</a>
               {#  <br/> {% if articul.getOption('REPLACE') %} Замена: {{ articul.getOption('REPLACE') }} {% endif %}#} </td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|toyota_date_convertor }} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|toyota_date_convertor }}</td>
             <td> {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }} </td>

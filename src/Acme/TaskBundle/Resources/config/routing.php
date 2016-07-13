@@ -5,7 +5,7 @@ use Symfony\Component\Routing\Route;
 
 $collection = new RouteCollection();
 
-$collection->add('acme_task_homepage', new Route('/origin', array(
+$collection->add('acme_task_homepage', new Route('/origin/{token}', array(
     '_controller' => 'AcmeTaskBundle:Default:index',
 )));
 

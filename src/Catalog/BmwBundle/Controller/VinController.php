@@ -26,15 +26,6 @@ class VinController extends BaseController{
         return 'Catalog\BmwBundle\Components\BmwConstants';
     }
 
-
-    public function articulsAction(Request $request)
-    {
-        if ($request->isXmlHttpRequest()) {
-            return parent::articulsAction($request);
-
-        }
-    }
-
     public function vinGroupsAction(Request $request, $regionCode, $modelCode, $modificationCode)
     {
         $this->addFilter('vinGroupFilter', array(

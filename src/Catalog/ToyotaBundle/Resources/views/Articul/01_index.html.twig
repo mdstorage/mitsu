@@ -1,6 +1,15 @@
 {% extends 'CatalogCommonBundle:Articul:01_index.html.twig' %}
 {% use 'CatalogToyotaBundle::toyota.base.html.twig' %}
-{% block formAction %}{{ path('articul_toyota_find') }}{% endblock formAction %}
+{% block formAction %}
+    {% if app.request.get('token') %}
+        {{ path('articul_toyota_find_token', {'token': app.request.get('token')}) }}
+
+    {% else %}
+
+        {{ path('articul_toyota_find') }}
+
+    {% endif %}
+{% endblock formAction %}
 
 {% block articulScript %}
     <script>

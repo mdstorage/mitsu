@@ -44,9 +44,42 @@ use BmwArticulFilters;
 
 
     }
+
+   /* public function modificationsAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $articul = $request->cookies->get(Constants::ARTICUL);
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+            $token = $request->get('token');
+            $parameters = array(
+                'regionCode' => $regionCode,
+                'modelCode' => $modelCode,
+                'token' => $token
+            );
+
+            $modifications = $this->model()->getArticulModifications($articul, $regionCode, $modelCode);
+
+            if(empty($modifications))
+                return $this->error($request, 'Модификации не найдены.');
+
+            $oContainer = Factory::createContainer()
+                ->setActiveModel(Factory::createModel($modelCode)
+                    ->setModifications(Factory::createCollection($modifications, Factory::createModification())
+                    )
+                );
+
+            $this->filter($oContainer);
+
+            return $this->render($this->bundle() . ':02_modifications.html.twig', array(
+                'oContainer' => $oContainer,
+                'parameters' => $parameters
+            ));
+        }
+    }*/
     
        
-    public function bmwArticulcomplectations1Action(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
+    public function bmwArticulcomplectations1Action(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $token = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
@@ -88,12 +121,14 @@ use BmwArticulFilters;
             $modificationCode = $request->get('modificationCode');
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
+            $token = $request->get('token');
 
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modelCode' => $modelCode,
                 'modificationCode' => $modificationCode,
-                'role' => $role
+                'role' => $role,
+                'token' => $token
             );
 
             $regions = $this->model()->getRegions();
@@ -136,13 +171,15 @@ use BmwArticulFilters;
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
             $korobka= $request->get('korobka');
+            $token = $request->get('token');
 
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modelCode' => $modelCode,
                 'modificationCode' => $modificationCode,
                 'role' => $role,
-                'korobka' => $korobka
+                'korobka' => $korobka,
+                'token' => $token
             );
 
 
@@ -168,12 +205,14 @@ use BmwArticulFilters;
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
             $korobka = $request->get('korobka');
+            $token = $request->get('token');
 
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modelCode' => $modelCode,
                 'modificationCode' => $modificationCode,
-                'korobka' => $korobka
+                'korobka' => $korobka,
+                'token' => $token
             );
 
 
@@ -214,7 +253,7 @@ use BmwArticulFilters;
 
 
 
-    public function bmwArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
+    public function bmwArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $token = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
       
@@ -224,10 +263,10 @@ use BmwArticulFilters;
             'articulGroups' => $articulGroups
         ));
 
-        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
+        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $token);
     }
 
-    public function bmwArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
+    public function bmwArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $token = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL); 
         $articulSubGroups = $this->model()->getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
@@ -236,11 +275,11 @@ use BmwArticulFilters;
             'articulSubGroups' => $articulSubGroups
         ));
 
-        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $token);
         
     }
 
-    public function bmwArticulSchemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null)
+    public function bmwArticulSchemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $token = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulSchemas = $this->model()->getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
@@ -250,10 +289,10 @@ use BmwArticulFilters;
             'articulSchemas' => $articulSchemas
         ));
 
-        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
+        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $token);
     }
 
-    public function bmwArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null)
+    public function bmwArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null, $token = null)
     {
         $articul = $request->cookies->get(Constants::ARTICUL);
         $articulPncs = $this->model()->getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode);
@@ -262,6 +301,6 @@ use BmwArticulFilters;
             'articulPncs' => $articulPncs
         ));
 
-        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode);
+        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $token);
     }
 } 

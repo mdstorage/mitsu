@@ -273,6 +273,7 @@ class BmwArticulModel extends BmwCatalogModel{
         FROM w_bildtaf_suche, w_btzeilen_verbauung
         WHERE btzeilenv_sachnr = :articul
         and bildtafs_btnr = btzeilenv_btnr
+        and bildtafs_mospid = btzeilenv_mospid
         and btzeilenv_mospid = :modificationCode
         ";
 

@@ -20,7 +20,8 @@ class AlfaRomeoVinModel extends AlfaRomeoCatalogModel {
         $sql = "
         SELECT vin_chassis.mvs, motor, vin_chassis.date, mvs.cat_cod, catalogues.cat_dsc, comm_modgrp.cmg_dsc, brands.title, comm_modgrp.cmg_cod, mvs.mvs_dsc
         FROM vin_chassis, mvs, catalogues, comm_modgrp, brands
-        WHERE (vin_chassis.vin = :vin or (vin_chassis.chassy = RIGHT(:vin,8) AND SUBSTRING(vin_chassis.mvs, 1, 3) = SUBSTRING(:vin, 4, 3)))
+        WHERE (vin_chassis.vin = :vin or (vin_chassis.chassy = RIGHT(:vin,8) AND SUBSTRING(vin_chassis.mvs, 1, 3) = SUBSTRING(:vin, 4, 3))
+        OR (RIGHT(vin_chassis.model_chassy,8) = RIGHT(:vin,8) AND LEFT(vin_chassis.model_chassy,3) IN (SELECT mod_cod FROM vin WHERE vin_cod = SUBSTRING(:vin, 4, 3))))
         AND mvs.mod_cod = SUBSTRING(vin_chassis.mvs, 1, 3)
         AND mvs.mvs_version = SUBSTRING(vin_chassis.mvs, 4, 3)
         AND mvs.mvs_serie = SUBSTRING(vin_chassis.mvs, 7, 1)

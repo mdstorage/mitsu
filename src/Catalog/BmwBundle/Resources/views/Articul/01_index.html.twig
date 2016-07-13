@@ -1,3 +1,15 @@
 {% extends 'CatalogCommonBundle:Articul:01_index.html.twig' %}
 {% use 'CatalogBmwBundle::bmw.base.html.twig' %}
-{% block formAction %}{{ path('articul_bmw_find') }}{% endblock formAction %}
+{% block formAction %}
+
+    {% if app.request.get('token') %}
+        {{ path('articul_bmw_find_token', {'token': app.request.get('token')}) }}
+
+    {% else %}
+
+        {{ path('articul_bmw_find') }}
+
+    {% endif %}
+
+
+{% endblock formAction %}

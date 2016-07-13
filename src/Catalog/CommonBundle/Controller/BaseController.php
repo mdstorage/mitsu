@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Catalog\CommonBundle\Components\Factory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Catalog\CommonBundle\Components\Constants;
 
 abstract class BaseController extends Controller
 {
@@ -76,6 +77,14 @@ abstract class BaseController extends Controller
         return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array(
             'message' => $message,
             'referer' => $headers['REFERER']
+        ));
+    }
+
+    public function errorBilling($message)
+    {
+        return $this->render('AcmeBillingBundle:Default:errorBilling.html.twig', array(
+            'message' => $message,
+            'referer' => Constants::REFERER
         ));
     }
 

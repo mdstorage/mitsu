@@ -1,7 +1,7 @@
 {% block brand %}BMW{% endblock brand %}
-{% block catalogPath %}{{ path('catalog_bmw') }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_bmw') }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_bmw') }}{% endblock articulPath %}
+{% block catalogPath %}{{ path('catalog_bmw', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_bmw', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_bmw', {'token': app.request.get('token')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
         <link rel="stylesheet" href="{{ asset('bundles/catalogbmw/css/common.css') }}" media="all">
     {% endblock userStylesheets %}
