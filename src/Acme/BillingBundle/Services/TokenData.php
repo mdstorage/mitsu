@@ -21,7 +21,7 @@ class TokenData
 
         $aData = array();
         $outData = array('token' => $token, 'SERVER' => $_SERVER);
-        $_server = json_encode($outData);
+        $_server = json_encode($outData);var_dump($_server); die;
 
         if($curl = curl_init()) {
             curl_setopt($curl, CURLOPT_URL, "http://billing.iauto.by/get/?token=".$token);
@@ -41,7 +41,7 @@ class TokenData
     {
 
         $aData = array();
-        $outData = array('token' => $token, 'SERVER' => $_SERVER);
+        $outData = array('token' => $token, 'request' => $this->get('request'));
         $_server = json_encode($outData);
 
         if($curl = curl_init()) {
