@@ -3,7 +3,7 @@ catalog_bmw_token:
   defaults:     {_controller: CatalogBmwBundle:Catalog:regionsModels, token: null, regionCode: null}
 
 catalog_bmw:
-  path:         /bmw/catalog/00/{regionCode}
+  path:         /bmw/{regionCode}
   defaults:     {_controller: CatalogBmwBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_bmw_modifications:
