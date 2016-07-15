@@ -59,5 +59,10 @@
     </div>
 {% endblock specification %}
 {% block catalogPath %}
-    {{ path('vin_audi_groups',({'regionCode': oContainer.getRegions|first.getCode, 'modelCode': result.model_for_groups, 'modificationCode': result.modif })) }}
+    {{ path('vin_audi_groups',({
+        'regionCode': oContainer.getRegions|first.getCode,
+        'modelCode': result.model_for_groups,
+        'modificationCode': result.modif,
+        'token': app.request.get('token')
+    })) }}
 {% endblock catalogPath %}

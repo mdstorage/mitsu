@@ -3,7 +3,7 @@ catalog_toyota_token:
   defaults:     {_controller: CatalogToyotaBundle:Catalog:regionsModels, token: null, regionCode: null}
 
 catalog_toyota:
-  path:         /toyota/catalog/00/{regionCode}
+  path:         /toyota/{regionCode}
   defaults:     {_controller: CatalogToyotaBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_toyota_modifications:

@@ -4,18 +4,22 @@ namespace Catalog\ToyotaBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Catalog\CommonBundle\Components\Constants;
 
 
 class ComplectationType extends AbstractType{
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $aOptions)
     {
-        foreach ($options['data'] as $index=>$value) {
+        $aLabels = array();
+        foreach ($aOptions['data'] as $index=>$value) {
+
+            $aLabels = array_diff($value['options']['option1'], array(''));
 
 
                 $builder
                     ->add('title'.$index, 'choice', array(
-                        'label' => $value['options']['option1'][$index],
+                        'label' => $aLabels[$index],
                         'choices' => $value['name'],
 
                         'attr' => array(

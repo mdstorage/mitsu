@@ -49,7 +49,8 @@ class CatalogController extends BaseController{
 
         $complectationsForForm = $this->model()->getComplectationsForForm($complectations);
 
-        $form = $this->createForm(new ComplectationType(), $complectationsForForm);
+
+        $form = $this->createForm($this->get('myform'), $complectationsForForm);
 
 
         if(empty($complectations))
@@ -64,7 +65,7 @@ class CatalogController extends BaseController{
         $this->filter($oContainer);
 
         $complectationsKeys = array_keys($oContainer->getActiveModification()->getComplectations());
-        if (1 == count($complectationsKeys)) {
+    /*    if (1 == count($complectationsKeys)) {
             return $this->redirect(
                 $this->generateUrl(
                     str_replace('complectations', 'groups', $this->get('request')->get('_route')),
@@ -74,7 +75,7 @@ class CatalogController extends BaseController{
                     )
                 ), 301
             );
-        };
+        };*/
 
         return $this->render($this->bundle() . ':03_complectations.html.twig', array(
             'oContainer' => $oContainer,

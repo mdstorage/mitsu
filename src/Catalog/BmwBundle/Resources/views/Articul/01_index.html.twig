@@ -3,6 +3,7 @@
 {% block formAction %}
 
     {% if app.request.get('token') %}
+
         {{ path('articul_bmw_find_token', {'token': app.request.get('token')}) }}
 
     {% else %}

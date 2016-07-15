@@ -31,7 +31,7 @@ class DefaultController extends Controller
         {
             return $this->redirect(
                 $this->generateUrl(
-                    'catalog'.'_'.$this->get('request')->get('catalog'),
+                    'catalog_'.$this->get('request')->get('catalog').'_token',
                     array_merge($parameters, array(
                             'token' => $token,
                             'regionCode' => null

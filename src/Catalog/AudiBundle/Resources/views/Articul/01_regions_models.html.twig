@@ -1,6 +1,16 @@
 {% extends 'CatalogAudiBundle:Catalog:01_regions_models.html.twig' %}
 {% use 'CatalogAudiBundle::audi.base.html.twig' %}
-{% block regionPath %}{{ path('articul_audi_find', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+{% block regionPath %}
+    {% if app.request.get('token') %}
+
+        {{ path('articul_audi_find_token', {'token': app.request.get('token'), 'regionCode': region.getCode }) }}
+
+    {% else %}
+
+        {{ path('articul_audi_find', {'regionCode': region.getCode}) }}
+
+    {% endif %}
+{% endblock regionPath %}
 {% block ajaxUrl %}{{ path('articul_audi_modifications') }}{% endblock ajaxUrl %}
 {% block head %}
     <h3>Запчасть с таким артикулом найдена в следующих моделях:</h3>
