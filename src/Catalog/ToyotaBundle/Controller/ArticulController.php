@@ -8,8 +8,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Catalog\ToyotaBundle\Controller\Traits\ToyotaArticulFilters;
 use Catalog\ToyotaBundle\Form\ComplectationType;
 
-class ArticulController extends BaseController{
-use ToyotaArticulFilters;
+class ArticulController extends BaseController
+{
+
+    use ToyotaArticulFilters;
+
     public function bundle()
     {
         return 'CatalogToyotaBundle:Articul';
@@ -23,6 +26,64 @@ use ToyotaArticulFilters;
     public function bundleConstants()
     {
         return 'Catalog\ToyotaBundle\Components\ToyotaConstants';
+    }
+
+
+    public function index_tokenAction($error_message = null, $token = null)
+    {
+        setcookie(Constants::ARTICUL_TOKEN, '');
+        return $this->render($this->bundle().':01_index.html.twig', array('error_message' => $error_message));
+    }
+
+    public function findByArticulTokenAction(Request $request, $token = null, $regionCode = null)
+    {
+        if (!$articul = $request->cookies->get(Constants::ARTICUL_TOKEN)) {
+            if ($articul = trim($request->get('articul'))) {
+                setcookie(Constants::ARTICUL_TOKEN, $articul);
+            } else {
+                return $this->indexAction('Запчасть с таким артикулом не найдена.', $token);
+            }
+        }
+        if (strlen($articul)<7)
+        {
+            return $this->indexAction('Запчасть с таким артикулом не найдена.', $token);
+        }
+        $articulRegions = $this->model()->getArticulRegions($articul);
+
+        if (empty($articulRegions)) {
+            setcookie(Constants::ARTICUL_TOKEN, '');
+            return $this->indexAction('Запчасть с таким артикулом не найдена.', $token);
+        }
+
+        if (is_null($regionCode)){
+            $regionCode = $articulRegions[0];
+        }
+
+        $articulModels  = $this->model()->getArticulModels($articul, $regionCode);
+
+        $this->addFilter('articulRegionModelsFilter', array(
+            'articulRegions' => $articulRegions,
+            'articulModels'  => $articulModels,
+            'regionCode' => $regionCode
+        ));
+
+        return $this->regionsModelsAction($request, $regionCode, $token);
+    }
+
+    public function modificationsTokenAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $articul = $request->cookies->get(Constants::ARTICUL_TOKEN);
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+            $articulModifications = $this->model()->getArticulModifications($articul, $regionCode, $modelCode);
+
+            $this->addFilter('articulModificationsFilter', array(
+                'articulModifications' => $articulModifications
+            ));
+
+            return parent::modificationsAction($request);
+        }
     }
 
     public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $subGroupCode)

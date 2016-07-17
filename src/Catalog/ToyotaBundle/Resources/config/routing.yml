@@ -84,12 +84,16 @@ vin_toyota_group:
 #---------------------------------------------------------------------------------------------
 
 articul_toyota:
-  path:         /toyota/articul/0/{token}
-  defaults:     {_controller: CatalogToyotaBundle:Articul:index, token: null}
+  path:         /toyota/articul/0
+  defaults:     {_controller: CatalogToyotaBundle:Articul:index}
+
+articul_toyota_token:
+  path:         /toyota/articul/00/{token}
+  defaults:     {_controller: CatalogToyotaBundle:Articul:index_token, token: null}
 
 articul_toyota_find_token:
   path:         /toyota/articul/1/{token}/{regionCode}
-  defaults:     {_controller: CatalogToyotaBundle:Articul:findByArticul, token: null, regionCode: null}
+  defaults:     {_controller: CatalogToyotaBundle:Articul:findByArticulToken, token: null, regionCode: null}
 
 articul_toyota_find:
   path:         /toyota/articul/01/{regionCode}
@@ -97,7 +101,7 @@ articul_toyota_find:
 
 articul_toyota_modifications:
   path:         /toyota/articul/3
-  defaults:     {_controller: CatalogToyotaBundle:Articul:modifications}
+  defaults:     {_controller: CatalogToyotaBundle:Articul:modificationsToken}
   requirements: {_method: POST}
 
 articul_toyota_complectations:
