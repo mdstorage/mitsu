@@ -19,7 +19,7 @@
 
 
 
-                    <a href="{{ path('articul_toyota_subgroups', parameters|merge({'groupCode': group.getCode})) }}">
+                    <a href="{{ path('articul_toyota_subgroups', parameters|merge({'groupCode': group.getCode, 'articul': app.request('articul')})) }}">
                         <div class="row">
 
                             ({{ group.getCode }}) {{ group.getRuname }}

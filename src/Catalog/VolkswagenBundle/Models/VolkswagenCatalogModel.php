@@ -80,12 +80,12 @@ class VolkswagenCatalogModel extends CatalogModel{
         $modelCode = urldecode($modelCode);
 
         $sql = "
-        SELECT einsatz, epis_typ, bezeichnung
+        SELECT einsatz, epis_typ
         FROM all_overview
         WHERE all_overview.catalog = 'vw'
         and markt = :regionCode
         and modell = :modelCode
-        and epis_typ NOT LIKE '0'
+        and bezeichnung = ''
         ";
 
         $query = $this->conn->prepare($sql);
@@ -98,7 +98,7 @@ class VolkswagenCatalogModel extends CatalogModel{
         $modifications = array();
         foreach($aData as $item){
             $modifications[$item['einsatz'].'_'.$item['epis_typ']] = array(
-                Constants::NAME     => $item['einsatz'].' '.$item['bezeichnung'],
+                Constants::NAME     => $item['einsatz'],
                 Constants::OPTIONS  => array());
 
         }
@@ -127,7 +127,7 @@ class VolkswagenCatalogModel extends CatalogModel{
         and markt = :regionCode
         and modell = :modelCode
         and einsatz = :modificationCode
-        and epis_typ NOT LIKE '0'
+        and bezeichnung = ''
         ";
 
         $query = $this->conn->prepare($sql);
@@ -159,9 +159,8 @@ class VolkswagenCatalogModel extends CatalogModel{
 
         foreach($aGroup as $item){
 
-
             $groups[$item['hg']=='0'?'10':$item['hg']] = array(
-                Constants::NAME     => mb_convert_encoding($item ['text'], 'UTF-8', 'Windows-1251'),
+                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['text']),'utf8'),
                 Constants::OPTIONS  => array()
             );
         }
@@ -652,7 +651,7 @@ $articuls = array();
         $sGroup = implode('; ', array_unique($aGroup));
 
 
-        return (iconv('cp1251', 'utf8', $sGroup));
+        return mb_strtoupper(iconv('cp1251', 'utf8', $sGroup), 'utf8');
 
     }
 

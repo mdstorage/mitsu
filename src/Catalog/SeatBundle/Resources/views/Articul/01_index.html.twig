@@ -1,3 +1,17 @@
 {% extends 'CatalogCommonBundle:Articul:01_index.html.twig' %}
 {% use 'CatalogSeatBundle::seat.base.html.twig' %}
-{% block formAction %}{{ path('articul_seat_find') }}{% endblock formAction %}
+
+{% block formAction %}
+
+    {% if app.request.get('token') %}
+
+        {{ path('articul_seat_find_token', {'token': app.request.get('token')}) }}
+
+    {% else %}
+
+        {{ path('articul_seat_find') }}
+
+    {% endif %}
+
+
+{% endblock formAction %}

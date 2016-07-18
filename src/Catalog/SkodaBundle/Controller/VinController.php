@@ -33,6 +33,7 @@ class VinController extends BaseController{
             $vin = $request->get('vin');
 
 
+
             $aRegions = $this->model()->getVinRegions($vin);
 
             if(empty($aRegions)){
@@ -93,6 +94,8 @@ class VinController extends BaseController{
         if ($request->isXmlHttpRequest()) {
             $vin = $request->cookies->get(Constants::VIN);
 
+
+            $token = $request->get('token');
 
             $region = $request->get('region');
 
@@ -156,6 +159,7 @@ class VinController extends BaseController{
 
             return $this->render($this->bundle().':02_result.html.twig', array(
                 'result' => $result,
+                'token' => $token,
                 'oContainer' => $oContainer
             ));
         }
@@ -191,7 +195,7 @@ class VinController extends BaseController{
         return $this->groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
     }
 
-    public function vinSubgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $groupCode)
+    public function vinSubgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $groupCode, $token = null)
     {
 
         $this->addFilter('vinSubGroupFilter', array(
@@ -202,7 +206,7 @@ class VinController extends BaseController{
             'vin' => $request->cookies->get(Constants::VIN),
         ));
 
-        return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode,$complectationCode = null, $groupCode);
+        return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode,$complectationCode = null, $groupCode, $token);
     }
 
     public function vinSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)

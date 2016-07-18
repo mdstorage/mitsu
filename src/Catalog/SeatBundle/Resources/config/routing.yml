@@ -1,5 +1,9 @@
+catalog_seat_token:
+  path:         /seat/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogSeatBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_seat:
-  path:         /seat/catalog/0/{regionCode}
+  path:         /seat/{regionCode}
   defaults:     {_controller: CatalogSeatBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_seat_modifications:
@@ -12,20 +16,20 @@ catalog_seat_complectations:
   defaults:     {_controller: CatalogSeatBundle:Catalog:complectations}
 
 catalog_seat_groups:
-  path:         /seat/catalog/3/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogSeatBundle:Catalog:groups}
+  path:         /seat/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogSeatBundle:Catalog:groups, token: null}
 
 catalog_seat_subgroups:
-  path:         /seat/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogSeatBundle:Catalog:subgroups}
+  path:         /seat/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogSeatBundle:Catalog:subgroups, token: null}
 
 catalog_seat_schemas:
-  path:         /seat/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogSeatBundle:Catalog:schemas}
+  path:         /seat/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogSeatBundle:Catalog:schemas, token: null}
 
 catalog_seat_schema:
-  path:         /seat/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogSeatBundle:Catalog:schema}
+  path:         /seat/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogSeatBundle:Catalog:schema, token: null}
 
 catalog_seat_articuls:
   path:         /seat/catalog/7
@@ -33,14 +37,14 @@ catalog_seat_articuls:
   requirements: {_method: POST}
 
 catalog_seat_group:
-  path:         /seat/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogSeatBundle:Catalog:getGroupBySubgroup}
+  path:         /seat/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogSeatBundle:Catalog:getGroupBySubgroup, token: null}
 
 #------------------------------------------------------------------------------
 
 vin_seat:
-  path:         /seat/vin/0
-  defaults:     {_controller: CatalogSeatBundle:Vin:index}
+  path:         /seat/vin/0/{token}
+  defaults:     {_controller: CatalogSeatBundle:Vin:index, token: null}
 
 vin_seat_region:
   path:         /seat/vin/2
@@ -53,20 +57,20 @@ vin_seat_result:
   requirements: {_method: POST}
 
 vin_seat_groups:
-  path:         /seat/vin/3/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogSeatBundle:Vin:groups}
+  path:         /seat/vin/3/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogSeatBundle:Vin:groups, token: null}
 
 vin_seat_subgroups:
-  path:         /seat/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogSeatBundle:Vin:vinSubgroups}
+  path:         /seat/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogSeatBundle:Vin:vinSubgroups, token: null}
 
 vin_seat_schemas:
-  path:         /seat/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogSeatBundle:Vin:schemas}
+  path:         /seat/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogSeatBundle:Vin:schemas, token: null}
 
 vin_seat_schema:
-  path:         /seat/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogSeatBundle:Vin:schema}
+  path:         /seat/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogSeatBundle:Vin:schema, token: null}
 
 vin_seat_articuls:
   path:         /seat/vin/7
@@ -74,17 +78,21 @@ vin_seat_articuls:
   requirements: {_method: POST}
 
 vin_seat_group:
-  path:         /seat/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogSeatBundle:Vin:getGroupBySubgroup}
+  path:         /seat/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogSeatBundle:Vin:getGroupBySubgroup, token: null}
 
 #---------------------------------------------------------------------------------------------
 
 articul_seat:
-  path:         /seat/articul/0
-  defaults:     {_controller: CatalogSeatBundle:Articul:index}
+  path:         /seat/articul/0/{token}
+  defaults:     {_controller: CatalogSeatBundle:Articul:index, token: null}
+
+articul_seat_find_token:
+  path:         /seat/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogSeatBundle:Articul:findByArticul, token: null, regionCode: null}
 
 articul_seat_find:
-  path:         /seat/articul/1/{regionCode}
+  path:         /seat/articul/2/{regionCode}
   defaults:     {_controller: CatalogSeatBundle:Articul:findByArticul, regionCode: null}
 
 articul_seat_modifications:
@@ -93,24 +101,24 @@ articul_seat_modifications:
   requirements: {_method: POST}
 
 articul_seat_complectations:
-  path:         /seat/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogSeatBundle:Articul:seatArticulComplectations}
+  path:         /seat/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogSeatBundle:Articul:seatArticulComplectations, token: null}
 
 articul_seat_groups:
-  path:         /seat/articul/5/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogSeatBundle:Articul:seatArticulgroups}
+  path:         /seat/articul/5/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogSeatBundle:Articul:seatArticulgroups, token: null}
 
 articul_seat_subgroups:
-  path:         /seat/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogSeatBundle:Articul:seatArticulSubgroups}
+  path:         /seat/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogSeatBundle:Articul:seatArticulSubgroups, token: null}
 
 articul_seat_schemas:
-  path:         /seat/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogSeatBundle:Articul:seatArticulSchemas}
+  path:         /seat/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogSeatBundle:Articul:seatArticulSchemas, token: null}
 
 articul_seat_schema:
-  path:         /seat/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogSeatBundle:Articul:seatArticulSchema}
+  path:         /seat/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogSeatBundle:Articul:seatArticulSchema, token: null}
 
 articul_seat_articuls:
   path:         /seat/articul/9
@@ -118,8 +126,9 @@ articul_seat_articuls:
   requirements: {_method: POST}
 
 articul_seat_group:
-  path:         /seat/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogSeatBundle:Articul:getGroupBySubgroup}
+  path:         /seat/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogSeatBundle:Articul:getGroupBySubgroup, token: null}
+
 catalog_seat_homepage:
     path:     /hello/{name}
     defaults: { _controller: CatalogSeatBundle:Default:index }

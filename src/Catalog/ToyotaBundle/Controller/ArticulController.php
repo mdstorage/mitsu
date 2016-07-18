@@ -29,62 +29,6 @@ class ArticulController extends BaseController
     }
 
 
-    public function index_tokenAction($error_message = null, $token = null)
-    {
-        setcookie(Constants::ARTICUL_TOKEN, '');
-        return $this->render($this->bundle().':01_index.html.twig', array('error_message' => $error_message));
-    }
-
-    public function findByArticulTokenAction(Request $request, $token = null, $regionCode = null)
-    {
-        if (!$articul = $request->cookies->get(Constants::ARTICUL_TOKEN)) {
-            if ($articul = trim($request->get('articul'))) {
-                setcookie(Constants::ARTICUL_TOKEN, $articul);
-            } else {
-                return $this->indexAction('Запчасть с таким артикулом не найдена.', $token);
-            }
-        }
-        if (strlen($articul)<7)
-        {
-            return $this->indexAction('Запчасть с таким артикулом не найдена.', $token);
-        }
-        $articulRegions = $this->model()->getArticulRegions($articul);
-
-        if (empty($articulRegions)) {
-            setcookie(Constants::ARTICUL_TOKEN, '');
-            return $this->indexAction('Запчасть с таким артикулом не найдена.', $token);
-        }
-
-        if (is_null($regionCode)){
-            $regionCode = $articulRegions[0];
-        }
-
-        $articulModels  = $this->model()->getArticulModels($articul, $regionCode);
-
-        $this->addFilter('articulRegionModelsFilter', array(
-            'articulRegions' => $articulRegions,
-            'articulModels'  => $articulModels,
-            'regionCode' => $regionCode
-        ));
-
-        return $this->regionsModelsAction($request, $regionCode, $token);
-    }
-
-    public function modificationsTokenAction(Request $request)
-    {
-        if ($request->isXmlHttpRequest()) {
-            $articul = $request->cookies->get(Constants::ARTICUL_TOKEN);
-            $regionCode = $request->get('regionCode');
-            $modelCode = $request->get('modelCode');
-            $articulModifications = $this->model()->getArticulModifications($articul, $regionCode, $modelCode);
-
-            $this->addFilter('articulModificationsFilter', array(
-                'articulModifications' => $articulModifications
-            ));
-
-            return parent::modificationsAction($request);
-        }
-    }
 
     public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
@@ -94,16 +38,13 @@ class ArticulController extends BaseController
     }
     
        
-    public function toyotaArticulComplectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $token = null)
+    public function toyotaArticulComplectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $articul = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);
 
         if(empty($data) & !empty($token)){
             return $this->errorBilling('Сервис не оплачен');
         }
-
-        $articul = $request->cookies->get(Constants::ARTICUL);
-
 
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
@@ -163,15 +104,15 @@ class ArticulController extends BaseController
         ));
     }
 
-    public function toyotaArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $token = null)
+    public function toyotaArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $articul = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);
+
+
 
         if(empty($data) & !empty($token)){
             return $this->errorBilling('Сервис не оплачен');
         }
-
-        $articul = $request->cookies->get(Constants::ARTICUL);
 
 
         $a = array();
@@ -191,6 +132,7 @@ class ArticulController extends BaseController
         $parameters['complectationCode'] = $complectationCode;
 
 
+
         $articulGroups = $this->model()->getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode);
 
 
@@ -198,25 +140,24 @@ class ArticulController extends BaseController
             'articulGroups' => $articulGroups
         ));
 
-        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $token);
+        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $articul, $token);
     }
 
-    public function toyotaArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $token = null)
+    public function toyotaArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $articul = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL); 
         $articulSubGroups = $this->model()->getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
 
         $this->addFilter('articulSubGroupsFilter', array(
             'articulSubGroups' => $articulSubGroups
         ));
 
-        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $token);
+        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $articul, $token);
         
     }
 
-    public function toyotaArticulSchemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $token = null)
+    public function toyotaArticulSchemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $articul = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+
         $articulSchemas = $this->model()->getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
 
 
@@ -224,19 +165,19 @@ class ArticulController extends BaseController
             'articulSchemas' => $articulSchemas
         ));
 
-        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $token);
+        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $articul, $token);
     }
 
-    public function toyotaArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null, $token = null)
+    public function toyotaArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null, $articul = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+
         $articulPncs = $this->model()->getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode);
 
         $this->addFilter('articulPncsFilter', array(
             'articulPncs' => $articulPncs
         ));
 
-        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $token);
+        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $articul, $token);
     }
     public function toyotaArticularticulsAction(Request $request)
     {

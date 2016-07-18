@@ -16,6 +16,7 @@
                         url:    "{{ path('vin_skoda_result') }}",
                         data:   {
                             region: '{{ region.getCode }}',
+                            token: '{{ app.request.get('token') }}'
                                 },
                         success: function(data) {
                             $("#result_for_region").html(data);

@@ -37,8 +37,8 @@ catalog_audi_articuls:
   requirements: {_method: POST}
 
 catalog_audi_group:
-  path:         /audi/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogAudiBundle:Catalog:getGroupBySubgroup}
+  path:         /audi/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogAudiBundle:Catalog:getGroupBySubgroup, token: null}
 
 #------------------------------------------------------------------------------
 
@@ -78,8 +78,8 @@ vin_audi_articuls:
   requirements: {_method: POST}
 
 vin_audi_group:
-  path:         /audi/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogAudiBundle:Vin:getGroupBySubgroup}
+  path:         /audi/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogAudiBundle:Vin:getGroupBySubgroup, token: null}
 
 #---------------------------------------------------------------------------------------------
 
@@ -87,12 +87,12 @@ articul_audi:
   path:         /audi/articul/0/{token}
   defaults:     {_controller: CatalogAudiBundle:Articul:index, token: null}
 
-articul_audi_find:
-  path:         /audi/articul/1/{regionCode}
-  defaults:     {_controller: CatalogAudiBundle:Articul:findByArticul, regionCode: null}
-
 articul_audi_find_token:
-  path:         /audi/articul/2/{token}/{regionCode}
+  path:         /audi/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogAudiBundle:Articul:findByArticul, token: null, regionCode: null}
+
+articul_audi_find:
+  path:         /audi/articul/2/{regionCode}
   defaults:     {_controller: CatalogAudiBundle:Articul:findByArticul, regionCode: null}
 
 articul_audi_modifications:
@@ -101,23 +101,23 @@ articul_audi_modifications:
   requirements: {_method: POST}
 
 articul_audi_complectations:
-  path:         /audi/articul/4/{regionCode}/{modelCode}/{modificationCode}/{token}
+  path:         /audi/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
   defaults:     {_controller: CatalogAudiBundle:Articul:audiArticulComplectations, token: null}
 
 articul_audi_groups:
-  path:         /audi/articul/5/{regionCode}/{modelCode}/{modificationCode}/{token}
+  path:         /audi/articul/5/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
   defaults:     {_controller: CatalogAudiBundle:Articul:audiArticulgroups, token: null}
 
 articul_audi_subgroups:
-  path:         /audi/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{token}
+  path:         /audi/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{articul}/{token}
   defaults:     {_controller: CatalogAudiBundle:Articul:audiArticulSubgroups, token: null}
 
 articul_audi_schemas:
-  path:         /audi/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{token}
+  path:         /audi/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
   defaults:     {_controller: CatalogAudiBundle:Articul:audiArticulSchemas, token: null}
 
 articul_audi_schema:
-  path:         /audi/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  path:         /audi/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
   defaults:     {_controller: CatalogAudiBundle:Articul:audiArticulSchema, token: null}
 
 articul_audi_articuls:
@@ -126,8 +126,9 @@ articul_audi_articuls:
   requirements: {_method: POST}
 
 articul_audi_group:
-  path:         /audi/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogAudiBundle:Articul:getGroupBySubgroup}
+  path:         /audi/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogAudiBundle:Articul:getGroupBySubgroup, token: null}
+
 catalog_audi_homepage:
     path:     /hello/{name}
     defaults: { _controller: CatalogAudiBundle:Default:index }

@@ -84,44 +84,40 @@ vin_toyota_group:
 #---------------------------------------------------------------------------------------------
 
 articul_toyota:
-  path:         /toyota/articul/0
-  defaults:     {_controller: CatalogToyotaBundle:Articul:index}
-
-articul_toyota_token:
-  path:         /toyota/articul/00/{token}
-  defaults:     {_controller: CatalogToyotaBundle:Articul:index_token, token: null}
+  path:         /toyota/articul/0/{token}
+  defaults:     {_controller: CatalogToyotaBundle:Articul:index, token: null}
 
 articul_toyota_find_token:
   path:         /toyota/articul/1/{token}/{regionCode}
-  defaults:     {_controller: CatalogToyotaBundle:Articul:findByArticulToken, token: null, regionCode: null}
+  defaults:     {_controller: CatalogToyotaBundle:Articul:findByArticul, token: null, regionCode: null}
 
 articul_toyota_find:
-  path:         /toyota/articul/01/{regionCode}
+  path:         /toyota/articul/2/{regionCode}
   defaults:     {_controller: CatalogToyotaBundle:Articul:findByArticul, regionCode: null}
 
 articul_toyota_modifications:
   path:         /toyota/articul/3
-  defaults:     {_controller: CatalogToyotaBundle:Articul:modificationsToken}
+  defaults:     {_controller: CatalogToyotaBundle:Articul:modifications}
   requirements: {_method: POST}
 
 articul_toyota_complectations:
-  path:         /toyota/articul/4/{regionCode}/{modelCode}/{modificationCode}/{token}
+  path:         /toyota/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
   defaults:     {_controller: CatalogToyotaBundle:Articul:toyotaArticulComplectations, token: null}
 
 articul_toyota_groups:
-  path:         /toyota/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  path:         /toyota/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{articul}/{token}
   defaults:     {_controller: CatalogToyotaBundle:Articul:toyotaArticulgroups, token: null}
 
 articul_toyota_subgroups:
-  path:         /toyota/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  path:         /toyota/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{articul}/{token}
   defaults:     {_controller: CatalogToyotaBundle:Articul:toyotaArticulSubgroups, token: null}
 
 articul_toyota_schemas:
-  path:         /toyota/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  path:         /toyota/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
   defaults:     {_controller: CatalogToyotaBundle:Articul:toyotaArticulSchemas, token: null}
 
 articul_toyota_schema:
-  path:         /toyota/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  path:         /toyota/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
   defaults:     {_controller: CatalogToyotaBundle:Articul:toyotaArticulSchema, token: null}
 
 articul_toyota_articuls:

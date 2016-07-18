@@ -137,7 +137,7 @@ class VolkswagenVinModel extends VolkswagenCatalogModel {
                 $sql = "
                 SELECT all_katalog.hg_ug, all_katalog.tsben, all_katalog.bildtafel2, all_katalog.modellangabe, ou
                 FROM all_katalog
-                WHERE all_katalog.catalog = 'au'
+                WHERE all_katalog.catalog = 'vw'
                 and all_katalog.epis_typ = :modificationCode
                 and  LEFT(hg_ug, 1) = :groupCode
                 ";*/
