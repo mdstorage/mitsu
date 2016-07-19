@@ -1,5 +1,9 @@
+catalog_lexus_token:
+  path:         /lexus/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogLexusBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_lexus:
-  path:         /lexus/catalog/0/{regionCode}
+  path:         /lexus/{regionCode}
   defaults:     {_controller: CatalogLexusBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_lexus_modifications:
@@ -8,24 +12,29 @@ catalog_lexus_modifications:
   requirements: {_method: POST}
 
 catalog_lexus_complectations:
-  path:         /lexus/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogLexusBundle:Catalog:complectations}
+  path:         /lexus/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Catalog:complectations, token: null}
+
+catalog_lexus_complectation_korobka:
+  path:         /lexus/catalog/12
+  defaults:     {_controller: CatalogLexusBundle:Catalog:complectation_korobka}
+  requirements: {_method: POST}
 
 catalog_lexus_groups:
-  path:         /lexus/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogLexusBundle:Catalog:groups}
+  path:         /lexus/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Catalog:groups, token: null}
 
 catalog_lexus_subgroups:
-  path:         /lexus/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogLexusBundle:Catalog:subgroups}
+  path:         /lexus/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Catalog:subgroups, token: null}
 
 catalog_lexus_schemas:
-  path:         /lexus/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogLexusBundle:Catalog:schemas}
+  path:         /lexus/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Catalog:schemas, token: null}
 
 catalog_lexus_schema:
-  path:         /lexus/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogLexusBundle:Catalog:schema}
+  path:         /lexus/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Catalog:schema, token: null}
 
 catalog_lexus_articuls:
   path:         /lexus/catalog/7
@@ -33,14 +42,14 @@ catalog_lexus_articuls:
   requirements: {_method: POST}
 
 catalog_lexus_group:
-  path:         /lexus/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogLexusBundle:Catalog:getGroupBySubgroup}
+  path:         /lexus/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Catalog:getGroupBySubgroup, token: null}
 
 #------------------------------------------------------------------------------
 
 vin_lexus:
-  path:         /lexus/vin/0
-  defaults:     {_controller: CatalogLexusBundle:Vin:index}
+  path:         /lexus/vin/0/{token}
+  defaults:     {_controller: CatalogLexusBundle:Vin:index, token: null}
 
 vin_lexus_result:
   path:         /lexus/vin/1
@@ -48,20 +57,20 @@ vin_lexus_result:
   requirements: {_method: POST}
 
 vin_lexus_groups:
-  path:         /lexus/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogLexusBundle:Vin:groups}
+  path:         /lexus/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Vin:groups, token: null}
 
 vin_lexus_subgroups:
-  path:         /lexus/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogLexusBundle:Vin:subgroups}
+  path:         /lexus/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Vin:subgroups, token: null}
 
 vin_lexus_schemas:
-  path:         /lexus/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogLexusBundle:Vin:schemas}
+  path:         /lexus/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Vin:schemas, token: null}
 
 vin_lexus_schema:
-  path:         /lexus/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogLexusBundle:Vin:schema}
+  path:         /lexus/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Vin:schema, token: null}
 
 vin_lexus_articuls:
   path:         /lexus/vin/7
@@ -69,17 +78,21 @@ vin_lexus_articuls:
   requirements: {_method: POST}
 
 vin_lexus_group:
-  path:         /lexus/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogLexusBundle:Vin:vinGroupBySubgroup}
+  path:         /lexus/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Vin:vinGroupBySubgroup, token: null}
 
 #---------------------------------------------------------------------------------------------
 
 articul_lexus:
-  path:         /lexus/articul/0
-  defaults:     {_controller: CatalogLexusBundle:Articul:index}
+  path:         /lexus/articul/0/{token}
+  defaults:     {_controller: CatalogLexusBundle:Articul:index, token: null}
+
+articul_lexus_find_token:
+  path:         /lexus/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogLexusBundle:Articul:findByArticul, token: null, regionCode: null}
 
 articul_lexus_find:
-  path:         /lexus/articul/1/{regionCode}
+  path:         /lexus/articul/2/{regionCode}
   defaults:     {_controller: CatalogLexusBundle:Articul:findByArticul, regionCode: null}
 
 articul_lexus_modifications:
@@ -88,24 +101,24 @@ articul_lexus_modifications:
   requirements: {_method: POST}
 
 articul_lexus_complectations:
-  path:         /lexus/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogLexusBundle:Articul:lexusArticulComplectations}
+  path:         /lexus/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Articul:lexusArticulComplectations, token: null}
 
 articul_lexus_groups:
-  path:         /lexus/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogLexusBundle:Articul:lexusArticulgroups}
+  path:         /lexus/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Articul:lexusArticulgroups, token: null}
 
 articul_lexus_subgroups:
-  path:         /lexus/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogLexusBundle:Articul:lexusArticulSubgroups}
+  path:         /lexus/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Articul:lexusArticulSubgroups, token: null}
 
 articul_lexus_schemas:
-  path:         /lexus/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogLexusBundle:Articul:lexusArticulSchemas}
+  path:         /lexus/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Articul:lexusArticulSchemas, token: null}
 
 articul_lexus_schema:
-  path:         /lexus/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogLexusBundle:Articul:lexusArticulSchema}
+  path:         /lexus/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Articul:lexusArticulSchema, token: null}
 
 articul_lexus_articuls:
   path:         /lexus/articul/9
@@ -113,8 +126,10 @@ articul_lexus_articuls:
   requirements: {_method: POST}
 
 articul_lexus_group:
-  path:         /lexus/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogLexusBundle:Articul:getGroupBySubgroup}
+  path:         /lexus/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogLexusBundle:Articul:getGroupBySubgroup, token: null}
+
+
 catalog_lexus_homepage:
     path:     /hello/{name}
     defaults: { _controller: CatalogLexusBundle:Default:index }

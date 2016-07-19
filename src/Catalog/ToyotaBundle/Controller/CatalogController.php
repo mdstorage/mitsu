@@ -27,7 +27,7 @@ class CatalogController extends BaseController{
     }
 
 
-    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $token = null)
+    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $articul = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);
 
