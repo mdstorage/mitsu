@@ -2,11 +2,11 @@
 {% use 'CatalogToyotaBundle::toyota.base.html.twig' %}
 {% block regionPath %}
     {% if app.request.get('token') %}
-        {{ path('articul_toyota_find_token', {'regionCode': region.getCode, 'token': app.request.get('token')}) }}
+        {{ path('articul_toyota_find_token', {'regionCode': region.getCode, 'token': app.request.get('token'), 'articul': app.request.get('articul')|trim}) }}
 
     {% else %}
 
-        {{ path('articul_toyota_find', {'regionCode': region.getCode}) }}
+        {{ path('articul_toyota_find', {'regionCode': region.getCode, 'articul': app.request.get('articul')|trim}) }}
 
     {% endif %}
 {% endblock regionPath %}
@@ -24,7 +24,7 @@
                     regionCode: $(this).attr('regionCode'),
                     modelCode: "{{ model.getCode }}",
                     token: "{{ app.request.get('token') }}",
-                    articul: "{{ app.request.get('articul') }}",
+                    articul: "{{ app.request.get('articul')|trim }}",
                 },
                 success: function(data) {
                     $("#modifications_for_model{{ modelCode }}").html(data);

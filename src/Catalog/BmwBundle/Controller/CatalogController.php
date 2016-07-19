@@ -313,7 +313,7 @@ class CatalogController extends BaseController{
         }
     }
 
-    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $token = null)
+  /*  public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $articul = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);
 
@@ -370,7 +370,7 @@ class CatalogController extends BaseController{
         ));
     }
 
-    public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $token = null)
+    public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $articul = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);
 
@@ -603,5 +603,6 @@ class CatalogController extends BaseController{
             ));
         }
     }
+  */
 
 } 

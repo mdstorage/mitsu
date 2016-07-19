@@ -79,9 +79,8 @@ use BmwArticulFilters;
     }*/
     
        
-    public function bmwArticulcomplectations1Action(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $token = null)
+    public function bmwArticulcomplectations1Action(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $articul = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
         $regions = $this->model()->getRegions();
@@ -114,9 +113,10 @@ use BmwArticulFilters;
 
     public function bmwArticulcomplectation_korobkaAction(Request $request)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+
         if ($request->isXmlHttpRequest()) {
 
+            $articul = $request->get('articul');
             $role = $request->get('role');
             $modificationCode = $request->get('modificationCode');
             $regionCode = $request->get('regionCode');
@@ -163,9 +163,10 @@ use BmwArticulFilters;
 
     public function bmwArticulcomplectation_yearAction(Request $request)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+
         if ($request->isXmlHttpRequest()) {
 
+            $articul = $request->get('articul');
             $role = $request->get('role');
             $modificationCode = $request->get('modificationCode');
             $regionCode = $request->get('regionCode');
@@ -196,9 +197,9 @@ use BmwArticulFilters;
 
     public function bmwArticulcomplectation_monthAction(Request $request)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
         if ($request->isXmlHttpRequest()) {
 
+            $articul = $request->get('articul');
             $role = $request->get('role');
             $year = $request->get('year');
             $modificationCode = $request->get('modificationCode');
@@ -212,7 +213,8 @@ use BmwArticulFilters;
                 'modelCode' => $modelCode,
                 'modificationCode' => $modificationCode,
                 'korobka' => $korobka,
-                'token' => $token
+                'token' => $token,
+                'articul' => $articul
             );
 
 
@@ -253,35 +255,33 @@ use BmwArticulFilters;
 
 
 
-    public function bmwArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $token = null)
+    public function bmwArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $articul = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
-      
+
         $articulGroups = $this->model()->getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode);
 
         $this->addFilter('articulGroupsFilter', array(
             'articulGroups' => $articulGroups
         ));
 
-        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $token);
+        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $articul, $token);
     }
 
-    public function bmwArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $token = null)
+    public function bmwArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $articul = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL); 
         $articulSubGroups = $this->model()->getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
 
         $this->addFilter('articulSubGroupsFilter', array(
             'articulSubGroups' => $articulSubGroups
         ));
 
-        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $token);
+        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $articul, $token);
         
     }
 
-    public function bmwArticulSchemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $token = null)
+    public function bmwArticulSchemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $articul = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+
         $articulSchemas = $this->model()->getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
 		
 		
@@ -289,18 +289,18 @@ use BmwArticulFilters;
             'articulSchemas' => $articulSchemas
         ));
 
-        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $token);
+        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $articul, $token);
     }
 
-    public function bmwArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null, $token = null)
+    public function bmwArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null, $articul = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+
         $articulPncs = $this->model()->getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode);
 
         $this->addFilter('articulPncsFilter', array(
             'articulPncs' => $articulPncs
         ));
 
-        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $token);
+        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $articul, $token);
     }
 } 

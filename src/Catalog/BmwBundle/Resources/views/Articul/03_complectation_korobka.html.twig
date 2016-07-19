@@ -33,6 +33,7 @@
                                  regionCode: '{{ oContainer.getActiveRegion.getCode }}',
                                  modelCode: '{{ oContainer.getActiveModel.getCode }}',
                                  role: '{{ role }}',
+                                 articul: '{{ app.request.get('articul') }}',
                                  token: '{{ token }}'},
                              success: function(data) {
                                  $("#korobka").html(data);
