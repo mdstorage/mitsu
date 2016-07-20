@@ -9,12 +9,12 @@ services:
             - { name: twig.extension}
   infiniti.catalog.model:
     class: Catalog\InfinitiBundle\Models\InfinitiCatalogModel
-    arguments:  ['@doctrine.dbal.infiniti_connection']
+    arguments:  ['@doctrine.dbal.nissan_connection']
 
   infiniti.vin.model:
     class: Catalog\InfinitiBundle\Models\InfinitiVinModel
-    arguments:  ['@doctrine.dbal.infiniti_connection']
+    arguments:  ['@doctrine.dbal.nissan_connection']
 
   infiniti.articul.model:
     class: Catalog\InfinitiBundle\Models\InfinitiArticulModel
-    arguments:  ['@doctrine.dbal.infiniti_connection']
+    arguments:  ['@doctrine.dbal.nissan_connection']

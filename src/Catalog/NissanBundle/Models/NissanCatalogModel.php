@@ -1060,44 +1060,59 @@ class NissanCatalogModel extends CatalogModel{
         $plus = array();
 
 
-       if ($regionCode != 'JP') {
+        if ($regionCode != 'JP') {
 
 
-           foreach ($aArticuls as $index => $value) {
-               $ct = 0;
-               $schemaOptions = $this->multiexplode(array('+', ' +', '+ '), $value['REC3']);
+            foreach ($aArticuls as $index => $value) {
+                $ct = 0;
+                $schemaOptions = $this->multiexplode(array('+', ' +', '+ '), $value['REC3']);
 
 
-               foreach ($schemaOptions as $item) {
+                foreach ($schemaOptions as $item) {
 
-                   $item = trim($item, ('*()'));
-                   if (strpos($item, ".")) {
-                       $plus = explode('.', $item);
+                    $item = trim($item, ('*()'));
+                    if (strpos($item, ".")) {
+                        $plus = explode('.', $item);
+                        $countPlus = count($plus);
 
+                        $counter = 0;
 
-                       if (count($plus) == count(array_intersect($plus, $complectation[0]))) {
-                           $ct = $ct + 1;
-                       }
+                        foreach ($plus as $plusItem)
+                        {
+                            if (stripos($plusItem, 'HR'))
+                            {
+                                $plus = array_merge($plus, array(str_replace('HR', 'VHR', $plusItem)));
+                                $counter = $counter +1;
 
+                            }
 
-                   } else {
-
-                       if (in_array($item, $complectation[0])) {
-                           $ct = $ct + 1;
-                       }
-
-                   }
-
-
-               }
+                        }
+                        $countPlus = count($plus)-$counter;
 
 
-               if ($ct === 0) {
-                   unset ($aArticuls[$index]);
-               }
+                        if ($countPlus == count(array_intersect($plus, $complectation[0]))) {
+                            $ct = $ct + 1;
+                        }
 
-           }
-       }
+
+                    } else {
+
+                        if (in_array($item, $complectation[0])) {
+                            $ct = $ct + 1;
+                        }
+
+                    }
+
+
+                }
+
+
+                if ($ct === 0) {
+                    unset ($aArticuls[$index]);
+                }
+
+            }
+        }
 
 
 $articuls = array();

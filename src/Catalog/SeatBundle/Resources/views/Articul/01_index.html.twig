@@ -5,11 +5,11 @@
 
     {% if app.request.get('token') %}
 
-        {{ path('articul_seat_find_token', {'token': app.request.get('token')}) }}
+        {{ path('articul_seat_find_token', {'token': app.request.get('token'), 'articul': app.request.get('articul')|trim}) }}
 
     {% else %}
 
-        {{ path('articul_seat_find') }}
+        {{ path('articul_seat_find', {'articul': app.request.get('articul')|trim}) }}
 
     {% endif %}
 

@@ -7,6 +7,7 @@
                 <div class="col-lg-4">
 
                 {% set role = parameters['role']%}
+                    {% set token = parameters['token']%}
 
 
                 {% for complectation in oContainer.getActiveModification.getComplectations %}
@@ -31,7 +32,9 @@
                                  modificationCode: '{{ oContainer.getActiveModification.getCode }}',
                                  regionCode: '{{ oContainer.getActiveRegion.getCode }}',
                                  modelCode: '{{ oContainer.getActiveModel.getCode }}',
-                                 role: '{{ role }}'},
+                                 role: '{{ role }}',
+                                 articul: '{{ app.request.get('articul') }}',
+                                 token: '{{ token }}'},
                              success: function(data) {
                                  $("#korobka").html(data);
                              }

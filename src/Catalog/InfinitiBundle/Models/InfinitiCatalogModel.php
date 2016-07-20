@@ -248,6 +248,7 @@ class InfinitiCatalogModel extends CatalogModel{
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
+
         $MDLDIR = ltrim(substr($complectationCode, 0, strpos($complectationCode, '_')), "0");
         $table = 'genloc_all';
 
@@ -530,7 +531,7 @@ class InfinitiCatalogModel extends CatalogModel{
            foreach($aData as $item)
            {
 
-                       $schemas[strtoupper($item['PIMGSTR'])] = array(
+                       $schemas[strtoupper($item['PIMGSTR'].'_'.$item['DATA3'])] = array(
                        Constants::NAME => $item['REC2'].' '.$item['REC3'],
                        Constants::OPTIONS => array('figure' => trim($item['FIGURE'], ('*()')),
                            'FROMDATE' => $item['FROM_DATE'],
@@ -1066,9 +1067,24 @@ class InfinitiCatalogModel extends CatalogModel{
                    $item = trim($item, ('*()'));
                    if (strpos($item, ".")) {
                        $plus = explode('.', $item);
+                       $countPlus = count($plus);
+
+                       $counter = 0;
+
+                       foreach ($plus as $plusItem)
+                       {
+                           if (stripos($plusItem, 'HR'))
+                           {
+                               $plus = array_merge($plus, array(str_replace('HR', 'VHR', $plusItem)));
+                               $counter = $counter +1;
+
+                           }
+
+                       }
+                       $countPlus = count($plus)-$counter;
 
 
-                       if (count($plus) == count(array_intersect($plus, $complectation[0]))) {
+                       if ($countPlus == count(array_intersect($plus, $complectation[0]))) {
                            $ct = $ct + 1;
                        }
 
@@ -1099,7 +1115,7 @@ $articuls = array();
         	 
             
             
-				$articuls[$item['OEMCODE']] = array(
+				$articuls[$item['OEMCODE'].'_'.$item['FROM_DATE']] = array(
                 Constants::NAME => $item['OEMCODE'],
                 Constants::OPTIONS => array(
                     Constants::QUANTITY => $item['PER_COUNT'],

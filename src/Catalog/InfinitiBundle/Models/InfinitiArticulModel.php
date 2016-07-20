@@ -21,15 +21,8 @@ class InfinitiArticulModel extends InfinitiCatalogModel{
          SELECT CATALOG
           FROM catalog
           WHERE catalog.OEMCODE = :articulCode
-         AND (catalog.CATALOG LIKE 'ELINF'
-         OR catalog.CATALOG LIKE 'ERINF')
+          AND CATALOG IN ('ELINF', 'ERINF', 'CAINF', 'USINF')
 
-        UNION
-        SELECT CATALOG
-        FROM catalog
-        WHERE catalog.OEMCODE = :articulCode
-        AND catalog.CATALOG LIKE 'USINF'
-        OR catalog.CATALOG LIKE 'CAINF'
          ";
 
         $query = $this->conn->prepare($sqlPnc);

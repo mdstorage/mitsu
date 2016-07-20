@@ -41,7 +41,7 @@
 
                 <tr>
                     <td>Цвет кузова:</td>
-                    <td>{{ result.cvet_kuzova }}</td>
+                    <td>{{ result.cvet_kuzova }}</td>{{ app.request }}
                 </tr>
 
 
@@ -50,5 +50,5 @@
     </div>
 {% endblock specification %}
 {% block catalogPath %}
-    {{ path('vin_nissan_groups',({'regionCode': result.region, 'modelCode': result.model, 'modificationCode': result.modif, 'complectationCode': result.kod_complektacii })) }}
+    {{ path('vin_nissan_groups',({'regionCode': result.region, 'modelCode': result.model, 'modificationCode': result.modif, 'complectationCode': result.kod_complektacii, 'token': app.request.get('token') })) }}
 {% endblock catalogPath %}

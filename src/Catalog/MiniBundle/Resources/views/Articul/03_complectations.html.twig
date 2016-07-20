@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
 {% use 'CatalogMiniBundle::mini.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_mini_find') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{{ path('articul_mini_find', {'token': app.request.get('token')}) }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / Комплектация
 {% endblock breadcrumbs %}
 
@@ -11,6 +11,7 @@
         <div class="row">
 
             <div class="complectations">
+                {% set token = parameters['token']%}
 
                 <div class="col-lg-4">
 
@@ -34,7 +35,9 @@
                                 url:    "{{ path('articul_mini_complectation_korobka') }}",
                                 data:   { role: $("#optionsRadios{{ complectation.getCode }}").val(), modificationCode: '{{ oContainer.getActiveModification.getCode }}',
                                     regionCode: '{{ oContainer.getActiveRegion.getCode }}',
-                                    modelCode: '{{ oContainer.getActiveModel.getCode }}'},
+                                    modelCode: '{{ oContainer.getActiveModel.getCode }}',
+                                    articul: '{{ app.request.get('articul') }}',
+                                    token: '{{ token }}'},
                                 success: function(data) {
                                     $("#vin-result").html(data);
                                 }
@@ -46,7 +49,7 @@
                 {% endfor %}
                 </div>
                 <div class="col-lg-8">
-                    <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~oContainer.getActiveModification.getComplectations|first.getOption('grafik')) }}"
+                    <img src="{{ asset('bundles/catalogmini/grafik/w_grafik/'~oContainer.getActiveModification.getComplectations|first.getOption('grafik')) }}"
                          alt="{{ oContainer.getActiveModification.getComplectations|first.getOption('grafik') }}"/>
                 </div>
             </div>

@@ -44,11 +44,43 @@ use MiniArticulFilters;
 
 
     }
+
+   /* public function modificationsAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $articul = $request->cookies->get(Constants::ARTICUL);
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+            $token = $request->get('token');
+            $parameters = array(
+                'regionCode' => $regionCode,
+                'modelCode' => $modelCode,
+                'token' => $token
+            );
+
+            $modifications = $this->model()->getArticulModifications($articul, $regionCode, $modelCode);
+
+            if(empty($modifications))
+                return $this->error($request, 'Модификации не найдены.');
+
+            $oContainer = Factory::createContainer()
+                ->setActiveModel(Factory::createModel($modelCode)
+                    ->setModifications(Factory::createCollection($modifications, Factory::createModification())
+                    )
+                );
+
+            $this->filter($oContainer);
+
+            return $this->render($this->bundle() . ':02_modifications.html.twig', array(
+                'oContainer' => $oContainer,
+                'parameters' => $parameters
+            ));
+        }
+    }*/
     
        
-    public function miniArticulcomplectations1Action(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
+    public function miniArticulcomplectations1Action(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $articul = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
         $regions = $this->model()->getRegions();
@@ -81,19 +113,22 @@ use MiniArticulFilters;
 
     public function miniArticulcomplectation_korobkaAction(Request $request)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+
         if ($request->isXmlHttpRequest()) {
 
+            $articul = $request->get('articul');
             $role = $request->get('role');
             $modificationCode = $request->get('modificationCode');
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
+            $token = $request->get('token');
 
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modelCode' => $modelCode,
                 'modificationCode' => $modificationCode,
-                'role' => $role
+                'role' => $role,
+                'token' => $token
             );
 
             $regions = $this->model()->getRegions();
@@ -128,21 +163,24 @@ use MiniArticulFilters;
 
     public function miniArticulcomplectation_yearAction(Request $request)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+
         if ($request->isXmlHttpRequest()) {
 
+            $articul = $request->get('articul');
             $role = $request->get('role');
             $modificationCode = $request->get('modificationCode');
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
             $korobka= $request->get('korobka');
+            $token = $request->get('token');
 
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modelCode' => $modelCode,
                 'modificationCode' => $modificationCode,
                 'role' => $role,
-                'korobka' => $korobka
+                'korobka' => $korobka,
+                'token' => $token
             );
 
 
@@ -159,21 +197,24 @@ use MiniArticulFilters;
 
     public function miniArticulcomplectation_monthAction(Request $request)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
         if ($request->isXmlHttpRequest()) {
 
+            $articul = $request->get('articul');
             $role = $request->get('role');
             $year = $request->get('year');
             $modificationCode = $request->get('modificationCode');
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
             $korobka = $request->get('korobka');
+            $token = $request->get('token');
 
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modelCode' => $modelCode,
                 'modificationCode' => $modificationCode,
-                'korobka' => $korobka
+                'korobka' => $korobka,
+                'token' => $token,
+                'articul' => $articul
             );
 
 
@@ -214,35 +255,33 @@ use MiniArticulFilters;
 
 
 
-    public function miniArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
+    public function miniArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $articul = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
-      
+
         $articulGroups = $this->model()->getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode);
 
         $this->addFilter('articulGroupsFilter', array(
             'articulGroups' => $articulGroups
         ));
 
-        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
+        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $articul, $token);
     }
 
-    public function miniArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
+    public function miniArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $articul = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL); 
         $articulSubGroups = $this->model()->getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
 
         $this->addFilter('articulSubGroupsFilter', array(
             'articulSubGroups' => $articulSubGroups
         ));
 
-        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $articul, $token);
         
     }
 
-    public function miniArticulSchemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null)
+    public function miniArticulSchemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $articul = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+
         $articulSchemas = $this->model()->getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
 		
 		
@@ -250,18 +289,18 @@ use MiniArticulFilters;
             'articulSchemas' => $articulSchemas
         ));
 
-        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
+        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $articul, $token);
     }
 
-    public function miniArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null)
+    public function miniArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null, $articul = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+
         $articulPncs = $this->model()->getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode);
 
         $this->addFilter('articulPncsFilter', array(
             'articulPncs' => $articulPncs
         ));
 
-        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode);
+        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $articul, $token);
     }
 } 

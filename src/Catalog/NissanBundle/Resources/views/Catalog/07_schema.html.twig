@@ -33,7 +33,9 @@
                         groupCode: '{{ oContainer.getActiveGroup.getCode}}',
                         subgroupCode: '{{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getCode }}',
                         pncCode: '{{ pnc.getCode }}',
-                        options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'
+                        articul: '{{ parameters.articul }}',
+                        options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}',
+                        token: '{{ parameters.token }}'
                         {% endblock ajaxData %} },
                     success: function(data) {
                         $(addslashes("#articul_for_pnc{{ pnc.getCode }}")).html(data);
@@ -79,7 +81,7 @@
 
 {% block commonArticul %}
     <div id="articul_{{ commonArticul.getCode }}">
-        <a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}" target="_blank">{{ commonArticul.getCode }}</a>
+        <a href="{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}" target="_blank">{{ commonArticul.getCode }}</a>
     </div>
     {% for coords in commonArticul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
         <area shape="rect" coords="
@@ -87,7 +89,7 @@
                                         {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }},
                                         {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }},
                                         {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}
-                                    " target="_blank" href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}" id="{{ commonArticul.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" data-name="{% block dataNameCommonArticul %}{{ commonArticul.getCode }}{% endblock dataNameCommonArticul %}"/>
+                                    " target="_blank" href="{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}" id="{{ commonArticul.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" data-name="{% block dataNameCommonArticul %}{{ commonArticul.getCode }}{% endblock dataNameCommonArticul %}"/>
     {% endfor %}
 {% endblock commonArticul %}
 
@@ -97,7 +99,7 @@
 
 {% block image %}
  
-    <img src="{{ asset('bundles/catalognissan/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/SECIMG/'~oContainer.getActiveSchema.getCode~'.gif') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+    <img src="{{ asset('bundles/catalognissan/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/SECIMG/'~oContainer.getActiveSchema.getCode|slice(0,6)~'.gif') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 
 {% endblock image %}
 

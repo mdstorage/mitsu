@@ -28,6 +28,8 @@ abstract class ArticulController extends CatalogController{
         {
             return $this->indexAction('Запчасть с таким артикулом не найдена.', $token);
         }
+
+        $articul = trim($request->get('articul'));
         $articulRegions = $this->model()->getArticulRegions($articul);
 
         if (empty($articulRegions)) {
@@ -38,6 +40,7 @@ abstract class ArticulController extends CatalogController{
         if (is_null($regionCode)){
             $regionCode = $articulRegions[0];
         }
+
 
         $articulModels  = $this->model()->getArticulModels($articul, $regionCode);
 
