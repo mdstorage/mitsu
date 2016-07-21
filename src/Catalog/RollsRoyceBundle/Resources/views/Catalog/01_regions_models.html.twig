@@ -5,16 +5,16 @@
 {% block models %}
     <h3>Модельный ряд:</h3>
 
-    <div class="col-lg-6">
+    <div class="col-lg-3">
 
 
         <div id="result">
             {% for model in oContainer.getActiveRegion.getModels %}
-                {% if loop.index <= (modelsListLenght/2|round + 1) %}
+                {% if loop.index <= (modelsListLenght/4|round + 1) %}
                     {% block halfList %}
                         {% set modelCode = model.getCode|md5 %}
 
-                        <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~model.getOption('grafik')) }}" href="#" id="{{ modelCode }}{{ modelCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}" alt="{{ model.getRuname }}" style="cursor: pointer">
+                        <img src="{{ asset('bundles/catalogrollsroyce/grafik/w_grafik/'~model.getOption('grafik')) }}" href="#" id="{{ modelCode }}{{ modelCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}" alt="{{ model.getRuname }}" style="cursor: pointer">
 
                         <div class="model glyphicon-plus" id="{{ modelCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}">
                             {{ model.getRuname }}
@@ -33,7 +33,7 @@
                                     type:   'POST',
                                     async:  false,
                                     url:    "{% block ajaxUrl %}{{ path('catalog_rollsroyce_modifications') }}{% endblock ajaxUrl %}",
-                                    data:   { regionCode: $(this).attr('regionCode'), modelCode: "{{ model.getCode }}" },
+                                    data:   { regionCode: $(this).attr('regionCode'), modelCode: "{{ model.getCode }}", token: "{{ app.request.get('token') }}" },
                                     success: function(data) {
                                         $("#modifications_for_model{{ modelCode }}").html(data);
                                     }
@@ -72,10 +72,28 @@
             {% endfor %}
         </div>
     </div>
-    <div class="col-lg-6">
+    <div class="col-lg-3">
         <div id="result">
             {% for model in oContainer.getActiveRegion.getModels %}
-                {% if loop.index > (modelsListLenght/2|round + 1) %}
+                {% if (loop.index <= (2*modelsListLenght/4|round + 1) and loop.index > (modelsListLenght/4|round + 1) ) %}
+                    {{ block('halfList') }}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div id="result">
+            {% for model in oContainer.getActiveRegion.getModels %}
+                {% if (loop.index <= (3*modelsListLenght/4|round + 1) and loop.index > (2*modelsListLenght/4|round + 1) ) %}
+                    {{ block('halfList') }}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div id="result">
+            {% for model in oContainer.getActiveRegion.getModels %}
+                {% if (loop.index <= (4*modelsListLenght/4|round + 1) and loop.index > (3*modelsListLenght/4|round + 1) ) %}
                     {{ block('halfList') }}
                 {% endif %}
             {% endfor %}
@@ -83,4 +101,16 @@
     </div>
 
 {% endblock models %}
-{% block regionPath %}{{ path('catalog_rollsroyce', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+
+{% block regionPath %}
+    {% if app.request.get('token') %}
+        {{ path('catalog_rollsroyce_token', {'token': app.request.get('token'), 'regionCode': region.getCode}) }}
+
+        {% else %}
+
+        {{ path('catalog_rollsroyce', {'regionCode': region.getCode}) }}
+
+    {% endif %}
+
+
+{% endblock regionPath %}

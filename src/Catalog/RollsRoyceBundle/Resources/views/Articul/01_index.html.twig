@@ -1,3 +1,16 @@
 {% extends 'CatalogCommonBundle:Articul:01_index.html.twig' %}
 {% use 'CatalogRollsRoyceBundle::rollsroyce.base.html.twig' %}
-{% block formAction %}{{ path('articul_rollsroyce_find') }}{% endblock formAction %}
+{% block formAction %}
+
+    {% if app.request.get('token') %}
+
+        {{ path('articul_rollsroyce_find_token', {'token': app.request.get('token'), 'articul': app.request.get('articul')|trim}) }}
+
+    {% else %}
+
+        {{ path('articul_rollsroyce_find', {'articul': app.request.get('articul')|trim}) }}
+
+    {% endif %}
+
+
+{% endblock formAction %}

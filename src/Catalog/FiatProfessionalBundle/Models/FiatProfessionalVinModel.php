@@ -6,13 +6,13 @@
  * Time: 13:30
  */
 
-namespace Catalog\AlfaRomeoBundle\Models;
+namespace Catalog\FiatProfessionalBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
 
-use Catalog\AlfaRomeoBundle\Components\AlfaRomeoConstants;
+use Catalog\FiatProfessionalBundle\Components\FiatProfessionalConstants;
 
-class AlfaRomeoVinModel extends AlfaRomeoCatalogModel {
+class FiatProfessionalVinModel extends FiatProfessionalCatalogModel {
 
     public function getVinFinderResult($vin)
     {

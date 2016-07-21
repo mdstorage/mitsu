@@ -1,2 +1,2 @@
 {% extends 'CatalogFiatProfessionalBundle:Catalog:08_articuls.html.twig' %}
-{% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}{% endblock commonArticulPath %}
+{% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': articul.getCode }) }}{% endblock commonArticulPath %}

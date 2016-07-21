@@ -1,9 +1,38 @@
-{% extends 'CatalogRollsRoyceBundle:Catalog:08_articuls.html.twig' %}
-{% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}{% endblock commonArticulPath %}
-{% block articulItem %}
-    {% if articul.getCode == app.request.cookies.get(constant('Catalog\\CommonBundle\\Components\\Constants::ARTICUL')) %}
-        <b style=" color: red; ">{{ articul.getCode }}</b>
-    {% else %}
-        {{ articul.getCode }}
+<table class="table small">
+    {% if oContainer.getActivePnc.getArticuls %}
+        <thead>
+        <tr>
+            <th>Артикул</th>
+            <th>Наименование</th>
+            <th>Кол-во</th>
+            <th>Период</th>
+            <th>Доп.информация</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for articul in oContainer.getActivePnc.getArticuls %}
+            {% if articul.getOption('kommavor')  not in [' '] %}<tr><td colspan="4">{{ articul.getOption('kommavor')}}</td></tr>{% endif %}
+            <tr>
+                <td><a href="{{ parameters.redirectAdress|replace({ '{article}': articul.getCode }) }}" target="_blank">{% if articul.getCode == parameters.articul %}
+                            <b style=" color: red; ">{{ articul.getCode }}</b>
+                        {% else %}
+                            {{ articul.getCode }}
+                        {% endif %}</a></td>
+                <td>{{ articul.getRuname }}</td>
+                <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }}</td>
+                <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|rollsroyce_date_convertor}} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|rollsroyce_date_convertor}}</td>
+                <td>{% if articul.getOption('dopinf') %}{{ articul.getOption('dopinf')}} {% endif %}</td>
+
+            </tr>
+            {% if articul.getOption('kommanach') %}<tr><td colspan="3" >{{ articul.getOption('kommanach')}}</td></tr>{% endif %}
+        {% endfor %}
+        </tbody>
     {% endif %}
-{% endblock articulItem %}
+    {% if not oContainer.getActivePnc.getArticuls %}
+        <tbody>
+        Запчасть не применяется в выбранной комплектации
+        </tbody>
+    {% endif %}
+
+</table>

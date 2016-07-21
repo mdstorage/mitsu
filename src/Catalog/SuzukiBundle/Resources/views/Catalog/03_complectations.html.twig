@@ -9,7 +9,7 @@
 	
             <div class="col-lg-6">
            
-                             <a href="{{ path('catalog_suzuki_groups', parameters|merge({'complectationCode': complectation.getCode})) }}">
+                             <a href="{{ path('catalog_suzuki_groups', parameters|merge({'complectationCode': complectation.getCode|url_encode})) }}">
         
     <b>    {{ complectation.getRuname }} </b>
       </a> <br/>  

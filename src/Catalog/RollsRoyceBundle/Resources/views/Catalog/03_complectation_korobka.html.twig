@@ -1,19 +1,14 @@
-{% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
-{% use 'CatalogRollsRoyceBundle::rollsroyce.base.html.twig' %}
-{% block breadcrumbs %}
-   <a href="{{ path('catalog_rollsroyce') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
-   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / Комплектация
-{% endblock breadcrumbs %}
-
 {% block body %}
-    {% block head %}<h3>Положение руля:</h3>{% endblock head %}
+<div class="row">
+    {% block head %}<h3>Коробка передач:</h3>{% endblock head %}
     {% block complectations %}
         <div class="row">
 
             <div class="complectations">
-                {% set token = parameters['token']%}
-
                 <div class="col-lg-4">
+                {% set role = parameters['role']%}
+                    {% set token = parameters['token']%}
+
 
                 {% for complectation in oContainer.getActiveModification.getComplectations %}
 
@@ -22,7 +17,7 @@
 
                         <div class="radio">
 
-                            <input type="radio" name="optionsRadios" id="optionsRadios{{ complectation.getCode }}" value="{{ complectation.getCode }}">
+                            <input type="radio" name="optionsRadiosKor" id="optionsRadios{{ complectation.getCode }}" value="{{ complectation.getCode }}">
                             {{ complectation.getRuname }}
 
                         </div>
@@ -32,49 +27,54 @@
                          $.ajax({
                              type:   'POST',
                              async:  false,
-                             url:    "{{ path('catalog_rollsroyce_complectation_korobka') }}",
-                             data:   { role: $("#optionsRadios{{ complectation.getCode }}").val(), modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                             url:    "{{ path('catalog_rollsroyce_complectation_year') }}",
+                             data:   { korobka: $("#optionsRadios{{ complectation.getCode }}").val(),
+                                 modificationCode: '{{ oContainer.getActiveModification.getCode }}',
                                  regionCode: '{{ oContainer.getActiveRegion.getCode }}',
                                  modelCode: '{{ oContainer.getActiveModel.getCode }}',
-                                 token: '{{ token }}'},
+                                 role: '{{ role }}',
+                                 token: '{{ token }}'
+                             },
                              success: function(data) {
-                                 $("#vin-result").html(data);
+                                 $("#korobka").html(data);
                              }
                          });
                      });
 
 
                  </script>
-
                 {% endfor %}
-                </div>
-                <div class="col-lg-8">
-                <img src="{{ asset('bundles/catalogrollsroyce/grafik/w_grafik/'~oContainer.getActiveModification.getComplectations|first.getOption('grafik')) }}"
-                     alt="{{ oContainer.getActiveModification.getComplectations|first.getOption('grafik') }}"/>
+
                 </div>
             </div>
-        </div>
+         </div>
         <div class="row">
-                <div id="vin-result"></div>
+                <div id="korobka"></div>
         </div>
 
+
         {% for complectation in oContainer.getActiveModification.getComplectations %}
-        {% block vinScript %}
+
                 <script>
 
 
                     $(document).ready(function(){
-                        var count = $('.radio').size();
+
+                        var count = $('input[name="optionsRadiosKor"]').size();
                         if (count == 1) {$("#optionsRadios{{ complectation.getCode }}").prop("checked", true);
                             $("#optionsRadios{{ complectation.getCode }}").trigger('change');
                         }
-                        {#$('#optionsRadiosM').trigger('change');#}
+                        else
+                        {
+                            $('input[name="optionsRadiosKor"]').eq(0).prop("checked", true);
+                            $('input[name="optionsRadiosKor"]').eq(0).trigger('change');
+                        }
 
                     });
                 </script>
 
-            {% endblock vinScript %}
         {% endfor %}
+
         {#
                             <input type="button" class="btn btn-info" value="Удалить статью" id="vin-button{{ post.id }}"/>
                        <div id="vin-result"></div>
@@ -82,4 +82,5 @@
 
                     #}
     {% endblock complectations %}
-{% endblock body %}
+</div>
+    {% endblock body %}

@@ -1,5 +1,5 @@
 catalog_nissan_token:
-  path:         /bmw/catalog/0/{token}/{regionCode}
+  path:         /nissan/catalog/0/{token}/{regionCode}
   defaults:     {_controller: CatalogNissanBundle:Catalog:regionsModels, token: null, regionCode: null}
 
 catalog_nissan:
@@ -83,7 +83,7 @@ articul_nissan:
   defaults:     {_controller: CatalogNissanBundle:Articul:index, token: null}
 
 articul_nissan_find_token:
-  path:         /bmw/articul/1/{token}/{regionCode}
+  path:         /nissan/articul/1/{token}/{regionCode}
   defaults:     {_controller: CatalogNissanBundle:Articul:findByArticul, regionCode: null}
 
 articul_nissan_find:
