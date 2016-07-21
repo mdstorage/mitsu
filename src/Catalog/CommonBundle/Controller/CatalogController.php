@@ -88,7 +88,9 @@ abstract class CatalogController extends BaseController{
                 'token' => $token
             );
 
-            if (!empty($request->get('articul')))
+            $articul = $request->get('articul');
+
+            if (!empty($articul))
             {
                 $parameters = array_merge($parameters, array('articul' => $request->get('articul')));
             }
