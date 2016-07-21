@@ -11,6 +11,8 @@
 
 {% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
 
+
+
 {% block image %}
  
     <img src="{{ asset('bundles/catalogsuzuki/images/'~oContainer.getActiveSchema.getCode~'.png') }}" width="900" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
@@ -18,5 +20,16 @@
 
 
 {% block ajaxUrl %}{{ path('catalog_suzuki_articuls') }}{% endblock ajaxUrl %}
-{% block ajaxData %} regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', complectationCode: '{{ oContainer.getActiveComplectation.getCode }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}' {% endblock ajaxData %}
+{% block ajaxData %}
+    regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+    modelCode: '{{ oContainer.getActiveModel.getCode }}',
+    modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+    complectationCode: '{{ oContainer.getActiveComplectation.getCode }}',
+    groupCode: '{{ oContainer.getActiveGroup.getCode }}',
+    subGroupCode: '{{ parameters.subGroupCode }}',
+    pncCode: '{{ pnc.getCode }}',
+    articul: '{{ parameters.articul }}',
+    options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}',
+    token: '{{ parameters.token }}'
+{% endblock ajaxData %}
 {% block subGroupPath %}{{ path('catalog_suzuki_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}

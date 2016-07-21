@@ -1,5 +1,9 @@
+catalog_skoda_token:
+  path:         /skoda/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogSkodaBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_skoda:
-  path:         /skoda/catalog/0/{regionCode}
+  path:         /skoda/{regionCode}
   defaults:     {_controller: CatalogSkodaBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_skoda_modifications:
@@ -12,20 +16,20 @@ catalog_skoda_complectations:
   defaults:     {_controller: CatalogSkodaBundle:Catalog:complectations}
 
 catalog_skoda_groups:
-  path:         /skoda/catalog/3/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogSkodaBundle:Catalog:groups}
+  path:         /skoda/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Catalog:groups, token: null}
 
 catalog_skoda_subgroups:
-  path:         /skoda/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogSkodaBundle:Catalog:subgroups}
+  path:         /skoda/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Catalog:subgroups, token: null}
 
 catalog_skoda_schemas:
-  path:         /skoda/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogSkodaBundle:Catalog:schemas}
+  path:         /skoda/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Catalog:schemas, token: null}
 
 catalog_skoda_schema:
-  path:         /skoda/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogSkodaBundle:Catalog:schema}
+  path:         /skoda/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Catalog:schema, token: null}
 
 catalog_skoda_articuls:
   path:         /skoda/catalog/7
@@ -33,14 +37,14 @@ catalog_skoda_articuls:
   requirements: {_method: POST}
 
 catalog_skoda_group:
-  path:         /skoda/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogSkodaBundle:Catalog:getGroupBySubgroup}
+  path:         /skoda/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Catalog:getGroupBySubgroup, token: null}
 
 #------------------------------------------------------------------------------
 
 vin_skoda:
-  path:         /skoda/vin/0
-  defaults:     {_controller: CatalogSkodaBundle:Vin:index}
+  path:         /skoda/vin/0/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Vin:index, token: null}
 
 vin_skoda_region:
   path:         /skoda/vin/2
@@ -53,20 +57,20 @@ vin_skoda_result:
   requirements: {_method: POST}
 
 vin_skoda_groups:
-  path:         /skoda/vin/3/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogSkodaBundle:Vin:groups}
+  path:         /skoda/vin/3/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Vin:groups, token: null}
 
 vin_skoda_subgroups:
-  path:         /skoda/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogSkodaBundle:Vin:vinSubgroups}
+  path:         /skoda/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Vin:vinSubgroups, token: null}
 
 vin_skoda_schemas:
-  path:         /skoda/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogSkodaBundle:Vin:schemas}
+  path:         /skoda/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Vin:schemas, token: null}
 
 vin_skoda_schema:
-  path:         /skoda/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogSkodaBundle:Vin:schema}
+  path:         /skoda/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Vin:schema, token: null}
 
 vin_skoda_articuls:
   path:         /skoda/vin/7
@@ -74,17 +78,21 @@ vin_skoda_articuls:
   requirements: {_method: POST}
 
 vin_skoda_group:
-  path:         /skoda/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogSkodaBundle:Vin:getGroupBySubgroup}
+  path:         /skoda/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Vin:getGroupBySubgroup, token: null}
 
 #---------------------------------------------------------------------------------------------
 
 articul_skoda:
-  path:         /skoda/articul/0
-  defaults:     {_controller: CatalogSkodaBundle:Articul:index}
+  path:         /skoda/articul/0/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Articul:index, token: null}
+
+articul_skoda_find_token:
+  path:         /skoda/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogSkodaBundle:Articul:findByArticul, token: null, regionCode: null}
 
 articul_skoda_find:
-  path:         /skoda/articul/1/{regionCode}
+  path:         /skoda/articul/2/{regionCode}
   defaults:     {_controller: CatalogSkodaBundle:Articul:findByArticul, regionCode: null}
 
 articul_skoda_modifications:
@@ -93,24 +101,24 @@ articul_skoda_modifications:
   requirements: {_method: POST}
 
 articul_skoda_complectations:
-  path:         /skoda/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogSkodaBundle:Articul:skodaArticulComplectations}
+  path:         /skoda/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Articul:skodaArticulComplectations, token: null}
 
 articul_skoda_groups:
-  path:         /skoda/articul/5/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogSkodaBundle:Articul:skodaArticulgroups}
+  path:         /skoda/articul/5/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Articul:skodaArticulgroups, token: null}
 
 articul_skoda_subgroups:
-  path:         /skoda/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogSkodaBundle:Articul:skodaArticulSubgroups}
+  path:         /skoda/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Articul:skodaArticulSubgroups, token: null}
 
 articul_skoda_schemas:
-  path:         /skoda/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogSkodaBundle:Articul:skodaArticulSchemas}
+  path:         /skoda/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Articul:skodaArticulSchemas, token: null}
 
 articul_skoda_schema:
-  path:         /skoda/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogSkodaBundle:Articul:skodaArticulSchema}
+  path:         /skoda/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Articul:skodaArticulSchema, token: null}
 
 articul_skoda_articuls:
   path:         /skoda/articul/9
@@ -118,8 +126,9 @@ articul_skoda_articuls:
   requirements: {_method: POST}
 
 articul_skoda_group:
-  path:         /skoda/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogSkodaBundle:Articul:getGroupBySubgroup}
+  path:         /skoda/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogSkodaBundle:Articul:getGroupBySubgroup, token: null}
+
 catalog_skoda_homepage:
     path:     /hello/{name}
     defaults: { _controller: CatalogSkodaBundle:Default:index }

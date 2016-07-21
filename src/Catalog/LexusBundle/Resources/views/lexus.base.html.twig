@@ -1,8 +1,8 @@
 {% block brand %}Lexus{% endblock brand %}
-{% block catalogPathLogo %}{{ path('catalog_lexus') }}{% endblock catalogPathLogo %}
-{% block catalogPath %}{{ path('catalog_lexus') }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_lexus') }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_lexus') }}{% endblock articulPath %}
+{% block catalogPathLogo %}{{ path('catalog_lexus', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_lexus', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_lexus', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_lexus', {'token': app.request.get('token')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
-    <link rel="stylesheet" href="{{ asset('bundles/cataloglexus/css/common.css') }}" media="all">
+    <link rel="stylesheet" href="{{ asset('bundles/catalogtoyota/css/common.css') }}" media="all">
 {% endblock userStylesheets %}

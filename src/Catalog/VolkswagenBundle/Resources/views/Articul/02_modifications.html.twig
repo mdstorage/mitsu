@@ -5,7 +5,7 @@
                 {% block modification %}
                 <div class="col-xs-2">
 
-                    <a href="{{ path('articul_volkswagen_groups', parameters|merge({'modificationCode': modification.getCode})) }}">
+                    <a href="{{ path('articul_volkswagen_groups', parameters|merge({'modificationCode': modification.getCode, 'articul': app.request.get('articul')})) }}">
                         {{ modification.getRuname }}
                     </a>
                 </div>

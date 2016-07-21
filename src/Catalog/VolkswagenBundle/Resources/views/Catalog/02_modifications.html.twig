@@ -3,8 +3,8 @@
     {% for modification in oContainer.getActiveModel.getModifications %}
          <div>
             {% block modification %}
-             <div class="col-xs-4">
-                <a href="{{ path('catalog_volkswagen_groups', parameters|merge({'modificationCode': modification.getCode})) }}">
+             <div class="col-xs-2">
+                <a href="{{ path('catalog_volkswagen_groups', parameters|merge({'modificationCode': modification.getCode, 'token': app.request.get('token')})) }}">
                    {{ modification.getRuname }}
                 </a>
              </div>

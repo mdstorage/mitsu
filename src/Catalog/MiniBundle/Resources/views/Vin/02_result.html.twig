@@ -46,5 +46,6 @@
     </div>
 {% endblock specification %}
 {% block catalogPath %}
-    {{ path('vin_mini_groups',({'regionCode': result.region, 'modelCode': result.modelforGroups, 'modificationCode': result.modifforGroups, 'complectationCode': result.complectationCode})) }}
+    {{ path('vin_mini_groups',({'regionCode': result.region, 'modelCode': result.modelforGroups, 'modificationCode': result.modifforGroups, 'complectationCode': result.complectationCode,
+    'token': app.request.get('token')})) }}
 {% endblock catalogPath %}

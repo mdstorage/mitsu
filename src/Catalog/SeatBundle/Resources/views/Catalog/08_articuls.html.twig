@@ -14,7 +14,7 @@
     <tbody>
     {% for articul in oContainer.getActivePnc.getArticuls %}
         <tr>
-            <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a>
+            <td><a href="{{ parameters.redirectAdress|replace({ '{article}': articul.getCode }) }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a>
                 {% if articul.getOption('zamena') %} <br>C {{ articul.getOption('dataOtmeny')|seat_date_convertor  }} замена: {{ articul.getOption('zamena') }} <br>({{ articul.getOption('zamenakoli4')|replace({'~':' '}) }} шт.){% endif %}
             </td>
             <td>{{ articul.getRuname }}</td>

@@ -30,7 +30,7 @@ trait InfinitiArticulFilters {
     public function CFilter($oContainer, $parameters)
     {
 
-       $articulDesc = $this->model()->getArticulDesc($parameters['articul'], $parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode']);
+        $articulDesc = $this->model()->getArticulDesc($parameters['articul'], $parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode']);
 
         $complectations = $oContainer->getActiveModification()->getComplectations();
 
@@ -63,54 +63,54 @@ trait InfinitiArticulFilters {
 
         foreach ($complectations as $indexC => $valueC) {
 
-                $ct = 0;
-                $schemaOptions = $this->model()->multiexplode(array(' +'), $aAllarticulDesc);
+            $ct = 0;
+            $schemaOptions = $this->model()->multiexplode(array(' +'), $aAllarticulDesc);
 
 
 
 
-                foreach ($schemaOptions as $item) {
+            foreach ($schemaOptions as $item) {
 
 
 
 
 
-                    if (strpos($item, ".")) {
+                if (strpos($item, ".")) {
 
-                        $plus = explode('.', $item);
-
-
-                        $plusExplode = $this->model()->multiexplode(array('.','+'), $item);
+                    $plus = explode('.', $item);
 
 
-
-                        foreach ($plusExplode as &$item)
-                        {
-                            $item = trim($item, ('*()'));
-                        }
+                    $plusExplode = $this->model()->multiexplode(array('.','+'), $item);
 
 
 
-                        if (count($plus) === count(array_intersect($plusExplode, explode('.', $valueC->getOptions()['OPTION9'])))) {
-                            $ct = $ct + 1;
-                        }
-
-
-                    } else {
-
-                        if (in_array($item, explode('.', $valueC->getOptions()['OPTION9']))) {
-                            $ct = $ct + 1;
-                        }
-
+                    foreach ($plusExplode as &$item)
+                    {
+                        $item = trim($item, ('*()'));
                     }
 
 
+
+                    if (count($plus) === count(array_intersect($plusExplode, explode('.', $valueC->getOptions()['OPTION9'])))) {
+                        $ct = $ct + 1;
+                    }
+
+
+                } else {
+
+                    if (in_array($item, explode('.', $valueC->getOptions()['OPTION9']))) {
+                        $ct = $ct + 1;
+                    }
+
                 }
 
 
-                if ($ct === 0) {
-                    $oContainer->getActiveModification()->removeComplectation($indexC);
-                }
+            }
+
+
+            if ($ct === 0) {
+                $oContainer->getActiveModification()->removeComplectation($indexC);
+            }
 
 
         }
@@ -118,7 +118,5 @@ trait InfinitiArticulFilters {
 
         return $oContainer;
     }
-
-
 
 } 

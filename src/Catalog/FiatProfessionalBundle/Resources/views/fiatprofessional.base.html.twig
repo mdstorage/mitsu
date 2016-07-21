@@ -1,8 +1,8 @@
-{% block brand %}FiatProfessional{% endblock brand %}
-{% block catalogPathLogo %}{{ path('catalog_fiatprofessional') }}{% endblock catalogPathLogo %}
-{% block catalogPath %}{{ path('catalog_fiatprofessional') }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_fiatprofessional') }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_fiatprofessional') }}{% endblock articulPath %}
+{% block brand %}Fiat Professional{% endblock brand %}
+{% block catalogPathLogo %}{{ path('catalog_fiatprofessional', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_fiatprofessional', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_fiatprofessional', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_fiatprofessional', {'token': app.request.get('token')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
-    <link rel="stylesheet" href="{{ asset('bundles/catalogfiatprofessional/css/common.css') }}" media="all">
+    <link rel="stylesheet" href="{{ asset('bundles/catalogfiat/css/common.css') }}" media="all">
 {% endblock userStylesheets %}

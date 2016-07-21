@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
 {% use 'CatalogMiniBundle::mini.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_mini_find') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
+    <a href="{{ path('articul_mini_find', {'token': app.request.get('token')}) }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>  /
     <a href="{{ path('articul_mini_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> /Группа запчастей
 {% endblock breadcrumbs %}
@@ -18,7 +18,7 @@
 
                         <a href="{{ path('articul_mini_subgroups', parameters|merge({'groupCode': group.getCode})) }}">
 
-                            <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~group.getOption('Id')) }}" width="100%" alt="{{ group.getRuname }}"/>
+                            <img src="{{ asset('bundles/catalogmini/grafik/w_grafik/'~group.getOption('Id')) }}" width="100%" alt="{{ group.getRuname }}"/>
                             {{ group.getRuname }}
 
                         </a>

@@ -8,7 +8,7 @@
 {% block complectationItem %}
         <div class="col-lg-4">
            
-                             <a href="{{ path('articul_suzuki_groups', parameters|merge({'complectationCode': complectation.getCode})) }}">
+                             <a href="{{ path('articul_suzuki_groups', parameters|merge({'complectationCode': complectation.getCode|url_encode})) }}">
         
     <b>    {{ complectation.getRuname }} </b>
       </a> <br/>  

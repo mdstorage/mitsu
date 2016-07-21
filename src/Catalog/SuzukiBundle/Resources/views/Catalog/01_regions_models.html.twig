@@ -33,7 +33,11 @@
                                                 type:   'POST',
                                                 async:  false,
                                                 url:    "{% block ajaxUrl %}{{ path('catalog_suzuki_modifications') }}{% endblock ajaxUrl %}",
-                                                data:   { regionCode: $(this).attr('regionCode'), modelCode: "{{ model.getCode }}" },
+                                                data:   {
+                                                    regionCode: $(this).attr('regionCode'),
+                                                    modelCode: "{{ model.getCode }}",
+                                                    token: "{{ app.request.get('token') }}"
+                                                },
                                                 success: function(data) {
                                                     $("#modifications_for_model{{ modelCode }}").html(data);
                                                 }
@@ -83,4 +87,14 @@
             </div>
         
     {% endblock models %}
-{% block regionPath %}{{ path('catalog_suzuki', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+{% block regionPath %}
+    {% if app.request.get('token') %}
+        {{ path('catalog_suzuki_token', {'token': app.request.get('token'), 'regionCode': region.getCode}) }}
+
+    {% else %}
+
+        {{ path('catalog_suzuki', {'regionCode': region.getCode}) }}
+
+    {% endif %}
+
+{% endblock regionPath %}

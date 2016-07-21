@@ -21,12 +21,6 @@ class SkodaCatalogModel extends CatalogModel{
         SELECT markt
         FROM all_overview
         WHERE catalog = 'sk'
-        UNION
-        SELECT markt
-        FROM all_overview
-        WHERE catalog = 'sk'
-        AND markt NOT LIKE 'RDW'
-        AND markt NOT LIKE 'USA'
         ";
 
         $query = $this->conn->query($sql);
@@ -265,6 +259,7 @@ class SkodaCatalogModel extends CatalogModel{
             /*    $ObDvig[] = $aDataSub[$item['bildtafel2']]['tsbem'];*/
            }
         $sDataLitr = array();
+        $sDataLitr0 = array();
 
         foreach($ObDvig as $index=>&$value)
                     {

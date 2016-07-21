@@ -8,8 +8,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Catalog\ToyotaBundle\Controller\Traits\ToyotaArticulFilters;
 use Catalog\ToyotaBundle\Form\ComplectationType;
 
-class ArticulController extends BaseController{
-use ToyotaArticulFilters;
+class ArticulController extends BaseController
+{
+
+    use ToyotaArticulFilters;
+
     public function bundle()
     {
         return 'CatalogToyotaBundle:Articul';
@@ -25,6 +28,8 @@ use ToyotaArticulFilters;
         return 'Catalog\ToyotaBundle\Components\ToyotaConstants';
     }
 
+
+
     public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
         $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode);
@@ -33,16 +38,13 @@ use ToyotaArticulFilters;
     }
     
        
-    public function toyotaArticulComplectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $token = null)
+    public function toyotaArticulComplectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $articul = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);
 
         if(empty($data) & !empty($token)){
             return $this->errorBilling('Сервис не оплачен');
         }
-
-        $articul = $request->cookies->get(Constants::ARTICUL);
-
 
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
@@ -102,15 +104,15 @@ use ToyotaArticulFilters;
         ));
     }
 
-    public function toyotaArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $token = null)
+    public function toyotaArticulGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $articul = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);
+
+
 
         if(empty($data) & !empty($token)){
             return $this->errorBilling('Сервис не оплачен');
         }
-
-        $articul = $request->cookies->get(Constants::ARTICUL);
 
 
         $a = array();
@@ -130,6 +132,7 @@ use ToyotaArticulFilters;
         $parameters['complectationCode'] = $complectationCode;
 
 
+
         $articulGroups = $this->model()->getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode);
 
 
@@ -137,25 +140,24 @@ use ToyotaArticulFilters;
             'articulGroups' => $articulGroups
         ));
 
-        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $token);
+        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $articul, $token);
     }
 
-    public function toyotaArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $token = null)
+    public function toyotaArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $articul = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL); 
         $articulSubGroups = $this->model()->getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
 
         $this->addFilter('articulSubGroupsFilter', array(
             'articulSubGroups' => $articulSubGroups
         ));
 
-        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $token);
+        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $articul, $token);
         
     }
 
-    public function toyotaArticulSchemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $token = null)
+    public function toyotaArticulSchemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $articul = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+
         $articulSchemas = $this->model()->getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
 
 
@@ -163,19 +165,19 @@ use ToyotaArticulFilters;
             'articulSchemas' => $articulSchemas
         ));
 
-        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $token);
+        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $articul, $token);
     }
 
-    public function toyotaArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null, $token = null)
+    public function toyotaArticulSchemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null, $articul = null, $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+
         $articulPncs = $this->model()->getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode);
 
         $this->addFilter('articulPncsFilter', array(
             'articulPncs' => $articulPncs
         ));
 
-        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $token);
+        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $articul, $token);
     }
     public function toyotaArticularticulsAction(Request $request)
     {

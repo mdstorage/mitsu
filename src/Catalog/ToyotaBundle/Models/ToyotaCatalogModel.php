@@ -136,7 +136,7 @@ class ToyotaCatalogModel extends CatalogModel{
     {
         $sql = "
         SELECT johokt.engine1 as f1, johokt.engine2 as f2, johokt.body as f3, johokt.grade as f4, johokt.atm_mtm as f5, johokt.trans as f6,
-        johokt.f1 as f7, johokt.f2 as f8, johokt.f3 as f9, johokt.f4 as f10, johokt.f5 as f11, compl_code, model_code, prod_start, prod_end,
+        johokt.f1 as f7, johokt.f2 as f8, johokt.f3 as f9, johokt.f4 as f10, SUBSTRING_INDEX(johokt.f5, ' ', 1) as f11, compl_code, model_code, prod_start, prod_end,
         kig1.desc_en ken1,
         kig2.desc_en ken2,
         kig3.desc_en ken3,
@@ -173,7 +173,8 @@ class ToyotaCatalogModel extends CatalogModel{
         LEFT JOIN kig kig8 ON (kig8.catalog = johokt.catalog AND kig8.catalog_code = johokt.catalog_code AND kig8.type = '08' AND kig8.sign = johokt.f2)
         LEFT JOIN kig kig9 ON (kig9.catalog = johokt.catalog AND kig9.catalog_code = johokt.catalog_code AND kig9.type = '09' AND kig9.sign = johokt.f3)
         LEFT JOIN kig kig10 ON (kig10.catalog = johokt.catalog AND kig10.catalog_code = johokt.catalog_code AND kig10.type = '10' AND kig10.sign = johokt.f4)
-        LEFT JOIN kig kig11 ON (kig11.catalog = johokt.catalog AND kig11.catalog_code = johokt.catalog_code AND kig11.type = '11' AND kig11.sign = johokt.f5)
+        LEFT JOIN kig kig11 ON (kig11.catalog = johokt.catalog AND kig11.catalog_code = johokt.catalog_code AND kig11.type = '11' AND kig11.sign = SUBSTRING_INDEX(johokt.f5, ' ', 1)
+        )
 
         LEFT JOIN tkm tkm1 ON (tkm1.catalog = kig1.catalog AND tkm1.catalog_code = kig1.catalog_code AND tkm1.type = kig1.type)
         LEFT JOIN tkm tkm2 ON (tkm2.catalog = kig2.catalog AND tkm2.catalog_code = kig2.catalog_code AND tkm2.type = kig2.type)
@@ -248,21 +249,20 @@ class ToyotaCatalogModel extends CatalogModel{
         $result = array();
 
 
-
         foreach ($complectations as $index => $value) {
 
             for ($i = 1; $i < 12; $i++) {
 
                 if (!empty($value['name']['f' . $i])) {
                     foreach ($value['name']['f' . $i] as $ind => $val) {
-                        $result['f' . $i]['name'][$ind] = $val;
+                        $result['f' . $i]['name'][urlencode($ind)] = $val;
                     }
                 }
 
 
                 if (!empty($value['options']['option1']['f' . $i])) {
                     foreach ($value['options']['option1'] as $ind => $val) {
-                        $result['f' . $i]['options']['option1'][$ind] = $val;
+                        $result['f' . $i]['options']['option1'][urlencode($ind)] = $val;
                     }
                 }
 
@@ -270,8 +270,10 @@ class ToyotaCatalogModel extends CatalogModel{
             }
 
 
-            unset($value);
         }
+
+
+
 
         return ($result);
 
@@ -296,7 +298,7 @@ class ToyotaCatalogModel extends CatalogModel{
             case ('f8'): $pole = 'johokt.f2';break;
             case ('f9'): $pole = 'johokt.f3';break;
             case ('f10'): $pole = 'johokt.f4';break;
-            case ('f11'): $pole = 'johokt.f5';break;
+            case ('f11'): $pole = 'SUBSTRING_INDEX(johokt.f5, " ", 1)';break;
         }
 
         $sql = "
@@ -338,7 +340,7 @@ class ToyotaCatalogModel extends CatalogModel{
         LEFT JOIN kig kig8 ON (kig8.catalog = johokt.catalog AND kig8.catalog_code = johokt.catalog_code AND kig8.type = '08' AND kig8.sign = johokt.f2)
         LEFT JOIN kig kig9 ON (kig9.catalog = johokt.catalog AND kig9.catalog_code = johokt.catalog_code AND kig9.type = '09' AND kig9.sign = johokt.f3)
         LEFT JOIN kig kig10 ON (kig10.catalog = johokt.catalog AND kig10.catalog_code = johokt.catalog_code AND kig10.type = '10' AND kig10.sign = johokt.f4)
-        LEFT JOIN kig kig11 ON (kig11.catalog = johokt.catalog AND kig11.catalog_code = johokt.catalog_code AND kig11.type = '11' AND kig11.sign = johokt.f5)
+        LEFT JOIN kig kig11 ON (kig11.catalog = johokt.catalog AND kig11.catalog_code = johokt.catalog_code AND kig11.type = '11' AND kig11.sign = SUBSTRING_INDEX(johokt.f5, ' ', 1))
 
         LEFT JOIN tkm tkm1 ON (tkm1.catalog = kig1.catalog AND tkm1.catalog_code = kig1.catalog_code AND tkm1.type = kig1.type)
         LEFT JOIN tkm tkm2 ON (tkm2.catalog = kig2.catalog AND tkm2.catalog_code = kig2.catalog_code AND tkm2.type = kig2.type)
@@ -474,7 +476,7 @@ class ToyotaCatalogModel extends CatalogModel{
         AND johokt.f2 = :f2
         AND johokt.f3 = :f3
         AND johokt.f4 = :f4
-        AND johokt.f5 = :f5
+        AND SUBSTRING_INDEX(johokt.f5, ' ', 1) = :f5
 
         ";
 

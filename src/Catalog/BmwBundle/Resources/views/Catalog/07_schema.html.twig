@@ -33,6 +33,7 @@
                                                 groupCode: '{{ parameters.groupCode }}',
                                                 subGroupCode: '{{ parameters.subGroupCode }}',
                                                 pncCode: '{{ pnc.getCode }}',
+                                                articul: '{{ parameters.articul }}',
                                                 options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}',
                                                 token: '{{ parameters.token }}'
                                             },
@@ -64,6 +65,9 @@
     <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~oContainer.getActiveSchema.getCode) }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 
 {% endblock image %}
+
+
+{% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 
 
 {% block subGroupPath %}{{ path('catalog_bmw_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}

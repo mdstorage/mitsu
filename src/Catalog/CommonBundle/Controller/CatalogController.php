@@ -81,11 +81,17 @@ abstract class CatalogController extends BaseController{
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
             $token = $request->get('token');
+
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modelCode' => $modelCode,
                 'token' => $token
             );
+
+            if (!empty($request->get('articul')))
+            {
+                $parameters = array_merge($parameters, array('articul' => $request->get('articul')));
+            }
 
             $modifications = $this->model()->getModifications($regionCode, $modelCode);
 
@@ -107,7 +113,7 @@ abstract class CatalogController extends BaseController{
         }
     }
 
-    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $token = null)
+    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $articul = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);
 
@@ -154,7 +160,7 @@ abstract class CatalogController extends BaseController{
         ));
     }
 
-    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $token = null)
+    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $articul = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);
 
@@ -211,7 +217,7 @@ abstract class CatalogController extends BaseController{
         ));
     }
 
-    public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $token = null)
+    public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $articul = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);
 
@@ -273,7 +279,7 @@ abstract class CatalogController extends BaseController{
         ));
     }
 
-    public function schemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $token = null)
+    public function schemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $articul = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);
 
@@ -335,7 +341,7 @@ abstract class CatalogController extends BaseController{
         ));
     }
 
-    public function schemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null, $token = null)
+    public function schemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null, $articul = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);
 
@@ -417,6 +423,7 @@ abstract class CatalogController extends BaseController{
             $groupCode = $request->get('groupCode');
             $subGroupCode = $request->get('subGroupCode');
             $pncCode = $request->get('pncCode');
+            $articul = $request->get('articul');
             $options = $request->get('options');
             $token = $request->get('token');
 
@@ -441,6 +448,7 @@ abstract class CatalogController extends BaseController{
                 'options' => json_decode($options, true),
                 'subGroupCode' => $subGroupCode,
                 'pncCode' => $pncCode,
+                'articul' => $articul,
                 'redirectAdress' => $redirectAdress
             );
 

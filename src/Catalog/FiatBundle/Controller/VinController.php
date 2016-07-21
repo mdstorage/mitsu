@@ -92,14 +92,32 @@ class VinController extends BaseController{
             $subGroupCode = $request->get('subGroupCode');
             $schemaCode = $request->get('schemaCode');
             $pncCode = $request->get('pncCode');
+            $articul = $request->get('articul');
             $options = $request->get('options');
+            $token = $request->get('token');
+
+            if (!empty($token))
+            {
+                $aDataToken = array();
+                $aDataToken = $this->get('my_token_info')->getDataToken($token);
+
+                $redirectAdress = $aDataToken['url'];
+            }
+            else
+            {
+                $redirectAdress = Constants::FIND_PATH;
+            }
+
+
 
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modificationCode' => $modificationCode,
                 'options' => json_decode($options, true),
                 'subGroupCode' => $subGroupCode,
-                'pncCode' => $pncCode
+                'pncCode' => $pncCode,
+                'articul' => $articul,
+                'redirectAdress' => $redirectAdress
             );
 
             $articuls = $this->model()->getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $pncCode, json_decode($options, true));

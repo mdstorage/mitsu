@@ -15,7 +15,7 @@
 
 {% block subgroupImage %}
     <div class="col-lg-8">
-        <img src="{{ asset('bundles/catalognissan/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/'~a~'/'~oContainer.getActiveGroup.getOption('picture')~'.gif') }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
+        <img src="{{ asset('bundles/cataloginfiniti/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/'~a~'/'~oContainer.getActiveGroup.getOption('picture')~'.gif') }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
 
     </div>
 {% endblock subgroupImage %}

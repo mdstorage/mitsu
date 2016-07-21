@@ -1,5 +1,9 @@
+catalog_rollsroyce_token:
+  path:         /rollsroyce/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_rollsroyce:
-  path:         /rollsroyce/catalog/0/{regionCode}
+  path:         /rollsroyce/{regionCode}
   defaults:     {_controller: CatalogRollsRoyceBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_rollsroyce_modifications:
@@ -8,24 +12,39 @@ catalog_rollsroyce_modifications:
   requirements: {_method: POST}
 
 catalog_rollsroyce_complectations:
-  path:         /rollsroyce/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogRollsRoyceBundle:Catalog:complectations}
+  path:         /rollsroyce/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Catalog:complectations1, token: null}
+
+catalog_rollsroyce_complectation_korobka:
+  path:         /rollsroyce/catalog/12
+  defaults:     {_controller: CatalogRollsRoyceBundle:Catalog:complectation_korobka}
+  requirements: {_method: POST}
+
+catalog_rollsroyce_complectation_year:
+  path:         /rollsroyce/catalog/10
+  defaults:     {_controller: CatalogRollsRoyceBundle:Catalog:complectation_year}
+  requirements: {_method: POST}
+
+catalog_rollsroyce_complectation_month:
+  path:         /rollsroyce/catalog/11
+  defaults:     {_controller: CatalogRollsRoyceBundle:Catalog:complectation_month}
+  requirements: {_method: POST}
 
 catalog_rollsroyce_groups:
-  path:         /rollsroyce/catalog/3/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogRollsRoyceBundle:Catalog:groups}
+  path:         /rollsroyce/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Catalog:groups, token: null}
 
 catalog_rollsroyce_subgroups:
-  path:         /rollsroyce/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogRollsRoyceBundle:Catalog:subgroups}
+  path:         /rollsroyce/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Catalog:subgroups, token: null}
 
 catalog_rollsroyce_schemas:
-  path:         /rollsroyce/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogRollsRoyceBundle:Catalog:schemas}
+  path:         /rollsroyce/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Catalog:schemas, token: null}
 
 catalog_rollsroyce_schema:
-  path:         /rollsroyce/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogRollsRoyceBundle:Catalog:schema}
+  path:         /rollsroyce/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Catalog:schema, token: null}
 
 catalog_rollsroyce_articuls:
   path:         /rollsroyce/catalog/7
@@ -33,14 +52,14 @@ catalog_rollsroyce_articuls:
   requirements: {_method: POST}
 
 catalog_rollsroyce_group:
-  path:         /rollsroyce/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /rollsroyce/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogRollsRoyceBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------
 
 vin_rollsroyce:
-  path:         /rollsroyce/vin/0
-  defaults:     {_controller: CatalogRollsRoyceBundle:Vin:index}
+  path:         /rollsroyce/vin/0/{token}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Vin:index, token: null}
 
 vin_rollsroyce_result:
   path:         /rollsroyce/vin/1
@@ -48,20 +67,20 @@ vin_rollsroyce_result:
   requirements: {_method: POST}
 
 vin_rollsroyce_groups:
-  path:         /rollsroyce/vin/3/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogRollsRoyceBundle:Vin:groups}
+  path:         /rollsroyce/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Vin:groups, token: null}
 
 vin_rollsroyce_subgroups:
-  path:         /rollsroyce/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogRollsRoyceBundle:Vin:subgroups}
+  path:         /rollsroyce/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Vin:subgroups, token: null}
 
 vin_rollsroyce_schemas:
-  path:         /rollsroyce/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogRollsRoyceBundle:Vin:schemas}
+  path:         /rollsroyce/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Vin:schemas, token: null}
 
 vin_rollsroyce_schema:
-  path:         /rollsroyce/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogRollsRoyceBundle:Vin:schema}
+  path:         /rollsroyce/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Vin:schema, token: null}
 
 vin_rollsroyce_articuls:
   path:         /rollsroyce/vin/7
@@ -69,17 +88,21 @@ vin_rollsroyce_articuls:
   requirements: {_method: POST}
 
 vin_rollsroyce_group:
-  path:         /rollsroyce/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /rollsroyce/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogRollsRoyceBundle:Vin:getGroupBySubgroup}
 
 #---------------------------------------------------------------------------------------------
 
 articul_rollsroyce:
-  path:         /rollsroyce/articul/0
-  defaults:     {_controller: CatalogRollsRoyceBundle:Articul:index}
+  path:         /rollsroyce/articul/0/{token}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Articul:index, token: null}
+
+articul_rollsroyce_find_token:
+  path:         /rollsroyce/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Articul:findByArticul, regionCode: null}
 
 articul_rollsroyce_find:
-  path:         /rollsroyce/articul/1/{regionCode}
+  path:         /rollsroyce/articul/2/{regionCode}
   defaults:     {_controller: CatalogRollsRoyceBundle:Articul:findByArticul, regionCode: null}
 
 articul_rollsroyce_modifications:
@@ -88,24 +111,39 @@ articul_rollsroyce_modifications:
   requirements: {_method: POST}
 
 articul_rollsroyce_complectations:
-  path:         /rollsroyce/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogRollsRoyceBundle:Articul:rollsroyceArticulComplectations}
+  path:         /rollsroyce/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Articul:rollsroyceArticulcomplectations1, token: null}
+
+articul_rollsroyce_complectation_korobka:
+  path:         /rollsroyce/articul/12
+  defaults:     {_controller: CatalogRollsRoyceBundle:Articul:rollsroyceArticulcomplectation_korobka}
+  requirements: {_method: POST}
+
+articul_rollsroyce_complectation_year:
+  path:         /rollsroyce/articul/10
+  defaults:     {_controller: CatalogRollsRoyceBundle:Articul:rollsroyceArticulcomplectation_year}
+  requirements: {_method: POST}
+
+articul_rollsroyce_complectation_month:
+  path:         /rollsroyce/articul/11
+  defaults:     {_controller: CatalogRollsRoyceBundle:Articul:rollsroyceArticulcomplectation_month}
+  requirements: {_method: POST}
 
 articul_rollsroyce_groups:
-  path:         /rollsroyce/articul/5/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogRollsRoyceBundle:Articul:rollsroyceArticulgroups}
+  path:         /rollsroyce/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Articul:rollsroyceArticulgroups, token: null}
 
 articul_rollsroyce_subgroups:
-  path:         /rollsroyce/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogRollsRoyceBundle:Articul:rollsroyceArticulSubgroups}
+  path:         /rollsroyce/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Articul:rollsroyceArticulSubgroups, token: null}
 
 articul_rollsroyce_schemas:
-  path:         /rollsroyce/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogRollsRoyceBundle:Articul:rollsroyceArticulSchemas}
+  path:         /rollsroyce/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Articul:rollsroyceArticulSchemas, token: null}
 
 articul_rollsroyce_schema:
-  path:         /rollsroyce/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogRollsRoyceBundle:Articul:rollsroyceArticulSchema}
+  path:         /rollsroyce/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogRollsRoyceBundle:Articul:rollsroyceArticulSchema, token: null}
 
 articul_rollsroyce_articuls:
   path:         /rollsroyce/articul/9
@@ -113,8 +151,12 @@ articul_rollsroyce_articuls:
   requirements: {_method: POST}
 
 articul_rollsroyce_group:
-  path:         /rollsroyce/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /rollsroyce/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogRollsRoyceBundle:Articul:getGroupBySubgroup}
+
+
+
+
 catalog_rollsroyce_homepage:
     path:     /hello/{name}
     defaults: { _controller: CatalogRollsRoyceBundle:Default:index }

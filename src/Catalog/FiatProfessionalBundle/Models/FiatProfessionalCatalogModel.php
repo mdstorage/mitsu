@@ -318,7 +318,12 @@ class FiatProfessionalCatalogModel extends CatalogModel{
            foreach ($aPncs as &$aPnc)
            {
                $singleCoords[$aPnc['tbd_rif']] = explode(';', $aPnc['hotspots']);
+               if ($singleCoords[$aPnc['tbd_rif']] == array(''))
+               {
+                   $singleCoords[$aPnc['tbd_rif']] = array('0,0,0,0');
+               }
            }
+
 
 
            foreach ($singleCoords as $index=>$value)
@@ -342,11 +347,15 @@ class FiatProfessionalCatalogModel extends CatalogModel{
 
                    foreach ($aCoords[$value['tbd_rif']] as $item1)
                    {
-                   $pncs[$value['tbd_rif']][Constants::OPTIONS][Constants::COORDS][$item1[0]] = array(
-                       Constants::X1 => floor(($item1[0])),
-                       Constants::Y1 => $item1[1],
-                       Constants::X2 => $item1[2],
-                       Constants::Y2 => $item1[3]);
+                       if (!empty($item1))
+                       {
+                           $pncs[$value['tbd_rif']][Constants::OPTIONS][Constants::COORDS][$item1['0']] = array(
+                               Constants::X1 => floor(($item1['0'])),
+                               Constants::Y1 => $item1['1'],
+                               Constants::X2 => $item1['2'],
+                               Constants::Y2 => $item1['3']);
+                       }
+
 
                    }
 

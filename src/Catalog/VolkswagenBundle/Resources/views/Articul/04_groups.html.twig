@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
 {% use 'CatalogVolkswagenBundle::volkswagen.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_volkswagen_find') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
+    <a href="{{ path('articul_volkswagen_find') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / Группа запчастей
 {% endblock breadcrumbs %}
 

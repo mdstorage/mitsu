@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogSkodaBundle::skoda.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('catalog_skoda') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
+    <a href="{{ path('catalog_skoda') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
     <a href="{{ path('catalog_skoda_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
     <a href="{{ path('catalog_skoda_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
@@ -27,7 +27,16 @@
                                             type:   'POST',
                                             async:  false,
                                             url:    "{{ path('catalog_skoda_articuls') }}",
-                                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}',groupCode: '{{ parameters.groupCode }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}', options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'  },
+                                            data:   {
+                                                regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                                                modelCode: '{{ oContainer.getActiveModel.getCode }}',
+                                                modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                                                groupCode: '{{ parameters.groupCode }}',
+                                                subGroupCode: '{{ parameters.subGroupCode }}',
+                                                pncCode: '{{ pnc.getCode }}',
+                                                options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}',
+                                                token: '{{ parameters.token }}'
+                                            },
                                             success: function(data) {
                                                 $("#articul_for_pnc{{ pnc.getCode }}").html(data);
                                             }
@@ -54,7 +63,7 @@
                             
 {% block image %}
  
-    <img src="{{ asset('bundles/catalogaudi/Images/Bilder/'~oContainer.getActiveSchema.getOption('cd')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+    <img src="{{ asset('bundles/catalogskoda/Images/Bilder/'~oContainer.getActiveSchema.getOption('cd')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 
 {% endblock image %}
 

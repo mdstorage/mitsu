@@ -12,7 +12,10 @@
                 type:   'POST',
                 async:  false,
                 url:    "{% block vinAjaxPath %}{{ path('vin_volkswagen_region') }}{% endblock vinAjaxPath %}",
-                data:   { vin: $("#vin").val(). replace(/\s+/g, '') },
+                data:   {
+                    vin: $("#vin").val(). replace(/\s+/g, ''),
+                    token: '{{ app.request.get('token') }}'
+                },
                 success: function(data) {
                     $("#vin-result").html(data);
                 }

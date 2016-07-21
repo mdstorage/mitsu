@@ -18,3 +18,7 @@ services:
   toyota.articul.model:
     class: Catalog\ToyotaBundle\Models\ToyotaArticulModel
     arguments:  ['@doctrine.dbal.toyota_connection']
+
+
+  my_form:
+    class: Catalog\ToyotaBundle\Form\ComplectationType

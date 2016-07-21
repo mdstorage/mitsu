@@ -1,8 +1,8 @@
 {% block brand %}Seat{% endblock brand %}
-{% block catalogPathLogo %}{{ path('catalog_seat') }}{% endblock catalogPathLogo %}
-{% block catalogPath %}{{ path('catalog_seat') }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_seat') }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_seat') }}{% endblock articulPath %}
+{% block catalogPathLogo %}{{ path('catalog_seat', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_seat', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_seat', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_seat', {'token': app.request.get('token')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
     <link rel="stylesheet" href="{{ asset('bundles/catalogseat/css/common.css') }}" media="all">
 {% endblock userStylesheets %}

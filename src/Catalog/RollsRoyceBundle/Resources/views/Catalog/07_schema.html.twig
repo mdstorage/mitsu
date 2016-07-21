@@ -1,14 +1,14 @@
 {% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogRollsRoyceBundle::rollsroyce.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('catalog_rollsroyce') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
+    <a href="{{ path('catalog_rollsroyce') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('catalog_rollsroyce_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> /
     <a href="{{ path('catalog_rollsroyce_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
     <a href="{{ path('catalog_rollsroyce_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
     <a href="{{ path('catalog_rollsroyce_schemas', parameters) }}">Схема</a> / Запчасти
 {% endblock breadcrumbs %}
-{% block complectation %}
-{% endblock complectation %}
+
 {% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
 
 							{% block pncScript %}
@@ -25,7 +25,18 @@
                                             type:   'POST',
                                             async:  false,
                                             url:    "{{ path('catalog_rollsroyce_articuls') }}",
-                                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', groupCode: '{{ parameters.groupCode }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}', options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'  },
+                                            data:   {
+                                                regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                                                modelCode: '{{ oContainer.getActiveModel.getCode }}',
+                                                modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                                                complectationCode: '{{ oContainer.getActiveComplectation.getCode }}',
+                                                groupCode: '{{ parameters.groupCode }}',
+                                                subGroupCode: '{{ parameters.subGroupCode }}',
+                                                pncCode: '{{ pnc.getCode }}',
+                                                articul: '{{ parameters.articul }}',
+                                                options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}',
+                                                token: '{{ parameters.token }}'
+                                            },
                                             success: function(data) {
                                                 $("#articul_for_pnc{{ pnc.getCode }}").html(data);
                                             }
@@ -51,9 +62,56 @@
                             {% endblock pncScript %}
                             
 {% block image %}
-    <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~oContainer.getActiveSchema.getCode) }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+    <img src="{{ asset('bundles/catalogrollsroyce/grafik/w_grafik/'~oContainer.getActiveSchema.getCode) }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 
 {% endblock image %}
 
 
+{% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
+
+
 {% block subGroupPath %}{{ path('catalog_rollsroyce_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
+
+
+
+{% block summary %}
+    <div class="col-lg-4">
+        <div>
+            {% block region %}
+                <b>Регион:</b> {% block regionRuname %}{{ oContainer.getActiveRegion.getRuname }}{% endblock regionRuname %}
+            {% endblock region %}
+        </div>
+        <div>
+            {% block model %}
+                <b>{% block modelTitle %}Модель:{% endblock modelTitle %}</b> {% block modelRuname %}{{ oContainer.getActiveModel.getRuname }}{% endblock modelRuname %}
+            {% endblock model %}
+        </div>
+        <div>
+            {% block modification %}
+                <b>{% block modificationTitle %}Модификация:{% endblock modificationTitle %}</b> {% block modificationRuname %}{{ oContainer.getActiveModification.getRuname }}{% endblock modificationRuname %}
+            {% endblock modification %}
+        </div>
+        <div>
+            {% block complectation %}
+                <b>Комплектация:</b> {% block complectationRuname %}{{ oContainer.getActiveComplectation.getRuname }}{% endblock complectationRuname %}
+            {% endblock complectation %}
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div>
+            {% block group %}
+                <b>Группа запчастей:</b> {% block groupRuname %}{{ oContainer.getActiveGroup.getRuname }}{% endblock groupRuname %}
+            {% endblock group %}
+        </div>
+        <div>
+            {% block subGroup %}
+                <b>Подгруппа запчастей:</b> {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }}{% endblock subGroupRuname %}
+            {% endblock subGroup %}
+        </div>
+        <div>
+            {% block schemaSummary%}
+                <b>Схема:</b> {% block schemaRuname %}{{ oContainer.getActiveSchema.getRuname }}{% endblock schemaRuname %}
+            {% endblock schemaSummary %}
+        </div>
+    </div>
+{% endblock summary%}

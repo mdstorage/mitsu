@@ -8,71 +8,39 @@ use Symfony\Component\HttpFoundation\Request;
 
 abstract class ArticulController extends CatalogController{
 
-    public function indexAction($error_message = null)
+    public function indexAction($error_message = null, $token = null)
     {
-        $parameters = array();
-        setcookie(Constants::ARTICUL, "");
+
+        setcookie(Constants::ARTICUL, '');
         return $this->render($this->bundle().':01_index.html.twig', array('error_message' => $error_message));
     }
 
-  /*  public function findByArticulAction(Request $request, $regionCode = null)
+    public function findByArticulAction(Request $request, $token = null, $regionCode = null)
     {
         if (!$articul = $request->cookies->get(Constants::ARTICUL)) {
             if ($articul = trim($request->get('articul'))) {
                 setcookie(Constants::ARTICUL, $articul);
             } else {
-                return $this->indexAction('Запчасть с таким артикулом не найдена.');
+                return $this->indexAction('Запчасть с таким артикулом не найдена.', $token);
             }
         }
         if (strlen($articul)<7)
         {
-            return $this->indexAction('Запчасть с таким артикулом не найдена.');
+            return $this->indexAction('Запчасть с таким артикулом не найдена.', $token);
         }
+
+        $articul = trim($request->get('articul'));
         $articulRegions = $this->model()->getArticulRegions($articul);
 
         if (empty($articulRegions)) {
-            setcookie(Constants::ARTICUL, "");
-            return $this->indexAction('Запчасть с таким артикулом не найдена.');
+            setcookie(Constants::ARTICUL, '');
+            return $this->indexAction('Запчасть с таким артикулом не найдена.', $token);
         }
 
         if (is_null($regionCode)){
             $regionCode = $articulRegions[0];
         }
 
-        $articulModels  = $this->model()->getArticulModels($articul, $regionCode);
-
-        $this->addFilter('articulRegionModelsFilter', array(
-            'articulRegions' => $articulRegions,
-            'articulModels'  => $articulModels,
-            'regionCode' => $regionCode
-        ));
-
-        return $this->regionsModelsAction($request, $regionCode);
-    }*/
-
-    public function findByArticulAction(Request $request, $regionCode = null, $token = null)
-    {
-        if (!$articul = $request->cookies->get(Constants::ARTICUL)) {
-            if ($articul = trim($request->get('articul'))) {
-                setcookie(Constants::ARTICUL, $articul);
-            } else {
-                return $this->indexAction('Запчасть с таким артикулом не найдена.');
-            }
-        }
-        if (strlen($articul)<7)
-        {
-            return $this->indexAction('Запчасть с таким артикулом не найдена.');
-        }
-        $articulRegions = $this->model()->getArticulRegions($articul);
-
-        if (empty($articulRegions)) {
-            setcookie(Constants::ARTICUL, "");
-            return $this->indexAction('Запчасть с таким артикулом не найдена.');
-        }
-
-        if (is_null($regionCode)){
-            $regionCode = $articulRegions[0];
-        }
 
         $articulModels  = $this->model()->getArticulModels($articul, $regionCode);
 
@@ -125,10 +93,11 @@ abstract class ArticulController extends CatalogController{
     public function modificationsAction(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
-            $articul = $request->cookies->get(Constants::ARTICUL_TOKEN);
+            $articul = $request->get('articul');
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
             $articulModifications = $this->model()->getArticulModifications($articul, $regionCode, $modelCode);
+
 
             $this->addFilter('articulModificationsFilter', array(
                 'articulModifications' => $articulModifications
@@ -151,16 +120,15 @@ abstract class ArticulController extends CatalogController{
         return $oContainer;
     }
 
-    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $token = null)
+    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $articul = null,  $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL_TOKEN);
         $articulComplectations = $this->model()->getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode);
 
         $this->addFilter('articulComplectationsFilter', array(
             'articulComplectations' => $articulComplectations
         ));
 
-        return parent::complectationsAction($request, $regionCode, $modelCode, $modificationCode, $token);
+        return parent::complectationsAction($request, $regionCode, $modelCode, $modificationCode, $articul, $token);
     }
 
     public function articulComplectationsFilter($oContainer, $parameters)

@@ -14,4 +14,5 @@ class MiniConstants {
     const PROD_DATE = 'prod_date';
     const CARLINE  = 'carline';
     const PAGE = 'page';
+    const TOKEN = 'token';
 } 

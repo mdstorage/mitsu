@@ -1,7 +1,7 @@
-{% block brand %}Mini Cooper{% endblock brand %}
-{% block catalogPath %}{{ path('catalog_mini') }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_mini') }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_mini') }}{% endblock articulPath %}
+{% block brand %}MiniCooper{% endblock brand %}
+{% block catalogPath %}{{ path('catalog_mini', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_mini', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_mini', {'token': app.request.get('token')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
-        <link rel="stylesheet" href="{{ asset('bundles/catalogbmw/css/common.css') }}" media="all">
+        <link rel="stylesheet" href="{{ asset('bundles/catalogmini/css/common.css') }}" media="all">
     {% endblock userStylesheets %}

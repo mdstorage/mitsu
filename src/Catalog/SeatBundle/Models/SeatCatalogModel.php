@@ -21,12 +21,6 @@ class SeatCatalogModel extends CatalogModel{
         SELECT markt
         FROM all_overview
         WHERE catalog = 'se'
-        UNION
-        SELECT markt
-        FROM all_overview
-        WHERE catalog = 'se'
-        AND markt NOT LIKE 'RDW'
-        AND markt NOT LIKE 'USA'
         ";
 
         $query = $this->conn->query($sql);

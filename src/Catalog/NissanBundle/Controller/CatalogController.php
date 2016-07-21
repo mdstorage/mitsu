@@ -25,7 +25,7 @@ class CatalogController extends BaseController{
         return 'Catalog\NissanBundle\Components\NissanConstants';
     }
 
-    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
+    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $articul = NULL, $token = NULL)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 

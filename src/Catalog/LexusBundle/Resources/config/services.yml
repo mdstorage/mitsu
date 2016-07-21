@@ -18,3 +18,7 @@ services:
   lexus.articul.model:
     class: Catalog\LexusBundle\Models\LexusArticulModel
     arguments:  ['@doctrine.dbal.lexus_connection']
+
+
+  my_form:
+    class: Catalog\LexusBundle\Form\ComplectationType

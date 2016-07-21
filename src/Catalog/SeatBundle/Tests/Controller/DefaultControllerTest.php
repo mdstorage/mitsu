@@ -1,6 +1,6 @@
 <?php
 
-namespace Catalog\AudiBundle\Tests\Controller;
+namespace Catalog\SeatBundle\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

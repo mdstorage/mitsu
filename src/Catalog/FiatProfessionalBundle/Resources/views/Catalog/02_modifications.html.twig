@@ -4,7 +4,7 @@
          <div>
             {% block modification %}
              <div class="row">
-                <a href="{{ path('catalog_fiatprofessional_groups', parameters|merge({'modificationCode': modification.getCode})) }}">
+                <a href="{{ path('catalog_fiatprofessional_groups', parameters|merge({'modificationCode': modification.getCode, 'token': app.request.get('token')})) }}">
                    {{ modification.getRuname }}
                 </a>
              </div>

@@ -1,5 +1,9 @@
+catalog_infiniti_token:
+  path:         /infiniti/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogInfinitiBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_infiniti:
-  path:         /infiniti/catalog/0/{regionCode}
+  path:         /infiniti/{regionCode}
   defaults:     {_controller: CatalogInfinitiBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_infiniti_modifications:
@@ -8,24 +12,24 @@ catalog_infiniti_modifications:
   requirements: {_method: POST}
 
 catalog_infiniti_complectations:
-  path:         /infiniti/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogInfinitiBundle:Catalog:complectations}
+  path:         /infiniti/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogInfinitiBundle:Catalog:complectations, token: null}
 
 catalog_infiniti_groups:
-  path:         /infiniti/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogInfinitiBundle:Catalog:groups}
+  path:         /infiniti/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogInfinitiBundle:Catalog:groups, token: null}
 
 catalog_infiniti_subgroups:
-  path:         /infiniti/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogInfinitiBundle:Catalog:subgroups}
+  path:         /infiniti/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogInfinitiBundle:Catalog:subgroups, token: null}
 
 catalog_infiniti_schemas:
-  path:         /infiniti/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogInfinitiBundle:Catalog:schemas}
+  path:         /infiniti/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogInfinitiBundle:Catalog:schemas, token: null}
 
 catalog_infiniti_schema:
-  path:         /infiniti/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogInfinitiBundle:Catalog:schema}
+  path:         /infiniti/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogInfinitiBundle:Catalog:schema, token: null}
 
 catalog_infiniti_articuls:
   path:         /infiniti/catalog/7
@@ -33,14 +37,14 @@ catalog_infiniti_articuls:
   requirements: {_method: POST}
 
 catalog_infiniti_group:
-  path:         /infiniti/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /infiniti/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogInfinitiBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------
 
 vin_infiniti:
-  path:         /infiniti/vin/0
-  defaults:     {_controller: CatalogInfinitiBundle:Vin:index}
+  path:         /infiniti/vin/0/{token}
+  defaults:     {_controller: CatalogInfinitiBundle:Vin:index, token: null}
 
 vin_infiniti_result:
   path:         /infiniti/vin/1
@@ -48,20 +52,20 @@ vin_infiniti_result:
   requirements: {_method: POST}
 
 vin_infiniti_groups:
-  path:         /infiniti/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogInfinitiBundle:Vin:groups}
+  path:         /infiniti/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogInfinitiBundle:Vin:groups, token: null}
 
 vin_infiniti_subgroups:
-  path:         /infiniti/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogInfinitiBundle:Vin:subgroups}
+  path:         /infiniti/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogInfinitiBundle:Vin:subgroups, token: null}
 
 vin_infiniti_schemas:
-  path:         /infiniti/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogInfinitiBundle:Vin:schemas}
+  path:         /infiniti/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogInfinitiBundle:Vin:schemas, token: null}
 
 vin_infiniti_schema:
-  path:         /infiniti/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogInfinitiBundle:Vin:schema}
+  path:         /infiniti/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogInfinitiBundle:Vin:schema, token: null}
 
 vin_infiniti_articuls:
   path:         /infiniti/vin/7
@@ -69,17 +73,21 @@ vin_infiniti_articuls:
   requirements: {_method: POST}
 
 vin_infiniti_group:
-  path:         /infiniti/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /infiniti/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogInfinitiBundle:Vin:getGroupBySubgroup}
 
 #---------------------------------------------------------------------------------------------
 
 articul_infiniti:
-  path:         /infiniti/articul/0
-  defaults:     {_controller: CatalogInfinitiBundle:Articul:index}
+  path:         /infiniti/articul/0/{token}
+  defaults:     {_controller: CatalogInfinitiBundle:Articul:index, token: null}
+
+articul_infiniti_find_token:
+  path:         /infiniti/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogInfinitiBundle:Articul:findByArticul, regionCode: null}
 
 articul_infiniti_find:
-  path:         /infiniti/articul/1/{regionCode}
+  path:         /infiniti/articul/2/{regionCode}
   defaults:     {_controller: CatalogInfinitiBundle:Articul:findByArticul, regionCode: null}
 
 articul_infiniti_modifications:
@@ -88,24 +96,24 @@ articul_infiniti_modifications:
   requirements: {_method: POST}
 
 articul_infiniti_complectations:
-  path:         /infiniti/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogInfinitiBundle:Articul:infinitiArticulComplectations}
+  path:         /infiniti/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogInfinitiBundle:Articul:infinitiArticulComplectations, token: null}
 
 articul_infiniti_groups:
-  path:         /infiniti/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogInfinitiBundle:Articul:infinitiArticulgroups}
+  path:         /infiniti/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogInfinitiBundle:Articul:infinitiArticulgroups, token: null}
 
 articul_infiniti_subgroups:
-  path:         /infiniti/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogInfinitiBundle:Articul:infinitiArticulSubgroups}
+  path:         /infiniti/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogInfinitiBundle:Articul:infinitiArticulSubgroups, token: null}
 
 articul_infiniti_schemas:
-  path:         /infiniti/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogInfinitiBundle:Articul:infinitiArticulSchemas}
+  path:         /infiniti/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogInfinitiBundle:Articul:infinitiArticulSchemas, token: null}
 
 articul_infiniti_schema:
-  path:         /infiniti/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogInfinitiBundle:Articul:infinitiArticulSchema}
+  path:         /infiniti/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogInfinitiBundle:Articul:infinitiArticulSchema, token: null}
 
 articul_infiniti_articuls:
   path:         /infiniti/articul/9
@@ -113,8 +121,10 @@ articul_infiniti_articuls:
   requirements: {_method: POST}
 
 articul_infiniti_group:
-  path:         /infiniti/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /infiniti/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogInfinitiBundle:Articul:getGroupBySubgroup}
+
+
 catalog_infiniti_homepage:
     path:     /hello/{name}
     defaults: { _controller: CatalogInfinitiBundle:Default:index }

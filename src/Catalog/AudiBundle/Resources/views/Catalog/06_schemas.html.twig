@@ -8,6 +8,9 @@
     <a href="{{ path('catalog_audi_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему
 {% endblock breadcrumbs %}
 
+{% block complectation %}
+{% endblock complectation %}
+
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
 
 {% block schema %}
