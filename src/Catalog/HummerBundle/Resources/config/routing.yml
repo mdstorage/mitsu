@@ -1,5 +1,9 @@
+catalog_hummer_token:
+  path:         /hummer/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogHummerBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_hummer:
-  path:         /hummer/catalog/0/{regionCode}
+  path:         /hummer/{regionCode}
   defaults:     {_controller: CatalogHummerBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_hummer_modifications:
@@ -8,24 +12,24 @@ catalog_hummer_modifications:
   requirements: {_method: POST}
 
 catalog_hummer_complectations:
-  path:         /hummer/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogHummerBundle:Catalog:complectations}
+  path:         /hummer/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogHummerBundle:Catalog:complectations, token: null}
 
 catalog_hummer_groups:
-  path:         /hummer/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogHummerBundle:Catalog:groups}
+  path:         /hummer/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogHummerBundle:Catalog:groups, token: null}
 
 catalog_hummer_subgroups:
-  path:         /hummer/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogHummerBundle:Catalog:subgroups}
+  path:         /hummer/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogHummerBundle:Catalog:subgroups, token: null}
 
 catalog_hummer_schemas:
-  path:         /hummer/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogHummerBundle:Catalog:schemas}
+  path:         /hummer/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogHummerBundle:Catalog:schemas, token: null}
 
 catalog_hummer_schema:
-  path:         /hummer/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogHummerBundle:Catalog:schema}
+  path:         /hummer/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogHummerBundle:Catalog:schema, token: null}
 
 catalog_hummer_articuls:
   path:         /hummer/catalog/7
@@ -33,14 +37,14 @@ catalog_hummer_articuls:
   requirements: {_method: POST}
 
 catalog_hummer_group:
-  path:         /hummer/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /hummer/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogHummerBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------
 
 vin_hummer:
-  path:         /hummer/vin/0
-  defaults:     {_controller: CatalogHummerBundle:Vin:index}
+  path:         /hummer/vin/0/{token}
+  defaults:     {_controller: CatalogHummerBundle:Vin:index, token: null}
 
 vin_hummer_result:
   path:         /hummer/vin/1
@@ -48,20 +52,20 @@ vin_hummer_result:
   requirements: {_method: POST}
 
 vin_hummer_groups:
-  path:         /hummer/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogHummerBundle:Vin:groups}
+  path:         /hummer/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogHummerBundle:Vin:groups, token: null}
 
 vin_hummer_subgroups:
-  path:         /hummer/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogHummerBundle:Vin:subgroups}
+  path:         /hummer/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogHummerBundle:Vin:subgroups, token: null}
 
 vin_hummer_schemas:
-  path:         /hummer/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogHummerBundle:Vin:schemas}
+  path:         /hummer/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogHummerBundle:Vin:schemas, token: null}
 
 vin_hummer_schema:
-  path:         /hummer/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogHummerBundle:Vin:schema}
+  path:         /hummer/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogHummerBundle:Vin:schema, token: null}
 
 vin_hummer_articuls:
   path:         /hummer/vin/7
@@ -69,17 +73,21 @@ vin_hummer_articuls:
   requirements: {_method: POST}
 
 vin_hummer_group:
-  path:         /hummer/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /hummer/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogHummerBundle:Vin:getGroupBySubgroup}
 
 #---------------------------------------------------------------------------------------------
 
 articul_hummer:
-  path:         /hummer/articul/0
-  defaults:     {_controller: CatalogHummerBundle:Articul:index}
+  path:         /hummer/articul/0/{token}
+  defaults:     {_controller: CatalogHummerBundle:Articul:index, token: null}
+
+articul_hummer_find_token:
+  path:         /hummer/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogHummerBundle:Articul:findByArticul, regionCode: null}
 
 articul_hummer_find:
-  path:         /hummer/articul/1/{regionCode}
+  path:         /hummer/articul/2/{regionCode}
   defaults:     {_controller: CatalogHummerBundle:Articul:findByArticul, regionCode: null}
 
 articul_hummer_modifications:
@@ -88,24 +96,24 @@ articul_hummer_modifications:
   requirements: {_method: POST}
 
 articul_hummer_complectations:
-  path:         /hummer/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogHummerBundle:Articul:hummerArticulComplectations}
+  path:         /hummer/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogHummerBundle:Articul:hummerArticulComplectations, token: null}
 
 articul_hummer_groups:
-  path:         /hummer/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogHummerBundle:Articul:hummerArticulgroups}
+  path:         /hummer/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogHummerBundle:Articul:hummerArticulgroups, token: null}
 
 articul_hummer_subgroups:
-  path:         /hummer/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogHummerBundle:Articul:hummerArticulSubgroups}
+  path:         /hummer/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogHummerBundle:Articul:hummerArticulSubgroups, token: null}
 
 articul_hummer_schemas:
-  path:         /hummer/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogHummerBundle:Articul:hummerArticulSchemas}
+  path:         /hummer/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogHummerBundle:Articul:hummerArticulSchemas, token: null}
 
 articul_hummer_schema:
-  path:         /hummer/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogHummerBundle:Articul:hummerArticulSchema}
+  path:         /hummer/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogHummerBundle:Articul:hummerArticulSchema, token: null}
 
 articul_hummer_articuls:
   path:         /hummer/articul/9
@@ -113,7 +121,7 @@ articul_hummer_articuls:
   requirements: {_method: POST}
 
 articul_hummer_group:
-  path:         /hummer/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /hummer/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogHummerBundle:Articul:getGroupBySubgroup}
 catalog_hummer_homepage:
     path:     /hello/{name}

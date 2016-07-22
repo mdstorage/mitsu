@@ -1,8 +1,8 @@
 {% block brand %}Pontiac{% endblock brand %}
-{% block catalogPathLogo %}{{ path('catalog_pontiac') }}{% endblock catalogPathLogo %}
-{% block catalogPath %}{{ path('catalog_pontiac') }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_pontiac') }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_pontiac') }}{% endblock articulPath %}
+{% block catalogPathLogo %}{{ path('catalog_pontiac', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_pontiac', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_pontiac', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_pontiac', {'token': app.request.get('token')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
     <link rel="stylesheet" href="{{ asset('bundles/cataloggm/css/common.css') }}" media="all">
 {% endblock userStylesheets %}

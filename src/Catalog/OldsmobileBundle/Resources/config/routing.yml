@@ -1,5 +1,9 @@
+catalog_oldsmobile_token:
+  path:         /oldsmobile/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogOldsmobileBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_oldsmobile:
-  path:         /oldsmobile/catalog/0/{regionCode}
+  path:         /oldsmobile/{regionCode}
   defaults:     {_controller: CatalogOldsmobileBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_oldsmobile_modifications:
@@ -8,24 +12,24 @@ catalog_oldsmobile_modifications:
   requirements: {_method: POST}
 
 catalog_oldsmobile_complectations:
-  path:         /oldsmobile/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogOldsmobileBundle:Catalog:complectations}
+  path:         /oldsmobile/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogOldsmobileBundle:Catalog:complectations, token: null}
 
 catalog_oldsmobile_groups:
-  path:         /oldsmobile/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogOldsmobileBundle:Catalog:groups}
+  path:         /oldsmobile/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogOldsmobileBundle:Catalog:groups, token: null}
 
 catalog_oldsmobile_subgroups:
-  path:         /oldsmobile/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogOldsmobileBundle:Catalog:subgroups}
+  path:         /oldsmobile/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogOldsmobileBundle:Catalog:subgroups, token: null}
 
 catalog_oldsmobile_schemas:
-  path:         /oldsmobile/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogOldsmobileBundle:Catalog:schemas}
+  path:         /oldsmobile/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogOldsmobileBundle:Catalog:schemas, token: null}
 
 catalog_oldsmobile_schema:
-  path:         /oldsmobile/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogOldsmobileBundle:Catalog:schema}
+  path:         /oldsmobile/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogOldsmobileBundle:Catalog:schema, token: null}
 
 catalog_oldsmobile_articuls:
   path:         /oldsmobile/catalog/7
@@ -33,14 +37,14 @@ catalog_oldsmobile_articuls:
   requirements: {_method: POST}
 
 catalog_oldsmobile_group:
-  path:         /oldsmobile/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /oldsmobile/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogOldsmobileBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------
 
 vin_oldsmobile:
-  path:         /oldsmobile/vin/0
-  defaults:     {_controller: CatalogOldsmobileBundle:Vin:index}
+  path:         /oldsmobile/vin/0/{token}
+  defaults:     {_controller: CatalogOldsmobileBundle:Vin:index, token: null}
 
 vin_oldsmobile_result:
   path:         /oldsmobile/vin/1
@@ -48,20 +52,20 @@ vin_oldsmobile_result:
   requirements: {_method: POST}
 
 vin_oldsmobile_groups:
-  path:         /oldsmobile/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogOldsmobileBundle:Vin:groups}
+  path:         /oldsmobile/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogOldsmobileBundle:Vin:groups, token: null}
 
 vin_oldsmobile_subgroups:
-  path:         /oldsmobile/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogOldsmobileBundle:Vin:subgroups}
+  path:         /oldsmobile/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogOldsmobileBundle:Vin:subgroups, token: null}
 
 vin_oldsmobile_schemas:
-  path:         /oldsmobile/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogOldsmobileBundle:Vin:schemas}
+  path:         /oldsmobile/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogOldsmobileBundle:Vin:schemas, token: null}
 
 vin_oldsmobile_schema:
-  path:         /oldsmobile/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogOldsmobileBundle:Vin:schema}
+  path:         /oldsmobile/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogOldsmobileBundle:Vin:schema, token: null}
 
 vin_oldsmobile_articuls:
   path:         /oldsmobile/vin/7
@@ -69,17 +73,21 @@ vin_oldsmobile_articuls:
   requirements: {_method: POST}
 
 vin_oldsmobile_group:
-  path:         /oldsmobile/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /oldsmobile/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogOldsmobileBundle:Vin:getGroupBySubgroup}
 
 #---------------------------------------------------------------------------------------------
 
 articul_oldsmobile:
-  path:         /oldsmobile/articul/0
-  defaults:     {_controller: CatalogOldsmobileBundle:Articul:index}
+  path:         /oldsmobile/articul/0/{token}
+  defaults:     {_controller: CatalogOldsmobileBundle:Articul:index, token: null}
+
+articul_oldsmobile_find_token:
+  path:         /oldsmobile/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogOldsmobileBundle:Articul:findByArticul, regionCode: null}
 
 articul_oldsmobile_find:
-  path:         /oldsmobile/articul/1/{regionCode}
+  path:         /oldsmobile/articul/2/{regionCode}
   defaults:     {_controller: CatalogOldsmobileBundle:Articul:findByArticul, regionCode: null}
 
 articul_oldsmobile_modifications:
@@ -88,24 +96,24 @@ articul_oldsmobile_modifications:
   requirements: {_method: POST}
 
 articul_oldsmobile_complectations:
-  path:         /oldsmobile/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogOldsmobileBundle:Articul:oldsmobileArticulComplectations}
+  path:         /oldsmobile/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogOldsmobileBundle:Articul:oldsmobileArticulComplectations, token: null}
 
 articul_oldsmobile_groups:
-  path:         /oldsmobile/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogOldsmobileBundle:Articul:oldsmobileArticulgroups}
+  path:         /oldsmobile/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogOldsmobileBundle:Articul:oldsmobileArticulgroups, token: null}
 
 articul_oldsmobile_subgroups:
-  path:         /oldsmobile/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogOldsmobileBundle:Articul:oldsmobileArticulSubgroups}
+  path:         /oldsmobile/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogOldsmobileBundle:Articul:oldsmobileArticulSubgroups, token: null}
 
 articul_oldsmobile_schemas:
-  path:         /oldsmobile/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogOldsmobileBundle:Articul:oldsmobileArticulSchemas}
+  path:         /oldsmobile/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogOldsmobileBundle:Articul:oldsmobileArticulSchemas, token: null}
 
 articul_oldsmobile_schema:
-  path:         /oldsmobile/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogOldsmobileBundle:Articul:oldsmobileArticulSchema}
+  path:         /oldsmobile/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogOldsmobileBundle:Articul:oldsmobileArticulSchema, token: null}
 
 articul_oldsmobile_articuls:
   path:         /oldsmobile/articul/9
@@ -113,7 +121,7 @@ articul_oldsmobile_articuls:
   requirements: {_method: POST}
 
 articul_oldsmobile_group:
-  path:         /oldsmobile/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /oldsmobile/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogOldsmobileBundle:Articul:getGroupBySubgroup}
 catalog_oldsmobile_homepage:
     path:     /hello/{name}
