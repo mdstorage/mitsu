@@ -1,8 +1,8 @@
 {% block brand %}Abarth{% endblock brand %}
-{% block catalogPathLogo %}{{ path('catalog_abarth') }}{% endblock catalogPathLogo %}
-{% block catalogPath %}{{ path('catalog_abarth') }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_abarth') }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_abarth') }}{% endblock articulPath %}
+{% block catalogPathLogo %}{{ path('catalog_abarth', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_abarth', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_abarth', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_abarth', {'token': app.request.get('token')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
-    <link rel="stylesheet" href="{{ asset('bundles/catalogabarth/css/common.css') }}" media="all">
+    <link rel="stylesheet" href="{{ asset('bundles/catalogfiat/css/common.css') }}" media="all">
 {% endblock userStylesheets %}

@@ -1,5 +1,9 @@
+catalog_abarth_token:
+  path:         /abarth/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogAbarthBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_abarth:
-  path:         /abarth/catalog/0/{regionCode}
+  path:         /abarth/{regionCode}
   defaults:     {_controller: CatalogAbarthBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_abarth_modifications:
@@ -8,24 +12,24 @@ catalog_abarth_modifications:
   requirements: {_method: POST}
 
 catalog_abarth_complectations:
-  path:         /abarth/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogAbarthBundle:Catalog:complectations}
+  path:         /abarth/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogAbarthBundle:Catalog:complectations, token: null}
 
 catalog_abarth_groups:
-  path:         /abarth/catalog/3/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogAbarthBundle:Catalog:groups}
+  path:         /abarth/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogAbarthBundle:Catalog:groups, token: null}
 
 catalog_abarth_subgroups:
-  path:         /abarth/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogAbarthBundle:Catalog:subgroups}
+  path:         /abarth/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogAbarthBundle:Catalog:subgroups, token: null}
 
 catalog_abarth_schemas:
-  path:         /abarth/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogAbarthBundle:Catalog:schemas}
+  path:         /abarth/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogAbarthBundle:Catalog:schemas, token: null}
 
 catalog_abarth_schema:
-  path:         /abarth/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogAbarthBundle:Catalog:schema}
+  path:         /abarth/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogAbarthBundle:Catalog:schema, token: null}
 
 catalog_abarth_articuls:
   path:         /abarth/catalog/7
@@ -33,14 +37,14 @@ catalog_abarth_articuls:
   requirements: {_method: POST}
 
 catalog_abarth_group:
-  path:         /abarth/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /abarth/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogAbarthBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------
 
 vin_abarth:
-  path:         /abarth/vin/0
-  defaults:     {_controller: CatalogAbarthBundle:Vin:index}
+  path:         /abarth/vin/0/{token}
+  defaults:     {_controller: CatalogAbarthBundle:Vin:index, token: null}
 
 vin_abarth_result:
   path:         /abarth/vin/1
@@ -48,20 +52,20 @@ vin_abarth_result:
   requirements: {_method: POST}
 
 vin_abarth_groups:
-  path:         /abarth/vin/3/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogAbarthBundle:Vin:groups}
+  path:         /abarth/vin/3/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogAbarthBundle:Vin:groups, token: null}
 
 vin_abarth_subgroups:
-  path:         /abarth/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogAbarthBundle:Vin:subgroups}
+  path:         /abarth/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogAbarthBundle:Vin:subgroups, token: null}
 
 vin_abarth_schemas:
-  path:         /abarth/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogAbarthBundle:Vin:schemas}
+  path:         /abarth/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogAbarthBundle:Vin:schemas, token: null}
 
 vin_abarth_schema:
-  path:         /abarth/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogAbarthBundle:Vin:schema}
+  path:         /abarth/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogAbarthBundle:Vin:schema, token: null}
 
 vin_abarth_articuls:
   path:         /abarth/vin/7
@@ -69,17 +73,21 @@ vin_abarth_articuls:
   requirements: {_method: POST}
 
 vin_abarth_group:
-  path:         /abarth/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /abarth/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogAbarthBundle:Vin:getGroupBySubgroup}
 
 #---------------------------------------------------------------------------------------------
 
 articul_abarth:
-  path:         /abarth/articul/0
-  defaults:     {_controller: CatalogAbarthBundle:Articul:index}
+  path:         /abarth/articul/0/{token}
+  defaults:     {_controller: CatalogAbarthBundle:Articul:index, token: null}
+
+articul_abarth_find_token:
+  path:         /abarth/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogAbarthBundle:Articul:findByArticul, regionCode: null}
 
 articul_abarth_find:
-  path:         /abarth/articul/1/{regionCode}
+  path:         /abarth/articul/2/{regionCode}
   defaults:     {_controller: CatalogAbarthBundle:Articul:findByArticul, regionCode: null}
 
 articul_abarth_modifications:
@@ -88,24 +96,24 @@ articul_abarth_modifications:
   requirements: {_method: POST}
 
 articul_abarth_complectations:
-  path:         /abarth/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogAbarthBundle:Articul:abarthArticulComplectations}
+  path:         /abarth/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogAbarthBundle:Articul:abarthArticulComplectations, token: null}
 
 articul_abarth_groups:
-  path:         /abarth/articul/5/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogAbarthBundle:Articul:abarthArticulgroups}
+  path:         /abarth/articul/5/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogAbarthBundle:Articul:abarthArticulgroups, token: null}
 
 articul_abarth_subgroups:
-  path:         /abarth/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogAbarthBundle:Articul:abarthArticulSubgroups}
+  path:         /abarth/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogAbarthBundle:Articul:abarthArticulSubgroups, token: null}
 
 articul_abarth_schemas:
-  path:         /abarth/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogAbarthBundle:Articul:abarthArticulSchemas}
+  path:         /abarth/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogAbarthBundle:Articul:abarthArticulSchemas, token: null}
 
 articul_abarth_schema:
-  path:         /abarth/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogAbarthBundle:Articul:abarthArticulSchema}
+  path:         /abarth/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogAbarthBundle:Articul:abarthArticulSchema, token: null}
 
 articul_abarth_articuls:
   path:         /abarth/articul/9
@@ -113,7 +121,7 @@ articul_abarth_articuls:
   requirements: {_method: POST}
 
 articul_abarth_group:
-  path:         /abarth/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /abarth/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogAbarthBundle:Articul:getGroupBySubgroup}
 catalog_abarth_homepage:
     path:     /hello/{name}
