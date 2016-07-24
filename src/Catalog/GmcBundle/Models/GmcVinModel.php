@@ -39,13 +39,12 @@ class GmcVinModel extends GmcCatalogModel {
 
 
 
-
         $result = array();
 
         if ($aData) {
             $result = array(
                 'brand' => $aData['MAKE_DESC'],
-                'model' => strtoupper((stripos($aData['MODEL_DESC'],' '))?substr($aData['MODEL_DESC'], 0, stripos($aData['MODEL_DESC'],' ')):$aData['MODEL_DESC']),
+                'model' => strtoupper((stripos($aData['MODEL_DESC'],' '))?urlencode(substr($aData['MODEL_DESC'], 0, stripos($aData['MODEL_DESC'],' '))).'_'.$aData['MAKE_DESC']:urlencode($aData['MODEL_DESC']).'_'.$aData['MAKE_DESC']),
                 'modif_for_group' => $aData['MODEL_YEAR'],
                 'complectation' => $aData['CATALOG_CODE'].'_'.$aData['MODEL_DESC'],
                 Constants::PROD_DATE => $aData['MODEL_YEAR'],

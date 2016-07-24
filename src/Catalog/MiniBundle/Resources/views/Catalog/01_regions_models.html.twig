@@ -14,7 +14,7 @@
                     {% block halfList %}
                         {% set modelCode = model.getCode|md5 %}
 
-                        <img src="{{ asset('bundles/catalogmini/grafik/w_grafik/'~model.getOption('grafik')) }}" href="#" id="{{ modelCode }}{{ modelCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}" alt="{{ model.getRuname }}" style="cursor: pointer">
+                        <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~model.getOption('grafik')) }}" href="#" id="{{ modelCode }}{{ modelCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}" alt="{{ model.getRuname }}" style="cursor: pointer">
 
                         <div class="model glyphicon-plus" id="{{ modelCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}">
                             {{ model.getRuname }}

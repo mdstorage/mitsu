@@ -1,5 +1,9 @@
+catalog_honda_token:
+  path:         /honda/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogHondaBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_honda:
-  path:         /honda/catalog/0/{regionCode}
+  path:         /honda/{regionCode}
   defaults:     {_controller: CatalogHondaBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_honda_modifications:
@@ -8,24 +12,24 @@ catalog_honda_modifications:
   requirements: {_method: POST}
 
 catalog_honda_complectations:
-  path:         /honda/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogHondaBundle:Catalog:complectations}
+  path:         /honda/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogHondaBundle:Catalog:complectations, token: null}
 
 catalog_honda_groups:
-  path:         /honda/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogHondaBundle:Catalog:groups}
+  path:         /honda/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogHondaBundle:Catalog:groups, token: null}
 
 catalog_honda_subgroups:
-  path:         /honda/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogHondaBundle:Catalog:subgroups}
+  path:         /honda/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogHondaBundle:Catalog:subgroups, token: null}
 
 catalog_honda_schemas:
-  path:         /honda/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogHondaBundle:Catalog:schemas}
+  path:         /honda/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogHondaBundle:Catalog:schemas, token: null}
 
 catalog_honda_schema:
-  path:         /honda/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogHondaBundle:Catalog:schema}
+  path:         /honda/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogHondaBundle:Catalog:schema, token: null}
 
 catalog_honda_articuls:
   path:         /honda/catalog/7
@@ -33,34 +37,34 @@ catalog_honda_articuls:
   requirements: {_method: POST}
 
 catalog_honda_group:
-  path:         /honda/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /honda/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogHondaBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------
 
 vin_honda:
-  path:         /honda/vin/0
-  defaults:     {_controller: CatalogHondaBundle:Vin:index1}
+  path:         /honda/vin/0/{token}
+  defaults:     {_controller: CatalogHondaBundle:Vin:index1, token: null}
 
 vin_honda_complectations:
-  path:         /honda/vin/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogHondaBundle:Vin:vinComplectations, regionCode: null, modelCode: null, modificationCode: null}
+  path:         /honda/vin/2/{token}
+  defaults:     {_controller: CatalogHondaBundle:Vin:vinComplectations, token: null}
 
 vin_honda_groups:
-  path:         /honda/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogHondaBundle:Vin:groups}
+  path:         /honda/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogHondaBundle:Vin:groups, token: null}
 
 vin_honda_subgroups:
-  path:         /honda/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogHondaBundle:Vin:subgroups}
+  path:         /honda/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogHondaBundle:Vin:subgroups, token: null}
 
 vin_honda_schemas:
-  path:         /honda/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogHondaBundle:Vin:schemas}
+  path:         /honda/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogHondaBundle:Vin:schemas, token: null}
 
 vin_honda_schema:
-  path:         /honda/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogHondaBundle:Vin:schema}
+  path:         /honda/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogHondaBundle:Vin:schema, token: null}
 
 vin_honda_articuls:
   path:         /honda/vin/7
@@ -68,17 +72,21 @@ vin_honda_articuls:
   requirements: {_method: POST}
 
 vin_honda_group:
-  path:         /honda/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /honda/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogHondaBundle:Vin:getGroupBySubgroup}
 
 #---------------------------------------------------------------------------------------------
 
 articul_honda:
-  path:         /honda/articul/0
-  defaults:     {_controller: CatalogHondaBundle:Articul:index}
+  path:         /honda/articul/0/{token}
+  defaults:     {_controller: CatalogHondaBundle:Articul:index, token: null}
+
+articul_honda_find_token:
+  path:         /honda/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogHondaBundle:Articul:findByArticul, regionCode: null}
 
 articul_honda_find:
-  path:         /honda/articul/1/{regionCode}
+  path:         /honda/articul/2/{regionCode}
   defaults:     {_controller: CatalogHondaBundle:Articul:findByArticul, regionCode: null}
 
 articul_honda_modifications:
@@ -87,24 +95,24 @@ articul_honda_modifications:
   requirements: {_method: POST}
 
 articul_honda_complectations:
-  path:         /honda/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogHondaBundle:Articul:hondaArticulComplectations}
+  path:         /honda/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogHondaBundle:Articul:hondaArticulComplectations, token: null}
 
 articul_honda_groups:
-  path:         /honda/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogHondaBundle:Articul:hondaArticulgroups}
+  path:         /honda/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogHondaBundle:Articul:hondaArticulgroups, token: null}
 
 articul_honda_subgroups:
-  path:         /honda/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogHondaBundle:Articul:hondaArticulSubgroups}
+  path:         /honda/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogHondaBundle:Articul:hondaArticulSubgroups, token: null}
 
 articul_honda_schemas:
-  path:         /honda/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogHondaBundle:Articul:hondaArticulSchemas}
+  path:         /honda/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogHondaBundle:Articul:hondaArticulSchemas, token: null}
 
 articul_honda_schema:
-  path:         /honda/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogHondaBundle:Articul:hondaArticulSchema}
+  path:         /honda/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogHondaBundle:Articul:hondaArticulSchema, token: null}
 
 articul_honda_articuls:
   path:         /honda/articul/9
@@ -112,7 +120,7 @@ articul_honda_articuls:
   requirements: {_method: POST}
 
 articul_honda_group:
-  path:         /honda/articul/10/{regionCode}/{modelCode}/{modificationCode}/complectationCode/{subGroupCode}
+  path:         /honda/articul/10/{regionCode}/{modelCode}/{modificationCode}/complectationCode/{subGroupCode}/{token}
   defaults:     {_controller: CatalogHondaBundle:Articul:getGroupBySubgroup}
 catalog_honda_homepage:
     path:     /hello/{name}

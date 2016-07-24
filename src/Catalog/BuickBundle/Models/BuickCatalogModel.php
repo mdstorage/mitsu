@@ -72,7 +72,7 @@ class BuickCatalogModel extends CatalogModel{
             {
                 if (strpos($item['MODEL_DESC'], $value) !== false)
                 {
-                    $models[strtoupper($value)] =
+                    $models[urlencode(strtoupper($value)).'_'.$item['MAKE_DESC']] =
                         array(Constants::NAME=>strtoupper($value),
                             Constants::OPTIONS=>array('DESC'=>$item['MAKE_DESC']));
 
@@ -90,6 +90,7 @@ class BuickCatalogModel extends CatalogModel{
 
     public function getModifications($regionCode, $modelCode)
     {
+        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
 
         $sql = "
         SELECT CATALOG_CODE, FIRST_YEAR, LAST_YEAR
@@ -150,6 +151,7 @@ class BuickCatalogModel extends CatalogModel{
     public function getComplectations($regionCode, $modelCode, $modificationCode)
    
     {
+        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
 
         $sql = "
         SELECT CATALOG_CODE, MODEL_DESC

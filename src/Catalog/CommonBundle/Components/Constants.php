@@ -28,5 +28,5 @@ class Constants {
     const FIND_PATH = 'http://autoasia.by/search/number/?article={article}';
 
     const TOKEN = 'TOKEN';
-    const REFERER = 'http://vincat.ru/origin';
+    const REFERER = 'http://icar.by';
 } 

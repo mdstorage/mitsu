@@ -1,8 +1,8 @@
 {% block brand %}Lancia{% endblock brand %}
-{% block catalogPathLogo %}{{ path('catalog_lancia') }}{% endblock catalogPathLogo %}
-{% block catalogPath %}{{ path('catalog_lancia') }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_lancia') }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_lancia') }}{% endblock articulPath %}
+{% block catalogPathLogo %}{{ path('catalog_lancia', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_lancia', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_lancia', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_lancia', {'token': app.request.get('token')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
-    <link rel="stylesheet" href="{{ asset('bundles/catalogalfaromeo/css/common.css') }}" media="all">
+    <link rel="stylesheet" href="{{ asset('bundles/catalogfiat/css/common.css') }}" media="all">
 {% endblock userStylesheets %}

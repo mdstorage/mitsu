@@ -25,8 +25,8 @@
     subGroupCode: '{{ parameters.subGroupCode }}',
     pncCode: '{{ pnc.getCode }}',
     articul: '{{ parameters.articul }}',
-    options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}',
-    token: '{{ parameters.token }}'
+    token: '{{ parameters.token }}',
+    options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'
 {% endblock ajaxData %}
 
 {% block subGroupPath %}{{ path('vin_suzuki_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}

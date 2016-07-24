@@ -211,21 +211,33 @@ class HummerArticulModel extends HummerCatalogModel{
         $modelCode = urldecode($modelCode);
 
         $sql = "
-        SELECT MAJOR_GROUP
+        SELECT part_usage.MAJOR_GROUP
         FROM part_usage
+        INNER JOIN callout_legend ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND callout_legend.CAPTION_GROUP = part_usage.MAJOR_GROUP)
         WHERE part_usage.PART_NBR = :articulCode
         AND part_usage.CATALOG_CODE = :catalogCode
-        AND :year BETWEEN FIRST_YEAR AND LAST_YEAR
+        AND :year BETWEEN part_usage.FIRST_YEAR AND part_usage.LAST_YEAR
         AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*')
 
         UNION
 
-        SELECT MAJOR_GROUP
+        SELECT part_v.MAJOR_GROUP
         FROM part_v
+        INNER JOIN callout_legend ON (callout_legend.PART_USAGE_ID = part_v.PART_USAGE_ID AND callout_legend.CAPTION_GROUP = part_v.MAJOR_GROUP)
         WHERE part_v.PART_NBR = :articulCode
         AND part_v.CATALOG_CODE = :catalogCode
-        AND :year BETWEEN FIRST_YEAR AND LAST_YEAR
+        AND :year BETWEEN part_v.FIRST_YEAR AND part_v.LAST_YEAR
         AND (part_v.COUNTRY_CODE = :regionCode OR part_v.COUNTRY_CODE = '*')
+
+        UNION
+
+        SELECT callout_legend.CAPTION_GROUP
+        FROM part_usage
+        INNER JOIN callout_legend ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR)
+        WHERE part_usage.PART_NBR = :articulCode
+        AND part_usage.PART_TYPE LIKE 'Z'
+        AND part_usage.CATALOG_CODE = :catalogCode
+        AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*')
 
         ";
 
@@ -297,6 +309,18 @@ class HummerArticulModel extends HummerCatalogModel{
         AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*')
         AND part_usage.PART_NBR = :articulCode
         AND part_usage.CATALOG_CODE = :catalogCode)
+        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
+        and :year BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
+
+        UNION
+        SELECT callout_legend.ART_NBR
+        FROM callout_legend
+        INNER JOIN part_v ON (part_v.PART_USAGE_ID = callout_legend.PART_USAGE_ID
+        AND part_v.PART_TYPE NOT LIKE 'Z'
+        AND (part_v.COUNTRY_CODE = :regionCode OR part_v.COUNTRY_CODE = '*')
+        AND part_v.PART_NBR = :articulCode
+        AND part_v.CATALOG_CODE = :catalogCode
+        AND :year BETWEEN part_v.FIRST_YEAR AND part_v.LAST_YEAR)
         WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
         and :year BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
 

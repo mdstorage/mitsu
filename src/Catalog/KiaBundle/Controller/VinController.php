@@ -49,7 +49,7 @@ class VinController extends BaseController{
         return $this->groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
     }
 
-    public function vinSubgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
+    public function vinSubgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $articul = null, $token = null)
     {
         $prodDate = $request->cookies->get(Constants::PROD_DATE);
 
@@ -62,7 +62,7 @@ class VinController extends BaseController{
             Constants::PROD_DATE => $prodDate
         ));
 
-        return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+        return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $articul, $token);
     }
 
     public function vinSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)

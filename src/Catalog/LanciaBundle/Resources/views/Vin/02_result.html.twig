@@ -43,5 +43,5 @@
     </div>
 {% endblock specification %}
 {% block catalogPath %}
-    {{ path('vin_lancia_groups',({'regionCode': result.region, 'modelCode': result.model_for_group, 'modificationCode': result.modif_for_group })) }}
+    {{ path('vin_lancia_groups',({'regionCode': result.region, 'modelCode': result.model_for_group, 'modificationCode': result.modif_for_group, 'token': app.request.get('token') })) }}
 {% endblock catalogPath %}

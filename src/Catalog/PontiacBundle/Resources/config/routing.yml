@@ -1,5 +1,9 @@
+catalog_pontiac_token:
+  path:         /pontiac/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogPontiacBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_pontiac:
-  path:         /pontiac/catalog/0/{regionCode}
+  path:         /pontiac/{regionCode}
   defaults:     {_controller: CatalogPontiacBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_pontiac_modifications:
@@ -8,24 +12,24 @@ catalog_pontiac_modifications:
   requirements: {_method: POST}
 
 catalog_pontiac_complectations:
-  path:         /pontiac/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogPontiacBundle:Catalog:complectations}
+  path:         /pontiac/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogPontiacBundle:Catalog:complectations, token: null}
 
 catalog_pontiac_groups:
-  path:         /pontiac/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogPontiacBundle:Catalog:groups}
+  path:         /pontiac/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogPontiacBundle:Catalog:groups, token: null}
 
 catalog_pontiac_subgroups:
-  path:         /pontiac/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogPontiacBundle:Catalog:subgroups}
+  path:         /pontiac/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogPontiacBundle:Catalog:subgroups, token: null}
 
 catalog_pontiac_schemas:
-  path:         /pontiac/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogPontiacBundle:Catalog:schemas}
+  path:         /pontiac/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogPontiacBundle:Catalog:schemas, token: null}
 
 catalog_pontiac_schema:
-  path:         /pontiac/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogPontiacBundle:Catalog:schema}
+  path:         /pontiac/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogPontiacBundle:Catalog:schema, token: null}
 
 catalog_pontiac_articuls:
   path:         /pontiac/catalog/7
@@ -33,14 +37,14 @@ catalog_pontiac_articuls:
   requirements: {_method: POST}
 
 catalog_pontiac_group:
-  path:         /pontiac/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /pontiac/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogPontiacBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------
 
 vin_pontiac:
-  path:         /pontiac/vin/0
-  defaults:     {_controller: CatalogPontiacBundle:Vin:index}
+  path:         /pontiac/vin/0/{token}
+  defaults:     {_controller: CatalogPontiacBundle:Vin:index, token: null}
 
 vin_pontiac_result:
   path:         /pontiac/vin/1
@@ -48,20 +52,20 @@ vin_pontiac_result:
   requirements: {_method: POST}
 
 vin_pontiac_groups:
-  path:         /pontiac/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogPontiacBundle:Vin:groups}
+  path:         /pontiac/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogPontiacBundle:Vin:groups, token: null}
 
 vin_pontiac_subgroups:
-  path:         /pontiac/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogPontiacBundle:Vin:subgroups}
+  path:         /pontiac/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogPontiacBundle:Vin:subgroups, token: null}
 
 vin_pontiac_schemas:
-  path:         /pontiac/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogPontiacBundle:Vin:schemas}
+  path:         /pontiac/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogPontiacBundle:Vin:schemas, token: null}
 
 vin_pontiac_schema:
-  path:         /pontiac/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogPontiacBundle:Vin:schema}
+  path:         /pontiac/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogPontiacBundle:Vin:schema, token: null}
 
 vin_pontiac_articuls:
   path:         /pontiac/vin/7
@@ -69,17 +73,21 @@ vin_pontiac_articuls:
   requirements: {_method: POST}
 
 vin_pontiac_group:
-  path:         /pontiac/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /pontiac/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogPontiacBundle:Vin:getGroupBySubgroup}
 
 #---------------------------------------------------------------------------------------------
 
 articul_pontiac:
-  path:         /pontiac/articul/0
-  defaults:     {_controller: CatalogPontiacBundle:Articul:index}
+  path:         /pontiac/articul/0/{token}
+  defaults:     {_controller: CatalogPontiacBundle:Articul:index, token: null}
+
+articul_pontiac_find_token:
+  path:         /pontiac/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogPontiacBundle:Articul:findByArticul, regionCode: null}
 
 articul_pontiac_find:
-  path:         /pontiac/articul/1/{regionCode}
+  path:         /pontiac/articul/2/{regionCode}
   defaults:     {_controller: CatalogPontiacBundle:Articul:findByArticul, regionCode: null}
 
 articul_pontiac_modifications:
@@ -88,24 +96,24 @@ articul_pontiac_modifications:
   requirements: {_method: POST}
 
 articul_pontiac_complectations:
-  path:         /pontiac/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogPontiacBundle:Articul:pontiacArticulComplectations}
+  path:         /pontiac/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogPontiacBundle:Articul:pontiacArticulComplectations, token: null}
 
 articul_pontiac_groups:
-  path:         /pontiac/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogPontiacBundle:Articul:pontiacArticulgroups}
+  path:         /pontiac/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogPontiacBundle:Articul:pontiacArticulgroups, token: null}
 
 articul_pontiac_subgroups:
-  path:         /pontiac/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogPontiacBundle:Articul:pontiacArticulSubgroups}
+  path:         /pontiac/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogPontiacBundle:Articul:pontiacArticulSubgroups, token: null}
 
 articul_pontiac_schemas:
-  path:         /pontiac/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogPontiacBundle:Articul:pontiacArticulSchemas}
+  path:         /pontiac/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogPontiacBundle:Articul:pontiacArticulSchemas, token: null}
 
 articul_pontiac_schema:
-  path:         /pontiac/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogPontiacBundle:Articul:pontiacArticulSchema}
+  path:         /pontiac/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogPontiacBundle:Articul:pontiacArticulSchema, token: null}
 
 articul_pontiac_articuls:
   path:         /pontiac/articul/9
@@ -113,7 +121,7 @@ articul_pontiac_articuls:
   requirements: {_method: POST}
 
 articul_pontiac_group:
-  path:         /pontiac/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /pontiac/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogPontiacBundle:Articul:getGroupBySubgroup}
 catalog_pontiac_homepage:
     path:     /hello/{name}

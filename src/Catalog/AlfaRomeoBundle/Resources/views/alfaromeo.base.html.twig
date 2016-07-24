@@ -1,8 +1,8 @@
 {% block brand %}AlfaRomeo{% endblock brand %}
-{% block catalogPathLogo %}{{ path('catalog_alfaromeo') }}{% endblock catalogPathLogo %}
-{% block catalogPath %}{{ path('catalog_alfaromeo') }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_alfaromeo') }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_alfaromeo') }}{% endblock articulPath %}
+{% block catalogPathLogo %}{{ path('catalog_alfaromeo', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_alfaromeo', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_alfaromeo', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_alfaromeo', {'token': app.request.get('token')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
-    <link rel="stylesheet" href="{{ asset('bundles/catalogalfaromeo/css/common.css') }}" media="all">
+    <link rel="stylesheet" href="{{ asset('bundles/catalogfiat/css/common.css') }}" media="all">
 {% endblock userStylesheets %}

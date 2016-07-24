@@ -12,7 +12,7 @@
             <div class="row">
                 <div class="col-xs-6">
                     {% block head %}<h3>Поиск по VIN</h3>{% endblock head %}
-                     <form class="form-horizontal" action="{{ path('vin_honda_complectations') }}">
+                     <form class="form-horizontal" action="{{ path('vin_honda_complectations', {'token': app.request.get('token')}) }}">
                         <div class="form-group">
                             <div class="col-xs-10">
                                 <input type="text" class="form-control" id="vin" name="vin" placeholder="Введите VIN"/>

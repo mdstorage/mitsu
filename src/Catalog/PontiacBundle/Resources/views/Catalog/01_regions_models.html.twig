@@ -1,6 +1,17 @@
 {% extends 'CatalogCommonBundle:Catalog:01_regions_models.html.twig' %}
 {% use 'CatalogPontiacBundle::pontiac.base.html.twig' %}
-{% block regionPath %}{{ path('catalog_pontiac', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+{% block regionPath %}
+    {% if app.request.get('token') %}
+        {{ path('catalog_pontiac_token', {'token': app.request.get('token'), 'regionCode': region.getCode}) }}
+
+    {% else %}
+
+        {{ path('catalog_pontiac', {'regionCode': region.getCode}) }}
+
+    {% endif %}
+
+{% endblock regionPath %}
+
 
 
 
@@ -60,7 +71,12 @@
                                             type:   'POST',
                                             async:  false,
                                             url:    "{% block ajaxUrl %}{{ path('catalog_pontiac_modifications') }}{% endblock ajaxUrl %}",
-                                            data:   { regionCode: $(this).attr('regionCode'), modelCode: "{{ model.getCode }}" },
+                                            data:   {
+                                                regionCode: $(this).attr('regionCode'),
+                                                modelCode: '{{ model.getCode }}',
+                                                token: "{{ app.request.get('token') }}"
+
+                                            },
                                             success: function(data) {
                                                 $("#modifications_for_model{{ modelCode }}").html(data);
                                             }
@@ -116,7 +132,13 @@
                                                 type:   'POST',
                                                 async:  false,
                                                 url:    "{% block ajaxUrl1 %}{{ path('catalog_pontiac_modifications') }}{% endblock ajaxUrl1 %}",
-                                                data:   { regionCode: $(this).attr('regionCode'), modelCode: "{{ model.getCode }}" },
+                                                data:   {
+                                                    regionCode: $(this).attr('regionCode'),
+                                                    modelCode: "{{ model.getCode }}",
+                                                    token: "{{ app.request.get('token') }}"
+                                                },
+
+
                                                 success: function(data) {
                                                     $("#modifications_for_model{{ modelCode }}").html(data);
                                                 }

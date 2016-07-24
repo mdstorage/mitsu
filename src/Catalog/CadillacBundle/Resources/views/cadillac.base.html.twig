@@ -1,8 +1,8 @@
 {% block brand %}Cadillac{% endblock brand %}
-{% block catalogPathLogo %}{{ path('catalog_cadillac') }}{% endblock catalogPathLogo %}
-{% block catalogPath %}{{ path('catalog_cadillac') }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_cadillac') }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_cadillac') }}{% endblock articulPath %}
+{% block catalogPathLogo %}{{ path('catalog_cadillac', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_cadillac', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_cadillac', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_cadillac', {'token': app.request.get('token')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
     <link rel="stylesheet" href="{{ asset('bundles/cataloggm/css/common.css') }}" media="all">
 {% endblock userStylesheets %}

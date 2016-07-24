@@ -1,7 +1,8 @@
-{% block brand %}Honda Европа{% endblock brand %}
-{% block catalogPath %}{{ path('catalog_hondaeurope') }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_hondaeurope') }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_hondaeurope') }}{% endblock articulPath %}
+{% block brand %}Хонда Европа{% endblock brand %}
+{% block catalogPathLogo %}{{ path('catalog_hondaeurope', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_hondaeurope', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_hondaeurope', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_hondaeurope', {'token': app.request.get('token')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
-        <link rel="stylesheet" href="{{ asset('bundles/cataloghondaeurope/css/common.css') }}" media="all">
-    {% endblock userStylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/cataloghondaeurope/css/common.css') }}" media="all">
+{% endblock userStylesheets %}

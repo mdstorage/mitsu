@@ -1,5 +1,9 @@
+catalog_kia_token:
+  path:         /kia/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogKiaBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_kia:
-  path:         /kia/catalog/0/{regionCode}
+  path:         /kia/{regionCode}
   defaults:     {_controller: CatalogKiaBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_kia_modifications:
@@ -8,24 +12,24 @@ catalog_kia_modifications:
   requirements: {_method: POST}
 
 catalog_kia_complectations:
-  path:         /kia/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogKiaBundle:Catalog:complectations}
+  path:         /kia/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogKiaBundle:Catalog:complectations, token: null}
 
 catalog_kia_groups:
-  path:         /kia/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogKiaBundle:Catalog:groups}
+  path:         /kia/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogKiaBundle:Catalog:groups, token: null}
 
 catalog_kia_subgroups:
-  path:         /kia/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogKiaBundle:Catalog:subgroups}
+  path:         /kia/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogKiaBundle:Catalog:subgroups, token: null}
 
 catalog_kia_schemas:
-  path:         /kia/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogKiaBundle:Catalog:schemas}
+  path:         /kia/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogKiaBundle:Catalog:schemas, token: null}
 
 catalog_kia_schema:
-  path:         /kia/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogKiaBundle:Catalog:schema}
+  path:         /kia/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogKiaBundle:Catalog:schema, token: null}
 
 catalog_kia_articuls:
   path:         /kia/catalog/7
@@ -33,14 +37,14 @@ catalog_kia_articuls:
   requirements: {_method: POST}
 
 catalog_kia_group:
-  path:         /kia/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /kia/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogKiaBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------
 
 vin_kia:
-  path:         /kia/vin/0
-  defaults:     {_controller: CatalogKiaBundle:Vin:index}
+  path:         /kia/vin/0/{token}
+  defaults:     {_controller: CatalogKiaBundle:Vin:index, token: null}
 
 vin_kia_result:
   path:         /kia/vin/1
@@ -48,20 +52,20 @@ vin_kia_result:
   requirements: {_method: POST}
 
 vin_kia_groups:
-  path:         /kia/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogKiaBundle:Vin:groups}
+  path:         /kia/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogKiaBundle:Vin:groups, token: null}
 
 vin_kia_subgroups:
-  path:         /kia/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogKiaBundle:Vin:vinSubgroups}
+  path:         /kia/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogKiaBundle:Vin:vinSubgroups, token: null}
 
 vin_kia_schemas:
-  path:         /kia/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogKiaBundle:Vin:schemas}
+  path:         /kia/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogKiaBundle:Vin:schemas, token: null}
 
 vin_kia_schema:
-  path:         /kia/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogKiaBundle:Vin:schema}
+  path:         /kia/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogKiaBundle:Vin:schema, token: null}
 
 vin_kia_articuls:
   path:         /kia/vin/7
@@ -69,17 +73,21 @@ vin_kia_articuls:
   requirements: {_method: POST}
 
 vin_kia_group:
-  path:         /kia/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /kia/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogKiaBundle:Vin:getGroupBySubgroup}
 
 #---------------------------------------------------------------------------------------------
 
 articul_kia:
-  path:         /kia/articul/0
-  defaults:     {_controller: CatalogKiaBundle:Articul:index}
+  path:         /kia/articul/0/{token}
+  defaults:     {_controller: CatalogKiaBundle:Articul:index, token: null}
+
+articul_kia_find_token:
+  path:         /kia/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogKiaBundle:Articul:findByArticul, regionCode: null}
 
 articul_kia_find:
-  path:         /kia/articul/1/{regionCode}
+  path:         /kia/articul/2/{regionCode}
   defaults:     {_controller: CatalogKiaBundle:Articul:findByArticul, regionCode: null}
 
 articul_kia_modifications:
@@ -88,24 +96,24 @@ articul_kia_modifications:
   requirements: {_method: POST}
 
 articul_kia_complectations:
-  path:         /kia/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogKiaBundle:Articul:kiaArticulComplectations}
+  path:         /kia/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogKiaBundle:Articul:kiaArticulComplectations, token: null}
 
 articul_kia_groups:
-  path:         /kia/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogKiaBundle:Articul:kiaArticulgroups}
+  path:         /kia/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogKiaBundle:Articul:kiaArticulgroups, token: null}
 
 articul_kia_subgroups:
-  path:         /kia/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogKiaBundle:Articul:kiaArticulSubgroups}
+  path:         /kia/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogKiaBundle:Articul:kiaArticulSubgroups, token: null}
 
 articul_kia_schemas:
-  path:         /kia/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogKiaBundle:Articul:kiaArticulSchemas}
+  path:         /kia/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogKiaBundle:Articul:kiaArticulSchemas, token: null}
 
 articul_kia_schema:
-  path:         /kia/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogKiaBundle:Articul:kiaArticulSchema}
+  path:         /kia/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogKiaBundle:Articul:kiaArticulSchema, token: null}
 
 articul_kia_articuls:
   path:         /kia/articul/9
@@ -113,7 +121,7 @@ articul_kia_articuls:
   requirements: {_method: POST}
 
 articul_kia_group:
-  path:         /kia/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /kia/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogKiaBundle:Articul:getGroupBySubgroup}
 catalog_kia_homepage:
     path:     /hello/{name}

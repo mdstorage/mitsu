@@ -1,5 +1,9 @@
+catalog_alfaromeo_token:
+  path:         /alfaromeo/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_alfaromeo:
-  path:         /alfaromeo/catalog/0/{regionCode}
+  path:         /alfaromeo/{regionCode}
   defaults:     {_controller: CatalogAlfaRomeoBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_alfaromeo_modifications:
@@ -8,24 +12,24 @@ catalog_alfaromeo_modifications:
   requirements: {_method: POST}
 
 catalog_alfaromeo_complectations:
-  path:         /alfaromeo/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogAlfaRomeoBundle:Catalog:complectations}
+  path:         /alfaromeo/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Catalog:complectations, token: null}
 
 catalog_alfaromeo_groups:
-  path:         /alfaromeo/catalog/3/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogAlfaRomeoBundle:Catalog:groups}
+  path:         /alfaromeo/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Catalog:groups, token: null}
 
 catalog_alfaromeo_subgroups:
-  path:         /alfaromeo/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogAlfaRomeoBundle:Catalog:subgroups}
+  path:         /alfaromeo/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Catalog:subgroups, token: null}
 
 catalog_alfaromeo_schemas:
-  path:         /alfaromeo/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogAlfaRomeoBundle:Catalog:schemas}
+  path:         /alfaromeo/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Catalog:schemas, token: null}
 
 catalog_alfaromeo_schema:
-  path:         /alfaromeo/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogAlfaRomeoBundle:Catalog:schema}
+  path:         /alfaromeo/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Catalog:schema, token: null}
 
 catalog_alfaromeo_articuls:
   path:         /alfaromeo/catalog/7
@@ -33,14 +37,14 @@ catalog_alfaromeo_articuls:
   requirements: {_method: POST}
 
 catalog_alfaromeo_group:
-  path:         /alfaromeo/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /alfaromeo/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogAlfaRomeoBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------
 
 vin_alfaromeo:
-  path:         /alfaromeo/vin/0
-  defaults:     {_controller: CatalogAlfaRomeoBundle:Vin:index}
+  path:         /alfaromeo/vin/0/{token}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Vin:index, token: null}
 
 vin_alfaromeo_result:
   path:         /alfaromeo/vin/1
@@ -48,20 +52,20 @@ vin_alfaromeo_result:
   requirements: {_method: POST}
 
 vin_alfaromeo_groups:
-  path:         /alfaromeo/vin/3/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogAlfaRomeoBundle:Vin:groups}
+  path:         /alfaromeo/vin/3/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Vin:groups, token: null}
 
 vin_alfaromeo_subgroups:
-  path:         /alfaromeo/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogAlfaRomeoBundle:Vin:subgroups}
+  path:         /alfaromeo/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Vin:subgroups, token: null}
 
 vin_alfaromeo_schemas:
-  path:         /alfaromeo/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogAlfaRomeoBundle:Vin:schemas}
+  path:         /alfaromeo/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Vin:schemas, token: null}
 
 vin_alfaromeo_schema:
-  path:         /alfaromeo/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogAlfaRomeoBundle:Vin:schema}
+  path:         /alfaromeo/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Vin:schema, token: null}
 
 vin_alfaromeo_articuls:
   path:         /alfaromeo/vin/7
@@ -69,17 +73,21 @@ vin_alfaromeo_articuls:
   requirements: {_method: POST}
 
 vin_alfaromeo_group:
-  path:         /alfaromeo/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /alfaromeo/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogAlfaRomeoBundle:Vin:getGroupBySubgroup}
 
 #---------------------------------------------------------------------------------------------
 
 articul_alfaromeo:
-  path:         /alfaromeo/articul/0
-  defaults:     {_controller: CatalogAlfaRomeoBundle:Articul:index}
+  path:         /alfaromeo/articul/0/{token}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Articul:index, token: null}
+
+articul_alfaromeo_find_token:
+  path:         /alfaromeo/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Articul:findByArticul, regionCode: null}
 
 articul_alfaromeo_find:
-  path:         /alfaromeo/articul/1/{regionCode}
+  path:         /alfaromeo/articul/2/{regionCode}
   defaults:     {_controller: CatalogAlfaRomeoBundle:Articul:findByArticul, regionCode: null}
 
 articul_alfaromeo_modifications:
@@ -88,24 +96,24 @@ articul_alfaromeo_modifications:
   requirements: {_method: POST}
 
 articul_alfaromeo_complectations:
-  path:         /alfaromeo/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogAlfaRomeoBundle:Articul:alfaromeoArticulComplectations}
+  path:         /alfaromeo/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Articul:alfaromeoArticulComplectations, token: null}
 
 articul_alfaromeo_groups:
-  path:         /alfaromeo/articul/5/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogAlfaRomeoBundle:Articul:alfaromeoArticulgroups}
+  path:         /alfaromeo/articul/5/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Articul:alfaromeoArticulgroups, token: null}
 
 articul_alfaromeo_subgroups:
-  path:         /alfaromeo/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogAlfaRomeoBundle:Articul:alfaromeoArticulSubgroups}
+  path:         /alfaromeo/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Articul:alfaromeoArticulSubgroups, token: null}
 
 articul_alfaromeo_schemas:
-  path:         /alfaromeo/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogAlfaRomeoBundle:Articul:alfaromeoArticulSchemas}
+  path:         /alfaromeo/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Articul:alfaromeoArticulSchemas, token: null}
 
 articul_alfaromeo_schema:
-  path:         /alfaromeo/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogAlfaRomeoBundle:Articul:alfaromeoArticulSchema}
+  path:         /alfaromeo/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogAlfaRomeoBundle:Articul:alfaromeoArticulSchema, token: null}
 
 articul_alfaromeo_articuls:
   path:         /alfaromeo/articul/9
@@ -113,7 +121,7 @@ articul_alfaromeo_articuls:
   requirements: {_method: POST}
 
 articul_alfaromeo_group:
-  path:         /alfaromeo/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /alfaromeo/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogAlfaRomeoBundle:Articul:getGroupBySubgroup}
 catalog_alfaromeo_homepage:
     path:     /hello/{name}

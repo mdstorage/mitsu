@@ -28,5 +28,5 @@
     </div>
 {% endblock specification %}
 {% block catalogPath %}
-    {{ path('vin_chevroletusa_groups',({'regionCode': result.region, 'modelCode': result.model, 'modificationCode': result.modif_for_group, 'complectationCode': result.complectation })) }}
+    {{ path('vin_chevroletusa_groups',({'regionCode': result.region, 'modelCode': result.model, 'modificationCode': result.modif_for_group, 'complectationCode': result.complectation, 'token': app.request.get('token') })) }}
 {% endblock catalogPath %}
