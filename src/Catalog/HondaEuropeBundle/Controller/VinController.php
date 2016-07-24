@@ -44,7 +44,7 @@ class VinController extends BaseController{
         return $this->render($this->bundle().':01_index.html.twig', array('error_message' => $error_message));
     }
     
-    public function vinComplectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
+    public function vinComplectationsAction(Request $request, $token = null)
     {
        $vin = $request->get('vin');
         $vinComplectations = $this->model()->getVinComplectations($vin);
@@ -64,7 +64,7 @@ class VinController extends BaseController{
             'vinComplectations' => $vinComplectations
         ));
 
-        return parent::complectationsAction($request, $regionCode, $modelCode, $modificationCode);
+        return parent::complectationsAction($request, $regionCode, $modelCode, $modificationCode, $articul = null, $token);
     }
     
     public function vinComplectationsFilter($oContainer, $parameters)
@@ -135,7 +135,7 @@ class VinController extends BaseController{
 
     public function vinSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
-    	print_r(substr($modificationCode, 1, 5));die;
+
         $this->addFilter('vinSchemasFilter', array(
             'regionCode' => $regionCode,
             'modelCode' => $modelCode,

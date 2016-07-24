@@ -1,4 +1,42 @@
 {% extends 'CatalogCommonBundle:Catalog:01_regions_models.html.twig' %}
 {% use 'CatalogHuyndaiBundle::huyndai.base.html.twig' %}
-{% block regionPath %}{{ path('catalog_huyndai', {'regionCode': region.getCode}) }}{% endblock regionPath %}
-{% block ajaxUrl %}{{ path('catalog_huyndai_modifications') }}{% endblock ajaxUrl %}
+{% block regionPath %}
+    {% if app.request.get('token') %}
+        {{ path('catalog_huyndai_token', {'token': app.request.get('token'), 'regionCode': region.getCode}) }}
+
+    {% else %}
+
+        {{ path('catalog_huyndai', {'regionCode': region.getCode}) }}
+
+    {% endif %}
+
+{% endblock regionPath %}
+
+{% block modificationScript %}
+    <script>
+        $("#{{ modelCode }}").on("click", function(){
+            $("#modifications_for_model{{ modelCode }}").toggleClass("hidden");
+            $(this).toggleClass("glyphicon-plus");
+            $.ajax({
+                type:   'POST',
+                async:  false,
+                url:    "{% block ajaxUrl %}{{ path('catalog_huyndai_modifications') }}{% endblock ajaxUrl %}",
+                data:   {
+                    regionCode: $(this).attr('regionCode'),
+                    modelCode: "{{ model.getCode }}",
+                    token: "{{ app.request.get('token') }}" },
+                success: function(data) {
+                    $("#modifications_for_model{{ modelCode }}").html(data);
+                }
+            });
+            $(this).toggleClass("glyphicon-minus");
+        });
+        $("#{{ modelCode }}").on("mouseover", function(){
+            $(this).css("cursor", "pointer");
+            $(this).addClass("btn-info");
+        });
+        $("#{{ modelCode }}").on("mouseout", function(){
+            $(this).removeClass("btn-info");
+        });
+    </script>
+{% endblock modificationScript %}

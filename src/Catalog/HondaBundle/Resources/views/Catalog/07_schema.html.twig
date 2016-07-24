@@ -25,7 +25,16 @@
                                             type:   'POST',
                                             async:  false,
                                             url:    "{{ path('catalog_honda_articuls') }}",
-                                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', complectationCode: '{{ oContainer.getActiveComplectation.getCode }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}'  },
+                                            data:   {
+                                                regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                                                modelCode: '{{ oContainer.getActiveModel.getCode }}',
+                                                modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                                                complectationCode: '{{ oContainer.getActiveComplectation.getCode }}',
+                                                subGroupCode: '{{ parameters.subGroupCode }}',
+                                                pncCode: '{{ pnc.getCode }}',
+                                                articul: '{{ parameters.articul }}',
+                                                token: '{{ parameters.token }}'
+                                            },
                                             success: function(data) {
                                                 $("#articul_for_pnc{{ pnc.getCode }}").html(data);
                                             }

@@ -94,34 +94,34 @@ class HondaEuropeCatalogModel extends CatalogModel{
 
     public function getComplectations($regionCode, $modelCode, $modificationCode)
    
-    {   $modelCode = rawurldecode($modelCode);
+    {
+            $modelCode = rawurldecode($modelCode);
 
 
-       $sql = "
-        SELECT *
-        FROM pmotyt
-        WHERE carea =:regionCode
-        AND cmodnamepc = :modelCode
-        AND dmodyr = :modificationCode
-        ";
+            $sql = "
+            SELECT *
+            FROM pmotyt
+            WHERE carea =:regionCode
+            AND cmodnamepc = :modelCode
+            AND dmodyr = :modificationCode
+            ";
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('modelCode',  $modelCode);
-        $query->bindValue('modificationCode',  $modificationCode);
-        $query->execute();
+            $query = $this->conn->prepare($sql);
+            $query->bindValue('regionCode', $regionCode);
+            $query->bindValue('modelCode',  $modelCode);
+            $query->bindValue('modificationCode',  $modificationCode);
+            $query->execute();
 
-        $aData = $query->fetchAll();
-             
-        $complectations = array();
+            $aData = $query->fetchAll();
+            $complectations = array();
         
         foreach($aData as &$item)
         {
-            $sqlOptions = "
-        SELECT cmnopt
-		FROM pmtmot
-		WHERE hmodtyp =:hmodtyp
-        ";
+                $sqlOptions = "
+                SELECT cmnopt
+		        FROM pmtmot
+		        WHERE hmodtyp =:hmodtyp
+                ";
 
             $query = $this->conn->prepare($sqlOptions);
             $query->bindValue('hmodtyp', $item['hmodtyp']);
@@ -130,45 +130,50 @@ class HondaEuropeCatalogModel extends CatalogModel{
             $aDataOptions = $query->fetchAll();
 
         
-        $aOriginOptions = array();
+            $aOriginOptions = array();
         
-        foreach($aDataOptions as $item1)
-         {
-		 	$aOriginOptions[] = $item1['cmnopt'];
-		 }
-		$aOriginOptionsDesc = array(); 
-		foreach (array_unique($aOriginOptions) as $item2)
-		{
-		$sqlOptionsDesc = "
-        SELECT xmnopt, cmnopt
-		FROM pmnopt
-		WHERE cmnopt =:item
-        ";
+            foreach($aDataOptions as $item1)
+            {
+		 	    $aOriginOptions[] = $item1['cmnopt'];
+		    }
 
-        $query = $this->conn->prepare($sqlOptionsDesc);
-        $query->bindValue('item', $item2);
-        $query->execute();
-        $aOriginOptionsDesc[] = $query->fetch();
-		 	
-		 }
+		    $aOriginOptionsDesc = array();
+
+
+            foreach (array_unique($aOriginOptions) as $item2)
+		    {
+		        $sqlOptionsDesc = "
+                SELECT xmnopt, cmnopt
+		        FROM pmnopt
+		        WHERE cmnopt =:item
+              ";
+
+                $query = $this->conn->prepare($sqlOptionsDesc);
+                $query->bindValue('item', $item2);
+                $query->execute();
+                $aOriginOptionsDesc[] = $query->fetch();
+            }
+
+
             $aOriginOptionDescs = array();
-		foreach($aOriginOptionsDesc as $item3)
-         {
-		 	$aOriginOptionDescs[] = '('.$item3['cmnopt'].') '.$item3['xmnopt'];
-		 	$aOriginOptionCodes[] = $item3['cmnopt'];
-		 }
+
+            foreach($aOriginOptionsDesc as $item3)
+            {
+		 	    $aOriginOptionDescs[] = '('.$item3['cmnopt'].') '.$item3['xmnopt'];
+		 	    $aOriginOptionCodes[] = $item3['cmnopt'];
+		    }
 		
-		foreach($aOriginOptionDescs as $index => $value)
-        {
-        	if (($value == '') || ($value == ' ') || ($value == '() '))
-        	{
+		    foreach($aOriginOptionDescs as $index => $value)
+            {
+        	    if (($value == '') || ($value == ' ') || ($value == '() '))
+        	    {
 				unset ($aOriginOptionDescs[$index]);
-			}
-		}
+			    }
+		    }
 		 
-		$comma_separated = implode("; ", $aOriginOptionDescs);
+		    $comma_separated = implode("; ", $aOriginOptionDescs);
 			 	 
-        $item['nfrmpf'] = $comma_separated;
+            $item['nfrmpf'] = $comma_separated;
        
 		}
 		/**

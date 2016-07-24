@@ -57,7 +57,7 @@ class GmcArticulModel extends GmcCatalogModel{
 
 
         $sql = "
-        SELECT model.MODEL_DESC
+        SELECT model.MODEL_DESC, model.MAKE_DESC
         FROM part_usage
         INNER JOIN model ON (model.CATALOG_CODE = part_usage.CATALOG_CODE AND (model.COUNTRY_CODE = part_usage.COUNTRY_CODE OR model.COUNTRY_CODE = '*')
         and (model.MAKE_DESC = 'Gmc' OR model.MAKE_DESC = 'Lt Truck Gmc'))
@@ -97,7 +97,7 @@ class GmcArticulModel extends GmcCatalogModel{
             {
                 if (strpos($item['MODEL_DESC'], $value) !== false)
                 {
-                    $models[] = strtoupper($value);
+                    $models[] = urlencode(strtoupper($value).'_'.$item['MAKE_DESC']);
 
                 }
 
@@ -112,6 +112,7 @@ class GmcArticulModel extends GmcCatalogModel{
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
 
+        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
 
 
         $sql = "
@@ -171,6 +172,7 @@ class GmcArticulModel extends GmcCatalogModel{
     
     public function getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode)
     {
+        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
 
         $sql = "
         SELECT model.CATALOG_CODE, model.MODEL_DESC
@@ -195,7 +197,7 @@ class GmcArticulModel extends GmcCatalogModel{
 
         foreach($aData as $item){
 
-            $complectations[] = $item['CATALOG_CODE'].'_'.$item ['MODEL_DESC'];
+            $complectations[] = urlencode($item['CATALOG_CODE'].'_'.$item ['MODEL_DESC']);
 
         }
 
@@ -205,27 +207,39 @@ class GmcArticulModel extends GmcCatalogModel{
     
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
+        $complectationCode = urldecode($complectationCode);
 
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;
-        $modelCode = urldecode($modelCode);
 
         $sql = "
-        SELECT MAJOR_GROUP
+        SELECT part_usage.MAJOR_GROUP
         FROM part_usage
+        INNER JOIN callout_legend ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND callout_legend.CAPTION_GROUP = part_usage.MAJOR_GROUP)
         WHERE part_usage.PART_NBR = :articulCode
         AND part_usage.CATALOG_CODE = :catalogCode
-        AND :year BETWEEN FIRST_YEAR AND LAST_YEAR
+        AND :year BETWEEN part_usage.FIRST_YEAR AND part_usage.LAST_YEAR
         AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*')
 
         UNION
 
-        SELECT MAJOR_GROUP
+        SELECT part_v.MAJOR_GROUP
         FROM part_v
+        INNER JOIN callout_legend ON (callout_legend.PART_USAGE_ID = part_v.PART_USAGE_ID AND callout_legend.CAPTION_GROUP = part_v.MAJOR_GROUP)
         WHERE part_v.PART_NBR = :articulCode
         AND part_v.CATALOG_CODE = :catalogCode
-        AND :year BETWEEN FIRST_YEAR AND LAST_YEAR
+        AND :year BETWEEN part_v.FIRST_YEAR AND part_v.LAST_YEAR
         AND (part_v.COUNTRY_CODE = :regionCode OR part_v.COUNTRY_CODE = '*')
+
+        UNION
+
+        SELECT callout_legend.CAPTION_GROUP
+        FROM part_usage
+        INNER JOIN callout_legend ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR)
+        WHERE part_usage.PART_NBR = :articulCode
+        AND part_usage.PART_TYPE LIKE 'Z'
+        AND part_usage.CATALOG_CODE = :catalogCode
+        AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*')
 
         ";
 
@@ -273,6 +287,7 @@ class GmcArticulModel extends GmcCatalogModel{
     
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
+        $complectationCode = urldecode($complectationCode);
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;
 
@@ -327,6 +342,7 @@ class GmcArticulModel extends GmcCatalogModel{
          
      public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
+        $complectationCode = urldecode($complectationCode);
 
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;

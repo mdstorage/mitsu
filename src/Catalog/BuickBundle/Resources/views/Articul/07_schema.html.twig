@@ -15,7 +15,7 @@
     <img src="{{ asset('bundles/cataloggm/Images/B/'~oContainer.getActiveSchema.getOption('IMAGE_NAME')~'.png') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 {% endblock image %}
 
-{% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock commonArticulPath %}
+{% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{{ path('articul_buick_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
 {% block pncScript %}
     {% if pnc.isActive %}
@@ -31,7 +31,18 @@
                                             type:   'POST',
                                             async:  false,
                                             url:    "{{ path('articul_buick_articuls') }}",
-                                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', complectationCode: '{{ oContainer.getActiveComplectation.getCode }}', groupCode: '{{ parameters.groupCode }}', subGroupCode: '{{ parameters.subGroupCode }}', schemaCode: '{{ oContainer.getActiveSchema.getCode }}', pncCode: '{{ pnc.getCode }}', options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'  },
+                                            data:   {
+                                                regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                                                modelCode: '{{ oContainer.getActiveModel.getCode }}',
+                                                modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                                                complectationCode: '{{ oContainer.getActiveComplectation.getCode }}',
+                                                groupCode: '{{ parameters.groupCode }}',
+                                                subGroupCode: '{{ parameters.subGroupCode }}',
+                                                schemaCode: '{{ oContainer.getActiveSchema.getCode }}',
+                                                pncCode: '{{ pnc.getCode }}',
+                                                articul: '{{ parameters.articul }}',
+                                                token: '{{ parameters.token }}',
+                                                options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'  },
                                             success: function(data) {
                                                 $("#articul_for_pnc{{ pnc.getCode }}").html(data);
                                             }

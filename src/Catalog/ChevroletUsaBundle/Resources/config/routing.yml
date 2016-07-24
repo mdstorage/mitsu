@@ -1,5 +1,9 @@
+catalog_chevroletusa_token:
+  path:         /chevroletusa/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_chevroletusa:
-  path:         /chevroletusa/catalog/0/{regionCode}
+  path:         /chevroletusa/{regionCode}
   defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_chevroletusa_modifications:
@@ -8,24 +12,24 @@ catalog_chevroletusa_modifications:
   requirements: {_method: POST}
 
 catalog_chevroletusa_complectations:
-  path:         /chevroletusa/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:complectations}
+  path:         /chevroletusa/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:complectations, token: null}
 
 catalog_chevroletusa_groups:
-  path:         /chevroletusa/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:groups}
+  path:         /chevroletusa/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:groups, token: null}
 
 catalog_chevroletusa_subgroups:
-  path:         /chevroletusa/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:subgroups}
+  path:         /chevroletusa/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:subgroups, token: null}
 
 catalog_chevroletusa_schemas:
-  path:         /chevroletusa/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:schemas}
+  path:         /chevroletusa/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:schemas, token: null}
 
 catalog_chevroletusa_schema:
-  path:         /chevroletusa/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:schema}
+  path:         /chevroletusa/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:schema, token: null}
 
 catalog_chevroletusa_articuls:
   path:         /chevroletusa/catalog/7
@@ -33,14 +37,14 @@ catalog_chevroletusa_articuls:
   requirements: {_method: POST}
 
 catalog_chevroletusa_group:
-  path:         /chevroletusa/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /chevroletusa/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogChevroletUsaBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------
 
 vin_chevroletusa:
-  path:         /chevroletusa/vin/0
-  defaults:     {_controller: CatalogChevroletUsaBundle:Vin:index}
+  path:         /chevroletusa/vin/0/{token}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Vin:index, token: null}
 
 vin_chevroletusa_result:
   path:         /chevroletusa/vin/1
@@ -48,20 +52,20 @@ vin_chevroletusa_result:
   requirements: {_method: POST}
 
 vin_chevroletusa_groups:
-  path:         /chevroletusa/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogChevroletUsaBundle:Vin:groups}
+  path:         /chevroletusa/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Vin:groups, token: null}
 
 vin_chevroletusa_subgroups:
-  path:         /chevroletusa/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogChevroletUsaBundle:Vin:subgroups}
+  path:         /chevroletusa/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Vin:subgroups, token: null}
 
 vin_chevroletusa_schemas:
-  path:         /chevroletusa/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogChevroletUsaBundle:Vin:schemas}
+  path:         /chevroletusa/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Vin:schemas, token: null}
 
 vin_chevroletusa_schema:
-  path:         /chevroletusa/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogChevroletUsaBundle:Vin:schema}
+  path:         /chevroletusa/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Vin:schema, token: null}
 
 vin_chevroletusa_articuls:
   path:         /chevroletusa/vin/7
@@ -69,17 +73,21 @@ vin_chevroletusa_articuls:
   requirements: {_method: POST}
 
 vin_chevroletusa_group:
-  path:         /chevroletusa/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /chevroletusa/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogChevroletUsaBundle:Vin:getGroupBySubgroup}
 
 #---------------------------------------------------------------------------------------------
 
 articul_chevroletusa:
-  path:         /chevroletusa/articul/0
-  defaults:     {_controller: CatalogChevroletUsaBundle:Articul:index}
+  path:         /chevroletusa/articul/0/{token}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Articul:index, token: null}
+
+articul_chevroletusa_find_token:
+  path:         /chevroletusa/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Articul:findByArticul, regionCode: null}
 
 articul_chevroletusa_find:
-  path:         /chevroletusa/articul/1/{regionCode}
+  path:         /chevroletusa/articul/2/{regionCode}
   defaults:     {_controller: CatalogChevroletUsaBundle:Articul:findByArticul, regionCode: null}
 
 articul_chevroletusa_modifications:
@@ -88,24 +96,24 @@ articul_chevroletusa_modifications:
   requirements: {_method: POST}
 
 articul_chevroletusa_complectations:
-  path:         /chevroletusa/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogChevroletUsaBundle:Articul:chevroletusaArticulComplectations}
+  path:         /chevroletusa/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Articul:chevroletusaArticulComplectations, token: null}
 
 articul_chevroletusa_groups:
-  path:         /chevroletusa/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogChevroletUsaBundle:Articul:chevroletusaArticulgroups}
+  path:         /chevroletusa/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Articul:chevroletusaArticulgroups, token: null}
 
 articul_chevroletusa_subgroups:
-  path:         /chevroletusa/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogChevroletUsaBundle:Articul:chevroletusaArticulSubgroups}
+  path:         /chevroletusa/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Articul:chevroletusaArticulSubgroups, token: null}
 
 articul_chevroletusa_schemas:
-  path:         /chevroletusa/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogChevroletUsaBundle:Articul:chevroletusaArticulSchemas}
+  path:         /chevroletusa/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Articul:chevroletusaArticulSchemas, token: null}
 
 articul_chevroletusa_schema:
-  path:         /chevroletusa/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogChevroletUsaBundle:Articul:chevroletusaArticulSchema}
+  path:         /chevroletusa/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogChevroletUsaBundle:Articul:chevroletusaArticulSchema, token: null}
 
 articul_chevroletusa_articuls:
   path:         /chevroletusa/articul/9
@@ -113,7 +121,7 @@ articul_chevroletusa_articuls:
   requirements: {_method: POST}
 
 articul_chevroletusa_group:
-  path:         /chevroletusa/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /chevroletusa/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogChevroletUsaBundle:Articul:getGroupBySubgroup}
 catalog_chevroletusa_homepage:
     path:     /hello/{name}

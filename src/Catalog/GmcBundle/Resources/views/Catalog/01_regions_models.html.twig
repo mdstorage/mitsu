@@ -1,6 +1,17 @@
 {% extends 'CatalogCommonBundle:Catalog:01_regions_models.html.twig' %}
 {% use 'CatalogGmcBundle::gmc.base.html.twig' %}
-{% block regionPath %}{{ path('catalog_gmc', {'regionCode': region.getCode}) }}{% endblock regionPath %}
+{% block regionPath %}
+    {% if app.request.get('token') %}
+        {{ path('catalog_gmc_token', {'token': app.request.get('token'), 'regionCode': region.getCode}) }}
+
+    {% else %}
+
+        {{ path('catalog_gmc', {'regionCode': region.getCode}) }}
+
+    {% endif %}
+
+{% endblock regionPath %}
+
 
 
 
@@ -36,7 +47,7 @@
             {% if modelsChevListLenght  != 0 %}
 
             <div class="col-lg-6">
-                <h4>Грузовые и 4x4 а/м:</h4>
+                <h4>Легковые а/м:</h4>
 
                     {% for model in oContainer.getActiveRegion.getModels %}
 
@@ -60,7 +71,12 @@
                                             type:   'POST',
                                             async:  false,
                                             url:    "{% block ajaxUrl %}{{ path('catalog_gmc_modifications') }}{% endblock ajaxUrl %}",
-                                            data:   { regionCode: $(this).attr('regionCode'), modelCode: "{{ model.getCode }}" },
+                                            data:   {
+                                                regionCode: $(this).attr('regionCode'),
+                                                modelCode: '{{ model.getCode }}',
+                                                token: "{{ app.request.get('token') }}"
+
+                                            },
                                             success: function(data) {
                                                 $("#modifications_for_model{{ modelCode }}").html(data);
                                             }
@@ -116,7 +132,13 @@
                                                 type:   'POST',
                                                 async:  false,
                                                 url:    "{% block ajaxUrl1 %}{{ path('catalog_gmc_modifications') }}{% endblock ajaxUrl1 %}",
-                                                data:   { regionCode: $(this).attr('regionCode'), modelCode: "{{ model.getCode }}" },
+                                                data:   {
+                                                    regionCode: $(this).attr('regionCode'),
+                                                    modelCode: "{{ model.getCode }}",
+                                                    token: "{{ app.request.get('token') }}"
+                                                },
+
+
                                                 success: function(data) {
                                                     $("#modifications_for_model{{ modelCode }}").html(data);
                                                 }

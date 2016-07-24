@@ -15,7 +15,7 @@
     <img src="{{ asset('bundles/cataloghonda/Pictures/'~oContainer.getActiveSchema.getCode~'/IMGE/'~oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getCode~'.png') }}" width="900" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
 {% endblock image %}
 
-{% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock commonArticulPath %}
+{% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{{ path('catalog_honda_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
 {% block pncScript %}
     {% if pnc.isActive %}
@@ -31,7 +31,16 @@
                                             type:   'POST',
                                             async:  false,
                                             url:    "{{ path('articul_honda_articuls') }}",
-                                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', complectationCode: '{{ oContainer.getActiveComplectation.getCode }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}'  },
+                                            data:   {
+                                                regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                                                modelCode: '{{ oContainer.getActiveModel.getCode }}',
+                                                modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                                                complectationCode: '{{ oContainer.getActiveComplectation.getCode }}',
+                                                subGroupCode: '{{ parameters.subGroupCode }}',
+                                                pncCode: '{{ pnc.getCode }}',
+                                                articul: '{{ parameters.articul }}',
+                                                token: '{{ parameters.token }}'
+                                            },
                                             success: function(data) {
                                                 $("#articul_for_pnc{{ pnc.getCode }}").html(data);
                                             }

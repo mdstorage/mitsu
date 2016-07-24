@@ -1,5 +1,9 @@
+catalog_cadillac_token:
+  path:         /cadillac/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogCadillacBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_cadillac:
-  path:         /cadillac/catalog/0/{regionCode}
+  path:         /cadillac/{regionCode}
   defaults:     {_controller: CatalogCadillacBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_cadillac_modifications:
@@ -8,24 +12,24 @@ catalog_cadillac_modifications:
   requirements: {_method: POST}
 
 catalog_cadillac_complectations:
-  path:         /cadillac/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogCadillacBundle:Catalog:complectations}
+  path:         /cadillac/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogCadillacBundle:Catalog:complectations, token: null}
 
 catalog_cadillac_groups:
-  path:         /cadillac/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogCadillacBundle:Catalog:groups}
+  path:         /cadillac/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogCadillacBundle:Catalog:groups, token: null}
 
 catalog_cadillac_subgroups:
-  path:         /cadillac/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogCadillacBundle:Catalog:subgroups}
+  path:         /cadillac/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogCadillacBundle:Catalog:subgroups, token: null}
 
 catalog_cadillac_schemas:
-  path:         /cadillac/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogCadillacBundle:Catalog:schemas}
+  path:         /cadillac/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogCadillacBundle:Catalog:schemas, token: null}
 
 catalog_cadillac_schema:
-  path:         /cadillac/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogCadillacBundle:Catalog:schema}
+  path:         /cadillac/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogCadillacBundle:Catalog:schema, token: null}
 
 catalog_cadillac_articuls:
   path:         /cadillac/catalog/7
@@ -33,14 +37,14 @@ catalog_cadillac_articuls:
   requirements: {_method: POST}
 
 catalog_cadillac_group:
-  path:         /cadillac/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /cadillac/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogCadillacBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------
 
 vin_cadillac:
-  path:         /cadillac/vin/0
-  defaults:     {_controller: CatalogCadillacBundle:Vin:index}
+  path:         /cadillac/vin/0/{token}
+  defaults:     {_controller: CatalogCadillacBundle:Vin:index, token: null}
 
 vin_cadillac_result:
   path:         /cadillac/vin/1
@@ -48,20 +52,20 @@ vin_cadillac_result:
   requirements: {_method: POST}
 
 vin_cadillac_groups:
-  path:         /cadillac/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogCadillacBundle:Vin:groups}
+  path:         /cadillac/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogCadillacBundle:Vin:groups, token: null}
 
 vin_cadillac_subgroups:
-  path:         /cadillac/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogCadillacBundle:Vin:subgroups}
+  path:         /cadillac/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogCadillacBundle:Vin:subgroups, token: null}
 
 vin_cadillac_schemas:
-  path:         /cadillac/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogCadillacBundle:Vin:schemas}
+  path:         /cadillac/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogCadillacBundle:Vin:schemas, token: null}
 
 vin_cadillac_schema:
-  path:         /cadillac/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogCadillacBundle:Vin:schema}
+  path:         /cadillac/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogCadillacBundle:Vin:schema, token: null}
 
 vin_cadillac_articuls:
   path:         /cadillac/vin/7
@@ -69,17 +73,21 @@ vin_cadillac_articuls:
   requirements: {_method: POST}
 
 vin_cadillac_group:
-  path:         /cadillac/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
+  path:         /cadillac/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogCadillacBundle:Vin:getGroupBySubgroup}
 
 #---------------------------------------------------------------------------------------------
 
 articul_cadillac:
-  path:         /cadillac/articul/0
-  defaults:     {_controller: CatalogCadillacBundle:Articul:index}
+  path:         /cadillac/articul/0/{token}
+  defaults:     {_controller: CatalogCadillacBundle:Articul:index, token: null}
+
+articul_cadillac_find_token:
+  path:         /cadillac/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogCadillacBundle:Articul:findByArticul, regionCode: null}
 
 articul_cadillac_find:
-  path:         /cadillac/articul/1/{regionCode}
+  path:         /cadillac/articul/2/{regionCode}
   defaults:     {_controller: CatalogCadillacBundle:Articul:findByArticul, regionCode: null}
 
 articul_cadillac_modifications:
@@ -88,24 +96,24 @@ articul_cadillac_modifications:
   requirements: {_method: POST}
 
 articul_cadillac_complectations:
-  path:         /cadillac/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogCadillacBundle:Articul:cadillacArticulComplectations}
+  path:         /cadillac/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogCadillacBundle:Articul:cadillacArticulComplectations, token: null}
 
 articul_cadillac_groups:
-  path:         /cadillac/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogCadillacBundle:Articul:cadillacArticulgroups}
+  path:         /cadillac/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogCadillacBundle:Articul:cadillacArticulgroups, token: null}
 
 articul_cadillac_subgroups:
-  path:         /cadillac/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogCadillacBundle:Articul:cadillacArticulSubgroups}
+  path:         /cadillac/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogCadillacBundle:Articul:cadillacArticulSubgroups, token: null}
 
 articul_cadillac_schemas:
-  path:         /cadillac/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogCadillacBundle:Articul:cadillacArticulSchemas}
+  path:         /cadillac/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogCadillacBundle:Articul:cadillacArticulSchemas, token: null}
 
 articul_cadillac_schema:
-  path:         /cadillac/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogCadillacBundle:Articul:cadillacArticulSchema}
+  path:         /cadillac/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogCadillacBundle:Articul:cadillacArticulSchema, token: null}
 
 articul_cadillac_articuls:
   path:         /cadillac/articul/9
@@ -113,7 +121,7 @@ articul_cadillac_articuls:
   requirements: {_method: POST}
 
 articul_cadillac_group:
-  path:         /cadillac/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /cadillac/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogCadillacBundle:Articul:getGroupBySubgroup}
 catalog_cadillac_homepage:
     path:     /hello/{name}

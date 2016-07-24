@@ -1,8 +1,8 @@
 {% block brand %}GMC{% endblock brand %}
-{% block catalogPathLogo %}{{ path('catalog_gmc') }}{% endblock catalogPathLogo %}
-{% block catalogPath %}{{ path('catalog_gmc') }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_gmc') }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_gmc') }}{% endblock articulPath %}
+{% block catalogPathLogo %}{{ path('catalog_gmc', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_gmc', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_gmc', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_gmc', {'token': app.request.get('token')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
     <link rel="stylesheet" href="{{ asset('bundles/cataloggm/css/common.css') }}" media="all">
 {% endblock userStylesheets %}

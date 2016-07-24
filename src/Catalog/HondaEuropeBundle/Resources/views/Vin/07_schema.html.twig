@@ -1,10 +1,10 @@
 {% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogHondaEuropeBundle::hondaeurope.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('vin_hondaeurope') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }}, 
+    <a href="{{ path('vin_hondaeurope') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
     <a href="{{ path('vin_hondaeurope_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> /
-    <a href="{{ path('vin_hondaeurope_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> / 
+    <a href="{{ path('vin_hondaeurope_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> /
     <a href="{{ path('catalog_hondaeurope_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
     <a href="{{ path('vin_hondaeurope_schemas', parameters) }}">Cхема</a> / Запчасти
 {% endblock breadcrumbs %}
@@ -23,7 +23,17 @@
                                             type:   'POST',
                                             async:  false,
                                             url:    "{{ path('vin_hondaeurope_articuls') }}",
-                                            data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', complectationCode: '{{ oContainer.getActiveComplectation.getCode }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}'  },
+                                            data:   {
+                                                regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                                                modelCode: '{{ oContainer.getActiveModel.getCode }}',
+                                                modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                                                complectationCode: '{{ oContainer.getActiveComplectation.getCode }}',
+                                                subGroupCode: '{{ parameters.subGroupCode }}',
+                                                pncCode: '{{ pnc.getCode }}',
+                                                articul: '{{ parameters.articul }}',
+                                                token: '{{ parameters.token }}'
+
+                                            },
                                             success: function(data) {
                                                 $("#articul_for_pnc{{ pnc.getCode }}").html(data);
                                             }
@@ -50,7 +60,7 @@
 
 {% block image %}
  
-    <img src="{{ asset('bundles/cataloghondaeurope/Img/Pictures/'~oContainer.getActiveSchema.getCode~'/IMGE/'~oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getCode~'.png') }}" width="900" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
+    <img src="{{ asset('bundles/cataloghondaeurope/Pictures/'~oContainer.getActiveSchema.getCode~'/IMGE/'~oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getCode~'.png') }}" width="900" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
 {% endblock image %}
 
 {% block ajaxUrl %}{{ path('vin_hondaeurope_articuls') }}{% endblock ajaxUrl %}

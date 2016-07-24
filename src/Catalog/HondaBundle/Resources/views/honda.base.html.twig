@@ -1,7 +1,8 @@
 {% block brand %}Honda{% endblock brand %}
-{% block catalogPath %}{{ path('catalog_honda') }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_honda') }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_honda') }}{% endblock articulPath %}
+{% block catalogPathLogo %}{{ path('catalog_honda', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_honda', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_honda', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_honda', {'token': app.request.get('token')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
-        <link rel="stylesheet" href="{{ asset('bundles/cataloghonda/css/common.css') }}" media="all">
-    {% endblock userStylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/cataloghonda/css/common.css') }}" media="all">
+{% endblock userStylesheets %}
