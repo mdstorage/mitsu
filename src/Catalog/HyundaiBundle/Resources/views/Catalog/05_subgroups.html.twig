@@ -1,0 +1,17 @@
+{% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
+{% use 'CatalogHyundaiBundle::hyundai.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('catalog_hyundai') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('catalog_hyundai_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> /
+    <a href="{{ path('catalog_hyundai_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> /
+    Подгруппа запчастей
+{% endblock breadcrumbs %}
+
+
+{% block subgroupImage %}{% endblock subgroupImage %}
+{% block subgroupItem %}
+          <div id="subgroup{{ subgroup.getCode }}">
+          <a href="{{ path('catalog_hyundai_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">{{ subgroup.getRuname }}</a>
+          </div>
+{% endblock subgroupItem %}

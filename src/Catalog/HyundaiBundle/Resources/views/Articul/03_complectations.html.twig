@@ -1,0 +1,130 @@
+{% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
+{% use 'CatalogHyundaiBundle::hyundai.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('articul_hyundai_find') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / Комплектация
+{% endblock breadcrumbs %}
+
+{% block body %}
+    {% block head %}<h3>Выбрать комплектацию:</h3>{% endblock head %}
+
+    {% block complectations %}
+        <div class="row">
+
+            <div class="complectations"><hr />
+                <div class="row">
+
+
+                    <div class="form-group">
+
+                        <div class="col-lg-5">
+
+                            <input name="filter-query" class="form-control" value="" id="filter-query" onclick="this.value='';"
+                                   type="text" placeholder="Введите любой признак для фильтрации параметров"/>
+                        </div>
+
+                        <a href="#" class="btn btn-default" onclick="$('#filter-query').val(''); $('#filter-query1').val(''); $('#filter-query2').val('');
+        repeatact();return false">Показать все</a>
+                        <input name="filter-query1" class="form-control" value="" id="filter-query1" type="text" style="display:none;"/>
+                        <input name="filter-query2" class="form-control" value="" id="filter-query2" type="text" style="display:none;"/>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="row">
+                    {# {% if oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
+                              <div class="col-lg-4">
+                                   <b>Трансмиссия:</b>
+                         {% for trans in oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
+
+                             <a href="#" class="btn btn-default" onclick="$('#filter-query').val('{{ trans }}');
+                             $('#filter-query2').val($('#filter-query').val().concat('+',$('#filter-query1').val()));
+                             repeatact();return false">{{ trans }}</a>
+
+                         {% endfor %}
+                             </div>
+                     {% endif %}
+
+                     {% if oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
+                             <div class="col-lg-4">
+                              <b>Положение руля:</b>
+                         {% for role in oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
+
+                             <a href="#" class="btn btn-default" onclick="$('#filter-query1').val('{{ role }}');
+                             $('#filter-query2').val($('#filter-query').val().concat('+',$('#filter-query1').val()));
+                             repeatact();return false">{{ role }}</a>
+
+                         {% endfor %}
+                             </div>
+                     {% endif %}#}
+                </div><hr />
+                <br/>
+
+                {% for complectation in oContainer.getActiveModification.getComplectations %}
+                    {% block complectationItem %}
+                        <div class="col-lg-4">
+
+                            <a href="{{ path('articul_hyundai_groups', parameters|merge({'complectationCode': complectation.getCode})) }}">
+
+                                <b>    {{ complectation.getRuname }} </b>
+                            </a> <br/>
+                            ({{ complectation.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|hyundai_date_convertor }} -
+                            {{ complectation.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|hyundai_date_convertor }})<br/>
+                            {%for opt in complectation.getOption('option1') %}
+                                {{ opt }} <br/>
+                            {% endfor %}
+
+                            <hr />
+
+                        </div>
+                    {% endblock complectationItem %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endblock complectations %}
+
+
+    <script>
+
+        $(document).ready(function() {
+            $('#filter-search').show();
+
+            $('#filter-query').keyup(function(event){
+
+                if (event.keyCode == 27 || $(this).val() == '') {
+                    $(this).val('');
+                    $('.col-lg-4').removeClass('visible').show().addClass('visible');
+                }
+                else {
+                    filter('.col-lg-4', $(this).val());
+                }
+            });
+            $('#filter-query2').keyup(function(event){
+
+                if (event.keyCode == 27 || $(this).val() == '') {
+                    $(this).val('');
+                    $('.col-lg-4').removeClass('visible').show().addClass('visible');
+                }
+                else {
+                    filter('.col-lg-4', $(this).val());
+                }
+            });
+        });
+        function filter(selector, query) {
+            query =	$.trim(query);
+            $(selector).each(function() {
+                (($(this).text().search(new RegExp(query.substr(0,query.indexOf("+")), "i")) < 0) ||
+                ($(this).text().search(new RegExp(query.substr(query.indexOf("+")+1,query.length), "i")) < 0))
+                        ? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
+            });
+        }
+        function repeatact(){
+            filter('.col-lg-4', $('#filter-query2').val());
+        }
+
+    </script>
+
+{% endblock body %}

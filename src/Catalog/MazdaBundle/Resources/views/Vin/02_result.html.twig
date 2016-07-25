@@ -44,5 +44,11 @@
     </div>
 {% endblock specification %}
 {% block catalogPath %}
-    {{ path('vin_mazda_groups', {'regionCode': result.region, 'modelCode': result.model, 'modificationCode': result.modification, 'complectationCode': result.complectation}) }}
+    {{ path('vin_mazda_groups', {
+        'regionCode': result.region,
+        'modelCode': result.model,
+        'modificationCode': result.modification,
+        'complectationCode': result.complectation,
+        'token': app.request.get('token')
+    }) }}
 {% endblock catalogPath %}

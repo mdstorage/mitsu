@@ -1,4 +1,8 @@
 {% block brand %}Mazda{% endblock brand %}
-{% block catalogPath %}{{ path('catalog_mazda') }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_mazda') }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_mazda') }}{% endblock articulPath %}
+{% block catalogPathLogo %}{{ path('catalog_mazda', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_mazda', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_mazda', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_mazda', {'token': app.request.get('token')}) }}{% endblock articulPath %}
+{% block userStylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/catalogmazda/css/common.css') }}" media="all">
+{% endblock userStylesheets %}

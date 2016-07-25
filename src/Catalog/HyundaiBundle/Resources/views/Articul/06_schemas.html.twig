@@ -1,0 +1,24 @@
+{% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
+{% use 'CatalogHyundaiBundle::hyundai.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('articul_hyundai_find') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_hyundai_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('articul_hyundai_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
+{% endblock breadcrumbs %}
+
+
+
+{% block schema %}
+    {% if schema.getCode is not empty %}
+            <div class="col-xs-3">
+        <a href="{{ path('articul_hyundai_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+
+                    <div class="row">
+                        {{ schema.getCode }}
+                    </div>
+                    <div class="row">
+                        <img src="{{ asset('bundles/cataloghyundai/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
+                    </div>
+
+        </a>
+            </div>
+    {% endif %}
+{% endblock schema %}

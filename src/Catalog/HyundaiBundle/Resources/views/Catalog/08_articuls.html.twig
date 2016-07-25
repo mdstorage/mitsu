@@ -1,0 +1,32 @@
+<table class="table small">
+    {% if oContainer.getActivePnc.getArticuls %}
+    <thead>
+        <tr>
+            <th>Артикул</th>
+            <th>Наименование</th>
+            <th>Кол-во</th>
+            <th>Период</th>
+            <th>Доп.информация</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for articul in oContainer.getActivePnc.getArticuls %}
+        <tr>
+            <td><a href="{{ parameters.redirectAdress|replace({ '{article}': articul.getCode }) }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a></td>
+            <td>{{ articul.getRuname }}</td>
+            <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }}</td>
+            <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|hyundai_date_convertor}} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|hyundai_date_convertor}}</td>
+            <td>{% if articul.getOption('option3') %} Код замены: </br> {{ articul.getOption('option3')}} {% endif %}</td>
+            
+        </tr>
+    {% endfor %}
+    </tbody>
+    {% endif %}
+    {% if not oContainer.getActivePnc.getArticuls %}
+        <tbody>
+    Запчасть не применяется в выбранной комплектации
+    </tbody>
+    {% endif %}
+
+</table>

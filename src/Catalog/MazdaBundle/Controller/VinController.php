@@ -33,7 +33,7 @@ class VinController extends BaseController{
         }
     }
 
-    public function vinGroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode)
+    public function vinGroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $token = null)
     {
         $this->addFilter('vinGroupFilter', array(
             'regionCode' => $regionCode,
@@ -41,10 +41,10 @@ class VinController extends BaseController{
             'complectationCode' => substr($complectationCode, 0, 4)
         ));
 
-        return $this->groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
+        return $this->groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $articul = null, $token);
     }
 
-    public function vinSubgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
+    public function vinSubgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $token = null)
     {
         $this->addFilter('vinSubGroupFilter', array(
             'regionCode' => $regionCode,
@@ -53,10 +53,10 @@ class VinController extends BaseController{
             'subComplectationCode' => substr($complectationCode, 4, 2).substr($complectationCode, 3, 1)
         ));
 
-        return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+        return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $articul = null, $token);
     }
 
-    public function vinSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
+    public function vinSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $token = null)
     {
         $this->addFilter('vinSchemasFilter', array(
             'regionCode' => $regionCode,
@@ -66,7 +66,7 @@ class VinController extends BaseController{
             'subGroupCode' => $subGroupCode
         ));
 
-        return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
+        return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $articul = null, $token);
     }
 
     public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $subGroupCode)
