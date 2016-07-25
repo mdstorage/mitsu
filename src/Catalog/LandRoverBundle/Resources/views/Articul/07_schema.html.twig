@@ -21,7 +21,7 @@
 {% block image %}
     <img src="{{ asset('bundles/cataloglandrover/Images/'~oContainer.getActiveSchema.getOption('pictureFolder')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="500" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 {% endblock image %}
-{% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock commonArticulPath %}
+{% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{{ path('articul_landrover_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
 {% block pncScript %}
     {% if pnc.isActive %}
@@ -35,7 +35,17 @@
                     type:   'POST',
                     async:  false,
                     url:    "{% block ajaxUrl %}{{ path('articul_landrover_articuls') }}{% endblock ajaxUrl %}",
-                    data:   { regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}',groupCode: '{{ parameters.groupCode }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}', options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'  },
+                    data:   {
+                        regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                        modelCode: '{{ oContainer.getActiveModel.getCode }}',
+                        modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                        groupCode: '{{ parameters.groupCode }}',
+                        subGroupCode: '{{ parameters.subGroupCode }}',
+                        pncCode: '{{ pnc.getCode }}',
+                        articul: '{{ parameters.articul }}',
+                        token: '{{ app.request.get('token') }}',
+                        options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'
+                    },
                     success: function(data) {
                         $(("#articul_for_pnc{{ pnc.getCode }}")).html(data);
                     }

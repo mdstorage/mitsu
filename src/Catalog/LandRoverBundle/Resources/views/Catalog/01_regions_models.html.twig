@@ -24,7 +24,7 @@
 
                                 {% block pathToGroups %}
 
-                            <a href="{{ path('catalog_landrover_groups', {'regionCode':  oContainer.getActiveRegion.getCode, 'modelCode': model.getCode}) }}">
+                            <a href="{{ path('catalog_landrover_groups', {'regionCode':  oContainer.getActiveRegion.getCode, 'modelCode': model.getCode, 'token': app.request.get('token')}) }}">
                                 {% endblock pathToGroups %}
                                 <img src="{{ asset('bundles/cataloglandrover/Images/'~(model.getOption('key')!=''?model.getOption('key'):'0')~'-'~model.getOption('type')~'.png') }}" width="100%" alt="{{ model.getRuname }}"/>
                                 {{ model.getRuname }}

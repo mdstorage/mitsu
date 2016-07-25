@@ -27,7 +27,7 @@ class VinController extends BaseController{
         return 'Catalog\LandRoverBundle\Components\LandRoverConstants';
     }
 
-    public function resultAction(Request $request)
+ /*   public function resultAction(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
 
@@ -41,17 +41,17 @@ class VinController extends BaseController{
             /**
              * @deprecated Оставлен для совместимости с маздой
              */
-            setcookie(Constants::PROD_DATE, $result[Constants::PROD_DATE]);
+    /*      setcookie(Constants::PROD_DATE, $result[Constants::PROD_DATE]);
 
 
 
-            setcookie(Constants::VIN, $vin);
+          setcookie(Constants::VIN, $vin);
 
-            return $this->render($this->bundle().':02_result.html.twig', array(
-                'result' => $result
-            ));
-        }
-    }
+          return $this->render($this->bundle().':02_result.html.twig', array(
+              'result' => $result
+          ));
+      }
+  }*/
 
 
     public function articulsAction(Request $request)

@@ -53,7 +53,7 @@ vin_mazda_result:
 
 vin_mazda_groups:
   path:         /mazda/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
-  defaults:     {_controller: CatalogMazdaBundle:Vin:vinGroups, token: nul}
+  defaults:     {_controller: CatalogMazdaBundle:Vin:vinGroups, token: null}
 
 vin_mazda_subgroups:
   path:         /mazda/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
