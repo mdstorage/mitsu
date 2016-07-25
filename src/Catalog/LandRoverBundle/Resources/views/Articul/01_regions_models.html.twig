@@ -3,7 +3,7 @@
 {% block regionPath %}{{ path('articul_landrover_find', {'regionCode': region.getCode}) }}{% endblock regionPath %}
 {% block pathToGroups %}
 
-                            <a href="{{ path('articul_landrover_groups', {'regionCode':  oContainer.getActiveRegion.getCode, 'modelCode': model.getCode, 'articul': app.request.get('articul')|trim}) }}">
+                            <a href="{{ path('articul_landrover_groups', {'regionCode':  oContainer.getActiveRegion.getCode, 'modelCode': model.getCode, 'articul': app.request.get('articul')|trim, 'token': app.request.get('token')}) }}">
                                 {% endblock pathToGroups %}
 {% block head %}
     <h3>Запчасть с таким артикулом найдена в следующих моделях:</h3>
