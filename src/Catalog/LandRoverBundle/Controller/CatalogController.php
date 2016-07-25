@@ -25,7 +25,7 @@ class CatalogController extends BaseController{
         return 'Catalog\LandRoverBundle\Components\LandRoverConstants';
     }
 
-    public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
+    public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $articul = null, $token = null)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
         $oContainer = Factory::createContainer();
@@ -95,7 +95,7 @@ class CatalogController extends BaseController{
     }
     
 
-    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode)
+    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode, $token = null)
     {
 
         $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode);

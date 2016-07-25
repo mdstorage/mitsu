@@ -1,7 +1,11 @@
-catalog_mazda:
-  path:         /mazda/catalog/0/{regionCode}
-  defaults:     {_controller: CatalogMazdaBundle:Catalog:regionsModels, regionCode: null}
+catalog_mazda_token:
+  path:         /mazda/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogMazdaBundle:Catalog:regionsModels, token: null, regionCode: null}
 
+catalog_mazda:
+  path:         /mazda/{regionCode}
+  defaults:     {_controller: CatalogMazdaBundle:Catalog:regionsModels, regionCode: null}
+  
 catalog_mazda_modifications:
   path:         /mazda/catalog/1
   defaults:     {_controller: CatalogMazdaBundle:Catalog:modifications}
@@ -12,20 +16,20 @@ catalog_mazda_complectations:
   defaults:     {_controller: CatalogMazdaBundle:Catalog:complectations}
 
 catalog_mazda_groups:
-  path:         /mazda/catalog/3/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogMazdaBundle:Catalog:groups}
+  path:         /mazda/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Catalog:groups, token: null}
 
 catalog_mazda_subgroups:
-  path:         /mazda/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogMazdaBundle:Catalog:subgroups}
+  path:         /mazda/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Catalog:subgroups, token: null}
 
 catalog_mazda_schemas:
-  path:         /mazda/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogMazdaBundle:Catalog:schemas}
+  path:         /mazda/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Catalog:schemas, token: null}
 
 catalog_mazda_schema:
-  path:         /mazda/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogMazdaBundle:Catalog:schema}
+  path:         /mazda/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Catalog:schema, token: null}
 
 catalog_mazda_articuls:
   path:         /mazda/catalog/7
@@ -33,14 +37,14 @@ catalog_mazda_articuls:
   requirements: {_method: POST}
 
 catalog_mazda_group:
-  path:         /mazda/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogMazdaBundle:Catalog:getGroupBySubgroup}
+  path:         /mazda/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Catalog:getGroupBySubgroup, token: null}
 
 #------------------------------------------------------------------------------
 
 vin_mazda:
-  path:         /mazda/vin/0
-  defaults:     {_controller: CatalogMazdaBundle:Vin:index}
+  path:         /mazda/vin/0/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Vin:index, token: null}
 
 vin_mazda_result:
   path:         /mazda/vin/1
@@ -48,20 +52,20 @@ vin_mazda_result:
   requirements: {_method: POST}
 
 vin_mazda_groups:
-  path:         /mazda/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogMazdaBundle:Vin:vinGroups}
+  path:         /mazda/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Vin:vinGroups, token: null}
 
 vin_mazda_subgroups:
-  path:         /mazda/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogMazdaBundle:Vin:vinSubgroups}
+  path:         /mazda/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Vin:vinSubgroups, token: null}
 
 vin_mazda_schemas:
-  path:         /mazda/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogMazdaBundle:Vin:vinSchemas}
+  path:         /mazda/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Vin:vinSchemas, token: null}
 
 vin_mazda_schema:
-  path:         /mazda/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogMazdaBundle:Vin:schema}
+  path:         /mazda/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Vin:schema, token: null}
 
 vin_mazda_articuls:
   path:         /mazda/vin/7
@@ -69,22 +73,27 @@ vin_mazda_articuls:
   requirements: {_method: POST}
 
 vin_mazda_group:
-  path:         /mazda/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogMazdaBundle:Vin:getGroupBySubgroup}
+  path:         /mazda/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Vin:getGroupBySubgroup, token: null}
 
 #---------------------------------------------------------------------------------------------
 
 articul_mazda:
-  path:         /mazda/articul/0
-  defaults:     {_controller: CatalogMazdaBundle:Articul:index}
+  path:         /mazda/articul/0/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Articul:index, token: null}
+
+articul_mazda_find_token:
+  path:         /mazda/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogMazdaBundle:Articul:findByArticul, token: null, regionCode: null}
 
 articul_mazda_find:
-  path:         /mazda/articul/1
-  defaults:     {_controller: CatalogMazdaBundle:Articul:findByArticul}
-
-articul_mazda_regions:
   path:         /mazda/articul/2/{regionCode}
-  defaults:     {_controller: CatalogMazdaBundle:Articul:regionsModels, regionCode: null}
+  defaults:     {_controller: CatalogMazdaBundle:Articul:findByArticul, regionCode: null}
+
+
+#articul_mazda_regions:
+#  path:         /mazda/articul/2/{regionCode}
+#  defaults:     {_controller: CatalogMazdaBundle:Articul:regionsModels, regionCode: null}
 
 articul_mazda_modifications:
   path:         /mazda/articul/3
@@ -93,23 +102,23 @@ articul_mazda_modifications:
 
 articul_mazda_complectations:
   path:         /mazda/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogMazdaBundle:Articul:complectations}
+  defaults:     {_controller: CatalogMazdaBundle:Articul:complectations, token: null}
 
 articul_mazda_groups:
-  path:         /mazda/articul/5/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogMazdaBundle:Articul:mazdaArticulGroups}
+  path:         /mazda/articul/5/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Articul:mazdaArticulGroups, token: null}
 
 articul_mazda_subgroups:
-  path:         /mazda/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}
-  defaults:     {_controller: CatalogMazdaBundle:Articul:mazdaArticulSubgroups}
+  path:         /mazda/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Articul:mazdaArticulSubgroups, token: null}
 
 articul_mazda_schemas:
-  path:         /mazda/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogMazdaBundle:Articul:mazdaArticulSchemas}
+  path:         /mazda/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Articul:mazdaArticulSchemas, token: null}
 
 articul_mazda_schema:
-  path:         /mazda/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogMazdaBundle:Articul:mazdaArticulSchema}
+  path:         /mazda/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Articul:mazdaArticulSchema, token: null}
 
 articul_mazda_articuls:
   path:         /mazda/articul/9
@@ -117,5 +126,5 @@ articul_mazda_articuls:
   requirements: {_method: POST}
 
 articul_mazda_group:
-  path:         /mazda/articul/10/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogMazdaBundle:Articul:getGroupBySubgroup}
+  path:         /mazda/articul/10/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogMazdaBundle:Articul:getGroupBySubgroup, token: null}

@@ -32,5 +32,9 @@
 </div>
 {% endblock specification %}
 {% block catalogPath %}
-{{ path('vin_landrover_groups',({'regionCode': 'EU', 'modelCode': result.model_for_groups  })) }}
+{{ path('vin_landrover_groups',({
+    'regionCode': 'EU',
+    'modelCode': result.model_for_groups,
+    'token': app.request.get('token')
+})) }}
 {% endblock catalogPath %}

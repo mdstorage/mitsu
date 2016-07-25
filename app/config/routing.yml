@@ -146,8 +146,8 @@ catalog_hondaeurope:
     resource: "@CatalogHondaEuropeBundle/Resources/config/routing.yml"
     prefix:   /
 
-catalog_huyndai:
-    resource: "@CatalogHuyndaiBundle/Resources/config/routing.yml"
+catalog_hyundai:
+    resource: "@CatalogHyundaiBundle/Resources/config/routing.yml"
     prefix:   /
 
 catalog_kia:

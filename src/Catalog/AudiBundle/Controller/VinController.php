@@ -204,9 +204,10 @@ class VinController extends BaseController{
             'modificationCode' => $modificationCode,
             'groupCode' => $groupCode,
             'vin' => $request->cookies->get(Constants::VIN),
+
         ));
 
-        return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode,$complectationCode = null, $groupCode, $token);
+        return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode,$complectationCode = null, $groupCode, $articul = null, $token);
     }
 
     public function vinSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)

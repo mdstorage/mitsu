@@ -1,5 +1,9 @@
+catalog_landrover_token:
+  path:         /landrover/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogLandRoverBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_landrover:
-  path:         /landrover/catalog/0/{regionCode}
+  path:         /landrover/{regionCode}
   defaults:     {_controller: CatalogLandRoverBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_landrover_modifications:
@@ -12,20 +16,20 @@ catalog_landrover_complectations:
   defaults:     {_controller: CatalogLandRoverBundle:Catalog:complectations}
 
 catalog_landrover_groups:
-  path:         /landrover/catalog/3/{regionCode}/{modelCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Catalog:groups, modificationCode: '1'}
+  path:         /landrover/catalog/3/{regionCode}/{modelCode}/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Catalog:groups, modificationCode: '1', token: null}
 
 catalog_landrover_subgroups:
-  path:         /landrover/catalog/4/{regionCode}/{modelCode}/{groupCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Catalog:subgroups, modificationCode: '1'}
+  path:         /landrover/catalog/4/{regionCode}/{modelCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Catalog:subgroups, modificationCode: '1', token: null}
 
 catalog_landrover_schemas:
-  path:         /landrover/catalog/5/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Catalog:schemas, modificationCode: '1'}
+  path:         /landrover/catalog/5/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Catalog:schemas, modificationCode: '1', token: null}
 
 catalog_landrover_schema:
-  path:         /landrover/catalog/6/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Catalog:schema, modificationCode: '1'}
+  path:         /landrover/catalog/6/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Catalog:schema, modificationCode: '1', token: null}
 
 catalog_landrover_articuls:
   path:         /landrover/catalog/7
@@ -33,14 +37,14 @@ catalog_landrover_articuls:
   requirements: {_method: POST}
 
 catalog_landrover_group:
-  path:         /landrover/catalog/8/{regionCode}/{modelCode}/{subGroupCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Catalog:getGroupBySubgroup}
+  path:         /landrover/catalog/8/{regionCode}/{modelCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Catalog:getGroupBySubgroup, token: null}
 
 #------------------------------------------------------------------------------
 
 vin_landrover:
-  path:         /landrover/vin/0
-  defaults:     {_controller: CatalogLandRoverBundle:Vin:index}
+  path:         /landrover/vin/0/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Vin:index, token: null}
 
 vin_landrover_result:
   path:         /landrover/vin/1
@@ -48,20 +52,20 @@ vin_landrover_result:
   requirements: {_method: POST}
 
 vin_landrover_groups:
-  path:         /landrover/vin/3/{regionCode}/{modelCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Vin:groups, modificationCode: '1'}
+  path:         /landrover/vin/3/{regionCode}/{modelCode}/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Vin:groups, modificationCode: '1', token: null}
 
 vin_landrover_subgroups:
-  path:         /landrover/vin/4/{regionCode}/{modelCode}/{groupCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Vin:subgroups, modificationCode: '1'}
+  path:         /landrover/vin/4/{regionCode}/{modelCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Vin:subgroups, modificationCode: '1', token: null}
 
 vin_landrover_schemas:
-  path:         /landrover/vin/5/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Vin:schemas, modificationCode: '1'}
+  path:         /landrover/vin/5/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Vin:schemas, modificationCode: '1', token: null}
 
 vin_landrover_schema:
-  path:         /landrover/vin/6/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Vin:schema, modificationCode: '1'}
+  path:         /landrover/vin/6/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Vin:schema, modificationCode: '1', token: null}
 
 vin_landrover_articuls:
   path:         /landrover/vin/7
@@ -69,17 +73,21 @@ vin_landrover_articuls:
   requirements: {_method: POST}
 
 vin_landrover_group:
-  path:         /landrover/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Vin:getGroupBySubgroup}
+  path:         /landrover/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Vin:getGroupBySubgroup, token: null}
 
 #---------------------------------------------------------------------------------------------
 
 articul_landrover:
-  path:         /landrover/articul/0
-  defaults:     {_controller: CatalogLandRoverBundle:Articul:index}
+  path:         /landrover/articul/0/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Articul:index, token: null}
+
+articul_landrover_find_token:
+  path:         /landrover/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogLandRoverBundle:Articul:findByArticul, token: null, regionCode: null}
 
 articul_landrover_find:
-  path:         /landrover/articul/1/{regionCode}
+  path:         /landrover/articul/2/{regionCode}
   defaults:     {_controller: CatalogLandRoverBundle:Articul:findByArticul, regionCode: null}
 
 articul_landrover_modifications:
@@ -92,20 +100,20 @@ articul_landrover_complectations:
   defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulComplectations}
 
 articul_landrover_groups:
-  path:         /landrover/articul/5/{regionCode}/{modelCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulgroups, modificationCode: '1'}
+  path:         /landrover/articul/5/{regionCode}/{modelCode}/{articul}/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulgroups, modificationCode: '1', token: null}
 
 articul_landrover_subgroups:
-  path:         /landrover/articul/6/{regionCode}/{modelCode}/{groupCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulSubgroups, modificationCode: '1'}
+  path:         /landrover/articul/6/{regionCode}/{modelCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulSubgroups, modificationCode: '1', token: null}
 
 articul_landrover_schemas:
-  path:         /landrover/articul/7/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulSchemas, modificationCode: '1'}
+  path:         /landrover/articul/7/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulSchemas, modificationCode: '1', token: null}
 
 articul_landrover_schema:
-  path:         /landrover/articul/8/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulSchema, modificationCode: '1'}
+  path:         /landrover/articul/8/{regionCode}/{modelCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Articul:landroverArticulSchema, modificationCode: '1', token: null}
 
 articul_landrover_articuls:
   path:         /landrover/articul/9
@@ -113,8 +121,8 @@ articul_landrover_articuls:
   requirements: {_method: POST}
 
 articul_landrover_group:
-  path:         /landrover/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
-  defaults:     {_controller: CatalogLandRoverBundle:Articul:getGroupBySubgroup}
+  path:         /landrover/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogLandRoverBundle:Articul:getGroupBySubgroup, token: null}
 catalog_landrover_homepage:
     path:     /hello/{name}
     defaults: { _controller: CatalogLandRoverBundle:Default:index }
