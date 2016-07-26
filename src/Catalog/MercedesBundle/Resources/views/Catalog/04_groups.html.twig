@@ -17,7 +17,7 @@
         <table class="table">
         {% for complectationCode, complectationName in modification.getOption('COMPLECTATIONS') %}
             <tr>
-                <td><a href="{{ path('catalog_mercedes_groups', parameters|merge({'modificationCode': modification.getCode, 'complectationCode': complectationCode})) }}"><span class="col-lg-3">{{ complectationCode|slice(-7) }}</span><span class="col-lg-9">{{ complectationName }}</span></a></td>
+                <td><a href="{{ path('catalog_mercedes_groups', parameters|merge({'modificationCode': modification.getCode, 'complectationCode': complectationCode })) }}"><span class="col-lg-3">{{ complectationCode|slice(-7) }}</span><span class="col-lg-9">{{ complectationName }}</span></a></td>
             </tr>
         {% endfor %}
         </table>

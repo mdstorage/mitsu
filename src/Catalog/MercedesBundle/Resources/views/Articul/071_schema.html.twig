@@ -17,9 +17,14 @@
 {% block ajaxUrl %}{{ path('articul_mercedes_saarticuls') }}{% endblock ajaxUrl %}
 {% block ajaxData %}
     {{ parent() }}
-    , groupCode: '{{ parameters.groupCode }}', complectationCode: '{{ parameters.complectationCode }}', sanum: '{{ parameters.sanum }}'
+    , groupCode: '{{ parameters.groupCode }}',
+    complectationCode: '{{ parameters.complectationCode }}',
+    sanum: '{{ parameters.sanum }}',
+    articul: '{{ parameters.articul }}',
+    token: '{{ parameters.token }}'
+
 {% endblock ajaxData %}
-{% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock commonArticulPath %}
+{% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{% endblock subGroupPath %}
 {% block pncScript %}
     {% if pnc.isActive %}

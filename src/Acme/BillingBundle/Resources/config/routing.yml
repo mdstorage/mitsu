@@ -1,4 +1,4 @@
 acme_billing_homepage:
-    path:     /{catalog}/{token}
+    path:     /{catalog}/token/{token}
     defaults: { _controller: AcmeBillingBundle:Default:index }
     requirements: {_method: GET}

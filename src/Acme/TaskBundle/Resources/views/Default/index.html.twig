@@ -1,21 +1,31 @@
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}{% block brand %}Оригинальные каталоги автозапчастей{% endblock brand %}{% endblock title%}</title>
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap.min.css') }}" media="all">
+        <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap-theme.min.css') }}" media="all">
+    {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 
+</head>
 
-<div class="complectations">
-{% for mark in marks %}
 <div class="col-lg-6">
-        <a href="http://vincat.ru/{{ mark|lower }}/catalog/0">{{ mark }}</a>
-</div>
+
+{% for mark in marks %}
+
+        <a href="http://vincat.ru/{{ mark|lower }}/catalog/0">{{ mark }}</a><br>
+
 
 {% endfor %}
-                <div class="col-lg-6">
-        <a href="http://nissan.by.suraman.newsolution.by">Nissan_old</a>
-                </div>
-                <div class="col-lg-6">
-        <a href="http://cats-toyota.by.suraman.newsolution.by">Toyota_old</a>
-                </div>
-                        <div class="col-lg-6">
-        <a href="http://vincat.ru/mitsubishi">Mitsubishi</a>
-                        </div>
+
+        <a href="http://nissan.by.suraman.newsolution.by">Nissan_old</a><br>
+
+
+        <a href="http://cats-toyota.by.suraman.newsolution.by">Toyota_old</a><br>
+
+
+        <a href="http://vincat.ru/mitsubishi">Mitsubishi</a><br>
+
 
 </div>
 
