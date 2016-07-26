@@ -14,7 +14,10 @@
 {% block ajaxUrl %}{{ path('vin_mercedes_articuls') }}{% endblock ajaxUrl %}
 {% block ajaxData %}
     {{ parent() }}
-    , groupCode: '{{ parameters.groupCode }}', complectationCode: '{{ parameters.complectationCode }}'
+    , groupCode: '{{ parameters.groupCode }}',
+    complectationCode: '{{ parameters.complectationCode }}',
+    articul: '{{ parameters.articul }}',
+    token: '{{ parameters.token }}'
 {% endblock ajaxData %}
-{% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock commonArticulPath %}
+{% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{{ path('catalog_mazda_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}

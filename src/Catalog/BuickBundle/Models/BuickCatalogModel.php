@@ -189,7 +189,7 @@ class BuickCatalogModel extends CatalogModel{
 
         foreach($aData as $item){
 
-            $complectations[$item['CATALOG_CODE'].'_'.$item ['MODEL_DESC']] = array(
+            $complectations[urlencode($item['CATALOG_CODE'].'_'.$item ['MODEL_DESC'])] = array(
                 Constants::NAME     => strtoupper($item ['MODEL_DESC']),
                 Constants::OPTIONS => array()
             );
@@ -203,6 +203,7 @@ class BuickCatalogModel extends CatalogModel{
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
 
+        $complectationCode = urldecode($complectationCode);
 
 
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
@@ -297,6 +298,7 @@ class BuickCatalogModel extends CatalogModel{
        public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
        {
 
+           $complectationCode = urldecode($complectationCode);
 
            $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
            $year = $modificationCode;
@@ -366,6 +368,7 @@ class BuickCatalogModel extends CatalogModel{
 
        public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
        {
+           $complectationCode = urldecode($complectationCode);
            $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
            $year = $modificationCode;
 
@@ -557,6 +560,7 @@ $articuls = array();
 
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $pncCode, $options)
     {
+        $complectationCode = urldecode($complectationCode);
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;
 
