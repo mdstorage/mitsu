@@ -12,32 +12,35 @@ use Symfony\Component\HttpFoundation\Request;
 use Catalog\CommonBundle\Components\Factory;
 
 trait CommonControllerTrait {
-    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
+    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $articul = null, $token = null)
     {
         $this->addFilter('catalogGroupsFilter', array(
             'regionCode' => $regionCode,
             'modelCode' => $modelCode,
             'modificationCode' => $modificationCode,
-            'complectationCode' => $complectationCode
+            'complectationCode' => $complectationCode,
+            'token' => $token
         ));
 
-        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
+        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $articul, $token);
     }
 
-    public function subGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
+    public function subGroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $articul = null, $token = null)
     {
         $this->addFilter('catalogSubGroupsFilter', array(
             'regionCode' => $regionCode,
             'modelCode' => $modelCode,
             'modificationCode' => $modificationCode,
             'complectationCode' => $complectationCode,
-            'groupCode' => $groupCode
+            'groupCode' => $groupCode,
+            'articul' => $articul,
+            'token' => $token
         ));
 
-        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $articul, $token);
     }
 
-    public function saFirstLevelSubgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $sanum)
+    public function saFirstLevelSubgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $sanum, $articul = null, $token = null)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
@@ -95,7 +98,7 @@ trait CommonControllerTrait {
         ));
     }
 
-    public function saSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $sanum)
+    public function saSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $sanum, $articul = null, $token = null)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
@@ -153,7 +156,7 @@ trait CommonControllerTrait {
         ));
     }
 
-    public function saSchemaAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $sanum, $schemaCode)
+    public function saSchemaAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $sanum, $schemaCode, $articul = null, $token = null)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
         $parameters['subGroupCode'] = $sanum;
@@ -196,6 +199,21 @@ trait CommonControllerTrait {
             ->setActiveSchema($oActiveSchema);
 
         $this->filter($oContainer);
+        if (!empty($token))
+        {
+            $aDataToken = array();
+            $aDataToken = $this->get('my_token_info')->getDataToken($token);
+
+            $redirectAdress = $aDataToken['url'];
+        }
+        else
+        {
+            $redirectAdress = Constants::FIND_PATH;
+        }
+
+        $parameters = array_merge($parameters, array(
+            'redirectAdress' => $redirectAdress
+        ));
 
         return $this->render($this->bundle() . ':071_schema.html.twig', array(
             'oContainer' => $oContainer,
@@ -207,6 +225,21 @@ trait CommonControllerTrait {
     {
         $pncCode = $request->get('pncCode');
         $sanum = $request->get('sanum');
+        $articul = $request->get('articul');
+        $token = $request->get('token');
+
+
+        if (!empty($token))
+        {
+            $aDataToken = array();
+            $aDataToken = $this->get('my_token_info')->getDataToken($token);
+
+            $redirectAdress = $aDataToken['url'];
+        }
+        else
+        {
+            $redirectAdress = Constants::FIND_PATH;
+        }
 
         $articuls = $this->model()->getSaArticuls($sanum, $pncCode);
 
@@ -217,8 +250,14 @@ trait CommonControllerTrait {
 
         $this->filter($oContainer);
 
+        $parameters = array(
+            'articul' => $articul,
+            'redirectAdress' => $redirectAdress
+        );
+
         return $this->render($this->bundle() . ':08_articuls.html.twig', array(
-            'oContainer' => $oContainer
+            'oContainer' => $oContainer,
+            'parameters' => $parameters
         ));
     }
 } 

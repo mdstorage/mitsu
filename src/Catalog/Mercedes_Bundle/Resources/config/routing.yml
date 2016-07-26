@@ -1,0 +1,140 @@
+catalog_mercedes:
+  path:         /mercedes/catalog/0/{regionCode}
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_mercedes_modifications:
+  path:         /mercedes/catalog/1
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_mercedes_complectations:
+  path:         /mercedes/catalog/2/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:complectations}
+
+catalog_mercedes_groups:
+  path:         /mercedes/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:groups}
+
+catalog_mercedes_subgroups:
+  path:         /mercedes/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:subgroups}
+
+catalog_mercedes_safirstlevelsubgroups:
+  path:         /mercedes/catalog/41/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{sanum}
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:saFirstLevelSubgroups}
+
+catalog_mercedes_saschemas:
+  path:         /mercedes/catalog/42/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{sanum}
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:saSchemas}
+
+catalog_mercedes_saschema:
+  path:         /mercedes/catalog/43/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{sanum}/{schemaCode}
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:saSchema}
+
+catalog_mercedes_saarticuls:
+  path:         /mercedes/catalog/44
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:saArticuls}
+  requirements: {_method: POST}
+
+catalog_mercedes_schemas:
+  path:         /mercedes/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:schemas}
+
+catalog_mercedes_schema:
+  path:         /mercedes/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:schema}
+
+catalog_mercedes_articuls:
+  path:         /mercedes/catalog/7
+  defaults:     {_controller: CatalogMercedesBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+
+#----------------------------------------------------------------------------------
+
+articul_mercedes:
+  path:         /mercedes/articul/0
+  defaults:     {_controller: CatalogMercedesBundle:Articul:index}
+
+articul_mercedes_find:
+  path:         /mercedes/articul/1/{regionCode}
+  defaults:     {_controller: CatalogMercedesBundle:Articul:findByArticul, regionCode: null}
+
+articul_mercedes_modifications:
+  path:         /mercedes/articul/3
+  defaults:     {_controller: CatalogMercedesBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_mercedes_complectations:
+  path:         /mercedes/articul/4/{regionCode}/{modelCode}/{modificationCode}
+  defaults:     {_controller: CatalogMercedesBundle:Articul:complectations}
+
+articul_mercedes_groups:
+  path:         /mercedes/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogMercedesBundle:Articul:mercedesArticulGroups}
+
+articul_mercedes_subgroups:
+  path:         /mercedes/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogMercedesBundle:Articul:mercedesArticulSubgroups}
+
+articul_mercedes_safirstlevelsubgroups:
+  path:         /mercedes/articul/41/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{sanum}
+  defaults:     {_controller: CatalogMercedesBundle:Articul:saFirstLevelSubgroups}
+
+articul_mercedes_saschemas:
+  path:         /mercedes/articul/42/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{sanum}
+  defaults:     {_controller: CatalogMercedesBundle:Articul:saSchemas}
+
+articul_mercedes_saschema:
+  path:         /mercedes/articul/43/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{sanum}/{schemaCode}
+  defaults:     {_controller: CatalogMercedesBundle:Articul:saSchema}
+
+articul_mercedes_saarticuls:
+  path:         /mercedes/articul/44
+  defaults:     {_controller: CatalogMercedesBundle:Articul:saArticuls}
+  requirements: {_method: POST}
+
+articul_mercedes_schemas:
+  path:         /mercedes/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogMercedesBundle:Articul:mercedesArticulSchemas}
+
+articul_mercedes_schema:
+  path:         /mercedes/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogMercedesBundle:Articul:mercedesArticulSchema}
+
+articul_mercedes_articuls:
+  path:         /mercedes/articul/9
+  defaults:     {_controller: CatalogMercedesBundle:Articul:articuls}
+  requirements: {_method: POST}
+
+#-------------------------------------------------------------------------------------
+
+vin_mercedes:
+  path:         /mercedes/vin/0
+  defaults:     {_controller: CatalogMercedesBundle:Vin:index}
+
+vin_mercedes_result:
+  path:         /mercedes/vin/1
+  defaults:     {_controller: CatalogMercedesBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_mercedes_groups:
+  path:         /mercedes/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
+  defaults:     {_controller: CatalogMercedesBundle:Vin:groups}
+
+vin_mercedes_subgroups:
+  path:         /mercedes/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
+  defaults:     {_controller: CatalogMercedesBundle:Vin:subgroups}
+
+vin_mercedes_schemas:
+  path:         /mercedes/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
+  defaults:     {_controller: CatalogMercedesBundle:Vin:schemas}
+
+vin_mercedes_schema:
+  path:         /mercedes/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
+  defaults:     {_controller: CatalogMercedesBundle:Vin:schema}
+
+vin_mercedes_articuls:
+  path:         /mercedes/vin/7
+  defaults:     {_controller: CatalogMercedesBundle:Vin:articuls}
+  requirements: {_method: POST}
