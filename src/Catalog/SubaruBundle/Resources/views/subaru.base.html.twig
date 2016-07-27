@@ -1,7 +1,8 @@
 {% block brand %}Subaru{% endblock brand %}
-{% block catalogPath %}{{ path('catalog_subaru') }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_subaru') }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_subaru') }}{% endblock articulPath %}
+{% block catalogPathLogo %}{{ path('catalog_subaru', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_subaru', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_subaru', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_subaru', {'token': app.request.get('token')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
-        <link rel="stylesheet" href="{{ asset('bundles/catalogsubaru/css/common.css') }}" media="all">
-    {% endblock userStylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/catalogsubaru/css/common.css') }}" media="all">
+{% endblock userStylesheets %}

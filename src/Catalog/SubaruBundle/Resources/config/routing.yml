@@ -3,7 +3,7 @@ catalog_subaru_token:
   defaults:     {_controller: CatalogSubaruBundle:Catalog:regionsModels, token: null, regionCode: null}
 
 catalog_subaru:
-  path:         /subaru/catalog/00/{regionCode}
+  path:         /subaru/{regionCode}
   defaults:     {_controller: CatalogSubaruBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_subaru_modifications:
