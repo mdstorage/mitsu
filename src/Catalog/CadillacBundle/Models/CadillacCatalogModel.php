@@ -72,7 +72,7 @@ class CadillacCatalogModel extends CatalogModel{
             {
                 if (strpos($item['MODEL_DESC'], $value) !== false)
                 {
-                    $models[strtoupper($value)] =
+                    $models[urlencode(strtoupper($value).'_'.$item['MAKE_DESC'])] =
                         array(Constants::NAME=>strtoupper($value),
                             Constants::OPTIONS=>array('DESC'=>$item['MAKE_DESC']));
 
@@ -90,6 +90,7 @@ class CadillacCatalogModel extends CatalogModel{
 
     public function getModifications($regionCode, $modelCode)
     {
+        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
 
         $sql = "
         SELECT CATALOG_CODE, FIRST_YEAR, LAST_YEAR
@@ -148,8 +149,8 @@ class CadillacCatalogModel extends CatalogModel{
     }
 
     public function getComplectations($regionCode, $modelCode, $modificationCode)
-   
     {
+        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
 
         $sql = "
         SELECT CATALOG_CODE, MODEL_DESC
@@ -187,7 +188,7 @@ class CadillacCatalogModel extends CatalogModel{
 
         foreach($aData as $item){
 
-            $complectations[$item['CATALOG_CODE'].'_'.$item ['MODEL_DESC']] = array(
+            $complectations[urlencode($item['CATALOG_CODE'].'_'.$item ['MODEL_DESC'])] = array(
                 Constants::NAME     => strtoupper($item ['MODEL_DESC']),
                 Constants::OPTIONS => array()
             );
@@ -201,7 +202,7 @@ class CadillacCatalogModel extends CatalogModel{
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
 
-
+        $complectationCode = urldecode($complectationCode);
 
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
 
@@ -294,7 +295,7 @@ class CadillacCatalogModel extends CatalogModel{
 
        public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
        {
-
+           $complectationCode = urldecode($complectationCode);
 
            $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
            $year = $modificationCode;
@@ -364,6 +365,7 @@ class CadillacCatalogModel extends CatalogModel{
 
        public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
        {
+           $complectationCode = urldecode($complectationCode);
            $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
            $year = $modificationCode;
 
@@ -514,7 +516,7 @@ class CadillacCatalogModel extends CatalogModel{
                    Constants::Y2 => $item['ye'],
                );
            }*/
-$articuls = array();
+        $articuls = array();
         return $articuls;
     }
 
@@ -555,6 +557,8 @@ $articuls = array();
 
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $pncCode, $options)
     {
+
+        $complectationCode = urldecode($complectationCode);
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;
 
@@ -610,7 +614,7 @@ $articuls = array();
 
 
 
-$articuls = array();
+        $articuls = array();
 
         foreach ($aArticuls as $item) {
         	 

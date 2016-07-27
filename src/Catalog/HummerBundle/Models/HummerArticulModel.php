@@ -44,7 +44,7 @@ class HummerArticulModel extends HummerCatalogModel{
             if ($value['COUNTRY_CODE'] === '*')
             {$regions = $reg;}
             else
-           $regions[] = $value['COUNTRY_CODE'];
+                $regions[] = $value['COUNTRY_CODE'];
         }
 
 
@@ -57,7 +57,7 @@ class HummerArticulModel extends HummerCatalogModel{
 
 
         $sql = "
-        SELECT model.MODEL_DESC
+        SELECT model.MODEL_DESC, model.MAKE_DESC
         FROM part_usage
         INNER JOIN model ON (model.CATALOG_CODE = part_usage.CATALOG_CODE AND (model.COUNTRY_CODE = part_usage.COUNTRY_CODE OR model.COUNTRY_CODE = '*')
         and (model.MAKE_DESC = 'Hummer' OR model.MAKE_DESC = 'Lt Truck Hummer'))
@@ -97,7 +97,7 @@ class HummerArticulModel extends HummerCatalogModel{
             {
                 if (strpos($item['MODEL_DESC'], $value) !== false)
                 {
-                    $models[] = strtoupper($value);
+                    $models[] = urlencode(strtoupper($value).'_'.$item['MAKE_DESC']);
 
                 }
 
@@ -108,10 +108,11 @@ class HummerArticulModel extends HummerCatalogModel{
 
         return array_unique($models);
     }
-    
+
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
 
+        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
 
 
         $sql = "
@@ -168,9 +169,10 @@ class HummerArticulModel extends HummerCatalogModel{
 
 
     }
-    
+
     public function getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode)
     {
+        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
 
         $sql = "
         SELECT model.CATALOG_CODE, model.MODEL_DESC
@@ -191,24 +193,24 @@ class HummerArticulModel extends HummerCatalogModel{
 
         $aData = $query->fetchAll();
 
-            $complectations = array();
+        $complectations = array();
 
         foreach($aData as $item){
 
-            $complectations[] = $item['CATALOG_CODE'].'_'.$item ['MODEL_DESC'];
+            $complectations[] = urlencode($item['CATALOG_CODE'].'_'.$item ['MODEL_DESC']);
 
         }
 
 
         return array_unique($complectations);
     }
-    
+
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
+        $complectationCode = urldecode($complectationCode);
 
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;
-        $modelCode = urldecode($modelCode);
 
         $sql = "
         SELECT part_usage.MAJOR_GROUP
@@ -250,15 +252,15 @@ class HummerArticulModel extends HummerCatalogModel{
 
         $aData = $query->fetchAll();
 
-    	$groups = array();
+        $groups = array();
 
         foreach($aData as $item)
-		{
+        {
 
-			$groups[]= $item['MAJOR_GROUP'];
+            $groups[]= $item['MAJOR_GROUP'];
 
-			
-		}
+
+        }
 
 
         return array_unique($groups);
@@ -270,7 +272,7 @@ class HummerArticulModel extends HummerCatalogModel{
 
         $aData =array('1' => '1');
 
-    	$subgroups = array();
+        $subgroups = array();
 
         foreach($aData as $item)
         {
@@ -282,9 +284,10 @@ class HummerArticulModel extends HummerCatalogModel{
         return array_unique($subgroups);
 
     }
-    
+
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
+        $complectationCode = urldecode($complectationCode);
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;
 
@@ -312,18 +315,6 @@ class HummerArticulModel extends HummerCatalogModel{
         WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
         and :year BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
 
-        UNION
-        SELECT callout_legend.ART_NBR
-        FROM callout_legend
-        INNER JOIN part_v ON (part_v.PART_USAGE_ID = callout_legend.PART_USAGE_ID
-        AND part_v.PART_TYPE NOT LIKE 'Z'
-        AND (part_v.COUNTRY_CODE = :regionCode OR part_v.COUNTRY_CODE = '*')
-        AND part_v.PART_NBR = :articulCode
-        AND part_v.CATALOG_CODE = :catalogCode
-        AND :year BETWEEN part_v.FIRST_YEAR AND part_v.LAST_YEAR)
-        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
-        and :year BETWEEN callout_legend.CAPTION_FIRST_YEAR AND callout_legend.CAPTION_LAST_YEAR
-
         ";
 
         $query = $this->conn->prepare($sql);
@@ -337,20 +328,21 @@ class HummerArticulModel extends HummerCatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
-	   
-	   $schemas = array();
+
+        $schemas = array();
         foreach($aData as $item) {
 
-                $schemas[] = $item['ART_NBR'];
+            $schemas[] = $item['ART_NBR'];
 
 
         }
-		   
+
         return array_unique($schemas);
     }
-         
-     public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
+
+    public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
+        $complectationCode = urldecode($complectationCode);
 
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;
@@ -396,7 +388,7 @@ class HummerArticulModel extends HummerCatalogModel{
         $pncs = array();
         foreach($aData as $item) {
 
-                $pncs[] = $item['CALLOUT_NBR'];
+            $pncs[] = $item['CALLOUT_NBR'];
 
 
         }

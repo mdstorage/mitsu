@@ -97,7 +97,7 @@ class BuickArticulModel extends BuickCatalogModel{
             {
                 if (strpos($item['MODEL_DESC'], $value) !== false)
                 {
-                    $models[] = urlencode(strtoupper($value)).'_'.$item['MAKE_DESC'];
+                    $models[] = urlencode(strtoupper($value).'_'.$item['MAKE_DESC']);
 
                 }
 
@@ -180,7 +180,7 @@ class BuickArticulModel extends BuickCatalogModel{
         INNER JOIN model ON (model.CATALOG_CODE = part_usage.CATALOG_CODE
         AND (model.COUNTRY_CODE = part_usage.COUNTRY_CODE OR model.COUNTRY_CODE = '*') AND model.MODEL_DESC LIKE :modelCode AND :modificationCode BETWEEN model.FIRST_YEAR AND model.LAST_YEAR)
         WHERE part_usage.PART_NBR = :articulCode
-         AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*')
+        AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*')
 
         ";
 
@@ -208,10 +208,9 @@ class BuickArticulModel extends BuickCatalogModel{
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
         $complectationCode = urldecode($complectationCode);
-        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
-
 
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
+
         $year = $modificationCode;
 
         $sql = "

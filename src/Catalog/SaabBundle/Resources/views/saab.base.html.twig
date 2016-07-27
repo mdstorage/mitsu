@@ -1,7 +1,8 @@
-{% block brand %}SAAB{% endblock brand %}
-{% block catalogPath %}{{ path('catalog_saab') }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_saab') }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_saab') }}{% endblock articulPath %}
+{% block brand %}Saab{% endblock brand %}
+{% block catalogPathLogo %}{{ path('catalog_saab', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_saab', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_saab', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_saab', {'token': app.request.get('token')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
-        <link rel="stylesheet" href="{{ asset('bundles/catalogbmw/css/common.css') }}" media="all">
-    {% endblock userStylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/catalogsaab/css/common.css') }}" media="all">
+{% endblock userStylesheets %}

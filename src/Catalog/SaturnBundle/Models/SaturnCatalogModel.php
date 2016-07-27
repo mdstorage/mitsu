@@ -72,7 +72,7 @@ class SaturnCatalogModel extends CatalogModel{
             {
                 if (strpos($item['MODEL_DESC'], $value) !== false)
                 {
-                    $models[strtoupper($value)] =
+                    $models[urlencode(strtoupper($value).'_'.$item['MAKE_DESC'])] =
                         array(Constants::NAME=>strtoupper($value),
                             Constants::OPTIONS=>array('DESC'=>$item['MAKE_DESC']));
 
@@ -80,7 +80,7 @@ class SaturnCatalogModel extends CatalogModel{
 
 
             }
-        	 
+
 
         }
 
@@ -90,6 +90,7 @@ class SaturnCatalogModel extends CatalogModel{
 
     public function getModifications($regionCode, $modelCode)
     {
+        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
 
         $sql = "
         SELECT CATALOG_CODE, FIRST_YEAR, LAST_YEAR
@@ -131,25 +132,26 @@ class SaturnCatalogModel extends CatalogModel{
 
 
 
-            foreach($aData as $item)
+        foreach($aData as $item)
+        {
+            foreach (range(min($first_year), max($last_year), 1) as $value)
             {
-                foreach (range(min($first_year), max($last_year), 1) as $value)
-                {
-                    $modifications[$value] = array(
-                        Constants::NAME     => $value,
-                        Constants::OPTIONS  => array());
-
-                }
+                $modifications[$value] = array(
+                    Constants::NAME     => $value,
+                    Constants::OPTIONS  => array());
 
             }
+
+        }
 
 
         return $modifications;
     }
 
     public function getComplectations($regionCode, $modelCode, $modificationCode)
-   
+
     {
+        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
 
         $sql = "
         SELECT CATALOG_CODE, MODEL_DESC
@@ -187,21 +189,22 @@ class SaturnCatalogModel extends CatalogModel{
 
         foreach($aData as $item){
 
-            $complectations[$item['CATALOG_CODE'].'_'.$item ['MODEL_DESC']] = array(
+            $complectations[urlencode($item['CATALOG_CODE'].'_'.$item ['MODEL_DESC'])] = array(
                 Constants::NAME     => strtoupper($item ['MODEL_DESC']),
                 Constants::OPTIONS => array()
             );
         }
 
 
-         return $complectations;
-     
+        return $complectations;
+
     }
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
 
 
+        $complectationCode = urldecode($complectationCode);
 
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
 
@@ -236,73 +239,74 @@ class SaturnCatalogModel extends CatalogModel{
 
     public function getGroupSchemas($regionCode, $modelCode, $modificationCode, $groupCode)
     {
-  /*      $sqlNumPrigroup = "
-        SELECT *
-        FROM pri_groups_full
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-            AND pri_group = :groupCode
-        ";
-    	$query = $this->conn->prepare($sqlNumPrigroup);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('model_code', $modelCode);
-        $query->bindValue('groupCode', $groupCode);
-        $query->execute();
-
-        $aData = $query->fetch();  
-       
-        $sqlNumModel = "
-        SELECT num_model
-        FROM part_images
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-        GROUP BY num_model
-        ";
-    	$query = $this->conn->prepare($sqlNumModel);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('model_code', $modelCode);
-        $query->execute();
-
-        $aNumModel = $query->fetch();
-
-        $groupSchemas = array();
-    /*    foreach ($aData as $item)*//* {
+        /*      $sqlNumPrigroup = "
+              SELECT *
+              FROM pri_groups_full
+              WHERE catalog = :regionCode
+                  AND model_code =:model_code
+                  AND pri_group = :groupCode
+              ";
+              $query = $this->conn->prepare($sqlNumPrigroup);
+              $query->bindValue('regionCode', $regionCode);
+              $query->bindValue('model_code', $modelCode);
+              $query->bindValue('groupCode', $groupCode);
+              $query->execute();
+      
+              $aData = $query->fetch();  
+             
+              $sqlNumModel = "
+              SELECT num_model
+              FROM part_images
+              WHERE catalog = :regionCode
+                  AND model_code =:model_code
+              GROUP BY num_model
+              ";
+              $query = $this->conn->prepare($sqlNumModel);
+              $query->bindValue('regionCode', $regionCode);
+              $query->bindValue('model_code', $modelCode);
+              $query->execute();
+      
+              $aNumModel = $query->fetch();
+      
+              $groupSchemas = array();
+          /*    foreach ($aData as $item)*//* {
             $groupSchemas[$aData['num_image']] = array(Constants::NAME => $aData['num_image'], Constants::OPTIONS => array(
               Constants::CD => $aData['catalog'].$aData['sub_dir'].$aData['sub_wheel'],
                     	'num_model' => $aNumModel['num_model'],
                         'num_image' => $aData['num_image']
                 ));
         }*/
-		$groupSchemas = array();
+        $groupSchemas = array();
         return $groupSchemas;
     }
 
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
 
-           $subgroups = array();
+        $subgroups = array();
 
-               $subgroups['1'] = array(
+        $subgroups['1'] = array(
 
-                   Constants::NAME => '1',
-                   Constants::OPTIONS => array()
+            Constants::NAME => '1',
+            Constants::OPTIONS => array()
 
-               );
+        );
 
-           return $subgroups;
-       }
+        return $subgroups;
+    }
 
-       public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
-       {
-
-
-           $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
-           $year = $modificationCode;
+    public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
+    {
+        $complectationCode = urldecode($complectationCode);
 
 
+        $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
+        $year = $modificationCode;
 
 
-           $sql = "
+
+
+        $sql = "
         SELECT callout_legend.ART_NBR, CAPTION_DESC, callout_legend.IMAGE_NAME
         FROM callout_legend, category, art, caption
         WHERE callout_legend.CATALOG_CODE = :catalogCode and CAPTION_GROUP = :groupCode
@@ -316,58 +320,59 @@ class SaturnCatalogModel extends CatalogModel{
         ";
 
 
-           $query = $this->conn->prepare($sql);
-           $query->bindValue('catalogCode',  $catalogCode);
-           $query->bindValue('groupCode',  $groupCode);
-           $query->bindValue('year',  $year);
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('catalogCode',  $catalogCode);
+        $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('year',  $year);
 
-           $query->execute();
+        $query->execute();
 
-           $aData = $query->fetchAll();
-
-
-
-           $schemas = array();
-
-           foreach($aData as $item)
-           {
-
-               $schemas[$item['ART_NBR']] = array(
-
-                   Constants::NAME => $item['CAPTION_DESC'],
-                   Constants::OPTIONS => array('IMAGE_NAME' => urlencode($item['IMAGE_NAME']))
-
-               );
-
-           }
-           return $schemas;
-
-       }
-
-       public function getSchema($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
-       {
-
-           $schema = array();
-
-
-                       $schema[$schemaCode] = array(
-                       Constants::NAME => $schemaCode,
-                           Constants::OPTIONS => array(
-                               Constants::CD => $schemaCode
-                           )
-                   );
+        $aData = $query->fetchAll();
 
 
 
-           return $schema;
-       }
+        $schemas = array();
 
-       public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
-       {
-           $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
-           $year = $modificationCode;
+        foreach($aData as $item)
+        {
 
-           $sql = "
+            $schemas[$item['ART_NBR']] = array(
+
+                Constants::NAME => $item['CAPTION_DESC'],
+                Constants::OPTIONS => array('IMAGE_NAME' => urlencode($item['IMAGE_NAME']))
+
+            );
+
+        }
+        return $schemas;
+
+    }
+
+    public function getSchema($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
+    {
+
+        $schema = array();
+
+
+        $schema[$schemaCode] = array(
+            Constants::NAME => $schemaCode,
+            Constants::OPTIONS => array(
+                Constants::CD => $schemaCode
+            )
+        );
+
+
+
+        return $schema;
+    }
+
+    public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
+    {
+        $complectationCode = urldecode($complectationCode);
+        $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
+        $year = $modificationCode;
+
+        $sql = "
         SELECT (callout_legend.CALLOUT_NBR) CALLOUT_NBR, part_usage_lang.PART_NAME, callout_legend.IMAGE_NAME
         FROM callout_legend
         INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE NOT LIKE 'Z' AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
@@ -405,87 +410,87 @@ class SaturnCatalogModel extends CatalogModel{
 
 
 
-           $query = $this->conn->prepare($sql);
-           $query->bindValue('catalogCode',  $catalogCode);
-           $query->bindValue('groupCode',  $groupCode);
-           $query->bindValue('regionCode',  $regionCode);
-           $query->bindValue('schemaCode',  $schemaCode);
-           $query->bindValue('year', $year);
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('catalogCode',  $catalogCode);
+        $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('schemaCode',  $schemaCode);
+        $query->bindValue('year', $year);
 
-           $query->execute();
-
-
-           $aPncs = $query->fetchAll();
+        $query->execute();
 
 
+        $aPncs = $query->fetchAll();
 
 
 
-           foreach ($aPncs as &$aPnc)
-           {
 
-               $sqlSchemaLabels = "
+
+        foreach ($aPncs as &$aPnc)
+        {
+
+            $sqlSchemaLabels = "
            SELECT x, y
            FROM coord
             WHERE coord.IMAGE_NAME_KEY = :IMAGE_NAME
             AND coord.LABEL_NAME = :pnc
            ";
 
-               $query = $this->conn->prepare($sqlSchemaLabels);
-               $query->bindValue('IMAGE_NAME',  $aPnc['IMAGE_NAME']);
-               $query->bindValue('pnc',  str_pad($aPnc['CALLOUT_NBR'], 5, "0", STR_PAD_LEFT));
+            $query = $this->conn->prepare($sqlSchemaLabels);
+            $query->bindValue('IMAGE_NAME',  $aPnc['IMAGE_NAME']);
+            $query->bindValue('pnc',  str_pad($aPnc['CALLOUT_NBR'], 5, "0", STR_PAD_LEFT));
 
-               $query->execute();
+            $query->execute();
 
-               $aPnc['clangjap'] = $query->fetchAll();
-
-
-               unset ($aPnc);
-
-           }
+            $aPnc['clangjap'] = $query->fetchAll();
 
 
+            unset ($aPnc);
 
-           $pncs = array();
-
-           foreach ($aPncs as $index=>$value) {
-               {
-                   if (!$value['clangjap'])
-                   {
-                       unset ($aPncs[$index]);
-                   }
-
-                   foreach ($value['clangjap'] as $item1)
-                   {
-                     /*  if ($value['PART_NAME'] != NULL)*/
-                       $pncs[($value['CALLOUT_NBR'])][Constants::OPTIONS][Constants::COORDS][($item1['x'])] = array(
-                           Constants::X2 => floor($item1['x'])+30,
-                           Constants::Y2 => $item1['y']+30,
-                           Constants::X1 => floor($item1['x'])-30,
-                           Constants::Y1 => ($item1['y'])-30);
-
-                   }
+        }
 
 
 
-               }
-           }
+        $pncs = array();
+
+        foreach ($aPncs as $index=>$value) {
+            {
+                if (!$value['clangjap'])
+                {
+                    unset ($aPncs[$index]);
+                }
+
+                foreach ($value['clangjap'] as $item1)
+                {
+                    /*  if ($value['PART_NAME'] != NULL)*/
+                    $pncs[($value['CALLOUT_NBR'])][Constants::OPTIONS][Constants::COORDS][($item1['x'])] = array(
+                        Constants::X2 => floor($item1['x'])+30,
+                        Constants::Y2 => $item1['y']+30,
+                        Constants::X1 => floor($item1['x'])-30,
+                        Constants::Y1 => ($item1['y'])-30);
+
+                }
 
 
-           foreach ($aPncs as $item) {
 
-             /*  if ($item['PART_NAME'] != NULL)*/
-
-               $pncs[$item['CALLOUT_NBR']][Constants::NAME] = strtoupper($item['PART_NAME']);
-
-           }
+            }
+        }
 
 
-            return $pncs;
-       }
+        foreach ($aPncs as $item) {
 
-       public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
-       {
+            /*  if ($item['PART_NAME'] != NULL)*/
+
+            $pncs[$item['CALLOUT_NBR']][Constants::NAME] = strtoupper($item['PART_NAME']);
+
+        }
+
+
+        return $pncs;
+    }
+
+    public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
+    {
         /*   $sqlSchemaLabels = "
            SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
            FROM pictures p
@@ -514,40 +519,40 @@ class SaturnCatalogModel extends CatalogModel{
                    Constants::Y2 => $item['ye'],
                );
            }*/
-$articuls = array();
+        $articuls = array();
         return $articuls;
     }
 
     public function getReferGroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
-     /*   $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-
-
-        $sqlSchemaLabels = "
-        SELECT name, x1, y1, x2, y2
-        FROM cats_coord
-        WHERE catalog_code =:catCode
-          AND compl_name =:schemaCode
-          AND quantity = 5
-          ";
-
-        $query = $this->conn->prepare($sqlSchemaLabels);
-        $query->bindValue('catCode', $catCode);
-        $query->bindValue('schemaCode', $schemaCode);
-        $query->execute();
-
-        $aData = $query->fetchAll();
-
-        $groups = array();
-        foreach ($aData as $item)
-        {
-            $groups[$item['name']][Constants::NAME] = $item['name'];
-            $groups[$item['name']][Constants::OPTIONS][Constants::COORDS][] = array(
-                Constants::X1 => ($item['x1']),
-                Constants::Y1 => $item['y1'],
-                Constants::X2 => $item['x2'],
-                Constants::Y2 => $item['y2']);
-        }*/
+        /*   $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+   
+   
+           $sqlSchemaLabels = "
+           SELECT name, x1, y1, x2, y2
+           FROM cats_coord
+           WHERE catalog_code =:catCode
+             AND compl_name =:schemaCode
+             AND quantity = 5
+             ";
+   
+           $query = $this->conn->prepare($sqlSchemaLabels);
+           $query->bindValue('catCode', $catCode);
+           $query->bindValue('schemaCode', $schemaCode);
+           $query->execute();
+   
+           $aData = $query->fetchAll();
+   
+           $groups = array();
+           foreach ($aData as $item)
+           {
+               $groups[$item['name']][Constants::NAME] = $item['name'];
+               $groups[$item['name']][Constants::OPTIONS][Constants::COORDS][] = array(
+                   Constants::X1 => ($item['x1']),
+                   Constants::Y1 => $item['y1'],
+                   Constants::X2 => $item['x2'],
+                   Constants::Y2 => $item['y2']);
+           }*/
 
         $groups = array();
         return $groups;
@@ -555,6 +560,7 @@ $articuls = array();
 
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $pncCode, $options)
     {
+        $complectationCode = urldecode($complectationCode);
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;
 
@@ -606,17 +612,17 @@ $articuls = array();
         $query->execute();
 
 
-         $aArticuls = $query->fetchAll();
+        $aArticuls = $query->fetchAll();
 
 
 
-$articuls = array();
+        $articuls = array();
 
         foreach ($aArticuls as $item) {
-        	 
-            
-            
-				$articuls[$item['PART_NBR']] = array(
+
+
+
+            $articuls[$item['PART_NBR']] = array(
                 Constants::NAME => $item['PART_DESC'],
                 Constants::OPTIONS => array(
                     Constants::QUANTITY => $item['QUANTITY'],
@@ -625,7 +631,7 @@ $articuls = array();
 
                 )
             );
-            
+
         }
 
 
@@ -655,5 +661,5 @@ $articuls = array();
 
     }
 
-    
+
 } 

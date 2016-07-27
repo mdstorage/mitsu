@@ -44,7 +44,7 @@ class SaturnArticulModel extends SaturnCatalogModel{
             if ($value['COUNTRY_CODE'] === '*')
             {$regions = $reg;}
             else
-           $regions[] = $value['COUNTRY_CODE'];
+                $regions[] = $value['COUNTRY_CODE'];
         }
 
 
@@ -57,7 +57,7 @@ class SaturnArticulModel extends SaturnCatalogModel{
 
 
         $sql = "
-        SELECT model.MODEL_DESC
+        SELECT model.MODEL_DESC, model.MAKE_DESC
         FROM part_usage
         INNER JOIN model ON (model.CATALOG_CODE = part_usage.CATALOG_CODE AND (model.COUNTRY_CODE = part_usage.COUNTRY_CODE OR model.COUNTRY_CODE = '*')
         and (model.MAKE_DESC = 'Saturn' OR model.MAKE_DESC = 'Lt Truck Saturn'))
@@ -97,7 +97,7 @@ class SaturnArticulModel extends SaturnCatalogModel{
             {
                 if (strpos($item['MODEL_DESC'], $value) !== false)
                 {
-                    $models[] = strtoupper($value);
+                    $models[] = urlencode(strtoupper($value).'_'.$item['MAKE_DESC']);
 
                 }
 
@@ -108,10 +108,11 @@ class SaturnArticulModel extends SaturnCatalogModel{
 
         return array_unique($models);
     }
-    
+
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
 
+        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
 
 
         $sql = "
@@ -168,9 +169,10 @@ class SaturnArticulModel extends SaturnCatalogModel{
 
 
     }
-    
+
     public function getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode)
     {
+        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
 
         $sql = "
         SELECT model.CATALOG_CODE, model.MODEL_DESC
@@ -191,24 +193,24 @@ class SaturnArticulModel extends SaturnCatalogModel{
 
         $aData = $query->fetchAll();
 
-            $complectations = array();
+        $complectations = array();
 
         foreach($aData as $item){
 
-            $complectations[] = $item['CATALOG_CODE'].'_'.$item ['MODEL_DESC'];
+            $complectations[] = urlencode($item['CATALOG_CODE'].'_'.$item ['MODEL_DESC']);
 
         }
 
 
         return array_unique($complectations);
     }
-    
+
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
+        $complectationCode = urldecode($complectationCode);
 
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;
-        $modelCode = urldecode($modelCode);
 
         $sql = "
         SELECT part_usage.MAJOR_GROUP
@@ -228,7 +230,7 @@ class SaturnArticulModel extends SaturnCatalogModel{
         AND part_v.CATALOG_CODE = :catalogCode
         AND :year BETWEEN part_v.FIRST_YEAR AND part_v.LAST_YEAR
         AND (part_v.COUNTRY_CODE = :regionCode OR part_v.COUNTRY_CODE = '*')
-        
+
         UNION
 
         SELECT callout_legend.CAPTION_GROUP
@@ -250,15 +252,15 @@ class SaturnArticulModel extends SaturnCatalogModel{
 
         $aData = $query->fetchAll();
 
-    	$groups = array();
+        $groups = array();
 
         foreach($aData as $item)
-		{
+        {
 
-			$groups[]= $item['MAJOR_GROUP'];
+            $groups[]= $item['MAJOR_GROUP'];
 
-			
-		}
+
+        }
 
 
         return array_unique($groups);
@@ -270,7 +272,7 @@ class SaturnArticulModel extends SaturnCatalogModel{
 
         $aData =array('1' => '1');
 
-    	$subgroups = array();
+        $subgroups = array();
 
         foreach($aData as $item)
         {
@@ -282,9 +284,10 @@ class SaturnArticulModel extends SaturnCatalogModel{
         return array_unique($subgroups);
 
     }
-    
+
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
+        $complectationCode = urldecode($complectationCode);
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;
 
@@ -325,20 +328,21 @@ class SaturnArticulModel extends SaturnCatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
-	   
-	   $schemas = array();
+
+        $schemas = array();
         foreach($aData as $item) {
 
-                $schemas[] = $item['ART_NBR'];
+            $schemas[] = $item['ART_NBR'];
 
 
         }
-		   
+
         return array_unique($schemas);
     }
-         
-     public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
+
+    public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
+        $complectationCode = urldecode($complectationCode);
 
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;
@@ -384,7 +388,7 @@ class SaturnArticulModel extends SaturnCatalogModel{
         $pncs = array();
         foreach($aData as $item) {
 
-                $pncs[] = $item['CALLOUT_NBR'];
+            $pncs[] = $item['CALLOUT_NBR'];
 
 
         }

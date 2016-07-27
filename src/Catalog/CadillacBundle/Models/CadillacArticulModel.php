@@ -57,7 +57,7 @@ class CadillacArticulModel extends CadillacCatalogModel{
 
 
         $sql = "
-        SELECT model.MODEL_DESC
+        SELECT model.MODEL_DESC, model.MAKE_DESC
         FROM part_usage
         INNER JOIN model ON (model.CATALOG_CODE = part_usage.CATALOG_CODE AND (model.COUNTRY_CODE = part_usage.COUNTRY_CODE OR model.COUNTRY_CODE = '*')
         and (model.MAKE_DESC = 'Cadillac' OR model.MAKE_DESC = 'Lt Truck Cadillac'))
@@ -97,7 +97,7 @@ class CadillacArticulModel extends CadillacCatalogModel{
             {
                 if (strpos($item['MODEL_DESC'], $value) !== false)
                 {
-                    $models[] = strtoupper($value);
+                    $models[] = urlencode(strtoupper($value).'_'.$item['MAKE_DESC']);
 
                 }
 
@@ -112,7 +112,7 @@ class CadillacArticulModel extends CadillacCatalogModel{
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
 
-
+        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
 
         $sql = "
         SELECT model.CATALOG_CODE, model.FIRST_YEAR, model.LAST_YEAR
@@ -171,6 +171,7 @@ class CadillacArticulModel extends CadillacCatalogModel{
     
     public function getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode)
     {
+        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
 
         $sql = "
         SELECT model.CATALOG_CODE, model.MODEL_DESC
@@ -195,7 +196,7 @@ class CadillacArticulModel extends CadillacCatalogModel{
 
         foreach($aData as $item){
 
-            $complectations[] = $item['CATALOG_CODE'].'_'.$item ['MODEL_DESC'];
+            $complectations[] = urlencode($item['CATALOG_CODE'].'_'.$item ['MODEL_DESC']);
 
         }
 
@@ -206,9 +207,11 @@ class CadillacArticulModel extends CadillacCatalogModel{
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
 
+        $complectationCode = urldecode($complectationCode);
+
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
+
         $year = $modificationCode;
-        $modelCode = urldecode($modelCode);
 
         $sql = "
         SELECT part_usage.MAJOR_GROUP
@@ -285,6 +288,8 @@ class CadillacArticulModel extends CadillacCatalogModel{
     
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
+
+        $complectationCode = urldecode($complectationCode);
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;
 
@@ -340,6 +345,7 @@ class CadillacArticulModel extends CadillacCatalogModel{
      public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
 
+        $complectationCode = urldecode($complectationCode);
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;
 
