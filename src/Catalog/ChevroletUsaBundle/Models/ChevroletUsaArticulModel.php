@@ -57,7 +57,7 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
 
 
         $sql = "
-        SELECT model.MODEL_DESC
+        SELECT model.MODEL_DESC, model.MAKE_DESC
         FROM part_usage
         INNER JOIN model ON (model.CATALOG_CODE = part_usage.CATALOG_CODE AND (model.COUNTRY_CODE = part_usage.COUNTRY_CODE OR model.COUNTRY_CODE = '*')
         and (model.MAKE_DESC = 'Chevrolet' OR model.MAKE_DESC = 'Lt Truck Chevrolet'))
@@ -97,7 +97,7 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
             {
                 if (strpos($item['MODEL_DESC'], $value) !== false)
                 {
-                    $models[] = strtoupper($value);
+                    $models[] = urlencode(strtoupper($value).'_'.$item['MAKE_DESC']);
 
                 }
 
@@ -112,6 +112,7 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
 
+        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
 
 
         $sql = "
@@ -171,6 +172,7 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
     
     public function getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode)
     {
+        $modelCode = urldecode(substr($modelCode, 0, strpos($modelCode, '_')));
 
         $sql = "
         SELECT model.CATALOG_CODE, model.MODEL_DESC
@@ -195,7 +197,7 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
 
         foreach($aData as $item){
 
-            $complectations[] = $item['CATALOG_CODE'].'_'.$item ['MODEL_DESC'];
+            $complectations[] = urlencode($item['CATALOG_CODE'].'_'.$item ['MODEL_DESC']);
 
         }
 
@@ -206,9 +208,10 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
 
+        $complectationCode = urldecode($complectationCode);
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;
-        $modelCode = urldecode($modelCode);
+
 
         $sql = "
         SELECT part_usage.MAJOR_GROUP
@@ -285,6 +288,8 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
     
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
+        $complectationCode = urldecode($complectationCode);
+
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;
 
@@ -339,6 +344,8 @@ class ChevroletUsaArticulModel extends ChevroletUsaCatalogModel{
          
      public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
+
+        $complectationCode = urldecode($complectationCode);
 
         $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
         $year = $modificationCode;

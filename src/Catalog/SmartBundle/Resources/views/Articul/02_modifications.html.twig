@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:02_modifications.html.twig' %}
 {% use 'CatalogSmartBundle::smart.base.html.twig' %}
 {% block modification %}
-    <a href="{{ path('articul_smart_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
+    <a href="{{ path('articul_smart_complectations', parameters|merge({'modificationCode': modification.getCode, 'articul': app.request.get('articul')})) }}">
         {{ modification.getRuname }}
     </a>
 {% endblock modification %}

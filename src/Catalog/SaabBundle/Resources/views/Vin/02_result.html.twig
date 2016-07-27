@@ -53,5 +53,9 @@
     </div>
 {% endblock specification %}
 {% block catalogPath %}
-    {{ path('vin_saab_groups',({'regionCode': 'EU', 'modelCode': result.model_no, 'modificationCode': result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]})) }}
+    {{ path('vin_saab_groups',({
+        'regionCode': 'EU',
+        'modelCode': result.model_no,
+        'modificationCode': result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')],
+        'token': app.request.get('token')})) }}
 {% endblock catalogPath %}

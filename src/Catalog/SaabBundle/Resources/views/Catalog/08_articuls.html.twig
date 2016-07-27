@@ -13,7 +13,7 @@
     <tbody>
     {% for articul in oContainer.getActivePnc.getArticuls %}
         <tr>
-            <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getOption('articul') }}" target="_blank">{% block articulItem %}{{ articul.getOption('articul') }}{% endblock articulItem %}</a>
+            <td><a href="{{ parameters.redirectAdress|replace({ '{article}': articul.getOption('articul') }) }}" target="_blank">{% block articulItem %}{{ articul.getOption('articul') }}{% endblock articulItem %}</a>
             <br/>
                 {% if articul.getOption('replace') %} Замена: {{ articul.getOption('replace')}} {% endif %}
             </td>

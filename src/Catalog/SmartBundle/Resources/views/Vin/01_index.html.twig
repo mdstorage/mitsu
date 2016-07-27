@@ -1,3 +1,26 @@
 {% extends 'CatalogCommonBundle:Vin:01_index.html.twig' %}
 {% use 'CatalogSmartBundle::smart.base.html.twig' %}
-{% block vinAjaxPath %}{{ path('vin_smart_result') }}{% endblock vinAjaxPath %}
+{% block vinScript %}
+    <script>
+        $("#vin-button").on('click', function(){
+            if($("#vin").val(). replace(/\s+/g, '').length !== 17){
+                alert("VIN должен состоять из 17 знаков!");
+                return;
+            }
+            $("#vin-result").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="20px" />');
+            $.ajax({
+                type:   'POST',
+                async:  false,
+                url:    "{% block vinAjaxPath %}{{ path('vin_smart_result') }}{% endblock vinAjaxPath %}",
+                data:   {
+                    vin: $("#vin").val(). replace(/\s+/g, ''),
+                    token: '{{ app.request.get('token') }}'
+                },
+                success: function(data) {
+                    $("#vin-result").html(data);
+                }
+            });
+        });
+    </script>
+{% endblock vinScript %}
+

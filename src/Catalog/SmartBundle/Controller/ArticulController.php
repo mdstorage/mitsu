@@ -34,9 +34,11 @@ class ArticulController extends BaseController{
         $regionCode = null,
         $modelCode = null,
         $modificationCode = null,
-        $complectationCode = null)
+        $complectationCode = null,
+        $articul = null,
+        $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+
         $articulGroups = $this->model()->getArticulGroups($articul, $complectationCode);
 
         $this->addFilter('articulGroupsFilter', array(
@@ -47,7 +49,9 @@ class ArticulController extends BaseController{
             'regionCode' => $regionCode,
             'modelCode' => $modelCode,
             'modificationCode' => $modificationCode,
-            'complectationCode' => $complectationCode
+            'complectationCode' => $complectationCode,
+            'articul' => $articul,
+            'token' => $token
         ));
 
         $articulModifications = $this->model()->getArticulModifications($articul, $regionCode, $modelCode);
@@ -60,7 +64,7 @@ class ArticulController extends BaseController{
             'articulComplectations' => $articulComplectations
         ));
 
-        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode);
+        return parent::groupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $articul, $token);
     }
 
     public function smartArticulSubgroupsAction(
@@ -69,9 +73,11 @@ class ArticulController extends BaseController{
         $modelCode = null,
         $modificationCode = null,
         $complectationCode = null,
-        $groupCode = null)
+        $groupCode = null,
+        $articul = null,
+        $token = null)
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+
         $articulSubGroups = $this->model()->getArticulSubGroups($articul, $complectationCode, $groupCode);
 
         $this->addFilter('articulSubGroupsFilter', array(
@@ -83,7 +89,9 @@ class ArticulController extends BaseController{
             'modelCode'         => $modelCode,
             'modificationCode'  => $modificationCode,
             'complectationCode' => $complectationCode,
-            'groupCode'         => $groupCode
+            'groupCode'         => $groupCode,
+            'articul'           => $articul,
+            'token'             => $token
         ));
 
         $sanums = $this->model()->getArticulSanums($articul);
@@ -94,10 +102,12 @@ class ArticulController extends BaseController{
             'modificationCode'  => $modificationCode,
             'complectationCode' => $complectationCode,
             'groupCode'         => $groupCode,
-            'sanums' => $sanums
+            'sanums'            => $sanums,
+            'articul'           => $articul,
+            'token'             => $token
         ));
 
-        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+        return parent::subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $articul, $token);
     }
 
     public function smartArticulSchemasAction(
@@ -107,22 +117,44 @@ class ArticulController extends BaseController{
         $modificationCode = null,
         $complectationCode = null,
         $groupCode = null,
-        $subGroupCode = null)
+        $subGroupCode = null,
+        $articul = null,
+        $token = null
+
+        )
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+        if (!empty($token))
+        {
+            $aDataToken = array();
+            $aDataToken = $this->get('my_token_info')->getDataToken($token);
+
+            $redirectAdress = $aDataToken['url'];
+        }
+        else
+        {
+            $redirectAdress = Constants::FIND_PATH;
+        }
+
+        $parameters = array(
+            'articul' => $articul,
+            'redirectAdress' => $redirectAdress
+        );
+
         $articulSchemas = $this->model()->getArticulSchemas($articul, $complectationCode, $groupCode, $subGroupCode);
         if (!$articulSchemas && $this->model()->getArticulCatnums($articul)) {
             return $this->render($this->bundle() . ':09_common_articuls.html.twig', array(
                 'oContainer' => Factory::createContainer()->setActiveArticul(
                         Factory::createArticul($articul)
-                    )
+                    ),
+                'parameters' => $parameters
+
             ));
         }
         $this->addFilter('articulSchemasFilter', array(
             'articulSchemas' => $articulSchemas
         ));
 
-        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
+        return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $articul, $token);
     }
 
     public function smartArticulSchemaAction(
@@ -133,16 +165,19 @@ class ArticulController extends BaseController{
         $complectationCode = null,
         $groupCode = null,
         $subGroupCode = null,
-        $schemaCode = null)
+        $schemaCode = null,
+        $articul = null,
+        $token = null
+    )
     {
-        $articul = $request->cookies->get(Constants::ARTICUL);
+
         $articulPncs = $this->model()->getArticulPncs($articul, $complectationCode, $groupCode, $subGroupCode);
 
         $this->addFilter('articulPncsFilter', array(
             'articulPncs' => $articulPncs
         ));
 
-        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode);
+        return parent::schemaAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $articul, $token);
     }
 
 //    public function saFirstLevelSubgroupsAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $sanum)
