@@ -205,9 +205,30 @@ class SubaruCatalogModel extends CatalogModel{
 
         $aAgregateData = array();
 
+        $aVozmozhnyeZna4s = array('STEERING', 'DESTINAT', 'TRAIN', 'ENGINE', 'GRADE', 'ROOF', 'VEHICLE', 'SPECIFIC', 'MISSION', 'DOOR', 'SUS', 'BODY');
+
+
+
+        $aAgregate = array();
+
+        foreach ($aVozmozhnyeZna4s as $aVozmozhnyeZna4)
+        {
+            foreach ($aAgregateNames as $aAgregateName)
+            {
+
+                if (strpos($aAgregateName['dif_fields'], $aVozmozhnyeZna4) !== false)
+                {
+                    $aAgregate[] =  $aVozmozhnyeZna4;
+                }
+
+            }
+
+        }
+
+
         foreach ($aAgregateNames as $aAgregateName)
         {
-            $aAgregateData = array_combine(str_split($aAgregateName['dif_code']) , array_diff(explode(' ', $aAgregateName['dif_fields']), array('')));
+            $aAgregateData = array_combine(str_split($aAgregateName['dif_code']) , array_diff($aAgregate, array('')));
         }
 
 
