@@ -1,9 +1,16 @@
-{% extends 'CatalogCommonBundle:Catalog:02_modifications.html.twig' %}
-{% use 'CatalogSubaruBundle::subaru.base.html.twig' %}
-{% block modification %}
-    <a href="{{ path('articul_subaru_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
-        {{ modification.getRuname }}
-        ({{ modification.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|date_convertor }}
-        {{ modification.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|date_convertor }})
-    </a>
-{% endblock modification %}
+<div class="modifications">
+    <div class="row">
+        {% for modification in oContainer.getActiveModel.getModifications %}
+            <div>
+                {% block modification %}
+                    <a href="{{ path('articul_subaru_complectations', parameters|merge({'modificationCode': modification.getCode, 'articul': app.request.get('articul')})) }}">
+                        {{ modification.getRuname }}
+                        ({{ modification.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|date_convertor }}
+                        {{ modification.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|date_convertor }})
+                    </a>
+                {% endblock modification %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+

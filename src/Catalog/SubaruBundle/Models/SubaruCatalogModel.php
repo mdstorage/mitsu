@@ -56,6 +56,7 @@ class SubaruCatalogModel extends CatalogModel{
         FROM models_jp_translate
         WHERE models_jp_translate.catalog = :regionCode
         AND models_jp_translate.sub_wheel = :wheel
+        ORDER BY (1)
 
         ";
 
@@ -96,6 +97,7 @@ class SubaruCatalogModel extends CatalogModel{
         SELECT desc_$lang, change_abb, sdate, edate
         FROM $table
         WHERE model_code = :modelCode
+        ORDER BY change_abb
         ";
 
         $query = $this->conn->prepare($sql);
@@ -228,7 +230,7 @@ class SubaruCatalogModel extends CatalogModel{
 
         foreach ($aAgregateNames as $aAgregateName)
         {
-            $aAgregateData = array_combine(str_split($aAgregateName['dif_code']) , array_diff($aAgregate, array('')));
+            $aAgregateData = array_combine(str_split($aAgregateName['dif_code']) , array_diff(array_unique($aAgregate), array('')));
         }
 
 

@@ -14,8 +14,18 @@
 {% endblock image %}
 
 {% block ajaxUrl %}{{ path('articul_subaru_articuls') }}{% endblock ajaxUrl %}
-{% block ajaxData %} regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', complectationCode: '{{ oContainer.getActiveComplectation.getCode }}', cd: '{{ oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD')) }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}' {% endblock ajaxData %}
-{% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock commonArticulPath %}
+{% block ajaxData %}
+    regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+    modelCode: '{{ oContainer.getActiveModel.getCode }}',
+    modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+    complectationCode: '{{ oContainer.getActiveComplectation.getCode }}',
+    cd: '{{ oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD')) }}',
+    subGroupCode: '{{ parameters.subGroupCode }}',
+    pncCode: '{{ pnc.getCode }}',
+    articul: '{{ parameters.articul }}',
+    token: '{{ app.request.get('token') }}'
+{% endblock ajaxData %}
+{% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{{ path('catalog_subaru_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
 {% block pncScript %}
     {% if pnc.isActive %}
