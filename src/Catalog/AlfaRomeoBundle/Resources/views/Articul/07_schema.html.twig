@@ -14,7 +14,7 @@
 {% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
 
 {% block image %}
-    <img src="{{ asset('bundles/catalogalfaromeo/Imgs/images/'~oContainer.getActiveSchema.getOption('catalog')~'/'~oContainer.getActiveSchema.getOption('picture')) }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+    <img src="{{ asset('bundles/catalogfiat/Imgs/images/'~oContainer.getActiveSchema.getOption('catalog')~'/'~oContainer.getActiveSchema.getOption('picture')) }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 {% endblock image %}
 
 {% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
