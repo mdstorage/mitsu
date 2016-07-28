@@ -7,6 +7,7 @@ use Catalog\CommonBundle\Components\Interfaces\CommonInterface;
 use Catalog\CommonBundle\Controller\CatalogController as BaseController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Catalog\CommonBundle\Components\Constants;
 
 class CatalogController extends BaseController{
 
