@@ -150,15 +150,21 @@ class SubaruArticulModel extends SubaruCatalogModel{
 
         return $groups;
     }
-    public function getArticulSubGroups($articul, $regionCode, $modelCode, $groupCode)
+    public function getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
         $sqlArticul = "
         SELECT sec_group
         FROM part_catalog
-        WHERE part_number = :articulCode
-        AND catalog = :regionCode
-        AND model_code = :modelCode
-        AND pri_group = :groupCode
+        LEFT JOIN body_desc ON body_desc.catalog = part_catalog.catalog
+        AND body_desc.model_code = part_catalog.model_code AND body_desc.f1 = :complectationCode
+        WHERE part_catalog.part_number = :articulCode
+        AND part_catalog.catalog = :regionCode
+        AND part_catalog.model_code = :modelCode
+        AND part_catalog.pri_group = :groupCode
+        AND part_catalog.sub_wheel = :wheel
         GROUP BY sec_group
         ";
 
@@ -167,6 +173,8 @@ class SubaruArticulModel extends SubaruCatalogModel{
         $query->bindValue('regionCode', $regionCode);
         $query->bindValue('modelCode', $modelCode);
         $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('wheel', $wheel);
+        $query->bindValue('complectationCode', $complectationCode);
         $query->execute();
         
         $aArticulDesc = $query->fetchAll();
@@ -179,15 +187,39 @@ class SubaruArticulModel extends SubaruCatalogModel{
     
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
+
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
+        if ($regionCode == 'JP'){
+            $table = 'part_images_jp';
+            $lang = 'jp';
+
+        }
+        else
+        {
+            $table = 'part_images';
+            $lang = 'en';
+
+        }
+
+
+
         $sqlArticul = "
-        SELECT page
+        SELECT part_images.image_file, part_images.desc_en
         FROM part_catalog
-        WHERE part_number = :articulCode
-        AND catalog = :regionCode
-        AND model_code = :modelCode
-        AND pri_group = :groupCode
-        AND sec_group =:subGroupCode
+        INNER JOIN part_images ON (part_images.sec_group = part_catalog.sec_group AND part_images.catalog = part_catalog.catalog
+        AND part_images.model_code = part_catalog.model_code)
+        INNER JOIN labels ON (labels.page = part_images.page AND labels.catalog = part_images.catalog AND labels.model_code = part_images.model_code
+        AND CONCAT(labels.part_code,labels.f9)  = part_catalog.part_code AND labels.sec_group = part_images.sec_group AND labels.sub_wheel = :wheel)
+        WHERE part_catalog.part_number = :articulCode
+        AND part_catalog.catalog = :regionCode
+        AND part_catalog.model_code = :modelCode
+        AND part_catalog.pri_group = :groupCode
+        AND part_catalog.sec_group =:subGroupCode
         ";
+
+
         
         $query = $this->conn->prepare($sqlArticul);
         $query->bindValue('articulCode', $articul);
@@ -195,100 +227,30 @@ class SubaruArticulModel extends SubaruCatalogModel{
         $query->bindValue('modelCode', $modelCode);
         $query->bindValue('groupCode', $groupCode);
         $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('wheel', $wheel);
         $query->execute();
 
-        $aData = $query->fetch();
-        
-       if ($aData['page']!='')
-       { 
-       	$sql = "
-        SELECT image_file, desc_en
-        FROM part_images
-        WHERE catalog = :regionCode
-        AND model_code = :modelCode
-        AND sec_group =:subGroupCode
-        AND page =:page
-        ";
-        
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('modelCode', $modelCode);
-        $query->bindValue('subGroupCode', $subGroupCode);
-        $query->bindValue('page', $aData['page']);
-        $query->execute();
-        $aData1 = $query->fetchAll(); 
-        }
-        else 
-        {
-        $aNumSchemas = $this->getNumSchemas($articul, $regionCode, $modelCode, $groupCode, $subGroupCode);
-        
-         
-        foreach  ($aNumSchemas as $item)
-        {
-			
-        $sql = "
-        SELECT image_file, desc_en
-        FROM part_images
-        WHERE catalog = :regionCode
-        AND model_code = :modelCode
-        AND sec_group = :subGroupCode
-        AND page = :page
-        ";
-         
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('modelCode', $modelCode);
-        $query->bindValue('subGroupCode', $subGroupCode);
-        $query->bindValue('page', $item);
-        $query->execute();
-        $aData1[] = $query->fetch();
-        }  
-        }  
-       
-       
+        $aData = $query->fetchAll();
+
         $schemas = array();
        
-        foreach  ($aData1 as $item1)
+        foreach  ($aData as $item)
         {
-        	if ((substr_count($item1['desc_en'],'MY')>0)&&(substr_count($item1['desc_en'], substr($modificationCode, 1, 5))!=0)||(substr_count($item1['desc_en'],'MY')==0))
-			$schemas[]=$item1['image_file'];
+        	if ((substr_count($item['desc_en'],'MY')>0)&&(substr_count($item['desc_en'], substr($modificationCode, 1, 5))!=0)||(substr_count($item['desc_en'],'MY')==0))
+			$schemas[] = $item['image_file'];
 		}
                
 
         return $schemas;
     }
-     public function getNumSchemas($articul, $regionCode, $modelCode, $groupCode, $subGroupCode)
-     {
-	 	$aArticulPncs = $this->getArticulPncs($articul, $regionCode, $modelCode, $groupCode, $subGroupCode);
-	 	
-	 	foreach ($aArticulPncs as $item)
-	 	{	
-	 	$sql = "
-        SELECT page
-        FROM labels
-        WHERE catalog = :regionCode
-        AND model_code = :modelCode
-        AND sec_group = :subGroupCode
-        AND part_code = :part_code
-        GROUP BY page
-        ";
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('modelCode', $modelCode);
-        $query->bindValue('subGroupCode', $subGroupCode);
-        $query->bindValue('part_code', $item);
-        $query->execute();
-         $groups = array();        
-        $aData = $query->fetchAll();
-        $groups = $this->array_column($aData, 'page');
-        }
-       
-       return $groups;
-	 }
+
 	 
     
      public function getArticulPncs($articul, $regionCode, $modelCode, $groupCode, $subGroupCode)
     {
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+        
         $sqlPnc = "
         SELECT part_code
         FROM part_catalog
@@ -307,7 +269,8 @@ class SubaruArticulModel extends SubaruCatalogModel{
         $query->bindValue('groupCode', $groupCode);
         $query->bindValue('subGroupCode', $subGroupCode);
         $query->execute();
-$pncs = array();
+
+        $pncs = array();
         $pncs = $this->array_column($query->fetchAll(), 'part_code');
 
         return $pncs; 

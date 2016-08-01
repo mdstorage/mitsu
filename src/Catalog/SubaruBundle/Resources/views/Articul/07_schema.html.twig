@@ -10,11 +10,13 @@
 {% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
 
 {% block image %}
-    <img src="{{ asset('bundles/catalogsubaru/images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(0,2)~'/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(2,9)~'/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(11,2)~'/model'~oContainer.getActiveSchema.getOption('num_model')~'/part1/'~oContainer.getActiveSchema.getCode~'.png') }}" width="900" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
+    <img src="{{ asset('bundles/catalogsubaru/Subaru_Images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="900" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
 {% endblock image %}
 
 {% block ajaxUrl %}{{ path('articul_subaru_articuls') }}{% endblock ajaxUrl %}
+
 {% block ajaxData %}
+
     regionCode: '{{ oContainer.getActiveRegion.getCode }}',
     modelCode: '{{ oContainer.getActiveModel.getCode }}',
     modificationCode: '{{ oContainer.getActiveModification.getCode }}',
@@ -24,7 +26,12 @@
     pncCode: '{{ pnc.getCode }}',
     articul: '{{ parameters.articul }}',
     token: '{{ app.request.get('token') }}'
+
 {% endblock ajaxData %}
+
+
+
+
 {% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{{ path('catalog_subaru_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
 {% block pncScript %}

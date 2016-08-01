@@ -9,9 +9,9 @@
     <tbody>
     {% for articul in oContainer.getActivePnc.getArticuls %}
         <tr>
-            <td><a href="{{ parameters.redirectAdress|replace({ '{article}': articul.getCode }) }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a></td>
+            <td><a href="{{ parameters.redirectAdress|replace({ '{article}': articul.getRuname }) }}" target="_blank">{% block articulItem %}{{ articul.getRuname }}{% endblock articulItem %}</a></td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|subaru_date_convertor }} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|subaru_date_convertor }}</td>
-            <td>{{ articul.getRuname }}</td>
+            <td>{{ articul.getOption('model_restrictions') }}</td>
         </tr>
     {% endfor %}
     </tbody>

@@ -10,12 +10,22 @@
 
 
 {% block image %}
-    <img src="{{ asset('bundles/catalogsubaru/images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(0,2)~'/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(2,9)~'/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(11,2)~'/model'~oContainer.getActiveSchema.getOption('num_model')~'/part1/'~oContainer.getActiveSchema.getCode~'.png') }}" width="900" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
+    <img src="{{ asset('bundles/catalogsubaru/Subaru_Images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="900" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
 {% endblock image %}
 
 {% block ajaxUrl %}{{ path('vin_subaru_articuls') }}{% endblock ajaxUrl %}
 
-{% block ajaxData %} regionCode: '{{ oContainer.getActiveRegion.getCode }}', modelCode: '{{ oContainer.getActiveModel.getCode }}', modificationCode: '{{ oContainer.getActiveModification.getCode }}', complectationCode: '{{ oContainer.getActiveComplectation.getCode }}', cd: '{{ oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD')) }}', subGroupCode: '{{ parameters.subGroupCode }}', pncCode: '{{ pnc.getCode }}' {% endblock ajaxData %}
+{% block ajaxData %}
+    regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+    modelCode: '{{ oContainer.getActiveModel.getCode }}',
+    modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+    complectationCode: '{{ oContainer.getActiveComplectation.getCode }}',
+    cd: '{{ oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD')) }}',
+    subGroupCode: '{{ parameters.subGroupCode }}',
+    articul: '{{ parameters.articul }}',
+    token: '{{ parameters.token }}',
+    pncCode: '{{ pnc.getCode }}'
+{% endblock ajaxData %}
 
-{% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock commonArticulPath %}
+{% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{{ path('vin_subaru_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
