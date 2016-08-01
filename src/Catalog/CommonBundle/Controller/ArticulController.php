@@ -93,7 +93,7 @@ abstract class ArticulController extends CatalogController{
     public function modificationsAction(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
-            $articul = $request->get('articul');var_dump($request); die;
+            $articul = $request->get('articul');
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
             $articulModifications = $this->model()->getArticulModifications($articul, $regionCode, $modelCode);
