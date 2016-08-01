@@ -16,7 +16,7 @@ class SubaruArticulModel extends SubaruCatalogModel{
     public function getArticulRegions($articulCode){
 
         $sql = "
-        SELECT catalog
+        SELECT catalog, sub_wheel
         FROM part_catalog
         WHERE part_number = :articulCode
         GROUP BY catalog";
@@ -29,7 +29,7 @@ class SubaruArticulModel extends SubaruCatalogModel{
 
         $regions = array();
         foreach($aData as $item){
-            $regions[] = $item['catalog'];
+            $regions[] = $item['catalog'].'_'.$item['sub_wheel'];
         }
 
         return $regions;
@@ -80,67 +80,71 @@ class SubaruArticulModel extends SubaruCatalogModel{
         return $modifications;
     }
     
-    public function getArticulComplectations($articulCode)
+    public function getArticulComplectations($articulCode, $regionCode, $modelCode, $modificationCode)
     {
-    	$sqlArticul = "
-        SELECT *
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
+
+        $sqlArticul = "
+        SELECT body_desc.f1
         FROM part_catalog
-        WHERE part_number = :articulCode
+        LEFT JOIN body_desc ON body_desc.catalog = part_catalog.catalog
+        AND body_desc.model_code = part_catalog.model_code
+        WHERE part_catalog.part_number = :articulCode
+        AND part_catalog.catalog = :regionCode
+        AND part_catalog.sub_wheel = :wheel
         ";
+
+
 
         $query = $this->conn->prepare($sqlArticul);
         $query->bindValue('articulCode', $articulCode);
-        $query->execute();
-        
-        $aArticulDesc = $query->fetchAll();
-    	$aComplectations = array();
-      foreach  ($aArticulDesc as $item)
-       { 
-       	$sql = "
-        SELECT *
-        FROM body_desc
-        WHERE catalog = :regionCode 
-        AND model_code = :model_code
-        ";
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('wheel', $wheel);
 
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode', $item['catalog']);
-        $query->bindValue('model_code', $item['model_code']);
         $query->execute();
 
-        $aCompl = $query->fetchAll(); 
-         foreach  ($aCompl as $item1)
-         {      	
-         	if ((substr_count($item['model_restrictions'], $item1['body'])>0)||
-         		(substr_count($item['model_restrictions'], $item1['engine1'])>0)||
-         		(substr_count($item['model_restrictions'], $item1['train'])>0)||
-         		(substr_count($item['model_restrictions'], $item1['trans'])>0)||
-         		(substr_count($item['model_restrictions'], $item1['grade'])>0)||
-         		(substr_count($item['model_restrictions'], $item1['sus'])>0))
-         	
-		 	{$aComplectations[] = $item1 ['f1'];}
+        $aComplectations = $query->fetchAll();
+
+
+        $complectations = array();
+
+         foreach  ($aComplectations as $item)
+         {
+             $complectations[] = $item['f1'];
 		 }
-        }
-        return $aComplectations;
+
+        return $complectations;
     }
-    public function getArticulGroups($articul, $regionCode, $modelCode)
+    public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
+
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
         $sqlArticul = "
-        SELECT pri_group
+
+        SELECT part_catalog.pri_group
         FROM part_catalog
-        WHERE part_number = :articulCode
-        AND catalog = :regionCode
-        AND model_code = :modelCode
+        LEFT JOIN body_desc ON body_desc.catalog = part_catalog.catalog
+        AND body_desc.model_code = part_catalog.model_code AND body_desc.f1 = :complectationCode
+        WHERE part_catalog.part_number = :articulCode
+        AND part_catalog.catalog = :regionCode
+        AND part_catalog.sub_wheel = :wheel
         ";
 
         $query = $this->conn->prepare($sqlArticul);
         $query->bindValue('articulCode', $articul);
         $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('modelCode', $modelCode);
+        $query->bindValue('wheel', $wheel);
+        $query->bindValue('complectationCode', $complectationCode);
+
         $query->execute();
         
         $aArticulDesc = $query->fetchAll();
-    	$groups = array();
+
+        $groups = array();
 
         $groups = $this->array_column($aArticulDesc, 'pri_group');
 
