@@ -88,7 +88,7 @@ abstract class CatalogController extends BaseController{
                 'token' => $token
             );
 
-            $articul = $request->get('articul');var_dump($articul); die;
+            $articul = $request->get('articul');
 
             if (!empty($articul))
             {
