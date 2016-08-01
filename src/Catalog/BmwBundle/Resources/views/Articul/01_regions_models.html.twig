@@ -45,7 +45,7 @@
     </script>
 {% endblock modificationScript %}
 
-{% block head %}
+{% block head %}{{ app.request.get('articul')|trim }}
     <h3>Запчасть с таким артикулом найдена в следующих моделях:</h3>
     {{ parent() }}
 {% endblock head %}
