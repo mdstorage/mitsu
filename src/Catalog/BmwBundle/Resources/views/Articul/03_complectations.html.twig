@@ -33,11 +33,14 @@
                                 type:   'POST',
                                 async:  false,
                                 url:    "{{ path('articul_bmw_complectation_korobka') }}",
-                                data:   { role: $("#optionsRadios{{ complectation.getCode }}").val(), modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                                data:   {
+                                    role: $("#optionsRadios{{ complectation.getCode }}").val(),
+                                    modificationCode: '{{ oContainer.getActiveModification.getCode }}',
                                     regionCode: '{{ oContainer.getActiveRegion.getCode }}',
                                     modelCode: '{{ oContainer.getActiveModel.getCode }}',
                                     articul: '{{ app.request.get('articul') }}',
-                                    token: '{{ token }}'},
+                                    token: '{{ token }}'
+                                },
                                 success: function(data) {
                                     $("#vin-result").html(data);
                                 }
