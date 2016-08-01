@@ -847,7 +847,7 @@ class SubaruCatalogModel extends CatalogModel{
         $pncs = array();
         foreach ($aDataLabels as $item) {
             {
-                $pncs[$item['part_code']][Constants::OPTIONS][Constants::COORDS][] = array(
+                $pncs[$item['part_code'].$item['f9']][Constants::OPTIONS][Constants::COORDS][] = array(
                     Constants::X1 => floor($item['x']/2),
                     Constants::Y1 => ($item['y']/2-5),
                     Constants::X2 => ($item['x']/2+80),
@@ -855,7 +855,7 @@ class SubaruCatalogModel extends CatalogModel{
             }
         }
          foreach ($aDataLabels as $item) {
-            $pncs[$item['part_code']][Constants::NAME] = $item['label_'.$lang];
+            $pncs[$item['part_code'].$item['f9']][Constants::NAME] = $item['label_'.$lang];
         }
       
 
@@ -937,7 +937,7 @@ class SubaruCatalogModel extends CatalogModel{
           AND model_code = :model_code
           AND (f8 = :modificationCode OR f8 = '')
           AND sec_group = :subGroupCode
-          AND part_code = :pncCode
+          AND part_code LIKE :pncCode
           AND sub_wheel = :wheel
         ";
 
@@ -960,7 +960,7 @@ class SubaruCatalogModel extends CatalogModel{
             foreach ($schemaOptions as $schemaOptionsOpt) {
 
 
-                $item = strpos($schemaOptionsOpt, '<')?substr_replace($schemaOptionsOpt,'', strpos($schemaOptionsOpt, '<'), strpos($schemaOptionsOpt, '>')+1):$schemaOptionsOpt;
+                $item = (strpos($schemaOptionsOpt, '<')!==false)?substr_replace($schemaOptionsOpt,'', strpos($schemaOptionsOpt, '<'), strripos($schemaOptionsOpt, '>')+1):$schemaOptionsOpt;
 
 
 
@@ -1023,12 +1023,13 @@ class SubaruCatalogModel extends CatalogModel{
         foreach ($aArticuls as $item) {
 
             
-            $articuls[$item['part_number']] = array(
-                Constants::NAME =>$item['model_restrictions'],
+            $articuls[$item['part_number'].'_'.$item['f21']] = array(
+                Constants::NAME =>$item['part_number'],
                 Constants::OPTIONS => array(
                     Constants::QUANTITY => '',
                     Constants::START_DATE => $item['sdate'],
-                    Constants::END_DATE => $item['edate']
+                    Constants::END_DATE => $item['edate'],
+                    'model_restrictions' => $item['model_restrictions']
                 )
             );
         }

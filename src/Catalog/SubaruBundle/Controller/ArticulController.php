@@ -140,7 +140,7 @@ use SubaruVinFilters;
 
     public function subaruArticulSubgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $articul = null, $token = null)
     {
-        $articulSubGroups = $this->model()->getArticulSubGroups($articul, $regionCode, $modelCode, $groupCode);
+        $articulSubGroups = $this->model()->getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
 
         $this->addFilter('articulSubGroupsFilter', array(
             'articulSubGroups' => $articulSubGroups
