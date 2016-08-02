@@ -5,11 +5,11 @@ use Catalog\CommonBundle\Components\Factory;
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Controller\ArticulController as BaseController;
 use Symfony\Component\HttpFoundation\Request;
-use Catalog\SubaruBundle\Controller\Traits\SubaruVinFilters;
+use Catalog\SubaruBundle\Controller\Traits\SubaruArticulFilters;
 use Catalog\SubaruBundle\Form\ComplectationType;
 
 class ArticulController extends BaseController{
-use SubaruVinFilters;
+use SubaruArticulFilters;
     public function bundle()
     {
         return 'CatalogSubaruBundle:Articul';
@@ -60,9 +60,20 @@ use SubaruVinFilters;
 
 
 
-        $complectationsForForm = $this->model()->getComplectationsForForm(array_intersect_key($complectations, array_flip($articulComplectations)));
+        $complectationsWithoutRestrictions = $this->model()->getComplectationsForForm(array_intersect_key($complectations, array_flip($articulComplectations)));
+        $modelRestrictions = $this->model()->getArticulModelRestrictions($articul, $regionCode, $modelCode, $modificationCode);
 
-        $form = $this->createForm(new ComplectationType(), $complectationsForForm);
+
+        $this->addFilter('articulComplectationsForFormFilter', array(
+            'complectationsForForm' => $complectationsWithoutRestrictions,
+            'modelRestrictions' => $modelRestrictions
+        ));
+
+        $complectationsRestrictions = $this->model()->getarticulComplectationsRestrictions($modelRestrictions, $complectationsWithoutRestrictions);
+
+
+
+        $form = $this->createForm(new ComplectationType(), $complectationsRestrictions);
 
 
         if(empty($complectations))

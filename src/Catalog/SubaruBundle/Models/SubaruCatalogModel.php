@@ -935,7 +935,7 @@ class SubaruCatalogModel extends CatalogModel{
         FROM part_catalog
         WHERE catalog = :regionCode
           AND model_code = :model_code
-          AND (f8 = :modificationCode OR f8 = '')
+
           AND sec_group = :subGroupCode
           AND part_code LIKE :pncCode
           AND sub_wheel = :wheel
@@ -944,7 +944,7 @@ class SubaruCatalogModel extends CatalogModel{
         $query = $this->conn->prepare($sqlArticuls);
         $query->bindValue('regionCode', $regionCode);
         $query->bindValue('model_code', $modelCode);
-        $query->bindValue('modificationCode', substr($modificationCode, 0, 1));
+
         $query->bindValue('subGroupCode', $subGroupCode);
         $query->bindValue('pncCode', $pncCode);
         $query->bindValue('wheel', $wheel);

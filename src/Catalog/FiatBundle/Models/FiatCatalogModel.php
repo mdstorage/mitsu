@@ -39,7 +39,7 @@ class FiatCatalogModel extends CatalogModel{
         SELECT comm_modgrp.cmg_cod, comm_modgrp.cmg_dsc
         FROM comm_modgrp, catalogues
         WHERE catalogues.cmg_cod = comm_modgrp.cmg_cod
-        and comm_modgrp.mk2_cod LIKE 'F'
+        and (comm_modgrp.mk2_cod LIKE 'F' OR comm_modgrp.mk2_cod LIKE 'T')
         GROUP BY comm_modgrp.cmg_dsc
         ";
 
