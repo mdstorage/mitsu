@@ -25,7 +25,7 @@ class Constants {
 
     const VIN = 'VIN';
 
-    const FIND_PATH = 'http://autoasia.by/search/number/?article={article}';
+    const FIND_PATH = 'http://ruli.by/search/number/?article={article}';
 
     const TOKEN = 'TOKEN';
     const REFERER = 'http://icar.by';

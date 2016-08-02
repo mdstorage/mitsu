@@ -87,7 +87,7 @@ class SubaruArticulModel extends SubaruCatalogModel{
 
 
         $sqlArticul = "
-        SELECT body_desc.f1
+        SELECT body_desc.f1, part_catalog.model_restrictions
         FROM part_catalog
         LEFT JOIN body_desc ON body_desc.catalog = part_catalog.catalog
         AND body_desc.model_code = part_catalog.model_code
@@ -116,6 +116,109 @@ class SubaruArticulModel extends SubaruCatalogModel{
 		 }
 
         return $complectations;
+
+
+
+    }
+
+    public function getArticulModelRestrictions($articulCode, $regionCode, $modelCode, $modificationCode)
+    {
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
+
+        $sqlArticul = "
+        SELECT part_catalog.model_restrictions
+        FROM part_catalog
+        WHERE part_catalog.part_number = :articulCode
+        AND part_catalog.model_code = :modelCode
+        AND part_catalog.catalog = :regionCode
+        AND part_catalog.sub_wheel = :wheel
+        ";
+
+
+
+        $query = $this->conn->prepare($sqlArticul);
+        $query->bindValue('articulCode', $articulCode);
+        $query->bindValue('modelCode', $modelCode);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('wheel', $wheel);
+
+        $query->execute();
+
+        $aRestrictions = $query->fetchAll();
+
+
+        $restrictions = array();
+
+        foreach  ($aRestrictions as $item)
+        {
+            $restrictions[] = $item['model_restrictions'];
+        }
+
+        return implode(' +', $restrictions);
+
+    }
+
+    public function getarticulComplectationsRestrictions($modelRestrictions, $complectationsWithoutRestrictions)
+    {
+
+        foreach ($complectationsWithoutRestrictions as $index => &$value) {
+            $ct = 0;
+            $schemaOptions = $this->multiexplode(array(' +'), $modelRestrictions);
+
+            $schemaOptions = (array_reverse(array_unique($schemaOptions)));
+
+            $plus = array();
+
+
+            foreach ($schemaOptions as $schemaOptionsOpt) {
+
+
+                $item = (strpos($schemaOptionsOpt, '<') !== false) ? substr_replace($schemaOptionsOpt,'', strpos($schemaOptionsOpt, '<'), strripos($schemaOptionsOpt, '>')+1) : $schemaOptionsOpt;
+
+
+                if (strpos($item, ".")) {
+                    $plus = array_merge($plus, explode('.', $item));
+                    $countOfPluses = 0;
+                    $pluses = array();
+
+
+
+                    foreach ($plus as $index1 => $plusOne){
+
+                        if (strpos($plusOne, '+')){
+
+                            unset($plus[$index1]);
+                            $plusOne = trim($plusOne, ('*()'));
+                            $pluses = explode('+', $plusOne);
+
+                            $countOfPluses = count($pluses) - 1;
+
+
+
+                            $plus = array_merge($plus, $pluses);
+
+                        }
+                    }
+
+
+                } else {
+
+                    $plus = array_merge($plus, array($item));
+
+                }
+
+
+            }
+            $array_flip = array_flip(array_unique($plus));
+
+            $value['name'] = (count(array_intersect_key($value['name'], $array_flip)) != 0)?array_intersect_key($value['name'], $array_flip):$value['name'];
+
+
+        }
+
+        return $complectationsWithoutRestrictions;
     }
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
@@ -127,7 +230,7 @@ class SubaruArticulModel extends SubaruCatalogModel{
 
         SELECT part_catalog.pri_group
         FROM part_catalog
-        LEFT JOIN body_desc ON body_desc.catalog = part_catalog.catalog
+        INNER JOIN body_desc ON body_desc.catalog = part_catalog.catalog
         AND body_desc.model_code = part_catalog.model_code AND body_desc.f1 = :complectationCode
         WHERE part_catalog.part_number = :articulCode
         AND part_catalog.catalog = :regionCode
@@ -156,10 +259,10 @@ class SubaruArticulModel extends SubaruCatalogModel{
         $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
 
         $sqlArticul = "
-        SELECT sec_group
+        SELECT part_catalog.sec_group
         FROM part_catalog
-        LEFT JOIN body_desc ON body_desc.catalog = part_catalog.catalog
-        AND body_desc.model_code = part_catalog.model_code AND body_desc.f1 = :complectationCode
+        INNER JOIN body_desc ON (body_desc.catalog = part_catalog.catalog
+        AND body_desc.model_code = part_catalog.model_code AND body_desc.f1 = :complectationCode)
         WHERE part_catalog.part_number = :articulCode
         AND part_catalog.catalog = :regionCode
         AND part_catalog.model_code = :modelCode
@@ -180,7 +283,7 @@ class SubaruArticulModel extends SubaruCatalogModel{
         $aArticulDesc = $query->fetchAll();
     	$subgroups = array();
 
-        $subgroups = $this->array_column($aArticulDesc, 'sec_group'); 
+        $subgroups = $this->array_column($aArticulDesc, 'sec_group');
 
         return $subgroups;
     }
