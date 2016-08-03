@@ -77,7 +77,7 @@ class SeatCatalogModel extends CatalogModel{
         WHERE all_overview.catalog = 'se'
         and markt = :regionCode
         and modell = :modelCode
-        and bezeichnung = ''
+        and hauptgruppen <> ''
         ";
 
         $query = $this->conn->prepare($sql);
@@ -119,7 +119,7 @@ class SeatCatalogModel extends CatalogModel{
         and markt = :regionCode
         and modell = :modelCode
         and einsatz = :modificationCode
-        and bezeichnung = ''
+        and hauptgruppen <> ''
         ";
 
         $query = $this->conn->prepare($sql);

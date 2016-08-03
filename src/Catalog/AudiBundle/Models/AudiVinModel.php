@@ -172,6 +172,8 @@ class AudiVinModel extends AudiCatalogModel {
             /*    $ObDvig[] = $aDataSub[$item['bildtafel2']]['tsbem'];*/
         }
         $sDataLitr = array();
+        $sDataLitr0 = array();
+
 
         foreach($ObDvig as $index=>&$value)
         {
@@ -209,14 +211,14 @@ class AudiVinModel extends AudiCatalogModel {
             );
 
         }
-        foreach($subgroups as $index => $value)
+     /*   foreach($subgroups as $index => $value)
         {
-            if(($value['options']['prime4'] != '') & (!strpos($value['options']['prime4'],$filtrDvig)) || ($value['options']['dannye'] != '') & (!strpos($value['options']['dannye'],$filtrNameDvig)))
+            if(($value['options']['prime4'] != '') & (strpos($value['options']['prime4'],$filtrDvig) == false) || ($value['options']['dannye'] != '') & (strpos($value['options']['dannye'],$filtrNameDvig) == false))
             {
                 unset ($subgroups[$index]);
             }
 
-        }
+        }*/
 
         foreach($subgroups as $index => $value)
         {

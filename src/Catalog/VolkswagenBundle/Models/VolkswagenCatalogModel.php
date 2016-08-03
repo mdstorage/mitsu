@@ -85,7 +85,7 @@ class VolkswagenCatalogModel extends CatalogModel{
         WHERE all_overview.catalog = 'vw'
         and markt = :regionCode
         and modell = :modelCode
-        and bezeichnung = ''
+        and hauptgruppen <> ''
         ";
 
         $query = $this->conn->prepare($sql);
@@ -127,7 +127,7 @@ class VolkswagenCatalogModel extends CatalogModel{
         and markt = :regionCode
         and modell = :modelCode
         and einsatz = :modificationCode
-        and bezeichnung = ''
+        and hauptgruppen <> ''
         ";
 
         $query = $this->conn->prepare($sql);
