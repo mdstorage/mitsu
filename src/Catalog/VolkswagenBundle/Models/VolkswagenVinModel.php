@@ -172,6 +172,7 @@ class VolkswagenVinModel extends VolkswagenCatalogModel {
             /*    $ObDvig[] = $aDataSub[$item['bildtafel2']]['tsbem'];*/
         }
         $sDataLitr = array();
+        $sDataLitr0 = array();
 
         foreach($ObDvig as $index=>&$value)
         {

@@ -172,6 +172,7 @@ class SeatVinModel extends SeatCatalogModel {
             /*    $ObDvig[] = $aDataSub[$item['bildtafel2']]['tsbem'];*/
         }
         $sDataLitr = array();
+        $sDataLitr0 = array();
 
         foreach($ObDvig as $index=>&$value)
         {
@@ -204,7 +205,7 @@ class SeatVinModel extends SeatCatalogModel {
                     'podgr'=>$item['hg_ug'],
                     'prime4'=>$this->getDesc($item['tsbem'], 'R'),
                     'grafik'=>substr($item['grafik'],strlen($item['grafik'])-3,3).'/'.substr($item['grafik'],strlen($item['grafik'])-3,3).substr($item['grafik'],1,5).substr($item['grafik'],0,1),
-                    'ObDvig'=>(count(array_unique($sDataLitr0))>1)?array_unique($sDataLitr0):'')
+                    'ObDvig'=>(count(array_unique($sDataLitr0))>1) ? array_unique($sDataLitr0) : '')
 
             );
 

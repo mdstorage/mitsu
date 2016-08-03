@@ -243,10 +243,9 @@ class SubaruCatalogModel extends CatalogModel{
 
 
 
-
         foreach ($aAgregateNames as $aAgregateName)
         {
-            $aAgregateData = array_combine(str_split($aAgregateName['dif_code']) , array_diff(array_unique($aAgregate), array('')));
+            $aAgregateData = array_combine(str_split($aAgregateName['dif_code']) , ($regionCode == 'JP')?array_values(array_diff($aAgregate, array(''))) : array_values(array_diff(array_unique($aAgregate), array(''))));
         }
 
 
@@ -813,7 +812,7 @@ class SubaruCatalogModel extends CatalogModel{
         $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
 
         if ($regionCode == 'JP'){
-            $table = 'labels_jp';
+            $table = 'labels_jp_translate';
             $lang = 'jp';
 
         }
@@ -826,7 +825,7 @@ class SubaruCatalogModel extends CatalogModel{
 
     	$sqlSchemaLabels = "
         SELECT *
-        FROM labels
+        FROM $table
         WHERE catalog = :regionCode
           AND model_code =:model_code
           AND sec_group = :subGroupCode
@@ -855,18 +854,67 @@ class SubaruCatalogModel extends CatalogModel{
             }
         }
          foreach ($aDataLabels as $item) {
-            $pncs[$item['part_code'].$item['f9']][Constants::NAME] = $item['label_'.$lang];
+            $pncs[$item['part_code'].$item['f9']][Constants::NAME] = $item['label_en'] ? $item['label_en'] : $item['label_'.$lang];
         }
       
 
         return $pncs;
     }
 
-    public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
+    public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
 
-        $articuls = array();
-        return $articuls;
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
+        if ($regionCode == 'JP'){
+            $table = 'labels2_jp';
+            $lang = 'jp';
+
+        }
+        else
+        {
+            $table = 'labels2';
+            $lang = 'en';
+
+        }
+
+        $sqlSchemaLabels = "
+        SELECT *
+        FROM $table
+        WHERE catalog = :regionCode
+          AND model_code =:model_code
+          AND sec_group = :subGroupCode
+          AND page = :page
+          AND sub_wheel = :wheel
+        ";
+
+        $query = $this->conn->prepare($sqlSchemaLabels);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('page', substr($cd['page'], -2));
+        $query->bindValue('model_code', $modelCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('wheel', $wheel);
+        $query->execute();
+
+        $aDataLabels = $query->fetchAll();
+
+        $pncs = array();
+        foreach ($aDataLabels as $item) {
+            {
+                $pncs[$item['label_text']][Constants::OPTIONS][Constants::COORDS][] = array(
+                    Constants::X1 => floor($item['x']/2),
+                    Constants::Y1 => ($item['y']/2-5),
+                    Constants::X2 => ($item['x']/2+160),
+                    Constants::Y2 => ($item['y']/2+20));
+            }
+        }
+        foreach ($aDataLabels as $item) {
+            $pncs[$item['label_text']][Constants::NAME] = $item['label_text'];
+        }
+
+
+        return $pncs;
     }
 
     public function getReferGroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
@@ -953,14 +1001,16 @@ class SubaruCatalogModel extends CatalogModel{
         $aArticuls = $query->fetchAll();
 
         foreach ($aArticuls as $index => $value) {
+
+
             $ct = 0;
-            $schemaOptions = $this->multiexplode(array(' +'), $value['model_restrictions']);
+            $schemaOptions = $this->multiexplode(array(' +', ' + '), $value['model_restrictions']);
 
 
             foreach ($schemaOptions as $schemaOptionsOpt) {
 
 
-                $item = (strpos($schemaOptionsOpt, '<')!==false)?substr_replace($schemaOptionsOpt,'', strpos($schemaOptionsOpt, '<'), strripos($schemaOptionsOpt, '>')+1):$schemaOptionsOpt;
+                $item = (strpos($schemaOptionsOpt, '<') !== false) ? substr_replace($schemaOptionsOpt,'', strpos($schemaOptionsOpt, '<'), strripos($schemaOptionsOpt, '>')+1) : $schemaOptionsOpt;
 
 
 
@@ -971,7 +1021,7 @@ class SubaruCatalogModel extends CatalogModel{
                     $pluses = array();
 
 
-                    {
+
                         foreach ($plus as $index1 => $plusOne){
 
                             if (strpos($plusOne, '+')){
@@ -988,13 +1038,13 @@ class SubaruCatalogModel extends CatalogModel{
 
                             }
                         }
-                    }
+
 
 
                     $countPlus = count($plus) - $countOfPluses;
 
 
-                    if ($countPlus == count(array_intersect($plus, $complectation))) {
+                    if ($countPlus == count(array_intersect($plus, $complectation)) || count(array_intersect($plus, $complectation)) == count($complectation)) {
                         $ct = $ct + 1;
                     }
 
