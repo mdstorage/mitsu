@@ -27,7 +27,7 @@ trait SubaruVinFilters {
     
     public function articulDescFilter($oContainer, $parameters)
     {
-        $aCompl = $this->model()->getVinCompl($parameters['regionCode'], $parameters['modelCode'], $parameters['complectationCode']);
+     /*   $aCompl = $this->model()->getVinCompl($parameters['regionCode'], $parameters['modelCode'], $parameters['complectationCode']);
         foreach ($oContainer->getActivePnc()->getArticuls() as $key => $articul) 
         
         {        	
@@ -41,7 +41,7 @@ trait SubaruVinFilters {
                 $oContainer->getActivePnc()->removeArticul($key);
             }
             
-        }if (count($oContainer->getActivePnc()->getArticuls())==0) {print_r('Выбранная запчасть на данную модель не устанавливается');die;}
+        }if (count($oContainer->getActivePnc()->getArticuls())==0) {print_r('Выбранная запчасть на данную модель не устанавливается');die;}*/
 
         return $oContainer; 
     }

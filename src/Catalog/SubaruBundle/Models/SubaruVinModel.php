@@ -120,6 +120,8 @@ class SubaruVinModel extends SubaruCatalogModel {
         $sDesc[$index] = $query->fetch();
        
          $ch[$index] ='('.$value.') '.$sDesc[$index]['param_name'];
+
+
          		
 		}
 
@@ -133,7 +135,7 @@ class SubaruVinModel extends SubaruCatalogModel {
 
         if ($aData) {
             $result = array(
-                'region' => $aData['catalog'],
+                'region' => $aData['catalog'].'_'.$aCompl['sus'],
                 'model' => '('.$aData['Model_code'].') '.$aModelDesc['desc_en'],
                 'prod_year' => $aData['date1'],
                 'modification' => $aModif['change_abb'].$aModif['desc_en'],
@@ -174,6 +176,9 @@ class SubaruVinModel extends SubaruCatalogModel {
     
     public function getVinSchemas($regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+        
         $sqlSchemas = "
         SELECT *
         FROM part_images
