@@ -1073,7 +1073,7 @@ class SubaruCatalogModel extends CatalogModel{
         foreach ($aArticuls as $item) {
 
             
-            $articuls[$item['part_number'].'_'.$item['f21']] = array(
+            $articuls[$item['part_number'].'_'.$item['f8']] = array(
                 Constants::NAME =>$item['part_number'],
                 Constants::OPTIONS => array(
                     Constants::QUANTITY => '',
