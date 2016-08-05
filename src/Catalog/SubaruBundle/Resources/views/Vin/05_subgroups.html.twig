@@ -8,7 +8,7 @@
 
 {% block subgroupImage %}
         <div class="col-lg-8">
-            <img src="{{ asset('bundles/catalogsubaru/Subaru_Images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(0,2)~'/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(2,9)~'/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(11,2)~'/model'~oContainer.getActiveSchema.getOption('num_model')~'/part1/'~oContainer.getActiveSchema.getOption('num_image')~'.png') }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}" />
+            <img src="{{ asset('bundles/catalogsubaru/Subaru_Images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~oContainer.getActiveSchema.getOption('sub_dir')~'/'~oContainer.getActiveSchema.getOption('sub_wheel')~'/model'~oContainer.getActiveSchema.getOption('num_model')~'/part1/'~oContainer.getActiveSchema.getOption('num_image')~'.png') }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}" />
         </div>
         {% endblock subgroupImage %}
 
