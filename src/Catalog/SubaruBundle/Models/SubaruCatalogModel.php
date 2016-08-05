@@ -552,14 +552,22 @@ class SubaruCatalogModel extends CatalogModel{
         $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
         $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
 
+        if ($regionCode == 'JP'){
+            $table = 'pri_groups_jp_translate';
+            $lang = 'jp';
+
+        }
+        else
+        {
+            $table = 'pri_groups';
+            $lang = 'en';
+
+        }
+
         $sql = "
-        SELECT `id`, `desc_en`
-        FROM pri_groups
-        WHERE pri_groups.catalog = :regionCode AND pri_groups.model_code =:model_code
-        UNION
-        SELECT `id`, `desc_en`
-        FROM pri_groups_jp_translate
-        WHERE pri_groups_jp_translate.catalog = :regionCode AND pri_groups_jp_translate.model_code = :model_code
+        SELECT *
+        FROM $table
+        WHERE $table.catalog = :regionCode AND $table.model_code = :model_code
         ";
 
         $query = $this->conn->prepare($sql);
@@ -572,7 +580,7 @@ class SubaruCatalogModel extends CatalogModel{
         $groups = array();
         foreach($aData as $item){
             $groups[$item['id']] = array(
-                Constants::NAME     => $item['desc_en'],
+                Constants::NAME     => ($item['desc_en'])?$item['desc_en']:$item['desc_'.$lang],
                 Constants::OPTIONS  => array()
             );
         }
