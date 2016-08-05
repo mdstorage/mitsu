@@ -701,8 +701,7 @@ class SubaruCatalogModel extends CatalogModel{
 
     public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
-
-
+        $complectation = $this->getComplForSchemas($regionCode, $modelCode, $complectationCode);
 
         $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
         $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
@@ -720,12 +719,14 @@ class SubaruCatalogModel extends CatalogModel{
         }
 
         $sqlSchemas = "
-        SELECT *
+        SELECT $table.image_file, $table.catalog, $table.sub_wheel, $table.num_model, $table.sub_dir, $table.page, desc_$lang, image_time.model_restriction as model_restrictions, image_time.sdate, image_time.edate
         FROM $table
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-            AND sec_group = :subGroupCode
-            AND sub_wheel = :wheel
+        INNER JOIN image_time ON (image_time.catalog = $table.catalog AND image_time.model_code = $table.model_code AND image_time.sec_group = $table.sec_group AND image_time.sub_wheel = $table.sub_wheel
+        AND image_time.page = $table.page)
+        WHERE $table.catalog = :regionCode
+            AND $table.model_code =:model_code
+            AND $table.sec_group = :subGroupCode
+            AND $table.sub_wheel = :wheel
         ";
 
         $query = $this->conn->prepare($sqlSchemas);
@@ -735,21 +736,26 @@ class SubaruCatalogModel extends CatalogModel{
         $query->bindValue('wheel', $wheel);
         $query->execute();
 
-        $aData = $query->fetchAll();
+        $aDatas = $query->fetchAll();
+
+        $aData = $this->restrictionsFilter($aDatas, $complectation);
+
+
 
         $schemas = array();
 
         foreach($aData as $item){
 		
 		if (((substr_count($item['desc_'.$lang],'MY') > 0) && (substr_count($item['desc_'.$lang], substr($modificationCode, 1, 5)) != 0)) || (substr_count($item['desc_'.$lang],'MY') == 0))
-
         {
             $schemas[$item['image_file']] = array(
                 Constants::NAME => $item['desc_'.$lang],
                 Constants::OPTIONS => array(
                     Constants::CD => $item['catalog'].'/'.$item['sub_dir'].'/'.$item['sub_wheel'].'/model'.$item['num_model'].'/part1',
                     'num_model' => $item['num_model'],
-                    'page' => $item['page']
+                    'page' => $item['page'],
+                    'sdate' => $item['sdate'],
+                    'edate' => $item['edate']
                     )
                 );
         }
@@ -823,7 +829,7 @@ class SubaruCatalogModel extends CatalogModel{
 
         }
 
-    	$sqlSchemaLabels = "
+    	$sqlSchema = "
         SELECT *
         FROM $table
         WHERE catalog = :regionCode
@@ -833,7 +839,7 @@ class SubaruCatalogModel extends CatalogModel{
           AND sub_wheel = :wheel
         ";
 
-        $query = $this->conn->prepare($sqlSchemaLabels);
+        $query = $this->conn->prepare($sqlSchema);
         $query->bindValue('regionCode', $regionCode);
         $query->bindValue('page', substr($cd['page'], -2));
         $query->bindValue('model_code', $modelCode);
@@ -841,22 +847,66 @@ class SubaruCatalogModel extends CatalogModel{
         $query->bindValue('wheel', $wheel);
         $query->execute();
 
-        $aDataLabels = $query->fetchAll();
-       
+        $aPncs = $query->fetchAll();
+
+
+        foreach ($aPncs as &$aPnc)
+        {
+
+            $sqlSchemaLabels = "
+        SELECT x, y
+        FROM $table
+        WHERE catalog = :regionCode
+          AND model_code =:model_code
+          AND sec_group = :subGroupCode
+          AND page = :page
+          AND sub_wheel = :wheel
+          and part_code = :pnc
+          AND f9 = :f9
+           ";
+
+            $query = $this->conn->prepare($sqlSchemaLabels);
+            $query->bindValue('regionCode', $regionCode);
+            $query->bindValue('page', substr($cd['page'], -2));
+            $query->bindValue('model_code', $modelCode);
+            $query->bindValue('subGroupCode', $subGroupCode);
+            $query->bindValue('wheel', $wheel);
+            $query->bindValue('pnc',  $aPnc['part_code']);
+            $query->bindValue('f9',  $aPnc['f9']);
+
+
+            $query->execute();
+
+            $aPnc['clangjap'] = $query->fetchAll();
+            unset($aPnc);
+
+        }
+
+
         $pncs = array();
-        foreach ($aDataLabels as $item) {
+
+
+        foreach ($aPncs as $index=>$value) {
+
+            if (!$value['clangjap'])
             {
-                $pncs[$item['part_code'].$item['f9']][Constants::OPTIONS][Constants::COORDS][] = array(
-                    Constants::X1 => floor($item['x']/2),
-                    Constants::Y1 => ($item['y']/2-5),
-                    Constants::X2 => ($item['x']/2+80),
-                    Constants::Y2 => ($item['y']/2+20));
+                unset ($aPncs[$index]);
+
+            }
+
+            foreach ($value['clangjap'] as $item1)
+            {
+                $pncs[$value['part_code'].$value['f9']][Constants::OPTIONS][Constants::COORDS][$item1['x']] = array(
+                    Constants::X1 => floor($item1['x']/2),
+                    Constants::Y1 => ($item1['y']/2-5),
+                    Constants::X2 => ($item1['x']/2+80),
+                    Constants::Y2 => ($item1['y']/2+20));
             }
         }
-         foreach ($aDataLabels as $item) {
+         foreach ($aPncs as $item)
+         {
             $pncs[$item['part_code'].$item['f9']][Constants::NAME] = $item['label_en'] ? $item['label_en'] : $item['label_'.$lang];
-        }
-      
+         }
 
         return $pncs;
     }
@@ -922,51 +972,92 @@ class SubaruCatalogModel extends CatalogModel{
         $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
         $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
 
-        $sqlSchemaLabels = "
-        SELECT *
-        FROM refer_to_fig
-         WHERE catalog = :regionCode
-          AND model_code =:model_code
-          AND sec_group = :subGroupCode
-          AND page = :cd
+        if ($regionCode == 'JP'){
+            $table = 'sec_groups_jp_translate';
+            $lang = 'jp';
+
+        }
+        else
+        {
+            $table = 'sec_groups';
+            $lang = 'en';
+
+        }
+
+        $sqlSchema= "
+          SELECT *
+          FROM refer_to_fig
+          INNER JOIN $table ON ($table.id = refer_to_fig.refer_fig AND $table.catalog = refer_to_fig.catalog AND $table.model_code = refer_to_fig.model_code)
+          WHERE refer_to_fig.catalog = :regionCode
+          AND refer_to_fig.model_code = :model_code
+          AND refer_to_fig.sec_group = :subGroupCode
+          AND refer_to_fig.page LIKE :cd
         ";
 
-        $query = $this->conn->prepare($sqlSchemaLabels);
+        $query = $this->conn->prepare($sqlSchema);
         $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('cd', substr($cd['cd'], -2));
+        $query->bindValue('cd', $cd['page']);
         $query->bindValue('model_code', $modelCode);
         $query->bindValue('subGroupCode', $subGroupCode);
         $query->execute();
 
-        $aDataLabels = $query->fetchAll();
+        $aPncs = $query->fetchAll();
         
         $groups = array();
-        foreach ($aDataLabels as $item) {
-        	
-        $sqlSubgroups = "
-        SELECT desc_en
-        FROM sec_groups
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-            AND id = :refer_fig
-        ";
 
-        $query = $this->conn->prepare($sqlSubgroups);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('model_code', $modelCode);
-        $query->bindValue('refer_fig', $item['refer_fig']);
-        $query->execute();
 
-        $aData = $query->fetch();
-        
-            $groups[$item['refer_fig']][Constants::NAME] = $aData['desc_en'];
-            $groups[$item['refer_fig']][Constants::OPTIONS][Constants::COORDS][] = array(
-                Constants::X1 => $item['x']/2,
-                Constants::Y1 => $item['y']/2-5,
-                Constants::X2 => $item['x']/2+80,
-                Constants::Y2 => $item['y']/2+20,
-            );
+        foreach ($aPncs as &$aPnc)
+        {
+
+            $sqlSchemaLabels = "
+          SELECT x,y
+          FROM refer_to_fig
+          INNER JOIN $table ON ($table.id = refer_to_fig.refer_fig AND $table.catalog = refer_to_fig.catalog AND $table.model_code = refer_to_fig.model_code)
+          WHERE refer_to_fig.catalog = :regionCode
+          AND refer_to_fig.model_code = :model_code
+          AND refer_to_fig.sec_group = :subGroupCode
+          AND refer_to_fig.page LIKE :cd
+          AND refer_to_fig.refer_fig LIKE :refer_fig
+           ";
+
+            $query = $this->conn->prepare($sqlSchemaLabels);
+            $query->bindValue('regionCode', $regionCode);
+            $query->bindValue('cd', $cd['page']);
+            $query->bindValue('model_code', $modelCode);
+            $query->bindValue('subGroupCode', $subGroupCode);
+            $query->bindValue('refer_fig',  $aPnc['refer_fig']);
+            $query->execute();
+
+            $query->execute();
+
+            $aPnc['clangjap'] = $query->fetchAll();
+            unset($aPnc);
+
         }
+
+        foreach ($aPncs as $index=>$value) {
+
+            if (!$value['clangjap'])
+            {
+                unset ($aPncs[$index]);
+
+            }
+
+            foreach ($value['clangjap'] as $item1)
+            {
+                $groups[$value['refer_fig']][Constants::OPTIONS][Constants::COORDS][$item1['x']] = array(
+                    Constants::X1 => floor($item1['x']/2),
+                    Constants::Y1 => ($item1['y']/2-5),
+                    Constants::X2 => ($item1['x']/2+80),
+                    Constants::Y2 => ($item1['y']/2+20));
+            }
+        }
+
+        foreach ($aPncs as $item)
+        {
+            $groups[$item['refer_fig']][Constants::NAME] = $item['desc_en'] ? $item['desc_en'] : $item['desc_'.$lang];
+        }
+
         return $groups;
     }
 
@@ -983,9 +1074,8 @@ class SubaruCatalogModel extends CatalogModel{
         FROM part_catalog
         WHERE catalog = :regionCode
           AND model_code = :model_code
-
           AND sec_group = :subGroupCode
-          AND part_code LIKE :pncCode
+          AND CONCAT (part_code, f11) LIKE :pncCode
           AND sub_wheel = :wheel
         ";
 
@@ -998,74 +1088,9 @@ class SubaruCatalogModel extends CatalogModel{
         $query->bindValue('wheel', $wheel);
         $query->execute();
 
-        $aArticuls = $query->fetchAll();
+        $aArticulses = $query->fetchAll();
 
-        foreach ($aArticuls as $index => $value) {
-
-
-            $ct = 0;
-            $schemaOptions = $this->multiexplode(array(' +', ' + '), $value['model_restrictions']);
-
-
-            foreach ($schemaOptions as $schemaOptionsOpt) {
-
-
-                $item = (strpos($schemaOptionsOpt, '<') !== false) ? substr_replace($schemaOptionsOpt,'', strpos($schemaOptionsOpt, '<'), strripos($schemaOptionsOpt, '>')+1) : $schemaOptionsOpt;
-
-
-
-              /*  $item = trim($item, ('*()'));*/
-                if (strpos($item, ".")) {
-                    $plus = explode('.', $item);
-                    $countOfPluses = 0;
-                    $pluses = array();
-
-
-
-                        foreach ($plus as $index1 => $plusOne){
-
-                            if (strpos($plusOne, '+')){
-
-                                unset($plus[$index1]);
-                                $plusOne = trim($plusOne, ('*()'));
-                                $pluses = explode('+', $plusOne);
-
-                                $countOfPluses = count($pluses) - 1;
-
-
-
-                                $plus = array_merge($plus, $pluses);
-
-                            }
-                        }
-
-
-
-                    $countPlus = count($plus) - $countOfPluses;
-
-
-                    if ($countPlus == count(array_intersect($plus, $complectation)) || count(array_intersect($plus, $complectation)) == count($complectation)) {
-                        $ct = $ct + 1;
-                    }
-
-
-                } else {
-
-                    if (in_array($item, $complectation)) {
-                        $ct = $ct + 1;
-                    }
-
-                }
-
-
-            }
-
-
-            if ($ct === 0) {
-                unset ($aArticuls[$index]);
-            }
-
-        }
+        $aArticuls = $this->restrictionsFilter($aArticulses, $complectation);
 
        
         $articuls = array();
@@ -1144,5 +1169,77 @@ class SubaruCatalogModel extends CatalogModel{
         $ready = str_replace($delimiters, $delimiters[0], $string);
         $launch = explode($delimiters[0], $ready);
         return  $launch;
+    }
+
+    public function restrictionsFilter($aArticuls, $complectation)
+    {
+        foreach ($aArticuls as $index => $value) {
+
+
+            $ct = 0;
+            $schemaOptions = $this->multiexplode(array(' +', ' + '), $value['model_restrictions']);
+
+
+            foreach ($schemaOptions as $schemaOptionsOpt) {
+
+
+                $item = (strpos($schemaOptionsOpt, '<') !== false) ? substr_replace($schemaOptionsOpt,'', strpos($schemaOptionsOpt, '<'), strripos($schemaOptionsOpt, '>')+1) : $schemaOptionsOpt;
+
+
+
+                /*  $item = trim($item, ('*()'));*/
+                if (strpos($item, ".")) {
+                    $plus = explode('.', $item);
+                    $countOfPluses = 0;
+                    $pluses = array();
+
+
+
+                    foreach ($plus as $index1 => $plusOne){
+
+                        if (strpos($plusOne, '+')){
+
+                            unset($plus[$index1]);
+                            $plusOne = trim($plusOne, ('*()'));
+                            $pluses = explode('+', $plusOne);
+
+                            $countOfPluses = count($pluses) - 1;
+
+
+
+                            $plus = array_merge($plus, $pluses);
+
+                        }
+                    }
+
+
+
+                    $countPlus = count($plus) - $countOfPluses;
+
+
+                    if ($countPlus == count(array_intersect($plus, $complectation)) || count(array_intersect($plus, $complectation)) == count($complectation)) {
+                        $ct = $ct + 1;
+                    }
+
+
+                } else {
+
+                    if (in_array($item, $complectation)) {
+                        $ct = $ct + 1;
+                    }
+
+                }
+
+
+            }
+
+
+            if ($ct === 0) {
+                unset ($aArticuls[$index]);
+            }
+
+        }
+
+        return $aArticuls;
     }
 } 

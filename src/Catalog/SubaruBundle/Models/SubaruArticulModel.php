@@ -87,10 +87,10 @@ class SubaruArticulModel extends SubaruCatalogModel{
 
 
         $sqlArticul = "
-        SELECT body_desc.f1, part_catalog.model_restrictions
+        SELECT DISTINCT body_desc.f1
         FROM part_catalog
-        LEFT JOIN body_desc ON body_desc.catalog = part_catalog.catalog
-        AND body_desc.model_code = part_catalog.model_code
+        INNER JOIN body_desc ON (body_desc.catalog = part_catalog.catalog
+        AND body_desc.model_code = part_catalog.model_code)
         WHERE part_catalog.part_number = :articulCode
         AND part_catalog.catalog = :regionCode
         AND part_catalog.sub_wheel = :wheel

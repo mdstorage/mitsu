@@ -14,6 +14,11 @@
                     <div class="row">
                         {{ schema.getRuname }}
                     </div>
+
+                    <div class="row">
+                        {{ schema.getOption('sdate')|subaru_date_convertor}} - {{ schema.getOption('edate')|subaru_date_convertor}}
+                    </div>
+
                     <div class="row">
                          <img src="{{ asset('bundles/catalogsubaru/Subaru_Images/'~schema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
                     </div>

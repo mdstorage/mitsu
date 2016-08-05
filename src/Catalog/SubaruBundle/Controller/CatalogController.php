@@ -27,7 +27,7 @@ class CatalogController extends BaseController{
     }
     
 
-    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode)
+    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode, $articul = null, $token = null)
     {
         $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $subGroupCode);
 
