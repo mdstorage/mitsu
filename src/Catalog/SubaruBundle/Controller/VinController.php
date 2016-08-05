@@ -61,7 +61,7 @@ class VinController extends BaseController{
         return $this->subgroupsAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
     }
 
-    public function vinSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
+    public function vinSchemasAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $articul = null, $token = null)
     {
         $this->addFilter('vinSchemasFilter', array(
             'regionCode' => $regionCode,
@@ -70,15 +70,24 @@ class VinController extends BaseController{
             'subGroupCode' => $subGroupCode
         ));
 
-        return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
+        return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $articul, $token);
     }
-    
 
-     public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode)
+
+    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode, $articul = null, $token = null)
     {
-        $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode);
-       
-        return $this->schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode);
-        
+        $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $subGroupCode);
+
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+
+        return $this->redirect(
+            $this->generateUrl(
+                str_replace('group', 'schemas', $this->get('request')->get('_route')),
+                array_merge($parameters, array(
+                        'groupCode' => $groupCode
+                    )
+                )
+            ), 301
+        );
     }
 } 

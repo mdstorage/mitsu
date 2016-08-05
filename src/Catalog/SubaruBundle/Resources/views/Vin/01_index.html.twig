@@ -12,7 +12,10 @@
                     type:   'POST',
                     async:  false,
                     url:    "{% block vinAjaxPath %}{{ path('vin_subaru_result') }}{% endblock vinAjaxPath %}",
-                    data:   { vin: $("#vin").val() },
+                    data:   {
+                        vin: $("#vin").val(),
+                        token: '{{ app.request.get('token') }}'
+                    },
                     success: function(data) {
                         $("#vin-result").html(data);
                     }

@@ -128,6 +128,3 @@ articul_subaru_articuls:
   defaults:     {_controller: CatalogSubaruBundle:Articul:articuls}
   requirements: {_method: POST}
 
-articul_subaru_group:
-  path:         /subaru/articul/10/{regionCode}/{modelCode}/{modificationCode}/complectationCode/{subGroupCode}/{token}
-  defaults:     {_controller: CatalogSubaruBundle:Articul:getGroupBySubgroup, token: null}
