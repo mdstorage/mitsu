@@ -13,19 +13,39 @@
     <img src="{{ asset('bundles/catalogsubaru/Subaru_Images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="900" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
 {% endblock image %}
 
-{% block ajaxUrl %}{{ path('vin_subaru_articuls') }}{% endblock ajaxUrl %}
+{{% block pncClick %}
 
-{% block ajaxData %}
-    regionCode: '{{ oContainer.getActiveRegion.getCode }}',
-    modelCode: '{{ oContainer.getActiveModel.getCode }}',
-    modificationCode: '{{ oContainer.getActiveModification.getCode }}',
-    complectationCode: '{{ oContainer.getActiveComplectation.getCode }}',
-    cd: '{{ oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD')) }}',
-    subGroupCode: '{{ parameters.subGroupCode }}',
-    articul: '{{ parameters.articul }}',
-    token: '{{ parameters.token }}',
-    pncCode: '{{ pnc.getCode }}'
-{% endblock ajaxData %}
+$("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
+$("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
+
+$("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+$.ajax({
+type:   'POST',
+async:  false,
+url:    "{{ path('vin_subaru_articuls') }}",
+data:   {
+regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+modelCode: '{{ oContainer.getActiveModel.getCode }}',
+modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+complectationCode: '{{ oContainer.getActiveComplectation.getCode }}',
+cd: '{{ oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD')) }}',
+subGroupCode: '{{ parameters.subGroupCode }}',
+articul: '{{ parameters.articul }}',
+token: '{{ parameters.token }}',
+pncCode: '{{ pnc.getCode }}'
+},
+success: function(data) {
+$("#articul_for_pnc{{ pnc.getCode }}").html(data);
+}
+});
+
+$.scrollTo("#pnc_{{ pnc.getCode }}", {duration:1500});
+
+
+$("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
+$("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
+
+{% endblock pncClick %}
 
 {% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{{ path('vin_subaru_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
