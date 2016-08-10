@@ -65,7 +65,7 @@ vin_subaru_subgroups:
 
 vin_subaru_schemas:
   path:         /subaru/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
-  defaults:     {_controller: CatalogSubaruBundle:Vin:vinSchemas, token: null}
+  defaults:     {_controller: CatalogSubaruBundle:Vin:schemas, token: null}
 
 vin_subaru_schema:
   path:         /subaru/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}

@@ -74,7 +74,7 @@ trait SubaruVinFilters {
 
     public function vinSchemasFilter($oContainer, $parameters)
     {
-        $schemas = $this->model()->getVinSchemas($parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode'], $parameters['subGroupCode']);
+        $schemas = $this->model()->getVinSchemas($parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode'], $parameters['subGroupCode']);var_dump($schemas); die;
 
         foreach ($oContainer->getSchemas() as $schema) {
             if (!in_array($schema->getCode(), $schemas, true)) {
