@@ -3,8 +3,8 @@
 {% block vinScript %}
         <script>
             $("#vin-button").on('click', function(){
-                if($("#vin").val().length !== 17){
-                    alert("VIN должен состоять из 17 знаков!");
+                if($("#vin").val().length !== 17 && $("#vin").val().length !== 9){
+                    alert("VIN должен состоять из 17 или 9 (для японских автомобилей) знаков!");
                     return;
                 }
                 $("#vin-result").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="20px" />');

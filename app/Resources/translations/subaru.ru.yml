@@ -8,6 +8,7 @@ USA_LH: США
 #Группы
 ENGINE: ДВИГАТЕЛЬ
 TRANSMISSION: ТРАНСМИССИЯ
+BOD: КУЗОВ
 ELECTRICAL EQUIPMENTS,EXHAUST,HEATER: ЭЛЕКТРИКА, ВПУСКНАЯ И ВЫПУСКНАЯ СИСТЕМА, СИСТЕМА ОХЛАЖДЕНИЯ И ОТОПЛЕНИЯ
 STEERING,BRAKE,SUSPENSION: РУЛЕВОЕ УПРАВЛЕНИЕ, ТОРМОЗНАЯ СИСТЕМА, ПОДВЕСКА
 BODY PARTS: КУЗОВНЫЕ ДЕТАЛИ

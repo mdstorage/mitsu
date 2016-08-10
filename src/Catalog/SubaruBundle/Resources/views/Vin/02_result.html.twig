@@ -20,28 +20,17 @@
                     <td>{{ result.modification }}</td>
                 </tr>
                 <tr>
-                    <td>Комплектация:</td>
+                    <td>Код комплектации:</td>
                     <td>{{ result.complectation }}</td>
                 </tr>
                 <tr>
-                    <td>Двигатель:</td>
-                    <td>{{ result.engine }}</td>
-                </tr>
-                <tr>
-                    <td>Исполнение:</td>
-                    <td>{{ result.sus }}</td>
-                </tr>
-                <tr>
-                    <td>Кузов:</td>
-                    <td>{{ result.body }}</td>
-                </tr>
-                <tr>
-                    <td>Привод:</td>
-                    <td>{{ result.train }}</td>
-                </tr>
-                <tr>
-                    <td>Трансмиссия:</td>
-                    <td>{{ result.trans }}</td>
+                    <td>Комплектация:</td>
+
+                    <td>
+                        {% for  compl in result.com%}
+                                {{ compl }} <br>
+                        {% endfor %}
+                    </td>
                 </tr>
                 <tr>
                     <td>Цвет:</td>
