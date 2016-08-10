@@ -13,7 +13,7 @@
     <img src="{{ asset('bundles/catalogsubaru/Subaru_Images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="900" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
 {% endblock image %}
 
-{{% block pncClick %}
+{% block pncClick %}
 
 $("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
 $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");

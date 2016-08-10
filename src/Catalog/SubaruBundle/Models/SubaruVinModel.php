@@ -233,6 +233,7 @@ class SubaruVinModel extends SubaruCatalogModel {
     
     public function getVinSchemas($regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
+
         $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
         $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
         
