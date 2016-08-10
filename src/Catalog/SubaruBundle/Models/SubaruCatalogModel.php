@@ -1122,8 +1122,7 @@ class SubaruCatalogModel extends CatalogModel{
         $aArticulses = $query->fetchAll();
 
         $aArticuls = $this->restrictionsFilter($aArticulses, $complectation);
-
-       
+        
         $articuls = array();
       
         foreach ($aArticuls as $item) {
@@ -1206,69 +1205,68 @@ class SubaruCatalogModel extends CatalogModel{
     {
         foreach ($aArticuls as $index => $value) {
 
-
-            $ct = 0;
-            $schemaOptions = $this->multiexplode(array(' +', ' + '), $value['model_restrictions']);
+            if ($value['model_restrictions'] != 'ALL') {
 
 
-            foreach ($schemaOptions as $schemaOptionsOpt) {
+                $ct = 0;
+                $schemaOptions = $this->multiexplode(array(' +', ' + '), $value['model_restrictions']);
 
 
-                $item = (strpos($schemaOptionsOpt, '<') !== false) ? substr_replace($schemaOptionsOpt,'', strpos($schemaOptionsOpt, '<'), strripos($schemaOptionsOpt, '>')+1) : $schemaOptionsOpt;
+                foreach ($schemaOptions as $schemaOptionsOpt) {
 
 
-
-                /*  $item = trim($item, ('*()'));*/
-                if (strpos($item, ".")) {
-                    $plus = explode('.', $item);
-                    $countOfPluses = 0;
-                    $pluses = array();
+                    $item = (strpos($schemaOptionsOpt, '<') !== false) ? substr_replace($schemaOptionsOpt, '', strpos($schemaOptionsOpt, '<'), strripos($schemaOptionsOpt, '>') + 1) : $schemaOptionsOpt;
 
 
-
-                    foreach ($plus as $index1 => $plusOne){
-
-                        if (strpos($plusOne, '+')){
-
-                            unset($plus[$index1]);
-                            $plusOne = trim($plusOne, ('*()'));
-                            $pluses = explode('+', $plusOne);
-
-                            $countOfPluses = count($pluses) - 1;
+                    /*  $item = trim($item, ('*()'));*/
+                    if (strpos($item, ".")) {
+                        $plus = explode('.', $item);
+                        $countOfPluses = 0;
+                        $pluses = array();
 
 
+                        foreach ($plus as $index1 => $plusOne) {
 
-                            $plus = array_merge($plus, $pluses);
+                            if (strpos($plusOne, '+')) {
 
+                                unset($plus[$index1]);
+                                $plusOne = trim($plusOne, ('*()'));
+                                $pluses = explode('+', $plusOne);
+
+                                $countOfPluses = count($pluses) - 1;
+
+
+                                $plus = array_merge($plus, $pluses);
+
+                            }
                         }
+
+
+                        $countPlus = count($plus) - $countOfPluses;
+
+
+                        if ($countPlus == count(array_intersect($plus, $complectation)) || count(array_intersect($plus, $complectation)) == count($complectation)) {
+                            $ct = $ct + 1;
+                        }
+
+
+                    } else {
+
+                        if (in_array($item, $complectation)) {
+                            $ct = $ct + 1;
+                        }
+
                     }
 
-
-
-                    $countPlus = count($plus) - $countOfPluses;
-
-
-                    if ($countPlus == count(array_intersect($plus, $complectation)) || count(array_intersect($plus, $complectation)) == count($complectation)) {
-                        $ct = $ct + 1;
-                    }
-
-
-                } else {
-
-                    if (in_array($item, $complectation)) {
-                        $ct = $ct + 1;
-                    }
 
                 }
 
 
+                if ($ct === 0) {
+                    unset ($aArticuls[$index]);
+                }
+
             }
-
-
-            if ($ct === 0) {
-                unset ($aArticuls[$index]);
-            }
-
         }
 
         return $aArticuls;
