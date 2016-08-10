@@ -38,15 +38,22 @@ class SubaruArticulModel extends SubaruCatalogModel{
 
     public function getArticulModels($articul, $regionCode)
     {
+        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
     	$sql = "
         SELECT model_code
         FROM part_catalog
         WHERE part_number =:articul
+        AND catalog = :regionCode
+        AND sub_wheel = :wheel
         GROUP BY model_code
         ";
        		
-         $query = $this->conn->prepare($sql);
-          $query->bindValue('articul', $articul);
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articul', $articul);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('wheel', $wheel);
         $query->execute();
 
 
@@ -59,9 +66,23 @@ class SubaruArticulModel extends SubaruCatalogModel{
     
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
+        $modelCode = urldecode($modelCode);
+
+        $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
+
+        if ($regionCode == 'JP'){
+            $table = 'model_changes_jp';
+            $lang = 'jp';
+        }
+        else
+        {
+            $table = 'model_changes';
+            $lang = 'en';
+        }
+
         $sql = "
-        SELECT desc_en, change_abb, sdate, edate
-        FROM model_changes
+        SELECT desc_$lang, change_abb, sdate, edate
+        FROM $table
         WHERE model_code = :modelCode
         ";
 
@@ -74,7 +95,7 @@ class SubaruArticulModel extends SubaruCatalogModel{
 
         $modifications = array();
         foreach($aData as $item){
-            $modifications[] = $item['change_abb'].$item['desc_en'];
+            $modifications[] = $item['change_abb'].$item['desc_'.$lang];
         }
 
         return $modifications;
@@ -295,13 +316,15 @@ class SubaruArticulModel extends SubaruCatalogModel{
         $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
 
         if ($regionCode == 'JP'){
-            $table = 'part_images_jp';
+            $part_images = 'part_images_jp';
+            $labels = 'labels_jp';
             $lang = 'jp';
 
         }
         else
         {
-            $table = 'part_images';
+            $part_images = 'part_images';
+            $labels = 'labels';
             $lang = 'en';
 
         }
@@ -309,19 +332,17 @@ class SubaruArticulModel extends SubaruCatalogModel{
 
 
         $sqlArticul = "
-        SELECT part_images.image_file, part_images.desc_en
+        SELECT $part_images.image_file, $part_images.desc_$lang
         FROM part_catalog
-        INNER JOIN part_images ON (part_images.sec_group = part_catalog.sec_group AND part_images.catalog = part_catalog.catalog
-        AND part_images.model_code = part_catalog.model_code)
-        INNER JOIN labels ON (labels.page = part_images.page AND labels.catalog = part_images.catalog AND labels.model_code = part_images.model_code
-        AND CONCAT(labels.part_code,labels.f9)  = part_catalog.part_code AND labels.sec_group = part_images.sec_group AND labels.sub_wheel = :wheel)
+        INNER JOIN $part_images ON ($part_images.sec_group = part_catalog.sec_group AND $part_images.catalog = part_catalog.catalog
+        AND $part_images.model_code = part_catalog.model_code)
         WHERE part_catalog.part_number = :articulCode
         AND part_catalog.catalog = :regionCode
         AND part_catalog.model_code = :modelCode
         AND part_catalog.pri_group = :groupCode
-        AND part_catalog.sec_group =:subGroupCode
+        AND part_catalog.sec_group = :subGroupCode
+        AND part_catalog.sub_wheel = :wheel
         ";
-
 
         
         $query = $this->conn->prepare($sqlArticul);
@@ -339,9 +360,10 @@ class SubaruArticulModel extends SubaruCatalogModel{
        
         foreach  ($aData as $item)
         {
-        	if ((substr_count($item['desc_en'],'MY')>0)&&(substr_count($item['desc_en'], substr($modificationCode, 1, 5))!=0)||(substr_count($item['desc_en'],'MY')==0))
+        /*	if ((substr_count($item['desc_en'],'MY') > 0) && (substr_count($item['desc_en'], substr($modificationCode, 1, 5))!=0) || (substr_count($item['desc_en'],'MY') == false))*/
 			$schemas[] = $item['image_file'];
 		}
+
                
 
         return $schemas;

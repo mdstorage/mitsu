@@ -216,19 +216,30 @@ class SubaruCatalogModel extends CatalogModel{
 
         if ($regionCode != 'JP')
         {
+            foreach ($aAgregateNames as $aAgregateName){
+                $sdif_fields = $aAgregateName['dif_fields'];
+                foreach(str_split($aAgregateName['dif_code']) as $index => $value){
+                    $adif_code[$index] = $value;
+                }
+            }
+
             foreach ($aVozmozhnyeZna4s as $aVozmozhnyeZna4)
             {
-                foreach ($aAgregateNames as $aAgregateName)
+                foreach($adif_code as $index => $value)
                 {
-
-                    if (strpos($aAgregateName['dif_fields'], $aVozmozhnyeZna4) !== false)
+                    if (strpos(trim($sdif_fields), $aVozmozhnyeZna4) !== false)
                     {
-                        $aAgregate[] =  $aVozmozhnyeZna4;
+                        $aAgregate[strpos(trim($sdif_fields), $aVozmozhnyeZna4)] =  $aVozmozhnyeZna4;
+
                     }
+
 
                 }
 
             }
+            ksort($aAgregate);
+            reset($aAgregate);
+
         }
 
         else
@@ -262,7 +273,7 @@ class SubaruCatalogModel extends CatalogModel{
                 if ($item['p' . $i]) {
                     $af[$i][$item['p' . $i]] = '(' . $item['p' . $i] . ') ' . $item['ken' . $i];
                     $result['p'.$i] = $af[$i];
-                    $psevd['p'.$i] = str_replace('ENGINE 1', 'ENGINE', $aAgregateData[$i]);
+                    $psevd['p'.$i] = str_replace(array('ENGINE 1'), array('ENGINE'), $aAgregateData[$i]);
 
                 }
             }
@@ -273,7 +284,6 @@ class SubaruCatalogModel extends CatalogModel{
                 Constants::OPTIONS => array('option1'=>$psevd)
             );
         }
-
 
      return $com;
       
@@ -652,6 +662,7 @@ class SubaruCatalogModel extends CatalogModel{
         }
 
         return $groupSchemas;
+
     }
 
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
@@ -705,6 +716,7 @@ class SubaruCatalogModel extends CatalogModel{
         }
 
         return $subgroups;
+
     }
 
     public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
@@ -727,9 +739,20 @@ class SubaruCatalogModel extends CatalogModel{
         }
 
         $sqlSchemas = "
-        SELECT $table.image_file, $table.catalog, $table.sub_wheel, $table.num_model, $table.sub_dir, $table.page, desc_$lang, image_time.model_restriction as model_restrictions, image_time.sdate, image_time.edate
+        SELECT
+        $table.image_file,
+        $table.catalog,
+        $table.sub_wheel,
+        $table.num_model,
+        $table.sub_dir,
+        $table.page,
+        desc_$lang,
+        image_time.model_restriction as model_restrictions,
+        image_time.sdate,
+        image_time.edate
         FROM $table
-        INNER JOIN image_time ON (image_time.catalog = $table.catalog AND image_time.model_code = $table.model_code AND image_time.sec_group = $table.sec_group AND image_time.sub_wheel = $table.sub_wheel
+        INNER JOIN image_time ON (image_time.catalog = $table.catalog AND image_time.model_code = $table.model_code AND image_time.sec_group = $table.sec_group
+        AND image_time.sub_wheel = $table.sub_wheel
         AND image_time.page = $table.page)
         WHERE $table.catalog = :regionCode
             AND $table.model_code =:model_code
