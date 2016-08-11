@@ -73,7 +73,10 @@
 
         <script type="text/javascript">
             $(document).ready(function(){
-                setInterval(publishHeight, 300);
+                publishHeight();
+                $(document).click(function(){
+                    publishHeight();
+                });
             });
         </script>
         <script type="text/javascript">
