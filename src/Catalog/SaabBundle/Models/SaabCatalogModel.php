@@ -334,7 +334,7 @@ ORDER BY ABS (SECTION_NO)
         LEFT JOIN section_footnote ON (saab.section.CATALOGUE_NO = saab.section_footnote.CATALOGUE_NO
          AND saab.section.GROUP_NO = section_footnote.GROUP_NO and saab.section.SECTION_NO = section_footnote.SECTION_NO)
         LEFT JOIN foodnote ON (saab.section_footnote.CATALOGUE_NO = foodnote.CATALOGUE_NO and foodnote.LANGUAGE_CODE = 16 and saab.section_footnote.FOOTNOTE_NO = foodnote.FOOTNOTE_NO)
-        WHERE  :modificationCode BETWEEN FROM_YEAR AND TO_YEAR AND HEAD_LINE_1 = :subGroupCode and saab.section.GROUP_NO = :groupCode and saab.section.CATALOGUE_NO = :modelCode
+        WHERE  :modificationCode BETWEEN FROM_YEAR AND TO_YEAR AND (HEAD_LINE_1 = :subGroupCode OR HEAD_LINE_2 = :subGroupCode OR HEAD_LINE_3 = :subGroupCode) and saab.section.GROUP_NO = :groupCode and saab.section.CATALOGUE_NO = :modelCode
         ORDER BY ABS (Sec)
         ";
 

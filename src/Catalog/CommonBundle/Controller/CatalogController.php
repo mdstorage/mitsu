@@ -263,7 +263,7 @@ abstract class CatalogController extends BaseController{
         };
 
         $subgroupsKeys = array_keys($oContainer->getActiveGroup()->getSubgroups());
-        if (1 == count($subgroupsKeys)) {
+      /*  if (1 == count($subgroupsKeys)) {
             return $this->redirect(
                 $this->generateUrl(
                     str_replace('subgroups', 'schemas', $this->get('request')->get('_route')),
@@ -273,7 +273,7 @@ abstract class CatalogController extends BaseController{
                     )
                 ), 301
             );
-        };
+        };*/
 
         return $this->render($this->bundle() . ':05_subgroups.html.twig', array(
             'oContainer' => $oContainer,

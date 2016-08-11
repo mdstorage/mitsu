@@ -1,0 +1,8 @@
+{% block brand %}Mitsubishi{% endblock brand %}
+{% block catalogPathLogo %}{{ path('catalog_mitsubishi', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_mitsubishi', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_mitsubishi', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_mitsubishi', {'token': app.request.get('token')}) }}{% endblock articulPath %}
+{% block userStylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/cataloggm/css/common.css') }}" media="all">
+{% endblock userStylesheets %}

@@ -1,49 +1,128 @@
+catalog_mitsubishi_token:
+  path:         /mitsubishi/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogMitsubishiBundle:Catalog:regionsModels, token: null, regionCode: null}
+
+catalog_mitsubishi:
+  path:         /mitsubishi/{regionCode}
+  defaults:     {_controller: CatalogMitsubishiBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_mitsubishi_modifications:
+  path:         /mitsubishi/catalog/1
+  defaults:     {_controller: CatalogMitsubishiBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_mitsubishi_complectations:
+  path:         /mitsubishi/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Catalog:complectations, token: null}
+
+catalog_mitsubishi_groups:
+  path:         /mitsubishi/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Catalog:groups, token: null}
+
+catalog_mitsubishi_subgroups:
+  path:         /mitsubishi/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Catalog:subgroups, token: null}
+
+catalog_mitsubishi_schemas:
+  path:         /mitsubishi/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Catalog:schemas, token: null}
+
+catalog_mitsubishi_schema:
+  path:         /mitsubishi/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Catalog:schema, token: null}
+
+catalog_mitsubishi_articuls:
+  path:         /mitsubishi/catalog/7
+  defaults:     {_controller: CatalogMitsubishiBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_mitsubishi_group:
+  path:         /mitsubishi/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_mitsubishi:
+  path:         /mitsubishi/vin/0/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Vin:index, token: null}
+
+vin_mitsubishi_result:
+  path:         /mitsubishi/vin/1
+  defaults:     {_controller: CatalogMitsubishiBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_mitsubishi_groups:
+  path:         /mitsubishi/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Vin:groups, token: null}
+
+vin_mitsubishi_subgroups:
+  path:         /mitsubishi/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Vin:subgroups, token: null}
+
+vin_mitsubishi_schemas:
+  path:         /mitsubishi/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Vin:schemas, token: null}
+
+vin_mitsubishi_schema:
+  path:         /mitsubishi/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Vin:schema, token: null}
+
+vin_mitsubishi_articuls:
+  path:         /mitsubishi/vin/7
+  defaults:     {_controller: CatalogMitsubishiBundle:Vin:vinarticuls}
+  requirements: {_method: POST}
+
+vin_mitsubishi_group:
+  path:         /mitsubishi/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_mitsubishi:
+  path:         /mitsubishi/articul/0/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Articul:index, token: null}
+
+articul_mitsubishi_find_token:
+  path:         /mitsubishi/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogMitsubishiBundle:Articul:findByArticul, regionCode: null}
+
+articul_mitsubishi_find:
+  path:         /mitsubishi/articul/2/{regionCode}
+  defaults:     {_controller: CatalogMitsubishiBundle:Articul:findByArticul, regionCode: null}
+
+articul_mitsubishi_modifications:
+  path:         /mitsubishi/articul/3
+  defaults:     {_controller: CatalogMitsubishiBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_mitsubishi_complectations:
+  path:         /mitsubishi/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Articul:mitsubishiArticulComplectations, token: null}
+
+articul_mitsubishi_groups:
+  path:         /mitsubishi/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Articul:mitsubishiArticulgroups, token: null}
+
+articul_mitsubishi_subgroups:
+  path:         /mitsubishi/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Articul:mitsubishiArticulSubgroups, token: null}
+
+articul_mitsubishi_schemas:
+  path:         /mitsubishi/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Articul:mitsubishiArticulSchemas, token: null}
+
+articul_mitsubishi_schema:
+  path:         /mitsubishi/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Articul:mitsubishiArticulSchema, token: null}
+
+articul_mitsubishi_articuls:
+  path:         /mitsubishi/articul/9
+  defaults:     {_controller: CatalogMitsubishiBundle:Articul:mitsubishiArticularticuls}
+  requirements: {_method: POST}
+
+articul_mitsubishi_group:
+  path:         /mitsubishi/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Articul:getGroupBySubgroup}
 catalog_mitsubishi_homepage:
-    path:     /mitsubishi
-    defaults: { _controller: CatalogMitsubishiBundle:Default:catalogsList }
-
-catalog_mitsubishi_vncs_list:
-    path:     /mitsubishi/vncsList
-    defaults: {_controller: CatalogMitsubishiBundle:Default:vncsList}
-    requirements: {_method: POST}
-
-catalog_mitsubishi_models_list:
-    path:     /mitsubishi/modelsList
-    defaults: {_controller: CatalogMitsubishiBundle:Default:modelsList}
-    requirements: {_method: POST}
-
-catalog_mitsubishi_classifications_list:
-    path:     /mitsubishi/{catalog}/{catalogNum}/{model}
-    defaults: {_controller: CatalogMitsubishiBundle:Default:classificationsList}
-
-catalog_mitsubishi_maingroups_list:
-    path:     /mitsubishi/{catalog}/{catalogNum}/{model}/{classification}
-    defaults: {_controller: CatalogMitsubishiBundle:Default:mainGroupsList}
-
-catalog_mitsubishi_subgroups_list:
-    path:     /mitsubishi/{catalog}/{catalogNum}/{model}/{classification}/{mainGroup}
-    defaults: {_controller: CatalogMitsubishiBundle:Default:subGroupsList}
-
-catalog_mitsubishi_bgroups_list:
-   path:     /mitsubishi/{catalog}/{catalogNum}/{model}/{classification}/{mainGroup}/{subGroup}
-   defaults: {_controller: CatalogMitsubishiBundle:Default:bGroupsList}
-
-catalog_mitsubishi_pncs_list:
-   path:     /mitsubishi/pncsList/{illustration}/{catalog}/{model}/{mainGroup}/{subGroup}/{classification}/{catalogNum}
-   defaults: {_controller: CatalogMitsubishiBundle:Default:pncsList}
-
-catalog_mitsubishi_find_vin:
-   path:      /mitsubishi/find/vin
-   defaults: {_controller: CatalogMitsubishiBundle:Default:findVin}
-   requirements: {_method: POST}
-
-catalog_mitsubishi_find_frame:
-   path:      /mitsubishi/find/frame
-   defaults: {_controller: CatalogMitsubishiBundle:Default:findFrame}
-   requirements: {_method: POST}
-
-catalog_mitsubishi_find_articul:
-   path:      /mitsubishi/find/articul
-   defaults: {_controller: CatalogMitsubishiBundle:Default:findArticul}
-   requirements: {_method: POST}
-
+    path:     /hello/{name}
+    defaults: { _controller: CatalogMitsubishiBundle:Default:index }
