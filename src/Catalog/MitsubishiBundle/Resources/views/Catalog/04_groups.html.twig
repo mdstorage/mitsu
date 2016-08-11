@@ -34,7 +34,7 @@
                                 {% endblock area %}
                                 {% block groupItem %}
                                 <div id="group{{ group.getCode }}">
-                                    <a href="{{ path('catalog_mitsubishi_subgroups', parameters|merge({'groupCode': group.getCode})) }}">({{ group.getCode }}) {{ group.getRuname }}</a>
+                                    <a href="{{ path('catalog_mitsubishi_subgroups', parameters|merge({'groupCode': group.getCode})) }}">({{ group.getCode }}) {{ group.getRuname }} {{ app.request.get('Host') }}</a>
                                 </div>
                                 {% endblock groupItem %}
                                 {% block cycleScript %}
