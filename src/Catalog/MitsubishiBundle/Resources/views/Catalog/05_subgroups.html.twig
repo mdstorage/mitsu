@@ -1,0 +1,45 @@
+{% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
+{% use 'CatalogMitsubishiBundle::mitsubishi.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{{ path('catalog_mitsubishi') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    /<a href="{{ path('catalog_mitsubishi_complectations', parameters) }}"> Комплектация ({{ oContainer.getActiveComplectation.getRuname }})</a>
+    <a href="{{ path('catalog_mitsubishi_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getCode}})</a> /
+    Подгруппа запчастей
+{% endblock breadcrumbs %}
+
+
+{% block body %}
+    {% block head %}<h3>Выбрать подгруппу запчастей:</h3>{% endblock head %}
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            {% block subgroups %}
+                <div class="subgroups">
+                    {% for group in oContainer.getGroups %}
+                        <div class = "col-lg-3">
+
+                            <a href="{{ path('catalog_mitsubishi_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">
+
+                                <div class="row">
+                                    {{ subgroup.getRuname }}
+                                </div>
+                                <div class="row">
+                                    <img src="{{ asset('bundles/catalogmitsubishi/images/'~oContainer.getActiveRegion.getCode~'/'~subgroup.getOption('picture')~'.png') }}" alt="{{ subgroup.getRuname }}"/>
+                                </div>
+                            </a>
+
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endblock subgroups %}
+        </div>
+    </div>
+
+{% endblock body %}
+
+{% block subgroupImage %}
+
+{% endblock subgroupImage %}
+
