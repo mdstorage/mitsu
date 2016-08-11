@@ -19,7 +19,7 @@
 
 {% endblock %}
 {% block source %}{% endblock source %}
-<div class="main">
+<div class="main" id="dynamic-content">
     <nav class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -95,5 +95,53 @@
         {% block body %}{% endblock body%}
     </div>
 </div>
+
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        setInterval(publishHeight, 300);
+    });
+</script>
+<script type="text/javascript">
+    var host = '{{ app.request.get('host') }}';
+
+    function publishHeight() {
+
+        var actualHeight = $('#dynamic-content').height();
+        var currentHeight = $(window).height();
+
+        if (host == '') {
+            var pairs = window.location.href.split('?');
+            if (pairs[1]) {
+                pairs = pairs[1].split('&');
+                if ((pairs != null) && (pairs.length > 0)) {
+                    for(var i = 0; i < pairs.length; i++) {
+                        var pair = pairs[i].split('=');
+                        if ((pair != null) && (pair.length > 0)) {
+                            if (pair[0] == 'host') {
+                                host = unescape(pair[1]);
+                                host = host.split('#');
+                                host = host[0];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (Math.abs(actualHeight - currentHeight) > 15) {
+            if (host){
+                var hostUrl = host;
+                hostUrl += '#height=' + actualHeight.toString();
+                window.top.location = hostUrl;
+            }
+        }
+    }
+</script>
+
+
 </body>
 </html>
