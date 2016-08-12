@@ -35,7 +35,7 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="{{ 'catalog' in app.request.getPathInfo ? 'active'}}"><a href="{% block catalogPath %}{% endblock catalogPath %}">{% block catalogMenuItem %}Каталог{{ app.request }}{% endblock catalogMenuItem %}</a></li>
+                    <li class="{{ 'catalog' in app.request.getPathInfo ? 'active'}}"><a href="{% block catalogPath %}{% endblock catalogPath %}">{% block catalogMenuItem %}Каталог{{ app.request.host }}{% endblock catalogMenuItem %}</a></li>
                     <li class="{{ 'vin' in app.request.getPathInfo ? 'active'}}"><a href="{% block vinPath %}{% endblock vinPath %}">{% block vinMenuItem %}Поиск по VIN{% endblock vinMenuItem %}</a></li>
                     <li class="{{ 'articul' in app.request.getPathInfo ? 'active'}}"><a href="{% block articulPath %}{% endblock articulPath %}">{% block articulMenuItem %}Поиск запчасти по артикулу{% endblock articulMenuItem %}</a></li>
                 </ul>
