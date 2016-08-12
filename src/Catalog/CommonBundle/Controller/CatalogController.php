@@ -18,7 +18,7 @@ abstract class CatalogController extends BaseController{
      */
     public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
     {
-        $data = $this->get('my_token_info')->getStatus($token);
+        $data = $this->get('my_token_info')->getStatus($token);var_dump($request); die;
 
         if(empty($data) & !empty($token)){
             return $this->errorBilling('Сервис не оплачен');
