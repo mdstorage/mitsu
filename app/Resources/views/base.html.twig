@@ -73,14 +73,26 @@
 
         <script type="text/javascript">
             $(document).ready(function(){
-                publishHeight();
-                $(document).click(function(){
-                    publishHeight();
-                });
+                setInterval(publishHeight, 300);
             });
         </script>
+
         <script type="text/javascript">
-            var host = '{{ app.request.get('host') }}';
+
+
+            host = '{{ app.request.get('callbackhost') }}';
+
+            if (host)
+            {
+                set_cookie ("cookiehost", host);
+            }
+            else
+            {
+                var host = get_cookie('cookiehost');
+            }
+
+            {#var host = '{{ app.request.cookies.get('callbackhost') }}';#}
+
 
             function publishHeight() {
 
