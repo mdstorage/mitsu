@@ -4,5 +4,9 @@
 {% block vinPath %}{{ path('vin_audi', {'token': app.request.get('token')}) }}{% endblock vinPath %}
 {% block articulPath %}{{ path('articul_audi', {'token': app.request.get('token')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
-    <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common.css') }}" media="all">
+        {% if app.request.get('callbackhost') %}
+            <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common_callbackhost.css') }}" media="all">
+        {% else %}
+            <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common.css') }}" media="all">
+        {% endif %}
 {% endblock userStylesheets %}
