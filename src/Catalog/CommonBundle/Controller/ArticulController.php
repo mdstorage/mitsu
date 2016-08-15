@@ -10,6 +10,7 @@ abstract class ArticulController extends CatalogController{
 
     public function indexAction($error_message = null, $token = null)
     {
+        setcookie('cookiehost', '');
 
         setcookie(Constants::ARTICUL, '');
         return $this->render($this->bundle().':01_index.html.twig', array('error_message' => $error_message));
@@ -17,7 +18,7 @@ abstract class ArticulController extends CatalogController{
 
     public function findByArticulAction(Request $request, $token = null, $regionCode = null)
     {
-        setcookie('cookiehost', '');
+
         if (!$articul = $request->cookies->get(Constants::ARTICUL)) {
             if ($articul = trim($request->get('articul'))) {
                 setcookie(Constants::ARTICUL, $articul);
