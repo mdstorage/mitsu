@@ -10,7 +10,6 @@ abstract class ArticulController extends CatalogController{
 
     public function indexAction($error_message = null, $token = null)
     {
-        setcookie('cookiehost', '');
 
         setcookie(Constants::ARTICUL, '');
         return $this->render($this->bundle().':01_index.html.twig', array('error_message' => $error_message));
