@@ -110,7 +110,7 @@
 
 
 
-    if (!get_cookie('cookiehost'))
+    if (app.request.get('callbackhost'))
     {
         host = '{{ app.request.get('callbackhost') }}';
         set_cookie ("cookiehost", host);
