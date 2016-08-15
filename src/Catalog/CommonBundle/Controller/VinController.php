@@ -13,6 +13,7 @@ abstract class VinController extends CatalogController{
         /**
          * @deprecated Оставлен для совместимости с маздой
          */
+        setcookie('cookiehost', '');
         setcookie(Constants::PROD_DATE, '');
 
         setcookie(Constants::VIN, '');
