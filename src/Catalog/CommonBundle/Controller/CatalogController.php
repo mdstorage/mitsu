@@ -18,7 +18,7 @@ abstract class CatalogController extends BaseController{
      */
     public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
     {
-        setcookie('cookiehost', '');
+
         $data = $this->get('my_token_info')->getStatus($token);
 
         if(empty($data) & !empty($token)){
