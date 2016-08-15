@@ -109,12 +109,11 @@
 <script type="text/javascript">
 
 
+    host = '{{ app.request.get('callbackhost') }}';
 
-    if (app.request.get('callbackhost'))
+    if (host)
     {
-        host = '{{ app.request.get('callbackhost') }}';
         set_cookie ("cookiehost", host);
-
     }
     else
     {
