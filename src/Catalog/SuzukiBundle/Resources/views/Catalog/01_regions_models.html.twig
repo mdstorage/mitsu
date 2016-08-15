@@ -14,7 +14,7 @@
                             {% block halfList %}
                                     {% set modelCode = model.getCode|md5 %}
                                     
-                                    <img src="{{ asset('bundles/catalogsuzuki/images/MODEL_IMAGE/'~model.getOption('option1')~'.psd') }}" href="#" id="{{ modelCode }}{{ modelCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}" alt="{{ model.getRuname }}" style="cursor: pointer">
+                                    <img src="{{ asset('bundles/catalogsuzuki/images/MODEL_IMAGE/'~model.getOption('option1')~'.psd') }}" id="{{ modelCode }}{{ modelCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}" alt="{{ model.getRuname }}" style="cursor: pointer">
                                     
                                     <div class="model glyphicon-plus" id="{{ modelCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}">
                                         {{ model.getRuname }} 
