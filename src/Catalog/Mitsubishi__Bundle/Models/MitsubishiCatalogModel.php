@@ -298,7 +298,7 @@ class MitsubishiCatalogModel extends CatalogModel{
                 Constants::OPTIONS => array('picture' => $item['illustration'])
             );
         }
-        var_dump($subgroups); die;
+
 
            return $subgroups;
        }
