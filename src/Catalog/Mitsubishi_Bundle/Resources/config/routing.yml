@@ -1,0 +1,49 @@
+catalog_mitsubishi_homepage:
+    path:     /mitsubishi
+    defaults: { _controller: CatalogMitsubishiBundle:Default:catalogsList }
+
+catalog_mitsubishi_vncs_list:
+    path:     /mitsubishi/vncsList
+    defaults: {_controller: CatalogMitsubishiBundle:Default:vncsList}
+    requirements: {_method: POST}
+
+catalog_mitsubishi_models_list:
+    path:     /mitsubishi/modelsList
+    defaults: {_controller: CatalogMitsubishiBundle:Default:modelsList}
+    requirements: {_method: POST}
+
+catalog_mitsubishi_classifications_list:
+    path:     /mitsubishi/{catalog}/{catalogNum}/{model}
+    defaults: {_controller: CatalogMitsubishiBundle:Default:classificationsList}
+
+catalog_mitsubishi_maingroups_list:
+    path:     /mitsubishi/{catalog}/{catalogNum}/{model}/{classification}
+    defaults: {_controller: CatalogMitsubishiBundle:Default:mainGroupsList}
+
+catalog_mitsubishi_subgroups_list:
+    path:     /mitsubishi/{catalog}/{catalogNum}/{model}/{classification}/{mainGroup}
+    defaults: {_controller: CatalogMitsubishiBundle:Default:subGroupsList}
+
+catalog_mitsubishi_bgroups_list:
+   path:     /mitsubishi/{catalog}/{catalogNum}/{model}/{classification}/{mainGroup}/{subGroup}
+   defaults: {_controller: CatalogMitsubishiBundle:Default:bGroupsList}
+
+catalog_mitsubishi_pncs_list:
+   path:     /mitsubishi/pncsList/{illustration}/{catalog}/{model}/{mainGroup}/{subGroup}/{classification}/{catalogNum}
+   defaults: {_controller: CatalogMitsubishiBundle:Default:pncsList}
+
+catalog_mitsubishi_find_vin:
+   path:      /mitsubishi/find/vin
+   defaults: {_controller: CatalogMitsubishiBundle:Default:findVin}
+   requirements: {_method: POST}
+
+catalog_mitsubishi_find_frame:
+   path:      /mitsubishi/find/frame
+   defaults: {_controller: CatalogMitsubishiBundle:Default:findFrame}
+   requirements: {_method: POST}
+
+catalog_mitsubishi_find_articul:
+   path:      /mitsubishi/find/articul
+   defaults: {_controller: CatalogMitsubishiBundle:Default:findArticul}
+   requirements: {_method: POST}
+
