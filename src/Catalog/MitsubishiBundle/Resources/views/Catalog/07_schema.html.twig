@@ -10,7 +10,7 @@
 {% endblock breadcrumbs %}
 
 
-{% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
+{% block refGroupsHead %}<h4>Связанные группа/подгруппа</h4>{% endblock refGroupsHead %}
 
 							{% block pncScript %}
                                 <script>
@@ -65,9 +65,11 @@
 {% block image %}
 
 
-    <img src="{{ asset('bundles/catalogmitsubishi/images/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+    <img src="{{ asset('bundles/catalogmitsubishi/images/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="600" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 
 {% endblock image %}
+
+{% block refGroupName %}{{ refGroup.getRuname }}{% endblock refGroupName %}
 
 
 

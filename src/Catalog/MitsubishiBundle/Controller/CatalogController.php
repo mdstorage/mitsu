@@ -27,17 +27,20 @@ class CatalogController extends BaseController{
     }
     
 
-    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode, $token = null)
+    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $token = null)
     {
 
-        $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode);
+        $groupCode = explode(' ', $subGroupCode)[0];
+        $subGroupCode = explode(' ', $subGroupCode)[1];
+
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
         return $this->redirect(
             $this->generateUrl(
                 str_replace('group', 'schemas', $this->get('request')->get('_route')),
                 array_merge($parameters, array(
-                        'groupCode' => $groupCode
+                        'groupCode' => $groupCode,
+                        'subGroupCode' => $subGroupCode
                     )
                 )
             ), 301

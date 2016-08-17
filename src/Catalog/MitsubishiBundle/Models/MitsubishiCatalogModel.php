@@ -372,9 +372,6 @@ class MitsubishiCatalogModel extends CatalogModel{
 
        public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
        {
-           $complectationCode = urldecode($complectationCode);
-           $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
-           $year = $modificationCode;
 
            $sql = "
             SELECT
@@ -387,15 +384,14 @@ class MitsubishiCatalogModel extends CatalogModel{
 
               FROM
               `part_catalog` pg
-              INNER JOIN pnc ON (pnc.pnc = pg.PNC AND pnc.catalog = pg.catalog)
-              INNER JOIN descriptions d ON (d.TS = pnc.desc_code AND d.catalog = pnc.catalog)
+              LEFT JOIN pnc ON (pnc.pnc = pg.PNC AND pnc.catalog = pg.catalog)
+              LEFT JOIN descriptions d ON (d.TS = pnc.desc_code AND d.catalog = pnc.catalog)
               WHERE
               pg.catalog = :regionCode
               AND (pg.Model = :modificationCode)
               AND pg.MainGroup = :groupCode
               AND pg.SubGroup = :subgroupCode
               AND (pg.Classification = :complectationCode OR pg.Classification = '')
-              GROUP BY pg.PartNumber, pg.StartDate, pg.EndDate
               ORDER BY pg.PNC, pg.StartDate
             ";
 
@@ -457,7 +453,7 @@ class MitsubishiCatalogModel extends CatalogModel{
                    foreach ($value['clangjap'] as $item1)
                    {
                      /*  if ($value['PART_NAME'] != NULL)*/
-                       $pncs[($value['pnc'])][Constants::OPTIONS][Constants::COORDS][($item1['startX'])] = array(
+                       $pncs[($value['pnc'])][Constants::OPTIONS][Constants::COORDS][($item1['startY'])] = array(
                            Constants::X2 => floor($item1['startX'] + $item1['endX']),
                            Constants::Y2 => $item1['startY'] + $item1['endY'],
                            Constants::X1 => floor($item1['startX']),
@@ -590,84 +586,68 @@ $articuls = array();
             }
         }
 
-      /*  foreach ($aPncs as $item)
+        foreach ($aPncs as $item)
         {
-            $groups[$item['refer_fig']][Constants::NAME] = $item['desc_en'] ? $item['desc_en'] : $item['desc_'.$lang];
-        }*/
+            $groups[$item['desc_code1']][Constants::NAME] = explode(' ', $item['desc_code1'])[0].' / '.explode(' ', $item['desc_code1'])[1];
+        }
 
         return $groups;
     }
 
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $pncCode, $options)
     {
-        $complectationCode = urldecode($complectationCode);
-        $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
-        $year = $modificationCode;
-
-
         $sql = "
-        SELECT part_usage.PART_NBR, part_usage_lang.PART_DESC, part_usage.FIRST_YEAR, part_usage.LAST_YEAR, part_usage.QUANTITY
-        FROM callout_legend
-        INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE NOT LIKE 'Z' AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
-        LEFT JOIN part_usage_lang ON (part_usage_lang.PART_USAGE_LANG_ID = part_usage.PART_USAGE_LANG_ID AND part_usage_lang.COUNTRY_LANG = 'EN')
-        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
-        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
-        AND callout_legend.ART_NBR = :schemaCode AND callout_legend.CALLOUT_NBR = :pnc
+            SELECT
+              pg.PNC as pnc,
+              pg.PartNumber as partNumber,
+              pg.StartDate as startDate,
+              pg.EndDate as endDate,
+              pg.Qty as quantity,
+              d.desc_en as desc_en,
+              dadd.desc_en as add_desc_en
 
-        UNION
-        SELECT part_v.PART_NBR, part_v.PART_DESC, part_v.FIRST_YEAR, part_v.LAST_YEAR, part_v.QUANTITY
-        FROM callout_legend
-        INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE LIKE 'Z' AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
-        INNER JOIN part_v ON (part_v.PART_NBR = part_usage.PART_NBR AND part_v.COUNTRY_LANG = 'EN' and part_v.CATALOG_CODE = callout_legend.CATALOG_CODE and part_v.COUNTRY_CODE = part_usage.COUNTRY_CODE
-        and (callout_legend.ORIG_MINOR_GROUP IS NULL OR part_v.MINOR_GROUP = callout_legend.ORIG_MINOR_GROUP))
-        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
-        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
-        AND callout_legend.ART_NBR = :schemaCode AND callout_legend.CALLOUT_NBR = :pnc
-
-        UNION
-        SELECT part_usage.PART_NBR, callout_model_lang.CALLOUT_DESC PART_DESC, callout_legend.FIRST_YEAR, callout_legend.LAST_YEAR, callout_legend.QUANTITY
-        FROM callout_legend
-        INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
-        INNER JOIN callout_model ON (callout_model.CALLOUT_ID = callout_legend.CALLOUT_ID)
-        INNER JOIN callout_model_lang ON (callout_model_lang.CALLOUT_MODEL_LANG_ID = callout_model.CALLOUT_MODEL_LANG_ID
-         AND callout_model_lang.COUNTRY_LANG = 'EN')
-        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
-        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
-        AND callout_legend.ART_NBR = :schemaCode AND callout_legend.CALLOUT_NBR = :pnc
-
-        ORDER BY (1)
-        ";
-
-
-
+              FROM
+              `part_catalog` pg
+              INNER JOIN pnc ON (pnc.pnc = pg.PNC AND pnc.catalog = pg.catalog)
+              INNER JOIN descriptions d ON (d.TS = pnc.desc_code AND d.catalog = pnc.catalog)
+              LEFT JOIN pbook ON (pbook.Partnumber = pg.PartNumber AND pbook.Catalog = pg.catalog)
+              LEFT JOIN descriptions dadd ON (dadd.TS = pbook.PartSpec AND dadd.catalog = pnc.catalog)
+              WHERE
+              pg.catalog = :regionCode
+              AND (pg.Model = :modificationCode)
+              AND pg.MainGroup = :groupCode
+              AND pg.SubGroup = :subgroupCode
+              AND (pg.Classification = :complectationCode OR pg.Classification = '')
+              AND pg.PNC = :pnc
+              GROUP BY pg.PartNumber, pg.StartDate, pg.EndDate
+              ORDER BY pg.PNC, pg.StartDate
+            ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('catalogCode',  $catalogCode);
-        $query->bindValue('groupCode',  $groupCode);
         $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('schemaCode',  $schemaCode);
-        $query->bindValue('year',  $year);
-        $query->bindValue('pnc', $pncCode);
+        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('complectationCode',  $complectationCode);
+        $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('subgroupCode',  $subGroupCode);
+        $query->bindValue('pnc',  $pncCode);
 
         $query->execute();
 
 
-         $aArticuls = $query->fetchAll();
+        $aArticuls = $query->fetchAll();
 
 
-
-$articuls = array();
+        $articuls = array();
 
         foreach ($aArticuls as $item) {
-        	 
-            
-            
-				$articuls[$item['PART_NBR']] = array(
-                Constants::NAME => $item['PART_DESC'],
+
+				$articuls[$item['partNumber']] = array(
+                Constants::NAME => $item['partNumber'],
                 Constants::OPTIONS => array(
-                    Constants::QUANTITY => $item['QUANTITY'],
-                    Constants::START_DATE => $item['FIRST_YEAR'],
-                    Constants::END_DATE => $item['LAST_YEAR'],
+                    Constants::QUANTITY => $item['quantity'],
+                    Constants::START_DATE => $item['startDate'],
+                    Constants::END_DATE => $item['endDate'],
+                    'add_desc_en' => $item['add_desc_en']
 
                 )
             );
@@ -676,29 +656,6 @@ $articuls = array();
 
 
         return $articuls;
-    }
-
-    public function getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode)
-    {
-
-
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-        $sqlGroup = "
-        SELECT part
-        FROM cats_map
-        WHERE sector_name = :subGroupCode
-          AND catalog_name = :catCode
-        ";
-
-        $query = $this->conn->prepare($sqlGroup);
-        $query->bindValue('subGroupCode', $subGroupCode);
-        $query->bindValue('catCode', $catCode);
-        $query->execute();
-
-        $groupCode = $query->fetchColumn(0);
-
-        return $groupCode;
-
     }
 
     

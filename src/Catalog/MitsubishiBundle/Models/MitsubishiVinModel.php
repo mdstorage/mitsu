@@ -18,21 +18,43 @@ class MitsubishiVinModel extends MitsubishiCatalogModel {
     {
 
 
+        $chassis = substr($vin, 0, 10);
+        $serialNo = substr($vin, 10);
         $sql = "
-        SELECT model.MAKE_DESC, vin_archive2.MODEL_YEAR, catalog_model_string.CATALOG_CODE, model.MODEL_DESC, country.COUNTRY_CODE
-        FROM vin_archive2
-        INNER JOIN catalog_model_string ON (catalog_model_string.MODEL_STRING = vin_archive2.ATTRIBUTE5
-        AND vin_archive2.MODEL_YEAR BETWEEN catalog_model_string.FIRST_YEAR AND catalog_model_string.LAST_YEAR)
-        INNER JOIN model ON (model.CATALOG_CODE = catalog_model_string.CATALOG_CODE)
-        INNER JOIN vin_partition ON (vin_partition.START_POS = 1 AND vin_partition.END_POS = 1)
-        INNER JOIN vin_rule country ON (country.VIN_PARTITION_ID = vin_partition.VIN_PARTITION_ID AND country.MATCH_VALUE = SUBSTRING(:vin, 1, 1))
-        WHERE vin_archive2.VIN_CHAR9 = SUBSTRING(:vin, 1, 9)
-        AND vin_archive2.VIN_CHAR2 = SUBSTRING(:vin, 10, 2)
-        AND vin_archive2.VIN_CHAR6 = SUBSTRING(:vin, 12, 6)
+        SELECT
+          v.Catalog as catalog, vv.Catalog as catalog,
+          v.Model as model, vv.Model as model,
+          v.Classification as classification, vv.Classification as classification,
+          v.ProdDate as prodDate, vv.ProdDate as prodDate,
+          v.XREF as xref, vv.XREF as xref,
+          v.OPC as opc, vv.OPC as opc,
+          v.Exterior as exterior, vv.Exterior as exterior,
+          v.Interior as interior, vv.Interior as interior,
+          dmodel.desc_en as descEnModel,
+          dmodif.desc_en as descEnModif,
+          dcompl.desc_en as descEnCompl,
+          m.Catalog_Num
+        FROM
+          `vin` v
+        INNER JOIN vin vv ON (vv.Chassis = :chassis AND vv.SerialNo = v.XREF AND vv.XREF = '')
+
+        LEFT JOIN models m ON ((m.catalog = v.catalog OR m.catalog = vv.catalog) AND (m.Model = v.model OR m.Model = vv.model) AND (m.Classification = v.classification OR m.Classification = vv.classification))
+        LEFT JOIN `model_desc` md ON m.Catalog_Num = TRIM(md.catalog_num)
+        LEFT JOIN `descriptions` dmodel ON (TRIM(md.name) = dmodel.TS AND dmodel.catalog = v.catalog)
+
+        LEFT JOIN `descriptions` dmodif ON (TRIM(m.Name1) = dmodif.TS AND dmodif.catalog = v.catalog)
+
+        LEFT JOIN `descriptions` dcompl ON (TRIM(m.Name) = dcompl.TS AND dcompl.catalog = v.catalog)
+
+        WHERE
+          v.Chassis = :chassis
+          AND v.SerialNo = :serialNo
+          LIMIT 1
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('vin', $vin);
+        $query->bindValue('chassis', $chassis);
+        $query->bindValue('serialNo', $serialNo);
         $query->execute();
 
         $aData = $query->fetch();
@@ -43,12 +65,17 @@ class MitsubishiVinModel extends MitsubishiCatalogModel {
 
         if ($aData) {
             $result = array(
-                'brand' => $aData['MAKE_DESC'],
-                'model' => strtoupper((stripos($aData['MODEL_DESC'],' '))?urlencode(substr($aData['MODEL_DESC'], 0, stripos($aData['MODEL_DESC'],' '))).'_'.$aData['MAKE_DESC']:urlencode($aData['MODEL_DESC']).'_'.$aData['MAKE_DESC']),
-                'modif_for_group' => $aData['MODEL_YEAR'],
-                'complectation' => $aData['CATALOG_CODE'].'_'.$aData['MODEL_DESC'],
-                Constants::PROD_DATE => $aData['MODEL_YEAR'],
-                'region' => $aData['COUNTRY_CODE'],
+                'model' => $aData['descEnModel'],
+                'model_for_group' => $aData['Catalog_Num'],
+                'modif' => '('.$aData['model'].') '.$aData['descEnModif'],
+                'modif_for_group' => $aData['model'],
+                'compl' => '('.$aData['classification'].') '.$aData['descEnCompl'],
+                'compl_for_group' => $aData['classification'],
+
+                Constants::PROD_DATE => $aData['prodDate'],
+                'region' => $aData['catalog'],
+                'exterior' => $aData['exterior'],
+                'interior' => $aData['interior']
                 );
         }
 
