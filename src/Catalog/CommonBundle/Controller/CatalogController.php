@@ -121,11 +121,11 @@ abstract class CatalogController extends BaseController{
 
     public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $articul = null, $token = null)
     {
-        $data = $this->get('my_token_info')->getStatus($token);
+       /* $data = $this->get('my_token_info')->getStatus($token);
 
         if(empty($data) & !empty($token)){
             return $this->errorBilling('Сервис не оплачен');
-        }
+        }*/
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
         $regions = $this->model()->getRegions();
