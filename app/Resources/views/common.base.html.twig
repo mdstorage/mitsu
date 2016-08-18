@@ -109,18 +109,20 @@
 <script type="text/javascript">
 
 
-    host = '{{ app.request.get('callbackhost') }}';
+    var host = get_cookie('cookiehost');
+    alert(host);
+    {#  host = '{{ app.request.get('callbackhost') }}';
 
-    if (host)
-    {
-        set_cookie ( "cookiehost", host);
-    }
-    else
-    {
-        var host = get_cookie('cookiehost');
-    }
+      if (host)
+      {
+          set_cookie ( "cookiehost", host);
+      }
+      else
+      {
+          var host = get_cookie('cookiehost');
+      }
 
-    {#var host = '{{ app.request.cookies.get('callbackhost') }}';#}
+      {#var host = '{{ app.request.cookies.get('callbackhost') }}';#}
 
 
     function publishHeight() {
