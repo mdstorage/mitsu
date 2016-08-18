@@ -26,7 +26,7 @@ abstract class CatalogController extends BaseController{
 
         if(empty($data) & !empty($token)){
             return $this->errorBilling('Сервис не оплачен');
-        }var_dump($request); die;
+        }
         /**
          * Выборка регионов из базы данных для конкретного артикула
          */
