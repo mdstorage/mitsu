@@ -578,7 +578,7 @@ class MitsubishiCatalogModel extends CatalogModel{
 
             foreach ($value['clangjap'] as $item1)
             {
-                $groups[$value['desc_code1']][Constants::OPTIONS][Constants::COORDS][$item1['startX']] = array(
+                $groups[$value['desc_code1']][Constants::OPTIONS][Constants::COORDS][$item1['startY']] = array(
                     Constants::X2 => floor($item1['startX'] + $item1['endX']),
                     Constants::Y2 => $item1['startY'] + $item1['endY'],
                     Constants::X1 => floor($item1['startX']),
