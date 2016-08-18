@@ -5,7 +5,7 @@
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
     <a href="{{ path('catalog_mitsubishi_complectations', parameters) }}"> Комплектация ({{ oContainer.getActiveComplectation.getRuname }})</a>/
     <a href="{{ path('catalog_mitsubishi_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
-    <a href="{{ path('catalog_mitsubishi_schemas', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveSchema.getRuname }})</a> /
+    <a href="{{ path('articul_mitsubishi_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
     Запчасти
 {% endblock breadcrumbs %}
 

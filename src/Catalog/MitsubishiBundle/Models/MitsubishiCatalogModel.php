@@ -508,7 +508,8 @@ class MitsubishiCatalogModel extends CatalogModel{
                    Constants::Y2 => $item['ye'],
                );
            }*/
-$articuls = array();
+        $articuls = array();
+
         return $articuls;
     }
 

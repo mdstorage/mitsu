@@ -4,13 +4,13 @@
             <div>
                 {% block modification %}
 
-                    <div class="col-lg-4">
-                        <div class="row">
-                            <a href="{{ path('articul_mitsubishi_complectations', parameters|merge({'modificationCode': modification.getCode, 'articul': app.request.get('articul')})) }}">
-                                {{ modification.getRuname }}
-                            </a>
-                        </div>
+
+                    <div class="row">
+                        <a href="{{ path('articul_mitsubishi_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
+                            {{ modification.getRuname }}
+                        </a>
                     </div>
+
 
                 {% endblock modification %}
             </div>
