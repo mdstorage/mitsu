@@ -17,7 +17,7 @@ abstract class CatalogController extends BaseController{
      *
      */
     public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
-    {
+    {var_dump($request); die;
 
 
         $data = $this->get('my_token_info')->getStatus($token);
