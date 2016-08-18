@@ -18,7 +18,7 @@ abstract class CatalogController extends BaseController{
      */
     public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
     {
-        $callbackhost = $request->get('callbackhost');
+        $callbackhost = $request->get('callbackhost');var_dump($callbackhost); die;
         set_cookie( "cookiehost", $callbackhost);
 
 
