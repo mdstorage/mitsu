@@ -1,7 +1,11 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogMitsubishiBundle::mitsubishi.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_mitsubishi_find') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_mitsubishi_groups', parameters) }}">Выбрать группу запчастей</a> /
+    <a href="{{ path('articul_mitsubishi_find') }}"> Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('articul_mitsubishi_complectations', parameters) }}"> Комплектация ({{ oContainer.getActiveComplectation.getRuname }})</a> /
+    <a href="{{ path('articul_mitsubishi_groups', parameters) }}"> Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> /
+    Подгруппа запчастей
     Выбрать схему
 {% endblock breadcrumbs %}
 
@@ -16,12 +20,12 @@
             <a href="{{ path('articul_mitsubishi_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
                 <div class="row">
-                    ({{ schema.getCode }}) {{ schema.getRuname }}
+                    Схема {{ loop.index }} из {{ loop.length }}
                 </div>
 
 
                 <div class="row">
-                    <img src="{{ asset('bundles/cataloggm/Images/G/'~schema.getOption('IMAGE_NAME')~'.gif') }}" width="200" alt="{{ schema.getRuname }}"/>
+                    <img src="{{ asset('bundles/catalogmitsubishi/images/'~oContainer.getActiveRegion.getCode~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
                 </div>
 
 

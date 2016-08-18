@@ -102,7 +102,7 @@
                     {% for refGroup in oContainer.getActiveSchema.getRefGroups %}
                         {% block refGroup %}
                             <div>
-                                <a href="{% block subGroupPath %}{% endblock subGroupPath %}">{{ refGroup.getCode }}</a>
+                                <a href="{% block subGroupPath %}{% endblock subGroupPath %}">{% block refGroupName %}{{ refGroup.getCode }}{% endblock refGroupName %}</a>
                             </div>
                             {% for coords in refGroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
                                 <area shape="rect" coords="

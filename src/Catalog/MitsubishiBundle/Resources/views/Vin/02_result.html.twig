@@ -5,22 +5,35 @@
             <table class="table table-bordered">
 
                 <tr>
-                    <td>Брэнд:</td>
-                    <td>{{ result.brand }}</td>
+                    <td>Модель:</td>
+                    <td>{{ result.model }}</td>
+                </tr>
+                <tr>
+                    <td>Регион производства:</td>
+                    <td>{{ result.region }}</td>
                 </tr>
                 <tr>
                     <td>Дата выпуска:</td>
                     <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|mitsubishi_vin_date_convertor }}</td>
                 </tr>
-                    <tr>
-                        <td>Модель:</td>
-                        <td>{{ result.model }}</td>
-                    </tr>
-
                 <tr>
-                    <td>Регион производства:</td>
-                    <td>{{ result.region }}</td>
+                    <td>Модификация:</td>
+                    <td>{{ result.modif }}</td>
                 </tr>
+                <tr>
+                    <td>Комплектация:</td>
+                    <td>{{ result.compl }}</td>
+                </tr>
+                <tr>
+                    <td>Цвет экстерьера:</td>
+                    <td>{{ result.exterior }}</td>
+                </tr>
+                <tr>
+                    <td>Цвет интерьера:</td>
+                    <td>{{ result.interior }}</td>
+                </tr>
+
+
 
 
             </table>
@@ -28,5 +41,5 @@
     </div>
 {% endblock specification %}
 {% block catalogPath %}
-    {{ path('vin_mitsubishi_groups',({'regionCode': result.region, 'modelCode': result.model, 'modificationCode': result.modif_for_group, 'complectationCode': result.complectation, 'token': app.request.get('token') })) }}
+    {{ path('vin_mitsubishi_groups',({'regionCode': result.region, 'modelCode': result.model_for_group, 'modificationCode': result.modif_for_group, 'complectationCode': result.compl_for_group, 'token': app.request.get('token') })) }}
 {% endblock catalogPath %}

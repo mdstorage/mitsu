@@ -3,9 +3,9 @@
     <thead>
         <tr>
             <th>Артикул</th>
-            <th>Наименование</th>
             <th>Период</th>
             <th>Кол-во</th>
+            <th>Информация</th>
         </tr>
     </thead>
 
@@ -14,11 +14,12 @@
         <tr>
             <td><a href="{{ parameters.redirectAdress|replace({ '{article}': articul.getCode }) }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a>
             </td>
-            <td>{{ articul.getRuname }}</td>
-            <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE')) }}
-                -{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE')) }}</td>
+            <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|mitsubishi_date_convertor }}
+                -{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|mitsubishi_date_convertor }}</td>
             <td>{% autoescape false %}{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY'))|replace({';':'<br/>'}) }}{% endautoescape %}<br/></td>
-            
+            <td>{{ articul.getOption('add_desc_en') }}</td>
+
+
         </tr>
     {% endfor %}
     </tbody>

@@ -5,12 +5,12 @@
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
     <a href="{{ path('catalog_mitsubishi_complectations', parameters) }}"> Комплектация ({{ oContainer.getActiveComplectation.getRuname }})</a>/
     <a href="{{ path('catalog_mitsubishi_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
-    <a href="{{ path('catalog_mitsubishi_schemas', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveSchema.getRuname }})</a> /
+    <a href="{{ path('articul_mitsubishi_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
     Запчасти
 {% endblock breadcrumbs %}
 
 
-{% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
+{% block refGroupsHead %}<h4>Связанные группа/подгруппа</h4>{% endblock refGroupsHead %}
 
 							{% block pncScript %}
                                 <script>
@@ -65,9 +65,11 @@
 {% block image %}
 
 
-    <img src="{{ asset('bundles/catalogmitsubishi/images/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+    <img src="{{ asset('bundles/catalogmitsubishi/images/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="600" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 
 {% endblock image %}
+
+{% block refGroupName %}{{ refGroup.getRuname }}{% endblock refGroupName %}
 
 
 

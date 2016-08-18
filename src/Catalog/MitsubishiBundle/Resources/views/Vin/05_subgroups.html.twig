@@ -9,12 +9,36 @@
 
 
 
+{% block body %}
+    {% block head %}<h3>Выбрать подгруппу запчастей:</h3>{% endblock head %}
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            {% block subgroups %}
+                <div class="subgroups">
+                    {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
+                        <div class = "col-xs-3 col-sm-3 col-md-3 col-lg-3">
+
+                            <a href="{{ path('vin_mitsubishi_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">
+
+                                <div class="row">
+                                    {{ subgroup.getRuname }}
+                                </div>
+                                <div class="row">
+                                    <img src="{{ asset('bundles/catalogmitsubishi/images/'~oContainer.getActiveRegion.getCode~'/'~subgroup.getOption('picture')~'.png') }}" alt="{{ subgroup.getRuname }}"/>
+                                </div>
+                            </a>
+
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endblock subgroups %}
+        </div>
+    </div>
+
+{% endblock body %}
+
 {% block subgroupImage %}
 
 {% endblock subgroupImage %}
-
-
-
-{% block pathToSchemas %}
-    {{ path('vin_mitsubishi_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}
-{% endblock pathToSchemas %}
