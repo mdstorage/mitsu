@@ -22,7 +22,7 @@ abstract class CatalogController extends BaseController{
         setcookie('cookiehost', $callbackhost, time()+3600);
 
 
-        $data = $this->get('my_token_info')->getStatus($token);
+      /*  $data = $this->get('my_token_info')->getStatus($token);
 
         if(empty($data) & !empty($token)){
             return $this->errorBilling('Сервис не оплачен');
