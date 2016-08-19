@@ -16,6 +16,7 @@ class Constants {
     const PROD_DATE = 'PROD_DATE';
     const ARTICUL = 'ARTICUL';
     const ARTICUL_TOKEN = 'ARTICUL_TOKEN';
+    const COOKIEHOST = 'COOKIEHOST';
 
 
     const X1 = 'x1';

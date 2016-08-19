@@ -109,18 +109,16 @@
 <script type="text/javascript">
 
 
-    var host = get_cookie('cookiehost');
-    alert(host);
-    {#  host = '{{ app.request.get('callbackhost') }}';
+    {# var host = get_cookie('cookiehost');#}
 
-      if (host)
+     var host = '{{ app.request.get('callbackhost') }}';
+
+      if (!host)
       {
-          set_cookie ( "cookiehost", host);
+          var host = get_cookie(constant('Catalog\\CommonBundle\\Components\\Constants::COOKIEHOST'));
       }
-      else
-      {
-          var host = get_cookie('cookiehost');
-      }
+    alert(host);
+
 
       {#var host = '{{ app.request.cookies.get('callbackhost') }}';#}
 

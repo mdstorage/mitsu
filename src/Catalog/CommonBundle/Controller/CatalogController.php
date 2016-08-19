@@ -18,11 +18,8 @@ abstract class CatalogController extends BaseController{
      */
     public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
     {
-        $callbackhost = $request->get('callbackhost');
-        setcookie('cookiehost', $callbackhost, time()+3600);
 
-
-      /*  $data = $this->get('my_token_info')->getStatus($token);
+        $data = $this->get('my_token_info')->getStatus($token);
 
         if(empty($data) & !empty($token)){
             return $this->errorBilling('Сервис не оплачен');
@@ -85,6 +82,7 @@ abstract class CatalogController extends BaseController{
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
             $token = $request->get('token');
+            setcookie(Constants::COOKIEHOST, $request->get('callbackhost'));
 
             $parameters = array(
                 'regionCode' => $regionCode,
@@ -121,11 +119,11 @@ abstract class CatalogController extends BaseController{
 
     public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $articul = null, $token = null)
     {
-       /* $data = $this->get('my_token_info')->getStatus($token);
+        $data = $this->get('my_token_info')->getStatus($token);
 
         if(empty($data) & !empty($token)){
             return $this->errorBilling('Сервис не оплачен');
-        }*/
+        }
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
         $regions = $this->model()->getRegions();
