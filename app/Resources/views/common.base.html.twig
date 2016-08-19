@@ -115,9 +115,9 @@
 
       if (!host)
       {
-          var host = get_cookie(constant('Catalog\\CommonBundle\\Components\\Constants::COOKIEHOST'));
+          var host = get_cookie('COOKIEHOST');
       }
-    alert(host);
+    
 
 
       {#var host = '{{ app.request.cookies.get('callbackhost') }}';#}
