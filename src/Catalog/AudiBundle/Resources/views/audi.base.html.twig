@@ -8,9 +8,9 @@
 {% block catalogPathLogo %}
     {{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'callbackhost':  app.request.cookies.get('COOKIEHOST') }) }}
 {% endblock catalogPathLogo %}
-{% block catalogPath %}{{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'callbackhost':  app.request.cookies.get('COOKIEHOST') }) }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'callbackhost':  app.request.cookies.get('COOKIEHOST') }) }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'callbackhost':  app.request.cookies.get('COOKIEHOST') }) }}{% endblock articulPath %}
+{% block catalogPath %}{{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'callbackhost':  app.request.cookies.get(constant('Catalog\\CommonBundle\\Components\\Constants::COOKIEHOST')) }) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'callbackhost':  app.request.cookies.get(constant('Catalog\\CommonBundle\\Components\\Constants::COOKIEHOST')) }) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'callbackhost':  app.request.cookies.get(constant('Catalog\\CommonBundle\\Components\\Constants::COOKIEHOST')) }) }}{% endblock articulPath %}
 {% block userStylesheets %}
         {% if app.request.get('callbackhost') or app.request.cookies.get('COOKIEHOST')%}
             <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common_callbackhost.css') }}" media="all">
