@@ -1,10 +1,10 @@
 {% block brand %}AUDI{% endblock brand %}
-{% block catalogPathLogo %}{{ path('catalog_audi', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
-{% block catalogPath %}{{ path('catalog_audi', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_audi', {'token': app.request.get('token')}) }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_audi', {'token': app.request.get('token')}) }}{% endblock articulPath %}
+{% block catalogPathLogo %}{{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost': app.request.get('callbackhost')}) }}{% endblock catalogPathLogo %}
+{% block catalogPath %}{{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost': app.request.get('callbackhost')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_audi', {'token': app.request.get('token'), 'callbackhost': app.request.get('callbackhost')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_audi', {'token': app.request.get('token'), 'callbackhost': app.request.get('callbackhost')}) }}{% endblock articulPath %}
 {% block userStylesheets %}
-        {% if app.request.get('callbackhost') or app.request.cookies.get('cookiehost')%}
+        {% if app.request.get('callbackhost') or app.request.cookies.get('COOKIEHOST')%}
             <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common_callbackhost.css') }}" media="all">
         {% else %}
             <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common.css') }}" media="all">
