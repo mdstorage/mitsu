@@ -31,6 +31,7 @@ class VinController extends BaseController{
         if ($request->isXmlHttpRequest()) {
 
             $vin = $request->get('vin');
+            $callbackhost = $request->get('callbackhost');
 
 
 
@@ -79,6 +80,7 @@ class VinController extends BaseController{
              */
 
             setcookie(Constants::VIN, $vin);
+            setcookie(Constants::COOKIEHOST, $callbackhost);
 
 
             return $this->render($this->bundle().':02_region.html.twig', array(

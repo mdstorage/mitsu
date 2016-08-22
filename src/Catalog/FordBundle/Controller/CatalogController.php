@@ -48,7 +48,7 @@ class CatalogController extends BaseController{
         
     }
 
-    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
+    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null,  $articul = NULL, $token = NULL)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
@@ -95,7 +95,7 @@ class CatalogController extends BaseController{
         ));
     }
 
-    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
+    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null,  $articul = NULL, $token = NULL)
     {
         /*   $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
 
@@ -159,7 +159,7 @@ class CatalogController extends BaseController{
         ));
     }
 
-    public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null)
+    public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null,  $articul = NULL, $token = NULL)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
         $oContainer = Factory::createContainer();
@@ -216,7 +216,7 @@ class CatalogController extends BaseController{
         ));
     }
 
-    public function schemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null)
+    public function schemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null,  $articul = NULL, $token = NULL)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
@@ -273,7 +273,7 @@ class CatalogController extends BaseController{
         ));
     }
 
-    public function schemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null)
+    public function schemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null,  $articul = NULL, $token = NULL)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 

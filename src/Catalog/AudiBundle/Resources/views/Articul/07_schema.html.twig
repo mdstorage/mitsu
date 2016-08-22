@@ -14,7 +14,7 @@
 {% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
 
 {% block image %}
-    <img src="{{ asset('bundles/catalogaudi/Images/Bilder/'~oContainer.getActiveSchema.getOption('cd')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+    <img src="{{ asset('bundles/catalogaudi/Images/Bilder/'~oContainer.getActiveSchema.getOption('cd')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" height="600" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 {% endblock image %}
 
 {% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
