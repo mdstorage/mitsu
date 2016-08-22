@@ -27,7 +27,7 @@ class CatalogController extends BaseController{
     }
 
 
-    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null)
+    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null,  $articul = NULL, $token = NULL)
     {
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
@@ -108,7 +108,7 @@ class CatalogController extends BaseController{
         }
     }
 
-    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null)
+    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null,  $articul = NULL, $token = NULL)
     {
 
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
