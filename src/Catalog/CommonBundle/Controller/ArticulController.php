@@ -97,7 +97,9 @@ abstract class ArticulController extends CatalogController{
             $articul = $request->get('articul');
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
+
             $articulModifications = $this->model()->getArticulModifications($articul, $regionCode, $modelCode);
+            setcookie(Constants::COOKIEHOST, $request->get('callbackhost'));
 
 
             $this->addFilter('articulModificationsFilter', array(
