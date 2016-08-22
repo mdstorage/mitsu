@@ -23,9 +23,9 @@
             </div>
             {% block articulScript %}
                 <script>
-                    set_cookie('COOKIEHOST', '{{ app.request.get('callbackhost') }}');
+                    set_cookie("COOKIEHOST", "{{ app.request.get('callbackhost') }}");
 
-                    function set_cookie ( name, value, exp_y, exp_m, exp_d, path, domain, secure )
+                    function set_cookie( name, value, exp_y, exp_m, exp_d, path, domain, secure )
                     {
                         var cookie_string = name + "=" + escape ( value );
 

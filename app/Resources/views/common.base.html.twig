@@ -123,7 +123,7 @@
       {#var host = '{{ app.request.cookies.get('callbackhost') }}';#}
 
 
-{#  function publishHeight() {
+  function publishHeight() {
 
       var actualHeight = $('#dynamic-content').height();
       var currentHeight = $(window).height();
@@ -154,7 +154,7 @@
               window.top.location = hostUrl;
           }
       }
-  }#}
+  }
   function get_cookie (cookie_name)
 
   {
@@ -166,7 +166,7 @@
           return null;
 
   }
-    
+
   function set_cookie ( name, value, exp_y, exp_m, exp_d, path, domain, secure )
   {
       var cookie_string = name + "=" + escape ( value );
