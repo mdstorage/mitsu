@@ -5,34 +5,34 @@
 
 {% block catalogPathLogo %}
     {% if app.request.get('callbackhost')%}
-        {{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost') }) }}
+        {{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOST') }) }}
+        {{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOST'), 'domain':  app.request.get('domain') }) }}
     {% endif %}
 
 
 {% endblock catalogPathLogo %}
 {% block catalogPath %}
     {% if app.request.get('callbackhost')%}
-        {{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost') }) }}
+        {{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOST') }) }}
+        {{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOST'), 'domain':  app.request.get('domain') }) }}
     {% endif %}
 {% endblock catalogPath %}
 
 {% block vinPath %}
     {% if app.request.get('callbackhost')%}
-        {{ path('vin_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost') }) }}
+        {{ path('vin_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('vin_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOST') }) }}
+        {{ path('vin_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOST'), 'domain':  app.request.get('domain') }) }}
     {% endif %}
 {% endblock vinPath %}
 
 {% block articulPath %}
     {% if app.request.get('callbackhost')%}
-        {{ path('articul_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost') }) }}
+        {{ path('articul_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('articul_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOST') }) }}
+        {{ path('articul_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOST'), 'domain':  app.request.get('domain') }) }}
     {% endif %}
 {% endblock articulPath %}
 
