@@ -82,7 +82,9 @@ abstract class CatalogController extends BaseController{
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
             $token = $request->get('token');
-            setcookie(Constants::COOKIEHOST, $request->get('callbackhost'));
+            $domain = $request->get('domain');
+
+            setcookie(Constants::COOKIEHOST, $request->get('callbackhost'), '', '', $domain);
 
             $parameters = array(
                 'regionCode' => $regionCode,
