@@ -62,7 +62,7 @@
 
 {% block image %}
 
-    <img src="{{ asset('bundles/catalogaudi/Images/Bilder/'~oContainer.getActiveSchema.getOption('cd')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+    <img src="{{ asset('bundles/catalogaudi/Images/Bilder/'~oContainer.getActiveSchema.getOption('cd')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" height="600" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 {% endblock image %}
 
 {% block ajaxUrl %}{{ path('vin_audi_articuls') }}{% endblock ajaxUrl %}

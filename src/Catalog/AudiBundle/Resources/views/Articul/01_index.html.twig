@@ -9,7 +9,7 @@
 
     {% else %}
 
-        {{ path('articul_audi_find', {'articul': app.request.get('articul')|trim, 'callbackhost': app.request.get('callbackhost')}) }}
+        {{ path('articul_audi_find', {'articul': app.request.get('articul')|trim, 'callbackhost': app.request.get('callbackhost') }) }}
 
     {% endif %}
 
