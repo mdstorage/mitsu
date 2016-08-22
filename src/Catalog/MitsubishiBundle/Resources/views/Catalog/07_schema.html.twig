@@ -5,12 +5,12 @@
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
     <a href="{{ path('catalog_mitsubishi_complectations', parameters) }}"> Комплектация ({{ oContainer.getActiveComplectation.getRuname }})</a>/
     <a href="{{ path('catalog_mitsubishi_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
-    <a href="{{ path('catalog_mitsubishi_schemas', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveSchema.getRuname }})</a> /
+    <a href="{{ path('articul_mitsubishi_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
     Запчасти
 {% endblock breadcrumbs %}
 
 
-{% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
+{% block refGroupsHead %}<h4>Связанные группа/подгруппа</h4>{% endblock refGroupsHead %}
 
 							{% block pncScript %}
                                 <script>
@@ -63,53 +63,15 @@
                             {% endblock pncScript %}
                             
 {% block image %}
- 
-    <img src="{{ asset('bundles/cataloggm/Images/B/'~oContainer.getActiveSchema.getOption('IMAGE_NAME')~'.png') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+
+
+    <img src="{{ asset('bundles/catalogmitsubishi/images/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="600" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 
 {% endblock image %}
 
+{% block refGroupName %}{{ refGroup.getRuname }}{% endblock refGroupName %}
 
 
 
 {% block subGroupPath %}{{ path('catalog_mitsubishi_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
 
-{% block summary %}
-    <div class="col-lg-4">
-        <div>
-            {% block region %}
-                <b>Регион:</b> {% block regionRuname %}{{ oContainer.getActiveRegion.getRuname }}{% endblock regionRuname %}
-            {% endblock region %}
-        </div>
-        <div>
-            {% block model %}
-                <b>{% block modelTitle %}Модель:{% endblock modelTitle %}</b> {% block modelRuname %}{{ oContainer.getActiveModel.getRuname }}{% endblock modelRuname %}
-            {% endblock model %}
-        </div>
-        <div>
-            {% block modification %}
-                <b>{% block modificationTitle %}Модификация:{% endblock modificationTitle %}</b> {% block modificationRuname %}{{ oContainer.getActiveModification.getRuname }}{% endblock modificationRuname %}
-            {% endblock modification %}
-        </div>
-        <div>
-            {% block complectation %}
-                <b>Комплектация:</b> {% block complectationRuname %}{{ oContainer.getActiveComplectation.getRuname }}{% endblock complectationRuname %}
-            {% endblock complectation %}
-        </div>
-    </div>
-    <div class="col-lg-4">
-        <div>
-            {% block group %}
-                <b>Группа запчастей:</b> {% block groupRuname %}{{ oContainer.getActiveGroup.getRuname }}{% endblock groupRuname %}
-            {% endblock group %}
-        </div>
-        <div>
-            {% block subGroup %}
-            {% endblock subGroup %}
-        </div>
-        <div>
-            {% block schemaSummary%}
-                <b>Подгруппа запчастей:</b> {% block schemaRuname %}{{ oContainer.getActiveSchema.getRuname }}{% endblock schemaRuname %}
-            {% endblock schemaSummary %}
-        </div>
-    </div>
-{% endblock summary%}

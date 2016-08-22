@@ -3,7 +3,7 @@
 {% block breadcrumbs %}
     <a href="{{ path('catalog_mitsubishi') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
-    /<a href="{{ path('catalog_mitsubishi_complectations', parameters) }}"> Комплектация ({{ oContainer.getActiveComplectation.getRuname }})</a>
+    <a href="{{ path('catalog_mitsubishi_complectations', parameters) }}"> Комплектация ({{ oContainer.getActiveComplectation.getRuname }})</a> /
     <a href="{{ path('catalog_mitsubishi_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getCode}})</a> /
     Подгруппа запчастей
 {% endblock breadcrumbs %}
@@ -17,8 +17,8 @@
         <div class="col-lg-12">
             {% block subgroups %}
                 <div class="subgroups">
-                    {% for group in oContainer.getGroups %}
-                        <div class = "col-lg-3">
+                    {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
+                        <div class = "col-xs-3 col-sm-3 col-md-3 col-lg-3">
 
                             <a href="{{ path('catalog_mitsubishi_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">
 
@@ -39,7 +39,4 @@
 
 {% endblock body %}
 
-{% block subgroupImage %}
-
-{% endblock subgroupImage %}
 

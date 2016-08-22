@@ -18,9 +18,9 @@ abstract class CatalogController extends BaseController{
      */
     public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
     {
+
         $data = $this->get('my_token_info')->getStatus($token);
 
-            
 
         if(empty($data) & !empty($token)){
             return $this->errorBilling('Сервис не оплачен');
@@ -83,6 +83,8 @@ abstract class CatalogController extends BaseController{
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
             $token = $request->get('token');
+
+            setcookie(Constants::COOKIEHOST, $request->get('callbackhost'));
 
             $parameters = array(
                 'regionCode' => $regionCode,
@@ -265,7 +267,7 @@ abstract class CatalogController extends BaseController{
         };
 
         $subgroupsKeys = array_keys($oContainer->getActiveGroup()->getSubgroups());
-      /*  if (1 == count($subgroupsKeys)) {
+        if (1 == count($subgroupsKeys)) {
             return $this->redirect(
                 $this->generateUrl(
                     str_replace('subgroups', 'schemas', $this->get('request')->get('_route')),
@@ -275,7 +277,7 @@ abstract class CatalogController extends BaseController{
                     )
                 ), 301
             );
-        };*/
+        };
 
         return $this->render($this->bundle() . ':05_subgroups.html.twig', array(
             'oContainer' => $oContainer,

@@ -18,12 +18,12 @@
         <a href="{{ path('catalog_mitsubishi_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
                     <div class="row">
-                        ({{ schema.getCode }}) {{ schema.getRuname }}
+                        Схема {{ loop.index }} из {{ loop.length }}
                     </div>
 
 
                     <div class="row">
-                        <img src="{{ asset('bundles/cataloggm/Images/G/'~schema.getOption('IMAGE_NAME')~'.gif') }}" width="200" alt="{{ schema.getRuname }}"/>
+                        <img src="{{ asset('bundles/catalogmitsubishi/images/'~oContainer.getActiveRegion.getCode~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
                     </div>
 
 

@@ -298,42 +298,37 @@ class MitsubishiCatalogModel extends CatalogModel{
                 Constants::OPTIONS => array('picture' => $item['illustration'])
             );
         }
-        var_dump($subgroups); die;
 
-           return $subgroups;
-       }
+        return $subgroups;
+    }
 
-       public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
-       {
-           $complectationCode = urldecode($complectationCode);
-
-
-           $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
-           $year = $modificationCode;
-
-
-
+    public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
+    {
 
            $sql = "
-        SELECT callout_legend.ART_NBR, CAPTION_DESC, callout_legend.IMAGE_NAME
-        FROM callout_legend, category, art, caption
-        WHERE callout_legend.CATALOG_CODE = :catalogCode and CAPTION_GROUP = :groupCode
-        and :year BETWEEN CAPTION_FIRST_YEAR AND CAPTION_LAST_YEAR
-        and category.CATEGORY_ID = art.CATEGORY_ID and art.ART_ID = callout_legend.ART_ID
-        AND caption.ART_NBR = callout_legend.ART_NBR
-        and :year BETWEEN caption.FIRST_YEAR AND caption.LAST_YEAR
-        AND caption.COUNTRY_LANG = 'EN'
-        AND caption.CATALOG_CODE = callout_legend.CATALOG_CODE
-        GROUP BY callout_legend.ART_NBR
+        SELECT
+          bg.Illustration as illustration
+        FROM
+          `bgroup` bg
+        WHERE bg.catalog = :regionCode
+        AND bg.Catalog_Num = :modelCode
+        AND bg.Model = :modificationCode
+        AND bg.MainGroup = :groupCode
+        AND bg.SubGroup = :subgroupCode
+        AND (bg.Classicfication = :complectationCode OR bg.Classicfication = '')
+        GROUP BY bg.Illustration
         ";
 
 
-           $query = $this->conn->prepare($sql);
-           $query->bindValue('catalogCode',  $catalogCode);
-           $query->bindValue('groupCode',  $groupCode);
-           $query->bindValue('year',  $year);
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('modelCode', $modelCode);
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('complectationCode',  $complectationCode);
+        $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('subgroupCode',  $subGroupCode);
 
-           $query->execute();
+        $query->execute();
 
            $aData = $query->fetchAll();
 
@@ -344,17 +339,18 @@ class MitsubishiCatalogModel extends CatalogModel{
            foreach($aData as $item)
            {
 
-               $schemas[$item['ART_NBR']] = array(
+               $schemas[$item['illustration']] = array(
 
-                   Constants::NAME => $item['CAPTION_DESC'],
-                   Constants::OPTIONS => array('IMAGE_NAME' => urlencode($item['IMAGE_NAME']))
+                   Constants::NAME => $item['illustration'],
+                   Constants::OPTIONS => array()
 
                );
 
            }
-           return $schemas;
 
-       }
+        return $schemas;
+
+    }
 
        public function getSchema($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
        {
@@ -376,85 +372,71 @@ class MitsubishiCatalogModel extends CatalogModel{
 
        public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
        {
-           $complectationCode = urldecode($complectationCode);
-           $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
-           $year = $modificationCode;
 
            $sql = "
-        SELECT (callout_legend.CALLOUT_NBR) CALLOUT_NBR, part_usage_lang.PART_NAME, callout_legend.IMAGE_NAME
-        FROM callout_legend
-        INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE NOT LIKE 'Z' AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
-        LEFT JOIN part_usage_lang ON (part_usage_lang.PART_USAGE_LANG_ID = part_usage.PART_USAGE_LANG_ID AND part_usage_lang.COUNTRY_LANG = 'EN')
-        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
-        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
-        AND callout_legend.ART_NBR = :schemaCode
+            SELECT
+              pg.PNC as pnc,
+              pg.PartNumber as partNumber,
+              pg.StartDate as startDate,
+              pg.EndDate as endDate,
+              pg.Qty as quantity,
+              d.desc_en
 
+              FROM
+              `part_catalog` pg
+              LEFT JOIN pnc ON (pnc.pnc = pg.PNC AND pnc.catalog = pg.catalog)
+              LEFT JOIN descriptions d ON (d.TS = pnc.desc_code AND d.catalog = pnc.catalog)
+              WHERE
+              pg.catalog = :regionCode
+              AND (pg.Model = :modificationCode)
+              AND pg.MainGroup = :groupCode
+              AND pg.SubGroup = :subgroupCode
+              AND (pg.Classification = :complectationCode OR pg.Classification = '')
+              ORDER BY pg.PNC, pg.StartDate
+            ";
 
+            $query = $this->conn->prepare($sql);
+            $query->bindValue('regionCode',  $regionCode);
+            $query->bindValue('modificationCode',  $modificationCode);
+            $query->bindValue('complectationCode',  $complectationCode);
+            $query->bindValue('groupCode',  $groupCode);
+            $query->bindValue('subgroupCode',  $subGroupCode);
 
-        UNION
-        SELECT (callout_legend.CALLOUT_NBR) CALLOUT_NBR, SUBSTRING_INDEX(part_v.part_desc, ',', 1) as PART_NAME, callout_legend.IMAGE_NAME
-        FROM callout_legend
-        INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE LIKE 'Z' AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
-        INNER JOIN part_v ON (part_v.PART_NBR = part_usage.PART_NBR AND part_v.COUNTRY_LANG = 'EN' and part_v.CATALOG_CODE = callout_legend.CATALOG_CODE and part_v.COUNTRY_CODE = part_usage.COUNTRY_CODE
-        and (callout_legend.ORIG_MINOR_GROUP IS NULL OR part_v.MINOR_GROUP = callout_legend.ORIG_MINOR_GROUP))
-        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
-        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
-        AND callout_legend.ART_NBR = :schemaCode
-
-        UNION
-        SELECT (callout_legend.CALLOUT_NBR) CALLOUT_NBR, callout_model_lang.CALLOUT_NOUN as PART_NAME, callout_legend.IMAGE_NAME
-        FROM callout_legend
-        INNER JOIN callout_model ON (callout_model.CALLOUT_ID = callout_legend.CALLOUT_ID)
-        INNER JOIN callout_model_lang ON (callout_model_lang.CALLOUT_MODEL_LANG_ID = callout_model.CALLOUT_MODEL_LANG_ID
-         AND callout_model_lang.COUNTRY_LANG = 'EN')
-        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
-        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
-        AND callout_legend.ART_NBR = :schemaCode
-
-
-        ORDER BY (1)
-        ";
-
-
-
-
-           $query = $this->conn->prepare($sql);
-           $query->bindValue('catalogCode',  $catalogCode);
-           $query->bindValue('groupCode',  $groupCode);
-           $query->bindValue('regionCode',  $regionCode);
-           $query->bindValue('schemaCode',  $schemaCode);
-           $query->bindValue('year', $year);
-
-           $query->execute();
+            $query->execute();
 
 
            $aPncs = $query->fetchAll();
-
-
-
 
 
            foreach ($aPncs as &$aPnc)
            {
 
                $sqlSchemaLabels = "
-           SELECT x, y
-           FROM coord
-            WHERE coord.IMAGE_NAME_KEY = :IMAGE_NAME
-            AND coord.LABEL_NAME = :pnc
+              SELECT
+              p.startX,
+              p.startY,
+              p.endX,
+              p.endY
+
+              FROM `pictures` p
+              WHERE p.catalog = :regionCode
+              AND p.picture_file = :schemaCode
+              AND p.desc_code1 = :pnc
+              AND p.type = '1'
+              ORDER BY p.desc_code1
            ";
 
                $query = $this->conn->prepare($sqlSchemaLabels);
-               $query->bindValue('IMAGE_NAME',  $aPnc['IMAGE_NAME']);
-               $query->bindValue('pnc',  str_pad($aPnc['CALLOUT_NBR'], 5, "0", STR_PAD_LEFT));
+               $query->bindValue('regionCode',  $regionCode);
+               $query->bindValue('schemaCode',  $schemaCode);
+               $query->bindValue('pnc',  $aPnc['pnc']);
+
 
                $query->execute();
 
                $aPnc['clangjap'] = $query->fetchAll();
 
-
                unset ($aPnc);
-
            }
 
 
@@ -471,11 +453,12 @@ class MitsubishiCatalogModel extends CatalogModel{
                    foreach ($value['clangjap'] as $item1)
                    {
                      /*  if ($value['PART_NAME'] != NULL)*/
-                       $pncs[($value['CALLOUT_NBR'])][Constants::OPTIONS][Constants::COORDS][($item1['x'])] = array(
-                           Constants::X2 => floor($item1['x'])+30,
-                           Constants::Y2 => $item1['y']+30,
-                           Constants::X1 => floor($item1['x'])-30,
-                           Constants::Y1 => ($item1['y'])-30);
+                       $pncs[($value['pnc'])][Constants::OPTIONS][Constants::COORDS][($item1['startY'])] = array(
+                           Constants::X2 => floor($item1['startX'] + $item1['endX']),
+                           Constants::Y2 => $item1['startY'] + $item1['endY'],
+                           Constants::X1 => floor($item1['startX']),
+                           Constants::Y1 => $item1['startY']
+                       );
 
                    }
 
@@ -487,9 +470,7 @@ class MitsubishiCatalogModel extends CatalogModel{
 
            foreach ($aPncs as $item) {
 
-             /*  if ($item['PART_NAME'] != NULL)*/
-
-               $pncs[$item['CALLOUT_NBR']][Constants::NAME] = strtoupper($item['PART_NAME']);
+               $pncs[$item['pnc']][Constants::NAME] = strtoupper($item['desc_en']);
 
            }
 
@@ -527,115 +508,147 @@ class MitsubishiCatalogModel extends CatalogModel{
                    Constants::Y2 => $item['ye'],
                );
            }*/
-$articuls = array();
+        $articuls = array();
+
         return $articuls;
     }
 
     public function getReferGroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
-     /*   $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-
 
         $sqlSchemaLabels = "
-        SELECT name, x1, y1, x2, y2
-        FROM cats_coord
-        WHERE catalog_code =:catCode
-          AND compl_name =:schemaCode
-          AND quantity = 5
-          ";
+              SELECT
+              p.desc_code1
+
+              FROM `pictures` p
+              WHERE p.catalog = :regionCode
+              AND p.picture_file = :schemaCode
+              AND p.type = '2'
+              ORDER BY p.desc_code1
+           ";
 
         $query = $this->conn->prepare($sqlSchemaLabels);
-        $query->bindValue('catCode', $catCode);
-        $query->bindValue('schemaCode', $schemaCode);
+        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('schemaCode',  $schemaCode);
+
         $query->execute();
 
-        $aData = $query->fetchAll();
+        $aPncs = $query->fetchAll();
 
         $groups = array();
-        foreach ($aData as $item)
+
+        foreach ($aPncs as &$aPnc)
         {
-            $groups[$item['name']][Constants::NAME] = $item['name'];
-            $groups[$item['name']][Constants::OPTIONS][Constants::COORDS][] = array(
-                Constants::X1 => ($item['x1']),
-                Constants::Y1 => $item['y1'],
-                Constants::X2 => $item['x2'],
-                Constants::Y2 => $item['y2']);
-        }*/
 
-        $groups = array();
+            $sqlSchemaLabels = "
+              SELECT
+              p.startX,
+              p.startY,
+              p.endX,
+              p.endY
+
+              FROM `pictures` p
+              WHERE p.catalog = :regionCode
+              AND p.picture_file = :schemaCode
+              AND p.desc_code1 = :pnc
+              AND p.type = '2'
+              ORDER BY p.desc_code1
+           ";
+
+            $query = $this->conn->prepare($sqlSchemaLabels);
+            $query->bindValue('regionCode',  $regionCode);
+            $query->bindValue('schemaCode',  $schemaCode);
+            $query->bindValue('pnc',  $aPnc['desc_code1']);
+
+
+            $query->execute();
+
+            $aPnc['clangjap'] = $query->fetchAll();
+
+            unset ($aPnc);
+        }
+
+        foreach ($aPncs as $index=>$value) {
+
+            if (!$value['clangjap'])
+            {
+                unset ($aPncs[$index]);
+
+            }
+
+            foreach ($value['clangjap'] as $item1)
+            {
+                $groups[$value['desc_code1']][Constants::OPTIONS][Constants::COORDS][$item1['startY']] = array(
+                    Constants::X2 => floor($item1['startX'] + $item1['endX']),
+                    Constants::Y2 => $item1['startY'] + $item1['endY'],
+                    Constants::X1 => floor($item1['startX']),
+                    Constants::Y1 => $item1['startY']
+                );
+            }
+        }
+
+        foreach ($aPncs as $item)
+        {
+            $groups[$item['desc_code1']][Constants::NAME] = explode(' ', $item['desc_code1'])[0].' / '.explode(' ', $item['desc_code1'])[1];
+        }
+
         return $groups;
     }
 
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $pncCode, $options)
     {
-        $complectationCode = urldecode($complectationCode);
-        $catalogCode = substr($complectationCode, 0, strpos($complectationCode, '_'));
-        $year = $modificationCode;
-
-
         $sql = "
-        SELECT part_usage.PART_NBR, part_usage_lang.PART_DESC, part_usage.FIRST_YEAR, part_usage.LAST_YEAR, part_usage.QUANTITY
-        FROM callout_legend
-        INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE NOT LIKE 'Z' AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
-        LEFT JOIN part_usage_lang ON (part_usage_lang.PART_USAGE_LANG_ID = part_usage.PART_USAGE_LANG_ID AND part_usage_lang.COUNTRY_LANG = 'EN')
-        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
-        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
-        AND callout_legend.ART_NBR = :schemaCode AND callout_legend.CALLOUT_NBR = :pnc
+            SELECT
+              pg.PNC as pnc,
+              pg.PartNumber as partNumber,
+              pg.StartDate as startDate,
+              pg.EndDate as endDate,
+              pg.Qty as quantity,
+              d.desc_en as desc_en,
+              dadd.desc_en as add_desc_en
 
-        UNION
-        SELECT part_v.PART_NBR, part_v.PART_DESC, part_v.FIRST_YEAR, part_v.LAST_YEAR, part_v.QUANTITY
-        FROM callout_legend
-        INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND part_usage.PART_TYPE LIKE 'Z' AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
-        INNER JOIN part_v ON (part_v.PART_NBR = part_usage.PART_NBR AND part_v.COUNTRY_LANG = 'EN' and part_v.CATALOG_CODE = callout_legend.CATALOG_CODE and part_v.COUNTRY_CODE = part_usage.COUNTRY_CODE
-        and (callout_legend.ORIG_MINOR_GROUP IS NULL OR part_v.MINOR_GROUP = callout_legend.ORIG_MINOR_GROUP))
-        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
-        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
-        AND callout_legend.ART_NBR = :schemaCode AND callout_legend.CALLOUT_NBR = :pnc
-
-        UNION
-        SELECT part_usage.PART_NBR, callout_model_lang.CALLOUT_DESC PART_DESC, callout_legend.FIRST_YEAR, callout_legend.LAST_YEAR, callout_legend.QUANTITY
-        FROM callout_legend
-        INNER JOIN part_usage ON (callout_legend.PART_USAGE_ID = part_usage.PART_USAGE_ID AND (part_usage.COUNTRY_CODE = :regionCode OR part_usage.COUNTRY_CODE = '*'))
-        INNER JOIN callout_model ON (callout_model.CALLOUT_ID = callout_legend.CALLOUT_ID)
-        INNER JOIN callout_model_lang ON (callout_model_lang.CALLOUT_MODEL_LANG_ID = callout_model.CALLOUT_MODEL_LANG_ID
-         AND callout_model_lang.COUNTRY_LANG = 'EN')
-        WHERE callout_legend.CATALOG_CODE = :catalogCode and callout_legend.CAPTION_GROUP = :groupCode
-        and :year BETWEEN callout_legend.FIRST_YEAR AND callout_legend.LAST_YEAR
-        AND callout_legend.ART_NBR = :schemaCode AND callout_legend.CALLOUT_NBR = :pnc
-
-        ORDER BY (1)
-        ";
-
-
-
+              FROM
+              `part_catalog` pg
+              INNER JOIN pnc ON (pnc.pnc = pg.PNC AND pnc.catalog = pg.catalog)
+              INNER JOIN descriptions d ON (d.TS = pnc.desc_code AND d.catalog = pnc.catalog)
+              LEFT JOIN pbook ON (pbook.Partnumber = pg.PartNumber AND pbook.Catalog = pg.catalog)
+              LEFT JOIN descriptions dadd ON (dadd.TS = pbook.PartSpec AND dadd.catalog = pnc.catalog)
+              WHERE
+              pg.catalog = :regionCode
+              AND (pg.Model = :modificationCode)
+              AND pg.MainGroup = :groupCode
+              AND pg.SubGroup = :subgroupCode
+              AND (pg.Classification = :complectationCode OR pg.Classification = '')
+              AND pg.PNC = :pnc
+              GROUP BY pg.PartNumber, pg.StartDate, pg.EndDate
+              ORDER BY pg.PNC, pg.StartDate
+            ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('catalogCode',  $catalogCode);
-        $query->bindValue('groupCode',  $groupCode);
         $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('schemaCode',  $schemaCode);
-        $query->bindValue('year',  $year);
-        $query->bindValue('pnc', $pncCode);
+        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('complectationCode',  $complectationCode);
+        $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('subgroupCode',  $subGroupCode);
+        $query->bindValue('pnc',  $pncCode);
 
         $query->execute();
 
 
-         $aArticuls = $query->fetchAll();
+        $aArticuls = $query->fetchAll();
 
 
-
-$articuls = array();
+        $articuls = array();
 
         foreach ($aArticuls as $item) {
-        	 
-            
-            
-				$articuls[$item['PART_NBR']] = array(
-                Constants::NAME => $item['PART_DESC'],
+
+				$articuls[$item['partNumber']] = array(
+                Constants::NAME => $item['partNumber'],
                 Constants::OPTIONS => array(
-                    Constants::QUANTITY => $item['QUANTITY'],
-                    Constants::START_DATE => $item['FIRST_YEAR'],
-                    Constants::END_DATE => $item['LAST_YEAR'],
+                    Constants::QUANTITY => $item['quantity'],
+                    Constants::START_DATE => $item['startDate'],
+                    Constants::END_DATE => $item['endDate'],
+                    'add_desc_en' => $item['add_desc_en']
 
                 )
             );
@@ -644,29 +657,6 @@ $articuls = array();
 
 
         return $articuls;
-    }
-
-    public function getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode)
-    {
-
-
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-        $sqlGroup = "
-        SELECT part
-        FROM cats_map
-        WHERE sector_name = :subGroupCode
-          AND catalog_name = :catCode
-        ";
-
-        $query = $this->conn->prepare($sqlGroup);
-        $query->bindValue('subGroupCode', $subGroupCode);
-        $query->bindValue('catCode', $catCode);
-        $query->execute();
-
-        $groupCode = $query->fetchColumn(0);
-
-        return $groupCode;
-
     }
 
     

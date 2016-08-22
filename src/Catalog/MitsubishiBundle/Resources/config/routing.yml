@@ -37,8 +37,8 @@ catalog_mitsubishi_articuls:
   requirements: {_method: POST}
 
 catalog_mitsubishi_group:
-  path:         /mitsubishi/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
-  defaults:     {_controller: CatalogMitsubishiBundle:Catalog:getGroupBySubgroup}
+  path:         /mitsubishi/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogMitsubishiBundle:Catalog:getGroupBySubgroup, token: null}
 
 #------------------------------------------------------------------------------
 
