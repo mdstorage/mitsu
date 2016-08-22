@@ -3,13 +3,10 @@
 {% endblock brand %}
 
 
-
-
 {% block catalogPathLogo %}
     {% if app.request.get('callbackhost')%}
         {{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost') }) }}
-    {% endif %}
-    {% if app.request.cookies.get('COOKIEHOST')%}
+    {% else %}
         {{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOST') }) }}
     {% endif %}
 
@@ -18,8 +15,7 @@
 {% block catalogPath %}
     {% if app.request.get('callbackhost')%}
         {{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost') }) }}
-    {% endif %}
-    {% if app.request.cookies.get('COOKIEHOST')%}
+    {% else %}
         {{ path('catalog_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOST') }) }}
     {% endif %}
 {% endblock catalogPath %}
@@ -27,18 +23,18 @@
 {% block vinPath %}
     {% if app.request.get('callbackhost')%}
         {{ path('vin_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost') }) }}
-    {% endif %}
-    {% if app.request.cookies.get('COOKIEHOST')%}
+    {% else %}
         {{ path('vin_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOST') }) }}
-    {% endif %}{% endblock vinPath %}
+    {% endif %}
+{% endblock vinPath %}
 
 {% block articulPath %}
     {% if app.request.get('callbackhost')%}
         {{ path('articul_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost') }) }}
-    {% endif %}
-    {% if app.request.cookies.get('COOKIEHOST')%}
+    {% else %}
         {{ path('articul_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOST') }) }}
-    {% endif %}{% endblock articulPath %}
+    {% endif %}
+{% endblock articulPath %}
 
 {% block userStylesheets %}
         {% if app.request.get('callbackhost') or app.request.cookies.get('COOKIEHOST')%}
