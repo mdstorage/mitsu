@@ -8,11 +8,12 @@
         <div class="alert alert-dismissable" id="articul-group">
             <div class="row">
                 <div class="col-xs-6">
-                    <h3>Поиск запчасти по артикулу</h3>
+                    {% block head %}<h3>Поиск запчасти по артикулу</h3>{% endblock head %}
                     <form class="form-horizontal" action="{% block formAction %}{% endblock formAction %}">
                         <div class="form-group">
                             <div class="col-xs-10">
                                 <input type="text" class="form-control" id="articul" name="articul" placeholder="Введите артикул запчасти"/>
+                                <input type="text" class="form-control" id="callbackhost" name="callbackhost" value ="{{ app.request.get('callbackhost') }}" style="display:none;"/>
                                 <div class="label label-danger">{{ error_message }}</div>
                             </div>
                             <input type="submit" class="btn btn-info" value="Искать" id="articul-button"/>
@@ -23,29 +24,6 @@
             </div>
             {% block articulScript %}
                 <script>
-                       set_cookie("COOKIEHOST", "{{ app.request.get('callbackhost') }}");
-
-                    function set_cookie( name, value, exp_y, exp_m, exp_d, path, domain, secure )
-                    {
-                        var cookie_string = name + "=" + escape ( value );
-
-                        if ( exp_y )
-                        {
-                            var expires = new Date ( exp_y, exp_m, exp_d );
-                            cookie_string += "; expires=" + expires.toGMTString();
-                        }
-
-                        if ( path )
-                            cookie_string += "; path=" + escape ( path );
-
-                        if ( domain )
-                            cookie_string += "; domain=" + escape ( domain );
-
-                        if ( secure )
-                            cookie_string += "; secure";
-
-                        document.cookie = cookie_string;
-                    }
                     $("#articul-button").on('click', function(){
                         if($("#articul").val(). replace(/\s+/g, '').length < 8){
                             alert("Артикул должен содержать не менее 8 знаков!");
