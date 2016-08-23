@@ -18,15 +18,6 @@ abstract class ArticulController extends CatalogController{
     public function findByArticulAction(Request $request, $token = null, $regionCode = null)
     {
 
-        if (!$callbackhost = $request->cookies->get(Constants::COOKIEHOST))
-        {
-            if ($callbackhost = trim($request->get('callbackhost'))){
-                setcookie(Constants::COOKIEHOST, $callbackhost);
-            }
-
-        }
-
-
         if (!$articul = $request->cookies->get(Constants::ARTICUL)) {
             if ($articul = trim($request->get('articul'))) {
                 setcookie(Constants::ARTICUL, $articul);
@@ -106,6 +97,17 @@ abstract class ArticulController extends CatalogController{
             $articul = $request->get('articul');
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
+
+
+            $callbackhost = trim($request->get('callbackhost'));
+
+            if (!$call = $request->cookies->get(Constants::COOKIEHOST.'Audi'))
+            {
+                if ($callbackhost){
+                    setcookie(Constants::COOKIEHOST.'Audi', $callbackhost);
+                }
+
+            }
 
             $articulModifications = $this->model()->getArticulModifications($articul, $regionCode, $modelCode);
 
