@@ -80,7 +80,7 @@ class VinController extends BaseController{
              */
 
             setcookie(Constants::VIN, $vin);
-            setcookie(Constants::COOKIEHOST, $callbackhost);
+            setcookie(Constants::COOKIEHOST.'Audi', $callbackhost);
 
 
             return $this->render($this->bundle().':02_region.html.twig', array(
