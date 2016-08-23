@@ -11,11 +11,21 @@ abstract class ArticulController extends CatalogController{
     public function indexAction($error_message = null, $token = null)
     {
         setcookie(Constants::ARTICUL, '');
+        setcookie(Constants::COOKIEHOST, '');
         return $this->render($this->bundle().':01_index.html.twig', array('error_message' => $error_message));
     }
 
     public function findByArticulAction(Request $request, $token = null, $regionCode = null)
     {
+
+        if (!$callbackhost = $request->cookies->get(Constants::COOKIEHOST))
+        {
+            if ($callbackhost = trim($request->get('callbackhost'))){
+                setcookie(Constants::COOKIEHOST, $callbackhost);
+            }
+
+        }
+
 
         if (!$articul = $request->cookies->get(Constants::ARTICUL)) {
             if ($articul = trim($request->get('articul'))) {

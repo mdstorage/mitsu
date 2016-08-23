@@ -32,7 +32,7 @@
     {% if app.request.get('callbackhost')%}
         {{ path('articul_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('articul_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOST'), 'domain':  app.request.get('domain') }) }}
+        {{ path('articul_audi', {'token': app.request.get('token'), 'callbackhost':  '70', 'domain':  app.request.get('domain') }) }}
     {% endif %}
 {% endblock articulPath %}
 
