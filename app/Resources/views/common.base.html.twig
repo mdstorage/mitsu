@@ -117,10 +117,10 @@
       if (!host)
       {
 
-          host = get_cookie(concat('COOKIEHOST', block('brand') ));
+          host = get_cookie(concat("COOKIEHOST", "{{ block('brand') }}" ));
           {#host = get_cookie('COOKIEHOSTAudi');#}
       }
-    alert(host);alert(concat('COOKIEHOST', block('brand')));
+    alert(concat("COOKIEHOST", "{{ block('brand') }}"));
 
 
       {#var host = '{{ app.request.cookies.get('callbackhost') }}';#}
