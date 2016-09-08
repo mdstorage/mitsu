@@ -106,9 +106,7 @@
     });
 </script>
 
-<script type="text/javascript">
-
-
+<script>
 
     {# var host = get_cookie('cookiehost');#}
 
@@ -116,10 +114,10 @@
 
       if (!host)
       {
-
-          host = get_cookie("COOKIEHOST{{ block('brand') }}" );
-          {#host = get_cookie('COOKIEHOSTAudi');#}
+          {#host = get_cookie("COOKIEHOST{{ block('brand') }}");#}
+          host = get_cookie('COOKIEHOSTAudi');
       }
+
     alert("COOKIEHOST{{ block('brand') }}");
 
 
