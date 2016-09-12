@@ -72,7 +72,11 @@ where fgstnr_von <= :vin and fgstnr_bis >= :vin and fgstnr_anf  = :subVin
                 'korobka' => $aData['Getriebe'],
             );
         }
-        else {print_r('Ничего не найдено'); die;}
+        else
+        {
+            print_r('Ничего не найдено'); die;
+        }
+
 
 
 

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>{% block title %}Каталог {% block brand %}{% endblock brand %}{% endblock title%}</title>
+    <title>{% block title %}Каталог {{ block('brand') }}{% endblock title%}</title>
     {% block stylesheets %}
         <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap.min.css') }}" media="all">
         <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap-theme.min.css') }}" media="all">
@@ -32,7 +32,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{% block catalogPathLogo %}{% endblock catalogPathLogo %}">Каталог {{ block('brand') }}</a>
+                <a class="navbar-brand" href="{% block catalogPathLogo %}{% endblock catalogPathLogo %}">Каталог <span id="span1">{{ block('brand') }}</span></a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -110,22 +110,14 @@
 
 <script>
 
-    {# var host = get_cookie('cookiehost');#}
-
       var host = '{{ app.request.get('callbackhost') }}';
 
       if (!host)
       {
-          {#host = get_cookie("COOKIEHOST{{ block('brand') }}");#}
-          host = get_cookie('COOKIEHOSTAudi');
+          host = get_cookie('COOKIEHOST'.concat($("#span1").text().trim()));
       }
 
-    alert(get_cookie('COOKIEHOST'.concat('{{ block('brandjs') }}')));
-
-
-      {#var host = '{{ app.request.cookies.get('callbackhost') }}';#}
-
-
+      
  function publishHeight() {
 
   var actualHeight = $('#dynamic-content').height();
