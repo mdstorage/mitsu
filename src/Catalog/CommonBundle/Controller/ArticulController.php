@@ -98,13 +98,16 @@ abstract class ArticulController extends CatalogController{
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
 
+            $brandSlash = $request->server->get('PATH_INFO');
+
+            $brand = explode('/', $brandSlash)[1];
 
             $callbackhost = trim($request->get('callbackhost'));
 
-            if (!$call = $request->cookies->get(Constants::COOKIEHOST.'Audi'))
+            if (!$call = $request->cookies->get(Constants::COOKIEHOST.$brand))
             {
                 if ($callbackhost){
-                    setcookie(Constants::COOKIEHOST.'Audi', $callbackhost);
+                    setcookie(Constants::COOKIEHOST.$brand, $callbackhost);
                 }
 
             }

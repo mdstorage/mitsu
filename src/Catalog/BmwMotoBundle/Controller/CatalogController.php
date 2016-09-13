@@ -1,30 +1,61 @@
 <?php
-namespace Catalog\CommonBundle\Controller;
+namespace Catalog\BmwMotoBundle\Controller;
+
 
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Components\Factory;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Catalog\CommonBundle\Components\Interfaces\CommonInterface;
+use Catalog\CommonBundle\Controller\CatalogController as BaseController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class CatalogController extends BaseController{
+class CatalogController extends BaseController{
 
-    /**
-     * Получение данных для страницы регионов и моделей
-     *
-     * @param Request $request Объект запроса (предоставляется Symfony2)
-     * @param string $regionCode Код региона (нужен для поиска модели)
-     *
-     */
-    public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
+    public function bundle()
+    {
+        return 'CatalogBmwMotoBundle:Catalog';
+    }
+
+    public function model()
+    {
+        return $this->get('bmwmoto.catalog.model');
+    }
+
+    public function bundleConstants()
+    {
+        return 'Catalog\BmwMotoBundle\Components\BmwMotoConstants';
+    }
+    
+
+    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode)
     {
 
-        $data = $this->get('my_token_info')->getStatus($token);
+        $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode);
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
+        return $this->redirect(
+            $this->generateUrl(
+                str_replace('group', 'schemas', $this->get('request')->get('_route')),
+                array_merge($parameters, array(
+                        'groupCode' => $groupCode
+                    )
+                )
+            ), 301
+        );
+
+
+        
+    }
+
+
+    public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
+    {
+        $data = $this->get('my_token_info')->getStatus($token);
 
         if(empty($data) & !empty($token)){
             return $this->errorBilling('Сервис не оплачен');
         }
+
         /**
          * Выборка регионов из базы данных для конкретного артикула
          */
@@ -54,7 +85,7 @@ abstract class CatalogController extends BaseController{
                  */
                 $oActiveRegion = reset($regionsList);
             }
-            
+
             /**
              * Выборка моделей из базы для данного артикула и региона
              */
@@ -73,9 +104,11 @@ abstract class CatalogController extends BaseController{
         }
 
         return $this->render($this->bundle() . ':01_regions_models.html.twig', array(
-            'oContainer' => $oContainer
+            'oContainer' => $oContainer,
+
         ));
     }
+
 
     public function modificationsAction(Request $request)
     {
@@ -83,35 +116,11 @@ abstract class CatalogController extends BaseController{
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
             $token = $request->get('token');
-
-
-            $brandSlash = $request->server->get('PATH_INFO');
-
-            $brand = explode('/', $brandSlash)[1];
-
-
-            $callbackhost = trim($request->get('callbackhost'));
-
-            if (!$call = $request->cookies->get(Constants::COOKIEHOST.$brand))
-            {
-                if ($callbackhost){
-                    setcookie(Constants::COOKIEHOST.$brand, $callbackhost);
-                }
-
-            }
-
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modelCode' => $modelCode,
                 'token' => $token
             );
-
-            $articul = $request->get('articul');
-
-            if (!empty($articul))
-            {
-                $parameters = array_merge($parameters, array('articul' => $request->get('articul')));
-            }
 
             $modifications = $this->model()->getModifications($regionCode, $modelCode);
 
@@ -133,7 +142,7 @@ abstract class CatalogController extends BaseController{
         }
     }
 
-    public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $articul = null, $token = null)
+    public function complectations1Action(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);
 
@@ -148,7 +157,9 @@ abstract class CatalogController extends BaseController{
         $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
         $modifications = $this->model()->getModifications($regionCode, $modelCode);
         $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
-        $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
+        $complectations = $this->model()->getRole($regionCode, $modelCode, $modificationCode);
+        $result = $this->model()->getComplectationsYear('', $modificationCode, '');
+
 
         if(empty($complectations))
             return $this->error($request, 'Комплектации не найдены.');
@@ -160,27 +171,151 @@ abstract class CatalogController extends BaseController{
                 ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
         unset($complectations);
         $this->filter($oContainer);
-        
-        $complectationsKeys = array_keys($oContainer->getActiveModification()->getComplectations());
-        if (1 == count($complectationsKeys)) {
-            return $this->redirect(
-                $this->generateUrl(
-                    str_replace('complectations', 'groups', $this->get('request')->get('_route')),
-                    array_merge($parameters, array(
-                            'complectationCode' => $complectationsKeys[0]
-                        )
-                    )
-                ), 301
-            );
-        };
 
-        return $this->render($this->bundle() . ':03_complectations.html.twig', array(
+
+        return $this->render($this->bundle() . ':03_complectation_year.html.twig', array(
+            'result' => $result,
             'oContainer' => $oContainer,
             'parameters' => $parameters
         ));
     }
 
-    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $articul = null, $token = null)
+    public function complectation_korobkaAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+
+            $role = $request->get('role');
+            $modificationCode = $request->get('modificationCode');
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+            $token = $request->get('token');
+
+            $parameters = array(
+                'regionCode' => $regionCode,
+                'modelCode' => $modelCode,
+                'modificationCode' => $modificationCode,
+                'role' => $role,
+                'token' => $token
+            );
+
+            $regions = $this->model()->getRegions();
+            $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
+            $models = $this->model()->getModels($regionCode);
+            $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
+            $modifications = $this->model()->getModifications($regionCode, $modelCode);
+            $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
+            $complectations = $this->model()->getComplectationsKorobka($role, $modificationCode);
+
+            if(empty($complectations))
+                return $this->error($request, 'Комплектации не найдены.');
+
+            $oContainer = Factory::createContainer()
+                ->setActiveRegion($regionsCollection[$regionCode])
+                ->setActiveModel($modelsCollection[$modelCode])
+                ->setActiveModification($modificationsCollection[$modificationCode]
+                    ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
+            unset($complectations);
+            $this->filter($oContainer);
+
+
+
+
+            return $this->render($this->bundle().':03_complectation_korobka.html.twig', array(
+                'oContainer' => $oContainer,
+                'parameters' => $parameters
+            ));
+        }
+    }
+
+    public function complectation_yearAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+
+            $role = $request->get('role');
+            $modificationCode = $request->get('modificationCode');
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+            $korobka= $request->get('korobka');
+            $token = $request->get('token');
+
+            $parameters = array(
+                'regionCode' => $regionCode,
+                'modelCode' => $modelCode,
+                'modificationCode' => $modificationCode,
+                'role' => $role,
+                'korobka' => $korobka,
+                'token' => $token
+            );
+
+
+
+            $result = $this->model()->getComplectationsYear($role, $modificationCode, $korobka);
+
+
+            return $this->render($this->bundle().':03_complectation_year.html.twig', array(
+                'result' => $result,
+                'parameters' => $parameters
+            ));
+        }
+    }
+
+    public function complectation_monthAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+
+            $role = $request->get('role');
+            $year = $request->get('year');
+            $modificationCode = $request->get('modificationCode');
+            $regionCode = $request->get('regionCode');
+            $modelCode = $request->get('modelCode');
+            $korobka = $request->get('korobka');
+            $token = $request->get('token');
+
+            $parameters = array(
+                'regionCode' => $regionCode,
+                'modelCode' => $modelCode,
+                'modificationCode' => $modificationCode,
+                'korobka' => $korobka,
+                'token' => $token
+            );
+
+
+
+
+            $regions = $this->model()->getRegions();
+            $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
+            $models = $this->model()->getModels($regionCode);
+            $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
+            $modifications = $this->model()->getModifications($regionCode, $modelCode);
+            $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
+            $complectations = $this->model()->getComplectationsMonth($role, $modificationCode, $year, $korobka);
+
+            if(empty($complectations))
+                return $this->error($request, 'Комплектации не найдены.');
+
+            $oContainer = Factory::createContainer()
+                ->setActiveRegion($regionsCollection[$regionCode])
+                ->setActiveModel($modelsCollection[$modelCode])
+                ->setActiveModification($modificationsCollection[$modificationCode]
+                    ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
+            unset($complectations);
+            $this->filter($oContainer);
+
+
+
+
+            $result = $this->model()->getComplectationsMonth($role, $modificationCode, $year, $korobka);
+
+
+            return $this->render($this->bundle().':03_complectation_month.html.twig', array(
+                'result' => $result,
+                'oContainer' => $oContainer,
+                'parameters' => $parameters
+            ));
+        }
+    }
+
+  /*  public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $articul = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);
 
@@ -299,7 +434,7 @@ abstract class CatalogController extends BaseController{
         ));
     }
 
-    public function schemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $articul = null, $token = null)
+    public function schemasAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);
 
@@ -361,7 +496,7 @@ abstract class CatalogController extends BaseController{
         ));
     }
 
-    public function schemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null, $articul = null, $token = null)
+    public function schemaAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $subGroupCode = null, $schemaCode = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);
 
@@ -411,22 +546,6 @@ abstract class CatalogController extends BaseController{
 
         $this->filter($oContainer);
 
-        if (!empty($token))
-        {
-            $aDataToken = array();
-            $aDataToken = $this->get('my_token_info')->getDataToken($token);
-
-            $redirectAdress = $aDataToken['url'];
-        }
-        else
-        {
-            $redirectAdress = Constants::FIND_PATH;
-        }
-
-        $parameters = array_merge($parameters, array(
-            'redirectAdress' => $redirectAdress
-        ));
-
         return $this->render($this->bundle() . ':07_schema.html.twig', array(
             'oContainer' => $oContainer,
             'parameters' => $parameters
@@ -443,9 +562,9 @@ abstract class CatalogController extends BaseController{
             $groupCode = $request->get('groupCode');
             $subGroupCode = $request->get('subGroupCode');
             $pncCode = $request->get('pncCode');
-            $articul = $request->get('articul');
             $options = $request->get('options');
             $token = $request->get('token');
+
 
 
             if (!empty($token))
@@ -468,7 +587,6 @@ abstract class CatalogController extends BaseController{
                 'options' => json_decode($options, true),
                 'subGroupCode' => $subGroupCode,
                 'pncCode' => $pncCode,
-                'articul' => $articul,
                 'redirectAdress' => $redirectAdress
             );
 
@@ -487,4 +605,6 @@ abstract class CatalogController extends BaseController{
             ));
         }
     }
+  */
+
 } 

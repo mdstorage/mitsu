@@ -1,0 +1,162 @@
+catalog_bmwmoto_token:
+  path:         /bmwmoto/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogBmwMotoBundle:Catalog:regionsModels, token: null, regionCode: null}
+
+catalog_bmwmoto:
+  path:         /bmwmoto/{regionCode}
+  defaults:     {_controller: CatalogBmwMotoBundle:Catalog:regionsModels, regionCode: null}
+
+catalog_bmwmoto_modifications:
+  path:         /bmwmoto/catalog/1
+  defaults:     {_controller: CatalogBmwMotoBundle:Catalog:modifications}
+  requirements: {_method: POST}
+
+catalog_bmwmoto_complectations:
+  path:         /bmwmoto/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Catalog:complectations1, token: null}
+
+catalog_bmwmoto_complectation_korobka:
+  path:         /bmwmoto/catalog/12
+  defaults:     {_controller: CatalogBmwMotoBundle:Catalog:complectation_korobka}
+  requirements: {_method: POST}
+
+catalog_bmwmoto_complectation_year:
+  path:         /bmwmoto/catalog/10
+  defaults:     {_controller: CatalogBmwMotoBundle:Catalog:complectation_year}
+  requirements: {_method: POST}
+
+catalog_bmwmoto_complectation_month:
+  path:         /bmwmoto/catalog/11
+  defaults:     {_controller: CatalogBmwMotoBundle:Catalog:complectation_month}
+  requirements: {_method: POST}
+
+catalog_bmwmoto_groups:
+  path:         /bmwmoto/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Catalog:groups, token: null}
+
+catalog_bmwmoto_subgroups:
+  path:         /bmwmoto/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Catalog:subgroups, token: null}
+
+catalog_bmwmoto_schemas:
+  path:         /bmwmoto/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Catalog:schemas, token: null}
+
+catalog_bmwmoto_schema:
+  path:         /bmwmoto/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Catalog:schema, token: null}
+
+catalog_bmwmoto_articuls:
+  path:         /bmwmoto/catalog/7
+  defaults:     {_controller: CatalogBmwMotoBundle:Catalog:articuls}
+  requirements: {_method: POST}
+
+catalog_bmwmoto_group:
+  path:         /bmwmoto/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Catalog:getGroupBySubgroup}
+
+#------------------------------------------------------------------------------
+
+vin_bmwmoto:
+  path:         /bmwmoto/vin/0/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Vin:index, token: null}
+
+vin_bmwmoto_result:
+  path:         /bmwmoto/vin/1
+  defaults:     {_controller: CatalogBmwMotoBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_bmwmoto_groups:
+  path:         /bmwmoto/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Vin:groups, token: null}
+
+vin_bmwmoto_subgroups:
+  path:         /bmwmoto/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Vin:subgroups, token: null}
+
+vin_bmwmoto_schemas:
+  path:         /bmwmoto/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Vin:schemas, token: null}
+
+vin_bmwmoto_schema:
+  path:         /bmwmoto/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Vin:schema, token: null}
+
+vin_bmwmoto_articuls:
+  path:         /bmwmoto/vin/7
+  defaults:     {_controller: CatalogBmwMotoBundle:Vin:articuls}
+  requirements: {_method: POST}
+
+vin_bmwmoto_group:
+  path:         /bmwmoto/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Vin:getGroupBySubgroup}
+
+#---------------------------------------------------------------------------------------------
+
+articul_bmwmoto:
+  path:         /bmwmoto/articul/0/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Articul:index, token: null}
+
+articul_bmwmoto_find_token:
+  path:         /bmwmoto/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogBmwMotoBundle:Articul:findByArticul, regionCode: null}
+
+articul_bmwmoto_find:
+  path:         /bmwmoto/articul/2/{regionCode}
+  defaults:     {_controller: CatalogBmwMotoBundle:Articul:findByArticul, regionCode: null}
+
+articul_bmwmoto_modifications:
+  path:         /bmwmoto/articul/3
+  defaults:     {_controller: CatalogBmwMotoBundle:Articul:modifications}
+  requirements: {_method: POST}
+
+articul_bmwmoto_complectations:
+  path:         /bmwmoto/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Articul:bmwmotoArticulcomplectations1, token: null}
+
+articul_bmwmoto_complectation_korobka:
+  path:         /bmwmoto/articul/12
+  defaults:     {_controller: CatalogBmwMotoBundle:Articul:bmwmotoArticulcomplectation_korobka}
+  requirements: {_method: POST}
+
+articul_bmwmoto_complectation_year:
+  path:         /bmwmoto/articul/10
+  defaults:     {_controller: CatalogBmwMotoBundle:Articul:bmwmotoArticulcomplectation_year}
+  requirements: {_method: POST}
+
+articul_bmwmoto_complectation_month:
+  path:         /bmwmoto/articul/11
+  defaults:     {_controller: CatalogBmwMotoBundle:Articul:bmwmotoArticulcomplectation_month}
+  requirements: {_method: POST}
+
+articul_bmwmoto_groups:
+  path:         /bmwmoto/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Articul:bmwmotoArticulgroups, token: null}
+
+articul_bmwmoto_subgroups:
+  path:         /bmwmoto/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Articul:bmwmotoArticulSubgroups, token: null}
+
+articul_bmwmoto_schemas:
+  path:         /bmwmoto/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Articul:bmwmotoArticulSchemas, token: null}
+
+articul_bmwmoto_schema:
+  path:         /bmwmoto/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Articul:bmwmotoArticulSchema, token: null}
+
+articul_bmwmoto_articuls:
+  path:         /bmwmoto/articul/9
+  defaults:     {_controller: CatalogBmwMotoBundle:Articul:articuls}
+  requirements: {_method: POST}
+
+articul_bmwmoto_group:
+  path:         /bmwmoto/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogBmwMotoBundle:Articul:getGroupBySubgroup}
+
+
+
+
+catalog_bmwmoto_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: CatalogBmwMotoBundle:Default:index }

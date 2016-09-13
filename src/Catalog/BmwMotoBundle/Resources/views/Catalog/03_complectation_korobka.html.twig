@@ -1,0 +1,86 @@
+{% block body %}
+<div class="row">
+    {% block head %}<h3>Коробка передач:</h3>{% endblock head %}
+    {% block complectations %}
+        <div class="row">
+
+            <div class="complectations">
+                <div class="col-lg-4">
+                {% set role = parameters['role']%}
+                    {% set token = parameters['token']%}
+
+
+                {% for complectation in oContainer.getActiveModification.getComplectations %}
+
+
+                    <div class="col-lg-6">
+
+                        <div class="radio">
+
+                            <input type="radio" name="optionsRadiosKor" id="optionsRadios{{ complectation.getCode }}" value="{{ complectation.getCode }}">
+                            {{ complectation.getRuname }}
+
+                        </div>
+                    </div>
+                 <script>
+                     $("#optionsRadios{{ complectation.getCode }}").on('change', function(){
+                         $.ajax({
+                             type:   'POST',
+                             async:  false,
+                             url:    "{{ path('catalog_bmwmoto_complectation_year') }}",
+                             data:   { korobka: $("#optionsRadios{{ complectation.getCode }}").val(),
+                                 modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                                 regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                                 modelCode: '{{ oContainer.getActiveModel.getCode }}',
+                                 role: '{{ role }}',
+                                 token: '{{ token }}'
+                             },
+                             success: function(data) {
+                                 $("#korobka").html(data);
+                             }
+                         });
+                     });
+
+
+                 </script>
+                {% endfor %}
+
+                </div>
+            </div>
+         </div>
+        <div class="row">
+                <div id="korobka"></div>
+        </div>
+
+
+        {% for complectation in oContainer.getActiveModification.getComplectations %}
+
+                <script>
+
+
+                    $(document).ready(function(){
+
+                        var count = $('input[name="optionsRadiosKor"]').size();
+                        if (count == 1) {$("#optionsRadios{{ complectation.getCode }}").prop("checked", true);
+                            $("#optionsRadios{{ complectation.getCode }}").trigger('change');
+                        }
+                        else
+                        {
+                            $('input[name="optionsRadiosKor"]').eq(0).prop("checked", true);
+                            $('input[name="optionsRadiosKor"]').eq(0).trigger('change');
+                        }
+
+                    });
+                </script>
+
+        {% endfor %}
+
+        {#
+                            <input type="button" class="btn btn-info" value="Удалить статью" id="vin-button{{ post.id }}"/>
+                       <div id="vin-result"></div>
+
+
+                    #}
+    {% endblock complectations %}
+</div>
+    {% endblock body %}

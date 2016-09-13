@@ -1,0 +1,7 @@
+{% block brand %}BMWMoto{% endblock brand %}
+{% block catalogPath %}{{ path('catalog_bmwmoto', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
+{% block vinPath %}{{ path('vin_bmwmoto', {'token': app.request.get('token')}) }}{% endblock vinPath %}
+{% block articulPath %}{{ path('articul_bmwmoto', {'token': app.request.get('token')}) }}{% endblock articulPath %}
+{% block userStylesheets %}
+        <link rel="stylesheet" href="{{ asset('bundles/catalogbmw/css/common.css') }}" media="all">
+    {% endblock userStylesheets %}

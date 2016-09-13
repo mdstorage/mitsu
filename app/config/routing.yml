@@ -158,6 +158,10 @@ catalog_bmw:
     resource: "@CatalogBmwBundle/Resources/config/routing.yml"
     prefix:   /
 
+catalog_bmwmoto:
+    resource: "@CatalogBmwMotoBundle/Resources/config/routing.yml"
+    prefix:   /
+
 catalog_mini:
     resource: "@CatalogMiniBundle/Resources/config/routing.yml"
     prefix:   /
