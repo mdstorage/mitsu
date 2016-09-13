@@ -79,7 +79,7 @@ class VinController extends BaseController{
              * @deprecated Оставлен для совместимости с маздой
              */
 
-            $brandSlash = $request->server->get('PATH_INFO');
+            $brandSlash = $request->server->get('REQUEST_URI');
 
             $brand = explode('/', $brandSlash)[1];
 

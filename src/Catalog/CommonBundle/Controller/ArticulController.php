@@ -98,7 +98,7 @@ abstract class ArticulController extends CatalogController{
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
 
-            $brandSlash = $request->server->get('PATH_INFO');
+            $brandSlash = $request->server->get('REQUEST_URI');
 
             $brand = explode('/', $brandSlash)[1];
 
