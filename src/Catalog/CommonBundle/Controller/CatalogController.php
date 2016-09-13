@@ -87,7 +87,7 @@ abstract class CatalogController extends BaseController{
 
             $brandSlash = $request->server->get('PATH_INFO');
 
-            $brand = explode('/', $brandSlash)[1];var_dump($brand); die;
+            $brand = explode('/', $brandSlash)[1];var_dump($brandSlash); die;
 
 
             $callbackhost = trim($request->get('callbackhost'));
