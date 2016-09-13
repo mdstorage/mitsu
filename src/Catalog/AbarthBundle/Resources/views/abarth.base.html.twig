@@ -6,3 +6,50 @@
 {% block userStylesheets %}
     <link rel="stylesheet" href="{{ asset('bundles/catalogfiat/css/common.css') }}" media="all">
 {% endblock userStylesheets %}
+
+
+{% block brand %}
+    Abarth
+{% endblock brand %}
+
+
+{% block catalogPathLogo %}
+    {% if app.request.get('callbackhost')%}
+        {{ path('catalog_abarth', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
+    {% else %}
+        {{ path('catalog_abarth', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTabarth'), 'domain':  app.request.get('domain') }) }}
+    {% endif %}
+
+
+{% endblock catalogPathLogo %}
+{% block catalogPath %}
+    {% if app.request.get('callbackhost')%}
+        {{ path('catalog_abarth', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
+    {% else %}
+        {{ path('catalog_abarth', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTabarth'), 'domain':  app.request.get('domain') }) }}
+    {% endif %}
+{% endblock catalogPath %}
+
+{% block vinPath %}
+    {% if app.request.get('callbackhost')%}
+        {{ path('vin_abarth', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
+    {% else %}
+        {{ path('vin_abarth', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTabarth'), 'domain':  app.request.get('domain') }) }}
+    {% endif %}
+{% endblock vinPath %}
+
+{% block articulPath %}
+    {% if app.request.get('callbackhost')%}
+        {{ path('articul_abarth', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
+    {% else %}
+        {{ path('articul_abarth', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTabarth'), 'domain':  app.request.get('domain') }) }}
+    {% endif %}
+{% endblock articulPath %}
+
+{% block userStylesheets %}
+    {% if app.request.get('callbackhost') or app.request.cookies.get('COOKIEHOSTabarth')%}
+        <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common_callbackhost.css') }}" media="all">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common.css') }}" media="all">
+    {% endif %}
+{% endblock userStylesheets %}
