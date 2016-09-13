@@ -1,0 +1,121 @@
+{% extends 'CatalogCommonBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogBmwMotoBundle::bmwmoto.base.html.twig' %}
+
+
+{% block models %}
+    <h3>Модельный ряд:</h3>
+
+    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+
+
+        <div id="result">
+            {% for model in oContainer.getActiveRegion.getModels %}
+                {% if loop.index <= (modelsListLenght/4|round + 1) %}
+                    {% block halfList %}
+                        {% set modelCode = model.getCode|md5 %}
+
+                        <img src="{{ asset('bundles/catalogbmwmoto/grafik/w_grafik/'~model.getOption('grafik')) }}" id="{{ modelCode }}{{ modelCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}" alt="{{ model.getRuname }}" style="cursor: pointer">
+
+                        <div class="model glyphicon-plus" id="{{ modelCode }}" regionCode="{{ oContainer.getActiveRegion.getCode }}">
+                            {{ model.getRuname }}
+                        </div>
+                        <div id="modifications_for_model{{ modelCode }}" class="hidden"></div><br/>
+                    {% block modificationScript %}
+                        <script>
+
+
+                            $("#{{ modelCode }}").on("click", function(){
+                                {% block ModelClick %}
+
+                                $("#modifications_for_model{{ modelCode }}").toggleClass("hidden");
+                                $("#{{ modelCode }}").toggleClass("glyphicon-plus");
+                                $.ajax({
+                                    type:   'POST',
+                                    async:  false,
+                                    url:    "{% block ajaxUrl %}{{ path('catalog_bmwmoto_modifications') }}{% endblock ajaxUrl %}",
+                                    data:   {
+                                        regionCode: $(this).attr('regionCode'),
+                                        modelCode: "{{ model.getCode }}",
+                                        token: "{{ app.request.get('token') }}",
+                                        articul: "{{ app.request.get('articul')|trim }}"
+                                    },
+                                    success: function(data) {
+                                        $("#modifications_for_model{{ modelCode }}").html(data);
+                                    }
+                                });
+                                $("#{{ modelCode }}").toggleClass("glyphicon-minus");
+                                {% endblock ModelClick %}
+                            });
+                            $("#{{ modelCode }}").on("mouseover", function(){
+                                $(this).css("cursor", "pointer");
+                                $(this).addClass("btn-info");
+                            });
+                            $("#{{ modelCode }}").on("mouseout", function(){
+                                $(this).removeClass("btn-info");
+                            });
+                        </script>
+                    {% endblock modificationScript %}
+                    {% block ImgScript %}
+                        <script>
+                            $("img#{{ modelCode }}{{ modelCode }}").on("click", function(){
+                                {{ block('ModelClick') }}
+                            });
+
+                            $("img#{{ modelCode }}{{ modelCode }}").on("mouseover", function(){
+                                $("#{{ modelCode }}").css("cursor", "pointer");
+                                $("#{{ modelCode }}").addClass("btn-info");
+                            });
+
+                            $("img#{{ modelCode }}{{ modelCode }}").on("mouseout", function(){
+                                $("#{{ modelCode }}").removeClass("btn-info");
+                            });
+                        </script>
+
+                    {% endblock ImgScript %}
+                    {% endblock halfList %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+        <div id="result">
+            {% for model in oContainer.getActiveRegion.getModels %}
+                {% if (loop.index <= (2*modelsListLenght/4|round + 1) and loop.index > (modelsListLenght/4|round + 1) ) %}
+                    {{ block('halfList') }}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+        <div id="result">
+            {% for model in oContainer.getActiveRegion.getModels %}
+                {% if (loop.index <= (3*modelsListLenght/4|round + 1) and loop.index > (2*modelsListLenght/4|round + 1) ) %}
+                    {{ block('halfList') }}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+        <div id="result">
+            {% for model in oContainer.getActiveRegion.getModels %}
+                {% if (loop.index <= (4*modelsListLenght/4|round + 1) and loop.index > (3*modelsListLenght/4|round + 1) ) %}
+                    {{ block('halfList') }}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock models %}
+
+{% block regionPath %}
+    {% if app.request.get('token') %}
+        {{ path('catalog_bmwmoto_token', {'token': app.request.get('token'), 'regionCode': region.getCode}) }}
+
+        {% else %}
+
+        {{ path('catalog_bmwmoto', {'regionCode': region.getCode}) }}
+
+    {% endif %}
+
+
+{% endblock regionPath %}

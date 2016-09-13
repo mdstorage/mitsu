@@ -1,0 +1,20 @@
+services:
+#    catalog_bmwmoto.example:
+#        class: Catalog\BmwMotoBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+  bmwmoto_date_convertor.extension:
+        class: Catalog\BmwMotoBundle\Twig\Extension\DateConvertorExtension
+        tags:
+            - { name: twig.extension}
+  bmwmoto.catalog.model:
+    class: Catalog\BmwMotoBundle\Models\BmwMotoCatalogModel
+    arguments:  ['@doctrine.dbal.bmwmoto_connection']
+
+  bmwmoto.vin.model:
+    class: Catalog\BmwMotoBundle\Models\BmwMotoVinModel
+    arguments:  ['@doctrine.dbal.bmwmoto_connection']
+
+  bmwmoto.articul.model:
+    class: Catalog\BmwMotoBundle\Models\BmwMotoArticulModel
+    arguments:  ['@doctrine.dbal.bmwmoto_connection']

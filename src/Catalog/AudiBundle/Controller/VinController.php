@@ -79,8 +79,12 @@ class VinController extends BaseController{
              * @deprecated Оставлен для совместимости с маздой
              */
 
+            $brandSlash = $request->server->get('PATH_INFO');
+
+            $brand = explode('/', $brandSlash)[1];
+
             setcookie(Constants::VIN, $vin);
-            setcookie(Constants::COOKIEHOST.'Audi', $callbackhost);
+            setcookie(Constants::COOKIEHOST.$brand, $callbackhost);
 
 
             return $this->render($this->bundle().':02_region.html.twig', array(
