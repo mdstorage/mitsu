@@ -2,11 +2,11 @@
 {% use 'CatalogLexusBundle::lexus.base.html.twig' %}
 {% block regionPath %}
     {% if app.request.get('token') %}
-        {{ path('catalog_lexus_token', {'token': app.request.get('token'), 'regionCode': region.getCode}) }}
+        {{ path('catalog_lexus_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% else %}
 
-        {{ path('catalog_lexus', {'regionCode': region.getCode}) }}
+        {{ path('catalog_lexus', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% endif %}
 

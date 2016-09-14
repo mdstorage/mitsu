@@ -2,11 +2,11 @@
 {% use 'CatalogHondaBundle::honda.base.html.twig' %}
 {% block regionPath %}
     {% if app.request.get('token') %}
-        {{ path('catalog_honda_token', {'token': app.request.get('token'), 'regionCode': region.getCode}) }}
+        {{ path('catalog_honda_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% else %}
 
-        {{ path('catalog_honda', {'regionCode': region.getCode}) }}
+        {{ path('catalog_honda', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% endif %}
 

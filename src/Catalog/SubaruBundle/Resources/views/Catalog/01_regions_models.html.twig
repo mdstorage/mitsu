@@ -2,11 +2,11 @@
 {% use 'CatalogSubaruBundle::subaru.base.html.twig' %}
 {% block regionPath %}
     {% if app.request.get('token') %}
-        {{ path('catalog_subaru_token', {'token': app.request.get('token'), 'regionCode': region.getCode}) }}
+        {{ path('catalog_subaru_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% else %}
 
-        {{ path('catalog_subaru', {'regionCode': region.getCode}) }}
+        {{ path('catalog_subaru', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% endif %}
 

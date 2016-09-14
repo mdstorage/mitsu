@@ -2,11 +2,11 @@
 {% use 'CatalogGmcBundle::gmc.base.html.twig' %}
 {% block regionPath %}
     {% if app.request.get('token') %}
-        {{ path('catalog_gmc_token', {'token': app.request.get('token'), 'regionCode': region.getCode}) }}
+        {{ path('catalog_gmc_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% else %}
 
-        {{ path('catalog_gmc', {'regionCode': region.getCode}) }}
+        {{ path('catalog_gmc', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% endif %}
 
