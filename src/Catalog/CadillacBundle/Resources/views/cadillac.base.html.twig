@@ -1,8 +1,45 @@
-{% block brand %}Cadillac{% endblock brand %}
-{% block catalogPathLogo %}{{ path('catalog_cadillac', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
-{% block catalogPath %}{{ path('catalog_cadillac', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_cadillac', {'token': app.request.get('token')}) }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_cadillac', {'token': app.request.get('token')}) }}{% endblock articulPath %}
+{% block brand %}
+    Cadillac
+{% endblock brand %}
+
+
+{% block catalogPathLogo %}
+    {% if app.request.get('callbackhost')%}
+        {{ path('catalog_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
+    {% else %}
+        {{ path('catalog_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTcadillac'), 'domain':  app.request.get('domain') }) }}
+    {% endif %}
+
+
+{% endblock catalogPathLogo %}
+{% block catalogPath %}
+    {% if app.request.get('callbackhost')%}
+        {{ path('catalog_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
+    {% else %}
+        {{ path('catalog_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTcadillac'), 'domain':  app.request.get('domain') }) }}
+    {% endif %}
+{% endblock catalogPath %}
+
+{% block vinPath %}
+    {% if app.request.get('callbackhost')%}
+        {{ path('vin_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
+    {% else %}
+        {{ path('vin_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTcadillac'), 'domain':  app.request.get('domain') }) }}
+    {% endif %}
+{% endblock vinPath %}
+
+{% block articulPath %}
+    {% if app.request.get('callbackhost')%}
+        {{ path('articul_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
+    {% else %}
+        {{ path('articul_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTcadillac'), 'domain':  app.request.get('domain') }) }}
+    {% endif %}
+{% endblock articulPath %}
+
 {% block userStylesheets %}
-    <link rel="stylesheet" href="{{ asset('bundles/cataloggm/css/common.css') }}" media="all">
+    {% if app.request.get('callbackhost') or app.request.cookies.get('COOKIEHOSTcadillac')%}
+        <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common_callbackhost.css') }}" media="all">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common.css') }}" media="all">
+    {% endif %}
 {% endblock userStylesheets %}

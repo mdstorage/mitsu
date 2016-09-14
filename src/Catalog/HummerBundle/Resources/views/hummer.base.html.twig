@@ -1,8 +1,45 @@
-{% block brand %}Hummer{% endblock brand %}
-{% block catalogPathLogo %}{{ path('catalog_hummer', {'token': app.request.get('token')}) }}{% endblock catalogPathLogo %}
-{% block catalogPath %}{{ path('catalog_hummer', {'token': app.request.get('token')}) }}{% endblock catalogPath %}
-{% block vinPath %}{{ path('vin_hummer', {'token': app.request.get('token')}) }}{% endblock vinPath %}
-{% block articulPath %}{{ path('articul_hummer', {'token': app.request.get('token')}) }}{% endblock articulPath %}
+{% block brand %}
+    Hummer
+{% endblock brand %}
+
+
+{% block catalogPathLogo %}
+    {% if app.request.get('callbackhost')%}
+        {{ path('catalog_hummer', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
+    {% else %}
+        {{ path('catalog_hummer', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSThummer'), 'domain':  app.request.get('domain') }) }}
+    {% endif %}
+
+
+{% endblock catalogPathLogo %}
+{% block catalogPath %}
+    {% if app.request.get('callbackhost')%}
+        {{ path('catalog_hummer', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
+    {% else %}
+        {{ path('catalog_hummer', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSThummer'), 'domain':  app.request.get('domain') }) }}
+    {% endif %}
+{% endblock catalogPath %}
+
+{% block vinPath %}
+    {% if app.request.get('callbackhost')%}
+        {{ path('vin_hummer', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
+    {% else %}
+        {{ path('vin_hummer', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSThummer'), 'domain':  app.request.get('domain') }) }}
+    {% endif %}
+{% endblock vinPath %}
+
+{% block articulPath %}
+    {% if app.request.get('callbackhost')%}
+        {{ path('articul_hummer', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
+    {% else %}
+        {{ path('articul_hummer', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSThummer'), 'domain':  app.request.get('domain') }) }}
+    {% endif %}
+{% endblock articulPath %}
+
 {% block userStylesheets %}
-    <link rel="stylesheet" href="{{ asset('bundles/cataloggm/css/common.css') }}" media="all">
+    {% if app.request.get('callbackhost') or app.request.cookies.get('COOKIEHOSThummer')%}
+        <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common_callbackhost.css') }}" media="all">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common.css') }}" media="all">
+    {% endif %}
 {% endblock userStylesheets %}
