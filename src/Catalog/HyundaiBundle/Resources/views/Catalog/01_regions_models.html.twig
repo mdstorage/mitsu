@@ -2,11 +2,11 @@
 {% use 'CatalogHyundaiBundle::hyundai.base.html.twig' %}
 {% block regionPath %}
     {% if app.request.get('token') %}
-        {{ path('catalog_hyundai_token', {'token': app.request.get('token'), 'regionCode': region.getCode}) }}
+        {{ path('catalog_hyundai_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% else %}
 
-        {{ path('catalog_hyundai', {'regionCode': region.getCode}) }}
+        {{ path('catalog_hyundai', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% endif %}
 

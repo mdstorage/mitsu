@@ -89,11 +89,11 @@ articul_audi:
 
 articul_audi_find_token:
   path:         /audi/articul/1/{token}/{regionCode}
-  defaults:     {_controller: CatalogAudiBundle:Articul:findByArticul, token: null, regionCode: null, callbackhost: null}
+  defaults:     {_controller: CatalogAudiBundle:Articul:findByArticul, token: null, regionCode: null}
 
 articul_audi_find:
   path:         /audi/articul/2/{regionCode}
-  defaults:     {_controller: CatalogAudiBundle:Articul:findByArticul, regionCode: null, callbackhost: null}
+  defaults:     {_controller: CatalogAudiBundle:Articul:findByArticul, regionCode: null}
 
 articul_audi_modifications:
   path:         /audi/articul/3

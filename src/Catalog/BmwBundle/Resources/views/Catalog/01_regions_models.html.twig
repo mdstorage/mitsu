@@ -109,11 +109,11 @@
 
 {% block regionPath %}
     {% if app.request.get('token') %}
-        {{ path('catalog_bmw_token', {'token': app.request.get('token'), 'regionCode': region.getCode}) }}
+        {{ path('catalog_bmw_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
 
         {% else %}
 
-        {{ path('catalog_bmw', {'regionCode': region.getCode}) }}
+        {{ path('catalog_bmw', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% endif %}
 
