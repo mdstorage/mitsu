@@ -109,7 +109,7 @@ abstract class CatalogController extends BaseController{
 
             if (stripos($headers['REFERER'], 'domain'))
             {
-                if (!$call = $request->cookies->get('DOMAIN', $domain))
+                if (!$call = $request->cookies->get('DOMAIN'))
                 {
                     if ($domain){
                         setcookie('DOMAIN', $domain);
