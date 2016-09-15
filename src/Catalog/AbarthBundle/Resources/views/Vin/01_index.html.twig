@@ -14,7 +14,8 @@
                 url:    "{% block vinAjaxPath %}{{ path('vin_abarth_result') }}{% endblock vinAjaxPath %}",
                 data:   {
                     vin: $("#vin").val(). replace(/\s+/g, ''),
-                    token: '{{ app.request.get('token') }}'
+                    token: '{{ app.request.get('token') }}',
+                    callbackhost: '{{ app.request.get('callbackhost') }}'
 
                 },
                 success: function(data) {
