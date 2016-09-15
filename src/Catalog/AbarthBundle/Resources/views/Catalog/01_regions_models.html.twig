@@ -2,11 +2,11 @@
 {% use 'CatalogAbarthBundle::abarth.base.html.twig' %}
 {% block regionPath %}
 {% if app.request.get('token') %}
-    {{ path('catalog_abarth_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
+    {{ path('catalog_abarth_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost'), 'domain':  app.request.get('domain')}) }}
 
 {% else %}
 
-    {{ path('catalog_abarth', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
+    {{ path('catalog_abarth', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost'), 'domain':  app.request.get('domain')}) }}
 
 {% endif %}
 
@@ -25,7 +25,8 @@
                     regionCode: $(this).attr('regionCode'),
                     modelCode: "{{ model.getCode }}",
                     token: "{{ app.request.get('token') }}",
-                    callbackhost: "{{ app.request.get('callbackhost') }}"
+                    callbackhost: "{{ app.request.get('callbackhost') }}",
+                    domain: "{{ app.request.get('domain') }}"
                 },
                 success: function(data) {
                     $("#modifications_for_model{{ modelCode }}").html(data);
