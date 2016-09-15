@@ -100,7 +100,7 @@ abstract class CatalogController extends BaseController{
                     setcookie(Constants::COOKIEHOST.$brand, $callbackhost, '', '/', $domain);
                 }
 
-            }
+            }var_dump($request); die;
 
             $parameters = array(
                 'regionCode' => $regionCode,
