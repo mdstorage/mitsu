@@ -29,7 +29,10 @@
                                        </div>#}
 
                                 <div class="row">
-                                    <img src="{{ asset('bundles/catalogfiat/Imgs/images/'~schema.getOption('catalog')~'/'~schema.getOption('picture')|replace({'png':'th.png'})) }}" width="100%" alt="{{ schema.getRuname }}"/>
+
+                                    <img src="{{ asset('bundles/catalogfiat/Imgs/images/L_EPERFIG/'~oContainer.getActiveGroup.getOption('catalog')~'/'~oContainer.getActiveGroup.getOption('picture')|replace({'png':'th.png'})) }}"  width="100%" alt="{{ oContainer.getActiveGroup.getRuname }}"/>
+
+                                    {# <img src="{{ asset('bundles/catalogfiat/Imgs/images/'~schema.getOption('catalog')~'/'~schema.getOption('picture')|replace({'png':'th.png'})) }}" width="100%" alt="{{ schema.getRuname }}"/>#}
                                 </div>
 
 
