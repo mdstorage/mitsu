@@ -102,7 +102,17 @@ abstract class CatalogController extends BaseController{
                 {
                     if ($callbackhost){
                         setcookie(Constants::COOKIEHOST.$brand.urlencode($domain), $callbackhost);
-                        var_dump(Constants::COOKIEHOST.$brand.urlencode($domain)); die;
+                    }
+
+                }
+            }
+
+            if (stripos($headers['REFERER'], 'domain'))
+            {
+                if (!$call = $request->cookies->get('DOMAIN', $domain))
+                {
+                    if ($domain){
+                        setcookie('DOMAIN', $domain);
                     }
 
                 }
