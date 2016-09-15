@@ -21,7 +21,12 @@
                 type:   'POST',
                 async:  false,
                 url:    "{% block ajaxUrl %}{{ path('catalog_alfaromeo_modifications') }}{% endblock ajaxUrl %}",
-                data:   { regionCode: $(this).attr('regionCode'), modelCode: "{{ model.getCode }}", token: "{{ app.request.get('token') }}" },
+                data:   {
+                    regionCode: $(this).attr('regionCode'),
+                    modelCode: "{{ model.getCode }}",
+                    token: "{{ app.request.get('token') }}",
+                    callbackhost: "{{ app.request.get('callbackhost') }}"
+                },
                 success: function(data) {
                     $("#modifications_for_model{{ modelCode }}").html(data);
                 }
