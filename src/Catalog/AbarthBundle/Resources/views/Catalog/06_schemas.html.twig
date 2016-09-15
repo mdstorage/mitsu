@@ -15,13 +15,13 @@
         <div style=" height: 300px; " class="col-sm-4 col-sm-offset-5 col-md-4 col-md-offset-0">
         <a href="{{ path('catalog_abarth_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
-                    <div class="row">
+             {#       <div class="row">
                         {{ schema.getRuname }}
                     </div>
 
                     <div class="row">
                     {{ schema.getOption('pattern')|replace({',':', '}) }}
-                    </div>
+                    </div>#}
 
                     <div class="row">
                         <img src="{{ asset('bundles/catalogfiat/Imgs/images/'~schema.getOption('catalog')~'/'~schema.getOption('picture')|replace({'png':'th.png'})) }}" width="200" alt="{{ schema.getRuname }}"/>
