@@ -105,7 +105,7 @@
 <script type="text/javascript">
     $(document).ready(function(){
         alert('{{ app.request.headers.get('REFERER') }}');
-        if('{{ app.request.headers.get('REFERER') }}'.indexOf("callbackhost=")+1)
+       /* if('{{ app.request.headers.get('REFERER') }}'.indexOf("callbackhost=")+1)*/
         {
             setInterval(publishHeight, 300);
         }
