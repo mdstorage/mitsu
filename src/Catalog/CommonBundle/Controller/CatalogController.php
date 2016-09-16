@@ -257,7 +257,7 @@ abstract class CatalogController extends BaseController{
     }
 
     public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $articul = null, $token = null)
-    {
+    {var_dump($request); die;
         $data = $this->get('my_token_info')->getStatus($token);
 
         if(empty($data) & !empty($token)){
