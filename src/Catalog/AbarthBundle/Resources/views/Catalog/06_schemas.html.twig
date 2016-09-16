@@ -17,28 +17,28 @@
             {% for schema in oContainer.getSchemas %}
 
 
-                        <div style=" height: 250px; " class="col-sm-2 col-sm-offset-5 col-md-2 col-md-offset-5 col-lg-2 col-lg-offset-5 col-xs-2 col-xs-offset-5">
+                        <div style=" height: 250px; " class="col-sm-2 col-sm-offset-0 col-md-2 col-md-offset-0 col-lg-2 col-lg-offset-0 col-xs-2 col-xs-offset-0">
                             <a href="{{ path('catalog_abarth_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
                                        <div class="row">
                                            {{ schema.getRuname }}
                                        </div>
 
-                                       {#<div class="row">
+                                       <div class="row">
                                        {{ schema.getOption('pattern')|replace({',':', '}) }}
-                                       </div>#}
+                                       </div>
 
                                 <div class="row">
 
-                                    {#<img src="{{ asset('bundles/catalogfiat/Imgs/images/L_EPERFIG/'~oContainer.getActiveGroup.getOption('catalog')~'/'~oContainer.getActiveGroup.getOption('picture')|replace({'png':'th.png'})) }}"  width="100%" alt="{{ oContainer.getActiveGroup.getRuname }}"/>#}
+                                     <img src="{{ asset('bundles/catalogfiat/Imgs/images/L_EPERFIG/'~oContainer.getActiveGroup.getOption('catalog')~'/'~oContainer.getActiveGroup.getOption('picture')|replace({'png':'th.png'})) }}"  width="100%" alt="{{ oContainer.getActiveGroup.getRuname }}"/>
 
-                                     <img src="{{ asset('bundles/catalogfiat/Imgs/images/'~schema.getOption('catalog')~'/'~schema.getOption('picture')) }}" width="20%" alt="{{ schema.getRuname }}"/>
+                                     {#<img src="{{ asset('bundles/catalogfiat/Imgs/images/'~schema.getOption('catalog')~'/'~schema.getOption('picture')) }}" width="20%" alt="{{ schema.getRuname }}"/>#}
                                 </div>
 
 
                             </a>
                         </div>
-                    
+
 
             {% endfor %}
         </div>
