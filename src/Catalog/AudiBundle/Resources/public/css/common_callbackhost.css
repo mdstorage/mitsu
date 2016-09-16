@@ -29,6 +29,8 @@ max-width: 1920px;
 .subgroups{
     margin-left: 60px;
 }
-img.highqual { -ms-interpolation-mode: bicubic; }
+.schemas{
+    margin-left: 60px;
+}
 
 .row{margin-right:0px;margin-left:0px !important;}
