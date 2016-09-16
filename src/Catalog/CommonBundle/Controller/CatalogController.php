@@ -87,6 +87,7 @@ abstract class CatalogController extends BaseController{
 
             $brandSlash = $request->server->get('REQUEST_URI');
 
+
             $brand = explode('/', $brandSlash)[1];
 
 
@@ -103,7 +104,6 @@ abstract class CatalogController extends BaseController{
                     if ($callbackhost){
                         setcookie(Constants::COOKIEHOST.$brand.urlencode($domain), $callbackhost);
                     }
-
                 }
             }
 
