@@ -50,6 +50,14 @@ class CatalogController extends BaseController{
 
     public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
     {
+
+        foreach($request->cookies->keys() as $index => $value)
+        {
+            if (stripos($value, Constants::COOKIEHOST) !== false)
+            {
+                setcookie($value, "");
+            }
+        }
         $data = $this->get('my_token_info')->getStatus($token);
 
         if(empty($data) & !empty($token)){
@@ -121,6 +129,52 @@ class CatalogController extends BaseController{
                 'modelCode' => $modelCode,
                 'token' => $token
             );
+
+            $brandSlash = $request->server->get('REQUEST_URI');
+
+
+            $brand = explode('/', $brandSlash)[1];
+
+
+            $callbackhost = trim($request->get('callbackhost'));
+            $domain = trim($request->get('domain'));
+
+
+            $headers = $request->server->getHeaders();
+
+            if (stripos($headers['REFERER'], 'callbackhost='))
+            {
+                if (!$call = $request->cookies->get(Constants::COOKIEHOST.$brand.urlencode($domain)))
+                {
+                    if ($callbackhost){
+                        setcookie(Constants::COOKIEHOST.$brand.urlencode($domain), $callbackhost);
+                    }
+                }
+            }
+            else{
+                setcookie(Constants::COOKIEHOST.$brand.urlencode($domain), "");
+            }
+
+            if (stripos($headers['REFERER'], 'domain'))
+            {
+                if (!$call = $request->cookies->get('DOMAIN'))
+                {
+                    if ($domain){
+                        setcookie('DOMAIN', $domain);
+                    }
+
+                }
+            }
+            else {
+                setcookie('DOMAIN', "");
+            }
+
+            $articul = $request->get('articul');
+
+            if (!empty($articul))
+            {
+                $parameters = array_merge($parameters, array('articul' => $request->get('articul')));
+            }
 
             $modifications = $this->model()->getModifications($regionCode, $modelCode);
 
