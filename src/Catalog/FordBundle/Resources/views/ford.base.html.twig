@@ -1,13 +1,11 @@
-{% block brand %}
-    Ford
-{% endblock brand %}
+{% block brand %}Ford{% endblock brand %}
 
 
 {% block catalogPathLogo %}
     {% if app.request.get('callbackhost')%}
         {{ path('catalog_ford', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('catalog_ford', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTford'), 'domain':  app.request.get('domain') }) }}
+        {{ path('catalog_ford', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTford')~app.request.cookies.get('DOMAIN'), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 
 
@@ -16,7 +14,7 @@
     {% if app.request.get('callbackhost')%}
         {{ path('catalog_ford', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('catalog_ford', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTford'), 'domain':  app.request.get('domain') }) }}
+        {{ path('catalog_ford', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTford')~app.request.cookies.get('DOMAIN'), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock catalogPath %}
 
@@ -24,7 +22,7 @@
     {% if app.request.get('callbackhost')%}
         {{ path('vin_ford', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('vin_ford', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTford'), 'domain':  app.request.get('domain') }) }}
+        {{ path('vin_ford', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTford')~app.request.cookies.get('DOMAIN'), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock vinPath %}
 
@@ -32,12 +30,12 @@
     {% if app.request.get('callbackhost')%}
         {{ path('articul_ford', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('articul_ford', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTford'), 'domain':  app.request.get('domain') }) }}
+        {{ path('articul_ford', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTford')~app.request.cookies.get('DOMAIN'), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock articulPath %}
 
 {% block userStylesheets %}
-    {% if app.request.get('callbackhost') or app.request.cookies.get('COOKIEHOSTford')%}
+    {% if (app.request.get('callbackhost')) or (app.request.cookies.get('COOKIEHOSTford')~app.request.cookies.get('DOMAIN')) %}
         <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common_callbackhost.css') }}" media="all">
     {% else %}
         <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common.css') }}" media="all">
