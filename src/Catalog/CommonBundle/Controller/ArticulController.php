@@ -15,7 +15,13 @@ abstract class ArticulController extends CatalogController{
         $brand = explode('/', $brandSlash)[1];
         setcookie(Constants::ARTICUL, '');
 
-        setcookie(Constants::COOKIEHOST.$brand, "");
+        foreach($this->get('request')->cookies->keys() as $index => $value)
+        {
+            if (stripos($value, Constants::COOKIEHOST) !== false)
+            {
+                setcookie($value, "");
+            }
+        }
         return $this->render($this->bundle().':01_index.html.twig', array('error_message' => $error_message));
     }
 
@@ -104,16 +110,41 @@ abstract class ArticulController extends CatalogController{
 
             $brandSlash = $request->server->get('REQUEST_URI');
 
+
             $brand = explode('/', $brandSlash)[1];
 
+
             $callbackhost = trim($request->get('callbackhost'));
+            $domain = trim($request->get('domain'));
 
-            if (!$call = $request->cookies->get(Constants::COOKIEHOST.$brand))
+
+            $headers = $request->server->getHeaders();
+
+            if (stripos($headers['REFERER'], 'callbackhost='))
             {
-                if ($callbackhost){
-                    setcookie(Constants::COOKIEHOST.$brand, $callbackhost);
+                if (!$call = $request->cookies->get(Constants::COOKIEHOST.$brand.urlencode($domain)))
+                {
+                    if ($callbackhost){
+                        setcookie(Constants::COOKIEHOST.$brand.urlencode($domain), $callbackhost);
+                    }
                 }
+            }
+            else{
+                setcookie(Constants::COOKIEHOST.$brand.urlencode($domain), "");
+            }
 
+            if (stripos($headers['REFERER'], 'domain'))
+            {
+                if (!$call = $request->cookies->get('DOMAIN'))
+                {
+                    if ($domain){
+                        setcookie('DOMAIN', $domain);
+                    }
+
+                }
+            }
+            else {
+                setcookie('DOMAIN', "");
             }
 
             $articulModifications = $this->model()->getArticulModifications($articul, $regionCode, $modelCode);
