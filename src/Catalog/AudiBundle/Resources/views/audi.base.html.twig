@@ -22,7 +22,7 @@
     {% if app.request.get('callbackhost')%}
         {{ path('vin_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('vin_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTaudi')~app.request.cookies.get('DOMAIN'), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+        {{ path('vin_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTaudi'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock vinPath %}
 
@@ -30,7 +30,7 @@
     {% if app.request.get('callbackhost')%}
         {{ path('articul_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('articul_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTaudi')~app.request.cookies.get('DOMAIN'), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+        {{ path('articul_audi', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTaudi'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock articulPath %}
 
