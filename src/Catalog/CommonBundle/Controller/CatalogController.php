@@ -18,6 +18,7 @@ abstract class CatalogController extends BaseController{
      */
     public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
     {
+        var_dump($request->cookies->keys()); die;
 
         foreach($request->cookies->keys() as $index => $value)
         {
