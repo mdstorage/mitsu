@@ -14,6 +14,7 @@
                             <div class="col-xs-10">
                                 <input type="text" class="form-control" id="articul" name="articul" placeholder="Введите артикул запчасти"/>
                                 <input type="text" class="form-control" id="callbackhost" name="callbackhost" value ="{{ app.request.get('callbackhost') }}" style="display:none;"/>
+                                <input type="text" class="form-control" id="callbackhost" name="domain" value ="{{ app.request.get('domain') }}" style="display:none;"/>
                                 <div class="label label-danger">{{ error_message }}</div>
                             </div>
                             <input type="submit" class="btn btn-info" value="Искать" id="articul-button"/>

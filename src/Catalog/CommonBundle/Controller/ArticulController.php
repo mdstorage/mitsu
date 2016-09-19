@@ -115,7 +115,7 @@ abstract class ArticulController extends CatalogController{
 
 
             $callbackhost = trim($request->get('callbackhost'));
-            $domain = trim($request->get('domain'));
+            $domain = trim($request->get('domain'));var_dump($domain); die;
 
 
             $headers = $request->server->getHeaders();
