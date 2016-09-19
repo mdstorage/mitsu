@@ -22,7 +22,7 @@ abstract class CatalogController extends BaseController{
 
         foreach($request->cookies->keys() as $index => $value)
         {
-            if (stripos($value, Constants::COOKIEHOST))
+            if (stripos($value, Constants::COOKIEHOST) != false)
             {var_dump($value); die;
                 setcookie($value, "");
             }
