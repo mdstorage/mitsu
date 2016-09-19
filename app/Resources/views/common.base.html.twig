@@ -104,7 +104,7 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
-        if(('{{ app.request.headers.get('REFERER') }}'.indexOf("callbackhost=")+1) || ('{{ app.request.get('callbackhost') }}'))
+        /*if(('{{ app.request.headers.get('REFERER') }}'.indexOf("callbackhost=")+1) || ('{{ app.request.get('callbackhost') }}'))*/
         {
             setInterval(publishHeight, 300);
         }
