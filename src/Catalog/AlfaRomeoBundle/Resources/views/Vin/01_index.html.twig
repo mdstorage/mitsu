@@ -15,7 +15,8 @@
                 data:   {
                     vin: $("#vin").val(). replace(/\s+/g, ''),
                     token: '{{ app.request.get('token') }}',
-                    callbackhost: '{{ app.request.get('callbackhost') }}'
+                    callbackhost: '{{ app.request.get('callbackhost') }}',
+                    domain: "{{ app.request.get('domain') }}"
 
                 },
                 success: function(data) {
