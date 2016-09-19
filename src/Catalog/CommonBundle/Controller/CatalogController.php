@@ -115,6 +115,9 @@ abstract class CatalogController extends BaseController{
                     }
                 }
             }
+            else{
+                setcookie(Constants::COOKIEHOST.$brand.urlencode($domain), "");
+            }
 
             if (stripos($headers['REFERER'], 'domain'))
             {
@@ -125,6 +128,9 @@ abstract class CatalogController extends BaseController{
                     }
 
                 }
+            }
+            else {
+                setcookie('DOMAIN', "");
             }
 
 
