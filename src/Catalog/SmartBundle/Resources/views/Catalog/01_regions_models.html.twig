@@ -3,11 +3,11 @@
 {% block regions %}{% endblock regions %}
 {% block regionPath %}
 {% if app.request.get('token') %}
-    {{ path('catalog_smart_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
+    {{ path('catalog_smart_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost'), 'domain':  app.request.get('domain')}) }}
 
 {% else %}
 
-    {{ path('catalog_smart', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
+    {{ path('catalog_smart', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost'), 'domain':  app.request.get('domain')}) }}
 
 {% endif %}
 

@@ -2,11 +2,11 @@
 {% use 'CatalogBuickBundle::buick.base.html.twig' %}
 {% block regionPath %}
     {% if app.request.get('token') %}
-        {{ path('catalog_buick_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
+        {{ path('catalog_buick_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost'), 'domain':  app.request.get('domain')}) }}
 
     {% else %}
 
-        {{ path('catalog_buick', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
+        {{ path('catalog_buick', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost'), 'domain':  app.request.get('domain')}) }}
 
     {% endif %}
 
