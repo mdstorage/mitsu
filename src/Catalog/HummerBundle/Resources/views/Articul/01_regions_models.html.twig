@@ -5,11 +5,11 @@
 
 {% block regionPath %}
     {% if app.request.get('token') %}
-        {{ path('articul_hummer_find_token', {'regionCode': region.getCode, 'token': app.request.get('token'), 'articul': app.request.get('articul')|trim}) }}
+        {{ path('articul_hummer_find_token', {'regionCode': region.getCode, 'token': app.request.get('token'), 'articul': app.request.get('articul')|trim, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% else %}
 
-        {{ path('articul_hummer_find', {'regionCode': region.getCode, 'articul': app.request.get('articul')|trim}) }}
+        {{ path('articul_hummer_find', {'regionCode': region.getCode, 'articul': app.request.get('articul')|trim, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% endif %}
 {% endblock regionPath %}
@@ -28,6 +28,8 @@
                     modelCode: "{{ model.getCode }}",
                     token: "{{ app.request.get('token') }}",
                     articul: "{{ app.request.get('articul')|trim }}",
+                    callbackhost: "{{ app.request.get('callbackhost') }}",
+                    domain: "{{ app.request.get('domain') }}"
                 },
                 success: function(data) {
                     $("#modifications_for_model{{ modelCode }}").html(data);
@@ -59,6 +61,8 @@
                     modelCode: "{{ model.getCode }}",
                     token: "{{ app.request.get('token') }}",
                     articul: "{{ app.request.get('articul')|trim }}",
+                    callbackhost: "{{ app.request.get('callbackhost') }}",
+                    domain: "{{ app.request.get('domain') }}"
                 },
                 success: function(data) {
                     $("#modifications_for_model{{ modelCode }}").html(data);
