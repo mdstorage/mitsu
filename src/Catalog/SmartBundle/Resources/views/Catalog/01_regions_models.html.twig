@@ -25,7 +25,10 @@
                 data:   {
                     regionCode: $(this).attr('regionCode'),
                     modelCode: "{{ model.getCode }}",
-                    token: "{{ app.request.get('token') }}" },
+                    token: "{{ app.request.get('token') }}",
+                    callbackhost: "{{ app.request.get('callbackhost') }}",
+                    domain: "{{ app.request.get('domain') }}"
+                },
                 success: function(data) {
                     $("#modifications_for_model{{ modelCode }}").html(data);
                 }

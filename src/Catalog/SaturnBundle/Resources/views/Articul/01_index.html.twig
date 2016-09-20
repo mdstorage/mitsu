@@ -2,11 +2,11 @@
 {% use 'CatalogSaturnBundle::saturn.base.html.twig' %}
 {% block formAction %}
     {% if app.request.get('token') %}
-        {{ path('articul_saturn_find_token', {'token': app.request.get('token'), 'articul': app.request.get('articul')|trim}) }}
+        {{ path('articul_saturn_find_token', {'token': app.request.get('token'), 'articul': app.request.get('articul')|trim, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% else %}
 
-        {{ path('articul_saturn_find', {'articul': app.request.get('articul')|trim}) }}
+        {{ path('articul_saturn_find', {'articul': app.request.get('articul')|trim, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% endif %}
 {% endblock formAction %}
