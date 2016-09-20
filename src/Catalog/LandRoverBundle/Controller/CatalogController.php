@@ -3,6 +3,7 @@ namespace Catalog\LandRoverBundle\Controller;
 
 
 use Catalog\CommonBundle\Components\Factory;
+use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Components\Interfaces\CommonInterface;
 use Catalog\CommonBundle\Controller\CatalogController as BaseController;
 use Symfony\Component\HttpFoundation\Request;
