@@ -30,8 +30,7 @@
     {% if app.request.get('callbackhost')%}
         {{ path('articul_hyundai', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {% set domind = 'COOKIEHOSThyundairyli.by' %}
-        {{ path('articul_hyundai', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSThyundairyli.by'), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+        {{ path('articul_hyundai', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSThyundai'~'ryli.by'|url_encode), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock articulPath %}
 
