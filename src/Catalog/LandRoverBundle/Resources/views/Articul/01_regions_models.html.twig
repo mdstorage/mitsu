@@ -1,5 +1,35 @@
 {% extends 'CatalogLandRoverBundle:Catalog:01_regions_models.html.twig' %}
 {% use 'CatalogLandRoverBundle::landrover.base.html.twig' %}
+{% block regionPath %}
+    {% if app.request.get('token') %}
+        {{ path('articul_landrover_find_token', {'regionCode': region.getCode, 'token': app.request.get('token'), 'articul': app.request.get('articul')|trim, 'callbackhost': app.request.get('callbackhost')}) }}
+
+    {% else %}
+
+        {{ path('articul_landrover_find', {'regionCode': region.getCode, 'articul': app.request.get('articul')|trim, 'callbackhost': app.request.get('callbackhost')}) }}
+
+    {% endif %}
+{% endblock regionPath %}
+{% block pathToGroups %}
+
+<a href="{{ path('articul_landrover_groups', {
+    'regionCode':  oContainer.getActiveRegion.getCode,
+    'modelCode': model.getCode,
+    'articul': app.request.get('articul')|trim,
+    'token': app.request.get('token'),
+    'callbackhost':  app.request.get('callbackhost'),
+    'domain':  app.request.get('domain')
+
+}) }}">
+    {% endblock pathToGroups %}
+    {% block head %}
+        <h3>Запчасть с таким артикулом найдена в следующих моделях:</h3>
+        {{ parent() }}
+    {% endblock head %}
+
+{#
+{% extends 'CatalogLandRoverBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogLandRoverBundle::landrover.base.html.twig' %}
 {% block regionPath %}{{ path('articul_landrover_find', {'regionCode': region.getCode}) }}{% endblock regionPath %}
 {% block pathToGroups %}
 
@@ -9,3 +39,58 @@
     <h3>Запчасть с таким артикулом найдена в следующих моделях:</h3>
     {{ parent() }}
 {% endblock head %}
+
+
+
+
+{% extends 'CatalogLandRoverBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogLandRoverBundle::landrover.base.html.twig' %}
+{% block regionPath %}
+    {% if app.request.get('token') %}
+        {{ path('articul_landrover_find_token', {'regionCode': region.getCode, 'token': app.request.get('token'), 'articul': app.request.get('articul')|trim, 'callbackhost': app.request.get('callbackhost')}) }}
+
+    {% else %}
+
+        {{ path('articul_landrover_find', {'regionCode': region.getCode, 'articul': app.request.get('articul')|trim, 'callbackhost': app.request.get('callbackhost')}) }}
+
+    {% endif %}
+{% endblock regionPath %}
+
+{% block modificationScript %}
+    <script>
+        $("#{{ modelCode }}").on("click", function(){
+            $("#modifications_for_model{{ modelCode }}").toggleClass("hidden");
+            $(this).toggleClass("glyphicon-plus");
+            $.ajax({
+                type:   'POST',
+                async:  false,
+                url:    "{% block ajaxUrl %}{{ path('articul_landrover_modifications') }}{% endblock ajaxUrl %}",
+                data:   {
+                    regionCode: $(this).attr('regionCode'),
+                    modelCode: "{{ model.getCode }}",
+                    token: "{{ app.request.get('token') }}",
+                    articul: "{{ app.request.get('articul')|trim }}",
+                    callbackhost: "{{ app.request.get('callbackhost') }}",
+                    domain: "{{ app.request.get('domain') }}"
+                },
+                success: function(data) {
+                    $("#modifications_for_model{{ modelCode }}").html(data);
+                }
+            });
+            $(this).toggleClass("glyphicon-minus");
+        });
+        $("#{{ modelCode }}").on("mouseover", function(){
+            $(this).css("cursor", "pointer");
+            $(this).addClass("btn-info");
+        });
+        $("#{{ modelCode }}").on("mouseout", function(){
+            $(this).removeClass("btn-info");
+        });
+    </script>
+{% endblock modificationScript %}
+
+{% block head %}
+    <h3>Запчасть с таким артикулом найдена в следующих моделях:</h3>
+    {{ parent() }}
+{% endblock head %}
+#}

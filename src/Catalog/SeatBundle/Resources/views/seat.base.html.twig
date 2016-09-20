@@ -35,7 +35,7 @@
 {% endblock articulPath %}
 
 {% block userStylesheets %}
-    {% if (app.request.get('callbackhost')) or (app.request.cookies.get('COOKIEHOSTseat'~app.request.cookies.get('DOMAIN'))) %}
+    {% if (app.request.get('callbackhost')) or (app.request.cookies.get('DOMAIN')) %}
         <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common_callbackhost.css') }}" media="all">
     {% else %}
         <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common.css') }}" media="all">
