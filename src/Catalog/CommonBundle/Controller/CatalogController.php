@@ -88,6 +88,7 @@ abstract class CatalogController extends BaseController{
 
     public function modificationsAction(Request $request)
     {
+
         if ($request->isXmlHttpRequest()) {
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');
@@ -101,7 +102,13 @@ abstract class CatalogController extends BaseController{
 
 
             $callbackhost = trim($request->get('callbackhost'));
+
+
+
             $domain = trim($request->get('domain'));
+
+            $domain = substr_replace($domain, '', strpos($domain, '.'), 1);
+
 
 
             $headers = $request->server->getHeaders();
