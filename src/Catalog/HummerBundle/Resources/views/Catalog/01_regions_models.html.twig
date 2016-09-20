@@ -2,11 +2,11 @@
 {% use 'CatalogHummerBundle::hummer.base.html.twig' %}
 {% block regionPath %}
     {% if app.request.get('token') %}
-        {{ path('catalog_hummer_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
+        {{ path('catalog_hummer_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost'), 'domain':  app.request.get('domain')}) }}
 
     {% else %}
 
-        {{ path('catalog_hummer', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost')}) }}
+        {{ path('catalog_hummer', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost'), 'domain':  app.request.get('domain')}) }}
 
     {% endif %}
 
