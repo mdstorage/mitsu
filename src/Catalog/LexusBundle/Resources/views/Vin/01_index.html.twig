@@ -12,8 +12,11 @@
                 type:   'POST',
                 async:  false,
                 url:    "{% block vinAjaxPath %}{{ path('vin_lexus_result') }}{% endblock vinAjaxPath %}",
-                data:   { vin: $("#vin").val(). replace(/\s+/g, ''),
-                token: '{{ app.request.get('token') }}'
+                data:   {
+                    vin: $("#vin").val(). replace(/\s+/g, ''),
+                    token: '{{ app.request.get('token') }}',
+                    callbackhost: "{{ app.request.get('callbackhost') }}",
+                    domain: "{{ app.request.get('domain') }}"
                 },
                 success: function(data) {
                     $("#vin-result").html(data);

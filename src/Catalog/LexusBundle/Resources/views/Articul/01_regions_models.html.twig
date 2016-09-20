@@ -4,11 +4,11 @@
 
 
    {% if app.request.get('token') %}
-        {{ path('articul_lexus_find_token', {'regionCode': region.getCode, 'articul': app.request.get('articul')|trim, 'token': app.request.get('token')}) }}
+        {{ path('articul_lexus_find_token', {'regionCode': region.getCode, 'articul': app.request.get('articul')|trim, 'token': app.request.get('token'), 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% else %}
 
-        {{ path('articul_lexus_find', {'regionCode': region.getCode, 'articul': app.request.get('articul')|trim}) }}
+        {{ path('articul_lexus_find', {'regionCode': region.getCode, 'articul': app.request.get('articul')|trim, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% endif %}
 
@@ -28,6 +28,8 @@
                     modelCode: "{{ model.getCode }}",
                     token: "{{ app.request.get('token') }}",
                     articul: "{{ app.request.get('articul')|trim }}",
+                    callbackhost: "{{ app.request.get('callbackhost') }}",
+                    domain: "{{ app.request.get('domain') }}"
                 },
                 success: function(data) {
                     $("#modifications_for_model{{ modelCode }}").html(data);

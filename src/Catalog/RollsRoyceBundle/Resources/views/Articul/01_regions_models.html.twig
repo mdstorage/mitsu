@@ -4,11 +4,11 @@
 
     {% if app.request.get('token') %}
 
-        {{ path('articul_rollsroyce_find_token', {'token': app.request.get('token'),'articul': app.request.get('articul')|trim, 'regionCode': region.getCode }) }}
+        {{ path('articul_rollsroyce_find_token', {'token': app.request.get('token'),'articul': app.request.get('articul')|trim, 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost') }) }}
 
     {% else %}
 
-        {{ path('articul_rollsroyce_find', {'regionCode': region.getCode, 'articul': app.request.get('articul')|trim}) }}
+        {{ path('articul_rollsroyce_find', {'regionCode': region.getCode, 'articul': app.request.get('articul')|trim, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% endif %}
 
@@ -27,7 +27,9 @@
                     regionCode: $(this).attr('regionCode'),
                     modelCode: "{{ model.getCode }}",
                     token: "{{ app.request.get('token') }}",
-                    articul: "{{ app.request.get('articul')|trim }}"
+                    articul: "{{ app.request.get('articul')|trim }}",
+                    callbackhost: "{{ app.request.get('callbackhost') }}",
+                    domain: "{{ app.request.get('domain') }}"
                 },
                 success: function(data) {
                     $("#modifications_for_model{{ modelCode }}").html(data);

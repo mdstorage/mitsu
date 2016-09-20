@@ -14,7 +14,9 @@
                     url:    "{% block vinAjaxPath %}{{ path('vin_subaru_result') }}{% endblock vinAjaxPath %}",
                     data:   {
                         vin: $("#vin").val(),
-                        token: '{{ app.request.get('token') }}'
+                        token: '{{ app.request.get('token') }}',
+                        callbackhost: "{{ app.request.get('callbackhost') }}",
+                        domain: "{{ app.request.get('domain') }}"
                     },
                     success: function(data) {
                         $("#vin-result").html(data);
