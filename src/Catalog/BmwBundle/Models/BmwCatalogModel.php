@@ -69,11 +69,21 @@ class BmwCatalogModel extends CatalogModel{
 
         $aData = $query->fetchAll();
 
+        $firstSymbolsModels = array();
+
+        foreach($aData as $item)
+        {
+            $firstSymbolsModels[!ctype_digit(substr($item['ExtBaureihe'],0,1))?substr($item['ExtBaureihe'],0,2):substr($item['ExtBaureihe'],0,1)] = !ctype_digit(substr($item['ExtBaureihe'],0,1))?substr($item['ExtBaureihe'],0,2):substr($item['ExtBaureihe'],0,1);
+        }
+
         $models = array();
         foreach($aData as $item) {
 
             $models[$item['Baureihe'].'_'.$item['Kuzov']] = array(Constants::NAME => strtoupper($item['ExtBaureihe']) . ' ' . $item['Kuzov'],
-                Constants::OPTIONS => array('grafik' => $item['Id']));
+                Constants::OPTIONS => array(
+                    'grafik' => $item['Id'],
+                    'firstSymbolsModels' => $firstSymbolsModels
+                    ));
 
         }
 
