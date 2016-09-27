@@ -42,10 +42,10 @@ class BmwArticulModel extends BmwCatalogModel{
     {
 
         $sql = "
-        select fztyp_karosserie Kuzov, fztyp_baureihe Baureihe
-        from w_fztyp, w_btzeilen_verbauung
-        where btzeilenv_sachnr = :articulCode and fztyp_mospid = btzeilenv_mospid and fztyp_karosserie NOT LIKE 'ohne'
-        and fztyp_ktlgausf = :regionCode
+        select fztyp_karosserie Kuzov, fztyp_baureihe Baureihe, b.ben_text ExtBaureihe
+        from w_fztyp, w_btzeilen_verbauung, w_baureihe, w_ben_gk b
+        where (baureihe_textcode = b.ben_textcode AND b.ben_iso = 'ru' AND b.ben_regiso = '') AND btzeilenv_sachnr = :articulCode and fztyp_mospid = btzeilenv_mospid and fztyp_karosserie NOT LIKE 'ohne'
+        and fztyp_ktlgausf = :regionCode AND fztyp_baureihe = baureihe_baureihe
         ";
 
         $query = $this->conn->prepare($sql);
@@ -56,6 +56,12 @@ class BmwArticulModel extends BmwCatalogModel{
         $aData = $query->fetchAll();
         $models = array();
 
+        $firstSymbolsModels = array();
+
+        foreach($aData as $item)
+        {
+            $firstSymbolsModels[!ctype_digit(substr($item['ExtBaureihe'],0,1))?strtoupper(substr($item['ExtBaureihe'],0,2)):(substr($item['ExtBaureihe'],0,1))] = !ctype_digit(substr($item['ExtBaureihe'],0,1))?strtoupper(substr($item['ExtBaureihe'],0,2)):(substr($item['ExtBaureihe'],0,1));
+        }
 
         foreach($aData as $item)
         {
@@ -64,6 +70,34 @@ class BmwArticulModel extends BmwCatalogModel{
         }
 
         return array_unique($models);
+    }
+
+    public function getArticulModelNavs($articul, $regionCode)
+    {
+
+        $sql = "
+        select fztyp_karosserie Kuzov, fztyp_baureihe Baureihe, b.ben_text ExtBaureihe
+        from w_fztyp, w_btzeilen_verbauung, w_baureihe, w_ben_gk b
+        where (baureihe_textcode = b.ben_textcode AND b.ben_iso = 'ru' AND b.ben_regiso = '') AND btzeilenv_sachnr = :articulCode and fztyp_mospid = btzeilenv_mospid and fztyp_karosserie NOT LIKE 'ohne'
+        and fztyp_ktlgausf = :regionCode AND fztyp_baureihe = baureihe_baureihe
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('articulCode', substr($articul, 4, strlen($articul)));
+        $query->bindValue('regionCode', $regionCode);
+        $query->execute();
+
+        $aData = $query->fetchAll();
+        $models = array();
+
+        $firstSymbolsModels = array();
+
+        foreach($aData as $item)
+        {
+            $firstSymbolsModels[!ctype_digit(substr($item['ExtBaureihe'],0,1))?strtoupper(substr($item['ExtBaureihe'],0,2)):(substr($item['ExtBaureihe'],0,1))] = !ctype_digit(substr($item['ExtBaureihe'],0,1))?strtoupper(substr($item['ExtBaureihe'],0,2)):(substr($item['ExtBaureihe'],0,1));
+        }
+
+        return ($firstSymbolsModels);
     }
     
     public function getArticulModifications($articul, $regionCode, $modelCode)

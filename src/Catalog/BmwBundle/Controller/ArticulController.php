@@ -44,40 +44,56 @@ use BmwArticulFilters;
 
 
     }
-
-   /* public function modificationsAction(Request $request)
+    public function articulRegionModelsFilter($oContainer, $parameters)
     {
-        if ($request->isXmlHttpRequest()) {
-            $articul = $request->cookies->get(Constants::ARTICUL);
-            $regionCode = $request->get('regionCode');
-            $modelCode = $request->get('modelCode');
-            $token = $request->get('token');
-            $parameters = array(
-                'regionCode' => $regionCode,
-                'modelCode' => $modelCode,
-                'token' => $token
-            );
+        $articulModels = $parameters['articulModels'];
+        $articulRegions = $parameters['articulRegions'];
+        $regionCode = $parameters['regionCode'];
+        $articul = $this->get('request')->get('articul');
 
-            $modifications = $this->model()->getArticulModifications($articul, $regionCode, $modelCode);
+        $navs = $this->model()->getArticulModelNavs($articul, $regionCode);
 
-            if(empty($modifications))
-                return $this->error($request, 'Модификации не найдены.');
-
-            $oContainer = Factory::createContainer()
-                ->setActiveModel(Factory::createModel($modelCode)
-                    ->setModifications(Factory::createCollection($modifications, Factory::createModification())
-                    )
-                );
-
-            $this->filter($oContainer);
-
-            return $this->render($this->bundle() . ':02_modifications.html.twig', array(
-                'oContainer' => $oContainer,
-                'parameters' => $parameters
-            ));
+        foreach ($oContainer->getRegions() as $region) {
+            if (!in_array($region->getCode(), $articulRegions, true)) {
+                $oContainer->removeRegion($region->getCode());
+            }
         }
-    }*/
-    
+
+        $regionsList = $oContainer->getRegions();
+
+        if (!is_null($regionCode)){
+            $oActiveRegion = $regionsList[$regionCode];
+        } else{
+            /*
+             * Если пользователь не задавал регион, то в качестве активного выбирается первый из списка регионов объект
+             */
+            $oActiveRegion = reset($regionsList);
+        }
+        $models = $this->model()->getModels($oActiveRegion->getCode());
+
+        $oContainer->setActiveRegion($oActiveRegion
+            ->setModels(Factory::createCollection($models, Factory::createModel()))
+        );
+
+        foreach ($oContainer->getActiveRegion()->getModels() as $model) {
+            if (!in_array($model->getCode(), $articulModels, true)) {
+
+                $oContainer->getActiveRegion()->removeModel($model->getCode());
+            }
+            /*
+             * Изменение Options (только опции firstSymbolsModels в нем) для моделей с учетом количества вкладок в nav tabs (новое количество и имена вкладок - в массиве $navs)
+             */
+            $opt = array(
+                'grafik' => $model->getOption('grafik'),
+                'firstSymbolsModels' => array_diff($navs, array('IS', 'M1', 'V8'))
+            );
+            $model->setOptions($opt);
+
+        }
+
+        return $oContainer;
+    }
+
        
     public function bmwArticulcomplectations1Action(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $articul = null, $token = null)
     {
