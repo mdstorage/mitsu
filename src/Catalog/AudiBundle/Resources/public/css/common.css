@@ -1,6 +1,6 @@
 .main{
     margin-left: 20px;
-    width: 90%;
+    width: 70%;
 
 }
 
@@ -112,6 +112,146 @@ img.highqual { -ms-interpolation-mode: bicubic; }
 .jivo-btn-dark {
     color: #222;
 }
+
+
+
+
+.new-search-auto .listLine .brandsList
+ul {
+    margin:0
+    0 0 80px
+}
+.tecdocCont
+.listLine {
+    border-bottom:1px solid #e5e5e5;
+    clear:both;
+    float:left;
+    position:relative;
+    width:100%
+}
+.listLine
+.wordBold {
+    float:left;
+    padding:5px
+    15px;
+    font-family:'Exo 2',Arial;
+    font-size:14px;
+    color:#000
+}
+.listLine
+.brandsList {
+    background:none repeat scroll 0 0 #f0f0f0
+}
+.listLine .brandsList
+ul {
+    background:none repeat scroll 0 0 #fff;
+    border-left:1px solid #e5e5e5;
+    margin:0
+    0 0 40px;
+    padding:5px
+    0 5px 10px
+}
+.listLine .brandsList ul:hover {
+    background:none repeat scroll 0 0 #fafafa
+}
+.listLine .brandsList ul
+li {
+    display:inline-block;
+    list-style:outside none none;
+    padding:3px
+    5px;
+    vertical-align:middle;
+    width:167px;
+    word-break:break-all
+}
+
+
+.clear {
+    clear:both !important
+}
+
+.new-search-auto .brandsList ul li
+a {
+    text-decoration:none !important;
+    color:#000
+}
+
+.header-menu ul
+li {
+    display:inline-block;
+    border-right:solid 1px #64b7da
+}
+.header-menu ul li
+a {
+    padding:10px
+    20px;
+    display:inline-block;
+    font-weight:bold
+}
+.header-menu ul li
+a.current {
+    background:#d9534f;
+    text-decoration:none;
+    color:#fff !important
+}
+.header-menu ul li a:hover {
+    background:#d9534f;
+    text-decoration:none;
+    color:#fff !important
+}
+ul,ol {
+    list-style:none !important
+}
+.new-search-auto .nav-tabs>li>a {
+    padding:7px
+    12px
+}
+.new-search-auto .nav>li>a {
+    display:block;
+    font-size:15px !important
+}
+
+.head_dropmenu>li {
+    padding:5px
+    20px
+}
+.headlist>li:hover {
+    background:#ffe023;
+    transition-duration:0.6s;
+    transition-property:background, color;
+    transition-timing-function:ease
+}
+.headlist > li:hover
+a {
+    border:0px
+}
+.headlist > li:hover
+.head_dropmenu {
+    display:block;
+    opacity:1;
+    filter:alpha(opacity=100);
+    -webkit-transition:all 0.5s;
+    -moz-transition:all 0.5s;
+    -o-transition:all 0.5s;
+    -ms-transition:all 0.5s;
+    transition:all 0.5s;
+    visibility:visible
+}
+.headlist > li:hover .head_dropmenu>li:hover {
+    background:#ffe023
+}
+.headlist > li:hover .head_dropmenu > li:hover
+a {
+    text-decoration:none
+}
+.headlist>li>a {
+    padding:0
+    0 5px
+}
+.headlist>li>i,.headlist>li>a>i {
+    color:#000
+}
+
 
 
 

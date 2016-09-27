@@ -1203,6 +1203,7 @@ class SubaruCatalogModel extends CatalogModel{
 
     public function restrictionsFilter($aArticuls, $complectation)
     {
+
         foreach ($aArticuls as $index => $value) {
 
             if ($value['model_restrictions'] != 'ALL') {
@@ -1255,6 +1256,20 @@ class SubaruCatalogModel extends CatalogModel{
                         if (in_array($item, $complectation)) {
                             $ct = $ct + 1;
                         }
+
+                        else
+                        {
+                            if (strpos($item, "#"))
+                            {
+                                $substr = substr_replace($item, '', strpos($item, '#'), strripos($item, '#') + 1);
+                                if(preg_grep('"'.$substr.'"', $complectation))
+                                {
+                                    $ct = $ct + 1;
+                                }
+                            }
+                        }
+
+
 
                     }
 
