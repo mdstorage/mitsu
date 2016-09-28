@@ -83,9 +83,13 @@ use BmwArticulFilters;
             /*
              * Изменение Options (только опции firstSymbolsModels в нем) для моделей с учетом количества вкладок в nav tabs (новое количество и имена вкладок - в массиве $navs)
              */
+            $firstSymbolsModels = array();
+            $firstSymbolsModels = array_intersect_key(array_diff($navs, array('IS', 'M1', 'V8')), $model->getOption('firstSymbolsModels'));
+            sort($firstSymbolsModels);
+            reset($firstSymbolsModels);
             $opt = array(
                 'grafik' => $model->getOption('grafik'),
-                'firstSymbolsModels' => array_diff($navs, array('IS', 'M1', 'V8'))
+                'firstSymbolsModels' => $firstSymbolsModels
             );
             $model->setOptions($opt);
 

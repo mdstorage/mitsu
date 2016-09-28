@@ -20,10 +20,10 @@ class SeatVinModel extends SeatCatalogModel {
 
 
         $sql = "
-        SELECT markt
+        SELECT markt, all_overview.catalog
         FROM all_overview, all_vkbz, all_vincode
         WHERE (all_vkbz.epis_typ = all_overview.epis_typ and all_vkbz.vkbz = all_vincode.verkaufstyp and all_vkbz.mkb_4 = all_vincode.motorkennbuchstable
-        and all_overview.einsatz = all_vincode.model_year and all_vincode.vin = :vin)
+        and all_overview.einsatz = all_vincode.model_year and all_vincode.vin = :vin and all_overview.catalog = 'se')
         ";
 
         $query = $this->conn->prepare($sql);

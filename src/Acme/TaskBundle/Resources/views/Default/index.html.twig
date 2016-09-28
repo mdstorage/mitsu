@@ -4,28 +4,109 @@
     {% block stylesheets %}
         <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap.min.css') }}" media="all">
         <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap-theme.min.css') }}" media="all">
+        <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/common.css') }}" media="all">
+
     {% endblock %}
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 
 </head>
+{% block javascripts %}
 
-<div class="col-lg-6">
+    <script src="{{ asset('bundles/catalogcommon/js/jquery-2.1.1.min.js') }}"></script>
+    <script src="{{ asset('bundles/catalogcommon/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('bundles/catalogcommon/js/jquery.imagemapster.min.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/jquery-scrolling.js') }}"></script>
 
-{% for mark in marks %}
+{% endblock %}
 
-        <a href="http://vincat.ru/{{ mark|lower }}/catalog/0" target="_blank">{{ mark }}</a><br>
+{% block summary_set %}{% endblock summary_set %}
+{% block body %}
+    <div class="main">
+    {% block vin %}
+        <div class="alert alert-dismissable" id="vin-frame-group">
+            <div class="row">
+                <div class="col-xs-6">
+                    {% block head %}<h3>Поиск по VIN</h3>{% endblock head %}
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-xs-10">
+                                <input type="text" class="form-control" id="vin" placeholder="Введите VIN"/>
+                            </div>
+                            <input type="button" class="btn btn-info" value="Искать" id="vin-button"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock vin %}
+    {% block frame %}{% endblock frame %}
+
+        {% block vinScript %}
+        {% set marks = ['Hyundai', 'KIA', 'Suzuki', 'Subaru', 'Mazda', 'Mercedes', 'Smart', 'BMW', 'BMWMoto', 'Mini', 'RollsRoyce', 'Saab', 'Audi', 'Volkswagen',
+        'Seat', 'Skoda', 'Fiat', 'FiatProfessional', 'Lancia', 'AlfaRomeo', 'Abarth', 'Nissan', 'Infiniti', 'LandRover', 'ChevroletUsa', 'Cadillac', 'Pontiac',
+        'Buick', 'Hummer', 'Saturn', 'GMC', 'Oldsmobile', 'Toyota', 'Lexus'] %}
 
 
-{% endfor %}
+        {% for mark in marks %}
 
-        <a href="http://nissan.by.suraman.newsolution.by" target="_blank">Nissan_old</a><br>
+            {% if mark in ['Volkswagen', 'Audi', 'Skoda', 'Seat'] %}
+                {% set pathth = 'vin_'~mark|lower~'_region' %}
+
+            {% else %}
+                {% set pathth = 'vin_'~mark|lower~'_result' %}
+
+            {% endif %}
+
+            <div id="vin-result{{ mark }}"></div>
+
+            <script>
+            $("#vin-button").on('click', function(){
+
+                if($("#vin").val(). replace(/\s+/g, '').length !== 17){
+                    alert("VIN должен состоять из 17 знаков!");
+                    return;
+                }
+                $("#vin-result").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="20px" />');
+
+                    $.ajax({
+                        type:   'POST',
+                        async:  false,
+                        url:    "{% block vinAjaxPath %}{{ path(pathth) }}{% endblock vinAjaxPath %}",
+                        data:   { vin: $("#vin").val(). replace(/\s+/g, '') },
+                        success: function(data) {
+                            if (data != 'Ничего не найдено')
+                            {
+
+                                $("#vin-result{{ mark }}").html(data);
+                                return;
+
+                            }
+
+                        }
+                    });
+
+            });
+            </script>
+
+        {% endfor %}
+        {% endblock vinScript %}
+    {% block frameScript %}{% endblock frameScript %}
+        <div class="row">
+            <div class="col-lg-6">
+
+                {% for mark in marks %}
+                    <a href="https://vincat.ru/{{ mark|lower }}/catalog/0" target="_blank">{{ mark }}</a><br>
+                {% endfor %}
+
+                <a href="https://nissan.by.suraman.newsolution.by" target="_blank">Nissan_old</a><br>
+
+                <a href="https://cats-toyota.by.suraman.newsolution.by" target="_blank">Toyota_old</a><br>
+
+                <a href="https://vincat.ru/mitsubishi" target="_blank">Mitsubishi</a><br>
+            </div>
+        </div>
+    </div>
+{% endblock body %}
 
 
-        <a href="http://cats-toyota.by.suraman.newsolution.by" target="_blank">Toyota_old</a><br>
-
-
-        <a href="http://vincat.ru/mitsubishi" target="_blank">Mitsubishi</a><br>
-
-
-</div>
 
