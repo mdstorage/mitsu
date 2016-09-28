@@ -6,13 +6,13 @@ catalog_lexus:
     resource: "@CatalogLexusBundle/Resources/config/routing.yml"
     prefix:   /
     requirements:
-        _scheme: https
+    _scheme: https
 
 catalog_toyota:
     resource: "@CatalogToyotaBundle/Resources/config/routing.yml"
     prefix:   /
     requirements:
-        _scheme: https
+       _scheme: https
 
 catalog_volvo:
     resource: "@CatalogVolvoBundle/Resources/config/routing.yml"
@@ -20,13 +20,11 @@ catalog_volvo:
     requirements:
         _scheme: https
 
-
 catalog_landrover:
     resource: "@CatalogLandRoverBundle/Resources/config/routing.yml"
     prefix:   /
     requirements:
         _scheme: https
-
 
 catalog_infiniti:
     resource: "@CatalogInfinitiBundle/Resources/config/routing.yml"
@@ -254,4 +252,4 @@ catalog_rollsroyce:
     resource: "@CatalogRollsRoyceBundle/Resources/config/routing.yml"
     prefix:   /
     requirements:
-        _scheme: https
+       _scheme: https
