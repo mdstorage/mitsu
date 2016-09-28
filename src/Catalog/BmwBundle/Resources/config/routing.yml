@@ -1,10 +1,14 @@
 catalog_bmw_token:
   path:         /bmw/catalog/0/{token}/{regionCode}
   defaults:     {_controller: CatalogBmwBundle:Catalog:regionsModels, token: null, regionCode: null}
+  requirements:
+     _scheme: https
 
 catalog_bmw:
   path:         /bmw/{regionCode}
   defaults:     {_controller: CatalogBmwBundle:Catalog:regionsModels, regionCode: null}
+  requirements:
+     _scheme: https
 
 catalog_bmw_modifications:
   path:         /bmw/catalog/1
