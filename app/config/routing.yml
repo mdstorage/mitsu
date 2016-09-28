@@ -9,6 +9,8 @@ catalog_lexus:
 catalog_toyota:
     resource: "@CatalogToyotaBundle/Resources/config/routing.yml"
     prefix:   /
+    requirements:
+        _scheme: https
 
 catalog_volvo:
     resource: "@CatalogVolvoBundle/Resources/config/routing.yml"
