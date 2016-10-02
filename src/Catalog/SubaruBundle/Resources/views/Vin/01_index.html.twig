@@ -2,6 +2,11 @@
 {% use 'CatalogSubaruBundle::subaru.base.html.twig' %}
 {% block vinScript %}
         <script>
+            $("#vin").keyup(function(event){
+                if(event.keyCode == 13){
+                    $("#vin-button").click();
+                }
+            });
             $("#vin-button").on('click', function(){
                 if($("#vin").val().length !== 17 && $("#vin").val().length !== 9){
                     alert("VIN должен состоять из 17 или 9 (для японских автомобилей) знаков!");

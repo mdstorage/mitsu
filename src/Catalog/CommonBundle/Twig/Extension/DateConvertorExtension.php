@@ -15,6 +15,7 @@ class DateConvertorExtension extends Twig_Extension{
     public function getFilters() {
         return array(
             'date_convertor'   => new \Twig_Filter_Method($this, 'dateConvertor'),
+            'file_exists'   => new \Twig_Filter_Method($this, 'fileExists'),
         );
     }
 
@@ -23,5 +24,14 @@ class DateConvertorExtension extends Twig_Extension{
             return "...";
         }
         return (substr( $str, 0, 4)."/".substr($str, 4, 2)."/".substr($str, 6, 2));
+    }
+
+    public function fileExists($file) {
+
+        if (file_exists($file)) {
+            return true;
+        }
+
+        return false;
     }
 } 
