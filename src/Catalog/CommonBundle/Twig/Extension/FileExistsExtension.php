@@ -21,7 +21,10 @@ class FileExistsExtension extends \Twig_Extension
         if (file_exists($file)) {
             return true;
         }
+        else
+        {
+            return false;
+        }
 
-        return false;
     }
 } 

@@ -48,5 +48,5 @@ security:
     # with these settings you can restrict or allow access for different parts
     # of your application based on roles, ip, host or methods
     # http://symfony.com/doc/current/book/security.html#security-book-access-control-matching-options
-    access_control:
-        - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+    #access_control:
+    #    - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }

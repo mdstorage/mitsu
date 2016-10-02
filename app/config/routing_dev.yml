@@ -1,18 +1,253 @@
-_wdt:
-    resource: "@WebProfilerBundle/Resources/config/routing/wdt.xml"
-    prefix:   /_wdt
+acme_billing:
+    resource: "@AcmeBillingBundle/Resources/config/routing.yml"
+    prefix:   /
 
-_profiler:
-    resource: "@WebProfilerBundle/Resources/config/routing/profiler.xml"
-    prefix:   /_profiler
+catalog_lexus:
+    resource: "@CatalogLexusBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
 
-_configurator:
-    resource: "@SensioDistributionBundle/Resources/config/routing/webconfigurator.xml"
-    prefix:   /_configurator
+catalog_toyota:
+    resource: "@CatalogToyotaBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
 
-_main:
-    resource: routing.yml
+catalog_volvo:
+    resource: "@CatalogVolvoBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
 
-# AcmeDemoBundle routes (to be removed)
-_acme_demo:
-    resource: "@AcmeDemoBundle/Resources/config/routing.yml"
+catalog_landrover:
+    resource: "@CatalogLandRoverBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_infiniti:
+    resource: "@CatalogInfinitiBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_nissan:
+    resource: "@CatalogNissanBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_chevroletusa:
+    resource: "@CatalogChevroletUsaBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_pontiac:
+    resource: "@CatalogPontiacBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_cadillac:
+    resource: "@CatalogCadillacBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_buick:
+    resource: "@CatalogBuickBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_hummer:
+    resource: "@CatalogHummerBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_saturn:
+    resource: "@CatalogSaturnBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_gmc:
+    resource: "@CatalogGmcBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_oldsmobile:
+    resource: "@CatalogOldsmobileBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_abarth:
+    resource: "@CatalogAbarthBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_fiatprofessional:
+    resource: "@CatalogFiatProfessionalBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_alfaromeo:
+    resource: "@CatalogAlfaRomeoBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_lancia:
+    resource: "@CatalogLanciaBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_fiat:
+    resource: "@CatalogFiatBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_seat:
+    resource: "@CatalogSeatBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_skoda:
+    resource: "@CatalogSkodaBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_volkswagen:
+    resource: "@CatalogVolkswagenBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_audi:
+    resource: "@CatalogAudiBundle/Resources/config/routing.yml"
+    prefix:   /
+
+catalog_ford:
+    resource: "@CatalogFordBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_saab:
+    resource: "@CatalogSaabBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+acme_task:
+    resource: "@AcmeTaskBundle/Resources/config/routing.php"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+acme_billing:
+    resource: "@AcmeBillingBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_subaru:
+    resource: "@CatalogSubaruBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_mercedes:
+    resource: "@CatalogMercedesBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_smart:
+    resource: "@CatalogSmartBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_common:
+    resource: "@CatalogCommonBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_mazda:
+    resource: "@CatalogMazdaBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_mitsubishi:
+    resource: "@CatalogMitsubishiBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+    
+catalog_suzuki:
+    resource: "@CatalogSuzukiBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+    
+catalog_honda:
+    resource: "@CatalogHondaBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_hondaeurope:
+    resource: "@CatalogHondaEuropeBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_hyundai:
+    resource: "@CatalogHyundaiBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_kia:
+    resource: "@CatalogKiaBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_bmw:
+    resource: "@CatalogBmwBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_bmwmoto:
+    resource: "@CatalogBmwMotoBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_mini:
+    resource: "@CatalogMiniBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
+
+catalog_rollsroyce:
+    resource: "@CatalogRollsRoyceBundle/Resources/config/routing.yml"
+    prefix:   /
+    requirements:
+       _scheme: http
