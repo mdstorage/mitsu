@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogCadillacBundle::cadillac.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_cadillac_find') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_cadillac_groups', parameters) }}">Выбрать группу запчастей</a> /
+    <a href="{% if  app.request.get('token') %} {{ path('articul_cadillac_find_token', parameters) }} {% else %} {{ path('articul_cadillac_find') }} {% endif %}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_cadillac_groups', parameters) }}">Выбрать группу запчастей</a> /
     Выбрать схему
 {% endblock breadcrumbs %}
 

@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
 {% use 'CatalogSeatBundle::seat.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('catalog_seat') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_seat_token', parameters) }} {% else %} {{ path('catalog_seat') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
     <a href="{{ path('catalog_seat_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> /
     Подгруппа запчастей

@@ -134,8 +134,15 @@ class CatalogController extends BaseController{
 
     public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $articul = null, $token = null)
     {
+        $data = $this->get('my_token_info')->getStatus($token);
+
+        if(empty($data) & !empty($token)){
+            return $this->errorBilling('Сервис не оплачен');
+        }
 
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+
+        if(empty($complectationCode) or $complectationCode == '1'){
 
         $a = array();
         $aForm = array();
@@ -149,8 +156,7 @@ class CatalogController extends BaseController{
 
         $complectationCode = $this->model()->getComplectationCodeFromFormaData($aForm, $regionCode, $modelCode);
 
-
-
+        }
 
         if(empty($complectationCode))
             return $this->error($request, 'Комплектация не найдена.');

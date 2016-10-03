@@ -7,7 +7,7 @@
 
 {% block subGroup %}<b>Подгруппа запчастей:</b> {{ oContainer.getActiveGroup.getSubGroup(parameters['sanum']).getRuname }}{% endblock subGroup %}
 {#{% block breadcrumbs %}#}
-    {#<a href="{{ path('catalog_smart') }}">Выбрать регион, модель, модификацию</a> /#}
+    {#<a href="{% if  app.request.get('token') %} {{ path('catalog_smart_token', parameters) }} {% else %} {{ path('catalog_smart') }} {% endif %}">Выбрать регион, модель, модификацию</a> /#}
     {#<a href="{{ path('catalog_smart_complectations', parameters) }}">Выбрать комплектацию</a> /#}
     {#Выбрать группу запчастей#}
 {#{% endblock breadcrumbs %}#}
@@ -26,7 +26,7 @@
 {#{% endblock picture %}#}
 
 {% block breadcrumbs %}
-    <a href="{{ path('catalog_smart') }}">Выбрать регион, модель, модификацию</a> /
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_smart_token', parameters) }} {% else %} {{ path('catalog_smart') }} {% endif %}">Выбрать регион, модель, модификацию</a> /
     <a href="{{ path('catalog_smart_complectations', parameters) }}">Выбрать комплектацию</a> /
     <a href="{{ path('catalog_smart_groups', parameters) }}">Выбрать группу запчастей</a> /
     Выбрать подгруппу запчастей

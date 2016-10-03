@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogSuzukiBundle::suzuki.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('catalog_suzuki') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('catalog_suzuki_complectations', parameters) }}">Выбрать комплектацию</a> / <a href="{{ path('catalog_suzuki_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('catalog_suzuki_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_suzuki_token', parameters) }} {% else %} {{ path('catalog_suzuki') }} {% endif %}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('catalog_suzuki_complectations', parameters) }}">Выбрать комплектацию</a> / <a href="{{ path('catalog_suzuki_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('catalog_suzuki_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
 {% endblock breadcrumbs %}
 
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}

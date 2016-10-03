@@ -1,7 +1,7 @@
 {% extends 'CatalogNissanBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogNissanBundle::nissan.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_nissan_find') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
+    <a href="{% if  app.request.get('token') %} {{ path('articul_nissan_find_token', parameters) }} {% else %} {{ path('articul_nissan_find') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
     <a href="{{ path('articul_nissan_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a>/
     <a href="{{ path('articul_nissan_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/

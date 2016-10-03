@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogAlfaRomeoBundle::alfaromeo.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_alfaromeo_find') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_alfaromeo_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('articul_alfaromeo_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
+    <a href="{% if  app.request.get('token') %} {{ path('articul_alfaromeo_find_token', parameters) }} {% else %} {{ path('articul_alfaromeo_find') }} {% endif %}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_alfaromeo_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('articul_alfaromeo_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
 {% endblock breadcrumbs %}
 
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}

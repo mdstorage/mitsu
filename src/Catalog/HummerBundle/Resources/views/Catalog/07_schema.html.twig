@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogHummerBundle::hummer.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('catalog_hummer') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_hummer_token', parameters) }} {% else %} {{ path('catalog_hummer') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
     <a href="{{ path('catalog_hummer_complectations', parameters) }}"> Комплектация ({{ oContainer.getActiveComplectation.getRuname }})</a>/
     <a href="{{ path('catalog_hummer_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/

@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogBuickBundle::buick.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_buick_find') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_buick_groups', parameters) }}">Выбрать группу запчастей</a> /
+    <a href="{% if  app.request.get('token') %} {{ path('articul_buick_find_token', parameters) }} {% else %} {{ path('articul_buick_find') }} {% endif %}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_buick_groups', parameters) }}">Выбрать группу запчастей</a> /
     Выбрать схему
 {% endblock breadcrumbs %}
 

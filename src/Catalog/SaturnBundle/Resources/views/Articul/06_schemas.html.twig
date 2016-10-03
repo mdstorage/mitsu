@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogSaturnBundle::saturn.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_saturn_find') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_saturn_groups', parameters) }}">Выбрать группу запчастей</a> /
+    <a href="{% if  app.request.get('token') %} {{ path('articul_saturn_find_token', parameters) }} {% else %} {{ path('articul_saturn_find') }} {% endif %}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_saturn_groups', parameters) }}">Выбрать группу запчастей</a> /
     Выбрать схему
 {% endblock breadcrumbs %}
 

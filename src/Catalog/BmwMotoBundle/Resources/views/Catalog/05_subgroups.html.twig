@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
 {% use 'CatalogBmwMotoBundle::bmwmoto.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('catalog_bmwmoto') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_bmwmoto_token', parameters) }} {% else %} {{ path('catalog_bmwmoto') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
     <a href="{{ path('catalog_bmwmoto_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> /
     <a href="{{ path('catalog_bmwmoto_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> /

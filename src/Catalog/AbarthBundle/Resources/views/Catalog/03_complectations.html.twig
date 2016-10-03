@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
 {% use 'CatalogAbarthBundle::abarth.base.html.twig' %}
 {% block breadcrumbs %}
-   <a href="{{ path('catalog_abarth') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+   <a href="{% if  app.request.get('token') %} {{ path('catalog_abarth_token', parameters) }} {% else %} {{ path('catalog_abarth') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getCode }})</a> / Комплектация                    
 {% endblock breadcrumbs %}
 

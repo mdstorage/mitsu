@@ -1,7 +1,8 @@
 {% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
 {% use 'CatalogSubaruBundle::subaru.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_subaru_find') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{% if  app.request.get('token') %} {{ path('articul_subaru_find_token', parameters) }} {% else %} {{ path('articul_subaru_find') }} {% endif %}">
+        Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / Комплектация
 {% endblock breadcrumbs %}
 
@@ -48,7 +49,10 @@
                         type:   'POST',
                         async:  false,
                         url:    "{{ path('catalog_subaru_complectation_korobka') }}",
-                        data:   { priznak_agregata: selector.substr(-2) ,engine: $(selector).val(), modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                        data:   {
+                            priznak_agregata: selector.substr(-2) ,
+                            engine: $(selector).val(),
+                            modificationCode: '{{ oContainer.getActiveModification.getCode }}',
                             regionCode: '{{ oContainer.getActiveRegion.getCode }}',
                             modelCode: '{{ oContainer.getActiveModel.getCode }}'},
                         success: function(data){

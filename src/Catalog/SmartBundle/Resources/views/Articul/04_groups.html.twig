@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{{ asset('bundles/catalogsmart/css/smart.css') }}" media="all">
 {% endblock %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_smart_find') }}">Выбрать регион, модель, модификацию</a> /
+    <a href="{% if  app.request.get('token') %} {{ path('articul_smart_find_token', parameters) }} {% else %} {{ path('articul_smart_find') }} {% endif %}">Выбрать регион, модель, модификацию</a> /
     <a href="{{ path('articul_smart_complectations', parameters) }}">Выбрать комплектацию</a> /
     Выбрать группу запчастей
 {% endblock breadcrumbs %}
