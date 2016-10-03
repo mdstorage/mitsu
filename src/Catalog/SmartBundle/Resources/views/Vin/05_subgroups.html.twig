@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
 {% use 'CatalogSmartBundle::smart.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('vin_smart') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('vin_smart_groups', parameters) }}">Выбрать группу запчастей</a> / Выбрать подгруппу запчастей
+    <a href="{{ path('vin_smart',parameters) }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('vin_smart_groups', parameters) }}">Выбрать группу запчастей</a> / Выбрать подгруппу запчастей
 {% endblock breadcrumbs %}
 
 

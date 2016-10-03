@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
 {% use 'CatalogCadillacBundle::cadillac.base.html.twig' %}
 {% block breadcrumbs %}
-   <a href="{{ path('vin_cadillac') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
+   <a href="{{ path('vin_cadillac',parameters) }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }}, {{ oContainer.getActiveComplectation.getRuname }})</a>
     / Группа запчастей
 {% endblock breadcrumbs %}

@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogLanciaBundle::lancia.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('vin_lancia') }}">Поиск по номеру кузова</a> /
+    <a href="{{ path('vin_lancia',parameters) }}">Поиск по номеру кузова</a> /
     <a href="{{ path('vin_lancia_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
     <a href="{{ path('vin_lancia_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему
 {% endblock breadcrumbs %}

@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogBmwBundle::bmw.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('vin_bmw') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{{ path('vin_bmw',parameters) }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }}, {{ oContainer.getActiveComplectation.getRuname}})</a> /
     <a href="{{ path('vin_bmw_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
     <a href="{{ path('vin_bmw_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему

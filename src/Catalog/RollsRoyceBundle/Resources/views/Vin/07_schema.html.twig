@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogRollsRoyceBundle::rollsroyce.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('vin_rollsroyce') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{{ path('vin_rollsroyce',parameters) }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }}, {{ oContainer.getActiveComplectation.getRuname}})</a> /
     <a href="{{ path('vin_rollsroyce_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> /
     <a href="{{ path('vin_rollsroyce_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /

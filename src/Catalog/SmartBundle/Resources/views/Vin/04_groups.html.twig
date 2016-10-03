@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
 {% use 'CatalogSmartBundle::smart.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('vin_smart') }}">Поиск по номеру кузова</a> / Выбрать группу запчастей
+    <a href="{{ path('vin_smart',parameters) }}">Поиск по номеру кузова</a> / Выбрать группу запчастей
 {% endblock breadcrumbs %}
 
 {% block complectationRuname %}{{ oContainer.getActiveComplectation.getRuname }}{% endblock complectationRuname %}

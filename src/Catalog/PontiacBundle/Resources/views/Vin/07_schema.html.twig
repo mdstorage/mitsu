@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogPontiacBundle::pontiac.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('vin_pontiac') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{{ path('vin_pontiac',parameters) }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }}, {{ oContainer.getActiveComplectation.getRuname }})</a> /
     <a href="{{ path('vin_pontiac_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> /
     <a href="{{ path('vin_pontiac_schemas', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveSchema.getRuname }})</a> /

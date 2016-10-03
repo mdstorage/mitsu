@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogMiniBundle::mini.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('vin_mini') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{{ path('vin_mini',parameters) }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }}, {{ oContainer.getActiveComplectation.getRuname}})</a> /
     <a href="{{ path('vin_mini_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> /
     <a href="{{ path('vin_mini_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /

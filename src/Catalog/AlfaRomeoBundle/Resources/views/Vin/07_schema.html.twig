@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogAlfaRomeoBundle::alfaromeo.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('vin_alfaromeo') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{{ path('vin_alfaromeo',parameters) }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
     <a href="{{ path('vin_alfaromeo_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> /
     <a href="{{ path('vin_alfaromeo_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
