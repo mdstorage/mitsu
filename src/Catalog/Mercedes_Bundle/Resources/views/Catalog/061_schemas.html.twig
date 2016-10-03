@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogMercedesBundle::mercedes.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('catalog_mercedes') }}">Выбрать регион, модель, модификацию</a> /
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_mercedes_token', parameters) }} {% else %} {{ path('catalog_mercedes') }} {% endif %}">Выбрать регион, модель, модификацию</a> /
     <a href="{{ path('catalog_mercedes_complectations', parameters) }}">Выбрать комплектацию</a> /
     <a href="{{ path('catalog_mercedes_groups', parameters) }}">Выбрать группу запчастей</a> /
     <a href="{{ path('catalog_mercedes_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> /

@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
 {% use 'CatalogFiatProfessionalBundle::fiatprofessional.base.html.twig' %}
 {% block breadcrumbs %}
-   <a href="{{ path('vin_fiatprofessional') }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
+   <a href="{{ path('vin_fiatprofessional',parameters) }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>
     / Группа запчастей
 {% endblock breadcrumbs %}

@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogSeatBundle::seat.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('vin_seat') }}">Поиск по номеру кузова</a> /
+    <a href="{{ path('vin_seat',parameters) }}">Поиск по номеру кузова</a> /
     <a href="{{ path('vin_seat_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
     <a href="{{ path('vin_seat_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему
 {% endblock breadcrumbs %}

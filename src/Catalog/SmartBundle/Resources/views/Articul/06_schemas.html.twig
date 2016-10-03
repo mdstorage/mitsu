@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogSmartBundle::smart.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_smart_find') }}">Выбрать регион, модель, модификацию</a> /
+    <a href="{% if  app.request.get('token') %} {{ path('articul_smart_find_token', parameters) }} {% else %} {{ path('articul_smart_find') }} {% endif %}">Выбрать регион, модель, модификацию</a> /
     <a href="{{ path('articul_smart_complectations', parameters) }}">Выбрать комплектацию</a> /
     <a href="{{ path('articul_smart_groups', parameters) }}">Выбрать группу запчастей</a> /
     <a href="{{ path('articul_smart_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему

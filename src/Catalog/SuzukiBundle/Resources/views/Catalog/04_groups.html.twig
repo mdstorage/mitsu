@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
 {% use 'CatalogSuzukiBundle::suzuki.base.html.twig' %}
 {% block breadcrumbs %}
-   <a href="{{ path('catalog_suzuki') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
+   <a href="{% if  app.request.get('token') %} {{ path('catalog_suzuki_token', parameters) }} {% else %} {{ path('catalog_suzuki') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>
     / <a href="{{ path('catalog_suzuki_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> / Группа запчастей
 {% endblock breadcrumbs %}

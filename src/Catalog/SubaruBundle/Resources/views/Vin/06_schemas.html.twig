@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogSubaruBundle::subaru.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('vin_subaru') }}">Поиск по номеру кузова</a> / <a href="{{ path('vin_subaru_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('vin_subaru_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
+    <a href="{{ path('vin_subaru', parameters) }}">Поиск по номеру кузова</a> / <a href="{{ path('vin_subaru_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('vin_subaru_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
 {% endblock breadcrumbs %}
 
 

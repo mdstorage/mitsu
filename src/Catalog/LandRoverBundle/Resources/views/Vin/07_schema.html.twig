@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogLandRoverBundle::landrover.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('vin_landrover') }}">Поиск по номеру кузова ({{ oContainer.getActiveModel.getRuname }})</a> /
+    <a href="{{ path('vin_landrover',parameters) }}">Поиск по номеру кузова ({{ oContainer.getActiveModel.getRuname }})</a> /
     <a href="{{ path('vin_landrover_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> / 
     <a href="{{ path('vin_landrover_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
     <a href="{{ path('vin_landrover_schemas', parameters) }}">Cхема</a> / Запчасти

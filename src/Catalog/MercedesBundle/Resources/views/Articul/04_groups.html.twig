@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{{ asset('bundles/catalogmercedes/css/mercedes.css') }}" media="all">
 {% endblock %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_mercedes_find') }}">Выбрать регион, модель, модификацию</a> /
+    <a href="{% if  app.request.get('token') %} {{ path('articul_mercedes_find_token', parameters) }} {% else %} {{ path('articul_mercedes_find') }} {% endif %}">Выбрать регион, модель, модификацию</a> /
     <a href="{{ path('articul_mercedes_complectations', parameters) }}">Выбрать комплектацию</a> /
     Выбрать группу запчастей
 {% endblock breadcrumbs %}

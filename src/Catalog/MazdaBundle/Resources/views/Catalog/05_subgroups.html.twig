@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
 {% use 'CatalogMazdaBundle::mazda.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('catalog_mazda') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('catalog_mazda_groups', parameters) }}">Выбрать группу запчастей</a> / Выбрать подгруппу запчастей
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_mazda_token', parameters) }} {% else %} {{ path('catalog_mazda') }} {% endif %}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('catalog_mazda_groups', parameters) }}">Выбрать группу запчастей</a> / Выбрать подгруппу запчастей
 {% endblock breadcrumbs %}
 
 {% block complectation %}{% endblock complectation %}

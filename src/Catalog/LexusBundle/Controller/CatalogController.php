@@ -131,17 +131,19 @@ class CatalogController extends BaseController{
 
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
-        $a = array();
-        $aForm = array();
-        $a = $request->get('ComplectationType');
-        unset($a['_token']);
+        if(empty($complectationCode) or $complectationCode == '1') {
 
-        foreach ($a as $index => $value)
-        {
-            $aForm[substr($index, strpos($index, 'f'), strlen($index))] = $value;
+            $a = array();
+            $aForm = array();
+            $a = $request->get('ComplectationType');
+            unset($a['_token']);
+
+            foreach ($a as $index => $value) {
+                $aForm[substr($index, strpos($index, 'f'), strlen($index))] = $value;
+            }
+
+            $complectationCode = $this->model()->getComplectationCodeFromFormaData($aForm, $regionCode, $modificationCode);
         }
-
-        $complectationCode = $this->model()->getComplectationCodeFromFormaData($aForm, $regionCode, $modificationCode);
 
         if(empty($complectationCode))
             return $this->error($request, 'Комплектация не найдена.');

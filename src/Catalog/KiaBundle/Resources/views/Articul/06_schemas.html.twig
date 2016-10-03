@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogKiaBundle::kia.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_kia_find') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_kia_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('articul_kia_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
+    <a href="{% if  app.request.get('token') %} {{ path('articul_kia_find_token', parameters) }} {% else %} {{ path('articul_kia_find') }} {% endif %}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_kia_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('articul_kia_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
 {% endblock breadcrumbs %}
 
 

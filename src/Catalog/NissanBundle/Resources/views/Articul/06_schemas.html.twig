@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogNissanBundle::nissan.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_nissan_find') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_nissan_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('articul_nissan_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
+    <a href="{% if  app.request.get('token') %} {{ path('articul_nissan_find_token', parameters) }} {% else %} {{ path('articul_nissan_find') }} {% endif %}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_nissan_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('articul_nissan_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
 {% endblock breadcrumbs %}
 
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}

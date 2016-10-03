@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogMercedesBundle::mercedes.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_mercedes_find') }}">Выбрать регион, модель, модификацию</a> /
+    <a href="{% if  app.request.get('token') %} {{ path('articul_mercedes_find_token', parameters) }} {% else %} {{ path('articul_mercedes_find') }} {% endif %}">Выбрать регион, модель, модификацию</a> /
     <a href="{{ path('articul_mercedes_complectations', parameters) }}">Выбрать комплектацию</a> /
     <a href="{{ path('articul_mercedes_groups', parameters) }}">Выбрать группу запчастей</a> /
     <a href="{{ path('articul_mercedes_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> /
@@ -11,7 +11,7 @@
 {% block complectation %}{% endblock complectation %}
 {% set schema = oContainer.getActiveSchema %}
 {% block image %}
-    <img src="{{ asset(('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png')|file_exists()) ? asset('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png') : asset('bundles/catalogmercedes/images/BM_IMAGES_ARC/'~schema.getCode~'.png') }}" width="100%" usemap="#{{ schema.getCode }}" alt="{{ schema.getRuname }}"/>
+    <img src="{{ ('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png')|file_exists() ? asset('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png') : asset('bundles/catalogmercedes/images/BM_IMAGES_ARC/'~schema.getCode~'.png') }}" width="100%" usemap="#{{ schema.getCode }}" alt="{{ schema.getRuname }}"/>
 {% endblock image %}
 
 {% block ajaxUrl %}{{ path('articul_mercedes_articuls') }}{% endblock ajaxUrl %}

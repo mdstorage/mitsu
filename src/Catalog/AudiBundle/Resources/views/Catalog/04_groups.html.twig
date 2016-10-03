@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
 {% use 'CatalogAudiBundle::audi.base.html.twig' %}
 {% block breadcrumbs %}
-   <a href="{{ path('catalog_audi') }}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }}, 
+   <a href="{% if  app.request.get('token') %} {{ path('catalog_audi_token', parameters) }} {% else %} {{ path('catalog_audi') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>
     / Группа запчастей
 {% endblock breadcrumbs %}
