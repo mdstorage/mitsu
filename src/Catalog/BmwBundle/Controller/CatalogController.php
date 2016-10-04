@@ -50,13 +50,20 @@ class CatalogController extends BaseController{
 
     public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
     {
+        $headers = $request->server->getHeaders();
 
         foreach($request->cookies->keys() as $index => $value)
         {
-            if (stripos($value, Constants::COOKIEHOST) !== false)
-            {
-                setcookie($value, "");
+            if (!empty($headers['REFERER'])){
+                if (stripos($headers['REFERER'], 'vincat.ru') == false){
+                    if (stripos($value, Constants::COOKIEHOST) !== false)
+                    {
+                        setcookie($value, "");
+                    }
+                }
+
             }
+
         }
         $data = $this->get('my_token_info')->getStatus($token);
 
@@ -143,7 +150,7 @@ class CatalogController extends BaseController{
 
             $headers = $request->server->getHeaders();
 
-            if (stripos($headers['REFERER'], 'callbackhost='))
+            if (stripos($headers['REFERER'], 'callbackhost=') || stripos($headers['REFERER'], 'modelCode'))
             {
                 if (!$call = $request->cookies->get(Constants::COOKIEHOST.$brand.urlencode($domain)))
                 {
@@ -156,7 +163,7 @@ class CatalogController extends BaseController{
                 setcookie(Constants::COOKIEHOST.$brand.urlencode($domain), "");
             }
 
-            if (stripos($headers['REFERER'], 'domain'))
+            if (stripos($headers['REFERER'], 'domain')|| stripos($headers['REFERER'], 'modelCode'))
             {
                 if (!$call = $request->cookies->get('DOMAIN'))
                 {

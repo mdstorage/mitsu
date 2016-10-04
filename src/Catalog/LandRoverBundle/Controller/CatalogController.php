@@ -125,6 +125,7 @@ class CatalogController extends BaseController{
 
     public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $articul = null, $token = null)
     {
+
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
         $oContainer = Factory::createContainer();
         $regions = $this->model()->getRegions();
