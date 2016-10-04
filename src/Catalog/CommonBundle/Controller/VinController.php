@@ -10,11 +10,17 @@ abstract class VinController extends CatalogController{
 
     public function indexAction()
     {
+        $headers = $this->get('request')->server->getHeaders();
+
         foreach($this->get('request')->cookies->keys() as $index => $value)
         {
-            if (stripos($value, Constants::COOKIEHOST) !== false)
-            {
-                setcookie($value, "");
+            if (!empty($headers['REFERER'])){
+                if (stripos($headers['REFERER'], 'vincat.ru') == false){
+                    if (stripos($value, Constants::COOKIEHOST) !== false)
+                    {
+                        setcookie($value, "");
+                    }
+                }
             }
         }
         /**
@@ -63,7 +69,7 @@ abstract class VinController extends CatalogController{
 
             $headers = $request->server->getHeaders();
 
-            if (stripos($headers['REFERER'], 'callbackhost='))
+            if (stripos($headers['REFERER'], 'callbackhost=') || stripos($headers['REFERER'], 'modelCode'))
             {
                 if (!$call = $request->cookies->get(Constants::COOKIEHOST.$brand.urlencode($domain)))
                 {
@@ -76,7 +82,7 @@ abstract class VinController extends CatalogController{
                 setcookie(Constants::COOKIEHOST.$brand.urlencode($domain), "");
             }
 
-            if (stripos($headers['REFERER'], 'domain'))
+            if (stripos($headers['REFERER'], 'domain')|| stripos($headers['REFERER'], 'modelCode'))
             {
                 if (!$call = $request->cookies->get('DOMAIN'))
                 {

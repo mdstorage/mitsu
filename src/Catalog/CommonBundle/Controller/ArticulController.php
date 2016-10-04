@@ -15,13 +15,23 @@ abstract class ArticulController extends CatalogController{
         $brand = explode('/', $brandSlash)[1];
         setcookie(Constants::ARTICUL, '');
 
+
+        $headers = $this->get('request')->server->getHeaders();
+
         foreach($this->get('request')->cookies->keys() as $index => $value)
         {
-            if (stripos($value, Constants::COOKIEHOST) !== false)
-            {
-                setcookie($value, "");
+            if (!empty($headers['REFERER'])){
+                if (stripos($headers['REFERER'], 'vincat.ru') == false){
+                    if (stripos($value, Constants::COOKIEHOST) !== false)
+                    {
+                        setcookie($value, "");
+                    }
+                }
+
             }
+
         }
+
         return $this->render($this->bundle().':01_index.html.twig', array('error_message' => $error_message));
     }
 
@@ -121,7 +131,7 @@ abstract class ArticulController extends CatalogController{
 
             $headers = $request->server->getHeaders();
 
-            if (stripos($headers['REFERER'], 'callbackhost='))
+            if (stripos($headers['REFERER'], 'callbackhost=') || stripos($headers['REFERER'], 'modelCode'))
             {
                 if (!$call = $request->cookies->get(Constants::COOKIEHOST.$brand.urlencode($domain)))
                 {
@@ -134,7 +144,7 @@ abstract class ArticulController extends CatalogController{
                 setcookie(Constants::COOKIEHOST.$brand.urlencode($domain), "");
             }
 
-            if (stripos($headers['REFERER'], 'domain'))
+            if (stripos($headers['REFERER'], 'domain')|| stripos($headers['REFERER'], 'modelCode'))
             {
                 if (!$call = $request->cookies->get('DOMAIN'))
                 {
