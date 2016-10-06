@@ -35,6 +35,7 @@
                             <input type="button" class="btn btn-info" value="Искать" id="vin-button"/>
                         </div>
                     </div>
+                    <div id="vin-result"></div>
                 </div>
             </div>
         </div>
@@ -42,53 +43,32 @@
     {% block frame %}{% endblock frame %}
 
         {% block vinScript %}
-        {% set marks = ['Hyundai', 'KIA', 'Suzuki', 'Subaru', 'Mazda', 'Mercedes', 'Smart', 'BMW', 'BMWMoto', 'Mini', 'RollsRoyce', 'Saab', 'Audi', 'Volkswagen',
-        'Seat', 'Skoda', 'Fiat', 'FiatProfessional', 'Lancia', 'AlfaRomeo', 'Abarth', 'Nissan', 'Infiniti', 'LandRover', 'ChevroletUsa', 'Cadillac', 'Pontiac',
-        'Buick', 'Hummer', 'Saturn', 'GMC', 'Oldsmobile', 'Toyota', 'Lexus'] %}
+                       <script>
+                           $("#vin").keyup(function(event){
+                               if(event.keyCode == 13){
+                                   $("#vin-button").click();
+                               }
+                           });
+                           $("#vin-button").on('click', function(){
 
+                               if($("#vin").val(). replace(/\s+/g, '').length !== 17){
+                                   alert("VIN должен состоять из 17 знаков!");
+                                   return;
+                               }
+                               $("#vin-result").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="20px" />');
 
-        {% for mark in marks %}
+                               $.ajax({
+                                   type:   'POST',
+                                   async:  false,
+                                   url:    "{% block vinAjaxPath %}{{ path('vin_common_result') }}{% endblock vinAjaxPath %}",
+                                   data:   { vin: $("#vin").val(). replace(/\s+/g, '') },
+                                   success: function(data) {
+                                           $("#vin-result").html(data);
+                                   }
+                               });
 
-            {% if mark in ['Volkswagen', 'Audi', 'Skoda', 'Seat'] %}
-                {% set pathth = 'vin_'~mark|lower~'_region' %}
-
-            {% else %}
-                {% set pathth = 'vin_'~mark|lower~'_result' %}
-
-            {% endif %}
-
-            <div id="vin-result{{ mark }}"></div>
-
-            <script>
-            $("#vin-button").on('click', function(){
-
-                if($("#vin").val(). replace(/\s+/g, '').length !== 17){
-                    alert("VIN должен состоять из 17 знаков!");
-                    return;
-                }
-                $("#vin-result").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="20px" />');
-
-                    $.ajax({
-                        type:   'POST',
-                        async:  false,
-                        url:    "{% block vinAjaxPath %}{{ path(pathth) }}{% endblock vinAjaxPath %}",
-                        data:   { vin: $("#vin").val(). replace(/\s+/g, '') },
-                        success: function(data) {
-                            if (data != 'Ничего не найдено')
-                            {
-
-                                $("#vin-result{{ mark }}").html(data);
-                                return;
-
-                            }
-
-                        }
-                    });
-
-            });
-            </script>
-
-        {% endfor %}
+                           });
+                       </script>
         {% endblock vinScript %}
     {% block frameScript %}{% endblock frameScript %}
         <div class="row">

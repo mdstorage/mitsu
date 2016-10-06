@@ -5,6 +5,11 @@
             <table class="table table-bordered">
 
                 <tr>
+                    <td>Марка:</td>
+                    <td>{{ result.marka }}</td>
+                </tr>
+
+                <tr>
                     <td>Регион:</td>
                     <td>{% for region in oContainer.getRegions %}{{ region.getRuname }}{% endfor %}</td>
                 </tr>

@@ -42,7 +42,7 @@ fgstnr_prod Produktionsdatum,
 fztyp_sichtschutz Sichtschutz
 from w_fgstnr
 inner join w_fztyp on (fgstnr_typschl = fztyp_typschl and fgstnr_mospid = fztyp_mospid)
-inner join w_baureihe on (fztyp_baureihe = baureihe_baureihe)
+inner join w_baureihe on (fztyp_baureihe = baureihe_baureihe AND w_baureihe.baureihe_marke_tps = 'Rolls-Royce')
 inner join w_publben pk on (fztyp_karosserie = pk.publben_bezeichnung and pk.publben_art = 'K')
 inner join w_publben pb on (baureihe_bauart = pb.publben_bezeichnung and pb.publben_art = 'B')
 inner join w_ben_gk b on (baureihe_textcode = b.ben_textcode and b.ben_iso = 'ru' and b.ben_regiso = '  ')
@@ -58,8 +58,11 @@ where fgstnr_von <= :vin and fgstnr_bis >= :vin and fgstnr_anf  = :subVin
 
         $aData = $query->fetch();
 
+        $result = array();
+
         if ($aData) {
             $result = array(
+                'marka' => $aData['Marke'],
                 'region' => $aData['Region'],
                 'model' => $aData['ExtBaureihe'],
                 'modif' => $aData['Modell'],
@@ -72,10 +75,6 @@ where fgstnr_von <= :vin and fgstnr_bis >= :vin and fgstnr_anf  = :subVin
                 'korobka' => $aData['Getriebe'],
             );
         }
-        else {print_r('Ничего не найдено'); die;}
-
-
-
         return $result;
     }
     

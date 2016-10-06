@@ -1,0 +1,10 @@
+acme_task_homepage:
+  path:         /
+  defaults:     {_controller: AcmeTaskBundle:Default:index}
+  requirements:
+     _scheme: https
+
+vin_common_result:
+  path:         /common/vin/1
+  defaults:     {_controller: AcmeTaskBundle:Default:result}
+  requirements: {_method: POST}

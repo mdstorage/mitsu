@@ -29,6 +29,7 @@ class HummerVinModel extends HummerCatalogModel {
         WHERE vin_archive2.VIN_CHAR9 = SUBSTRING(:vin, 1, 9)
         AND vin_archive2.VIN_CHAR2 = SUBSTRING(:vin, 10, 2)
         AND vin_archive2.VIN_CHAR6 = SUBSTRING(:vin, 12, 6)
+        AND model.MAKE_DESC = 'Hummer'
         ";
 
         $query = $this->conn->prepare($sql);
@@ -45,7 +46,7 @@ class HummerVinModel extends HummerCatalogModel {
         if ($aData) {
             $result = array(
                 'brand' => $aData['MAKE_DESC'],
-                'model' => strtoupper((stripos($aData['MODEL_DESC'],' '))?substr($aData['MODEL_DESC'], 0, stripos($aData['MODEL_DESC'],' ')):$aData['MODEL_DESC']),
+                'model' => strtoupper((stripos($aData['MODEL_DESC'],' '))?substr($aData['MODEL_DESC'], 0, stripos($aData['MODEL_DESC'],' ')):$aData['MODEL_DESC']).'_'.$aData['MAKE_DESC'],
                 'modif_for_group' => $aData['MODEL_YEAR'],
                 'complectation' => $aData['CATALOG_CODE'].'_'.$aData['MODEL_DESC'],
                 Constants::PROD_DATE => $aData['MODEL_YEAR'],
