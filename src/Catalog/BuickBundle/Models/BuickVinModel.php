@@ -29,6 +29,7 @@ class BuickVinModel extends BuickCatalogModel {
         WHERE vin_archive2.VIN_CHAR9 = SUBSTRING(:vin, 1, 9)
         AND vin_archive2.VIN_CHAR2 = SUBSTRING(:vin, 10, 2)
         AND vin_archive2.VIN_CHAR6 = SUBSTRING(:vin, 12, 6)
+        AND (model.MAKE_DESC = 'Buick' OR model.MAKE_DESC = 'Lt Truck Buick')
         ";
 
         $query = $this->conn->prepare($sql);

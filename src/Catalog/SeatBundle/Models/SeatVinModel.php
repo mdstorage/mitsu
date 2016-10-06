@@ -64,6 +64,24 @@ class SeatVinModel extends SeatCatalogModel {
 
         $aDatas = $query->fetchAll();
 
+        foreach($aDatas as $aData){
+            switch ($aData['catalog'])
+            {
+                case 'au':
+                    $marka = 'AUDI'; break;
+
+                case 'se':
+                    $marka = 'SEAT'; break;
+
+                case 'vw':
+                    $marka = 'VOLKSWAGEN'; break;
+
+                case 'sk':
+                    $marka = 'SKODA'; break;
+            }
+
+        }
+
 
         $result = array();
 
@@ -71,6 +89,7 @@ class SeatVinModel extends SeatCatalogModel {
 
             $result = array(
                 /*   'model_for_groups' => urlencode($aDataModif['family']),*/
+                'marka' => $marka,
                 'model' => $this->getDesc($aData['vkb_ts_text'], 'R'),
                 Constants::PROD_DATE => $aData['prod_date'],
                 'mod_god' => $aData['model_year'],

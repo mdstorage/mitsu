@@ -28,6 +28,7 @@ class FiatProfessionalVinModel extends FiatProfessionalCatalogModel {
         AND comm_modgrp.cmg_cod = catalogues.cmg_cod
         AND comm_modgrp.mk2_cod = catalogues.mk2_cod
         AND comm_modgrp.mk2_cod = brands.eper_submake
+        AND brands.title = 'FIAT PROFESSIONAL'
         ";
 
         $query = $this->conn->prepare($sql);

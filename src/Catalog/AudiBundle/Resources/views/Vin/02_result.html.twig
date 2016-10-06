@@ -5,6 +5,10 @@
             <table class="table table-bordered">
 
                 <tr>
+                    <td>Марка:</td>
+                    <td>{{ result.marka }}</td>
+                </tr>
+                <tr>
                     <td>Регион:</td>
                     <td>{% for region in oContainer.getRegions %}{{ region.getRuname }}{% endfor %}</td>
                 </tr>
@@ -16,10 +20,10 @@
                     <td>Дата выпуска:</td>
                     <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|audi_vin_date_convertor }}</td>
                 </tr>
-                    <tr>
-                        <td>Модельный год:</td>
-                        <td>{{ result.mod_god }}</td>
-                    </tr>
+                <tr>
+                    <td>Модельный год:</td>
+                    <td>{{ result.mod_god }}</td>
+                </tr>
 
                 <tr>
                     <td>Модельный код:</td>
@@ -49,10 +53,10 @@
                     <td>{{ result.kuzovcolor }}</td>
                 </tr>
 
-                    <tr>
-                        <td>Цвет крыши:</td>
-                        <td>{{ result.kry6acolor }}</td>
-                    </tr>
+                <tr>
+                    <td>Цвет крыши:</td>
+                    <td>{{ result.kry6acolor }}</td>
+                </tr>
 
             </table>
         </div>

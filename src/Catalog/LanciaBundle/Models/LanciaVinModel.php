@@ -28,6 +28,7 @@ class LanciaVinModel extends LanciaCatalogModel {
         AND comm_modgrp.cmg_cod = catalogues.cmg_cod
         AND comm_modgrp.mk2_cod = catalogues.mk2_cod
         AND comm_modgrp.mk2_cod = brands.eper_submake
+        AND brands.title = 'LANCIA'
         ";
 
         $query = $this->conn->prepare($sql);

@@ -58,7 +58,7 @@ class BmwCatalogModel extends CatalogModel{
         b.ben_text ExtBaureihe
         FROM w_fztyp, w_baureihe, w_grafik, w_ben_gk b
         WHERE (baureihe_textcode = b.ben_textcode AND b.ben_iso = 'ru' AND b.ben_regiso = '') AND grafik_grafikid = baureihe_grafikid AND fztyp_baureihe = baureihe_baureihe
-        AND fztyp_ktlgausf = :regionCode AND baureihe_marke_tps = 'BMW' AND fztyp_karosserie NOT LIKE 'ohne'
+        AND fztyp_ktlgausf = :regionCode AND (baureihe_marke_tps = 'BMW' OR baureihe_marke_tps = 'BMW i') AND fztyp_karosserie NOT LIKE 'ohne'
         ORDER BY ExtBaureihe
         ";
 

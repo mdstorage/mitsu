@@ -153,7 +153,7 @@ catalog_saab:
        _scheme: https
 
 acme_task:
-    resource: "@AcmeTaskBundle/Resources/config/routing.php"
+    resource: "@AcmeTaskBundle/Resources/config/routing.yml"
     prefix:   /
     requirements:
        _scheme: https

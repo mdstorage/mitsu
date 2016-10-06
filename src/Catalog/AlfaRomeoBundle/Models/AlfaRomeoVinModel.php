@@ -28,6 +28,7 @@ class AlfaRomeoVinModel extends AlfaRomeoCatalogModel {
         AND comm_modgrp.cmg_cod = catalogues.cmg_cod
         AND comm_modgrp.mk2_cod = catalogues.mk2_cod
         AND comm_modgrp.mk2_cod = brands.eper_submake
+        AND brands.title = 'ALFA ROMEO'
         ";
 
         $query = $this->conn->prepare($sql);
