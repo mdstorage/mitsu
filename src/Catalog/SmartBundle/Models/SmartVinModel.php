@@ -23,8 +23,8 @@ class SmartVinModel extends SmartCatalogModel
           db.DB_NAME, db.TABLES
         FROM comm_dc_map_v map
         LEFT JOIN special_dcdbinfo_v db ON map.LOCATION = db.LOCATION
-        WHERE (map.VINWHC = :vinwhc AND map.VIN = :vin) OR (map.WHC = :vinwhc AND
-          map.CHASSBM = :chassbm AND map.CHASS_IDENT = :chassident)
+        WHERE ((map.VINWHC = :vinwhc AND map.VIN = :vin) OR (map.WHC = :vinwhc AND
+          map.CHASSBM = :chassbm AND map.CHASS_IDENT = :chassident)) AND RIGHT (map.LOCATION, 2) = 'SM'
         ";
 
         $query = $this->conn->prepare($sqlVin);
@@ -96,9 +96,36 @@ class SmartVinModel extends SmartCatalogModel
 
             $aInfo = $query->fetch();
 
+            switch (trim($aVin[0]['MARKET']))
+            {
+                case '1':
+                    $region_RU = 'Европа'; break;
+
+                case 'F':
+                    $region_RU = 'Северная Америка'; break;
+
+                case 'S':
+                    $region_RU = 'Япония'; break;
+
+                case 'W':
+                    $region_RU = 'Латинская Америка'; break;
+
+                case 'K':
+                    $region_RU = 'Южная Африка'; break;
+
+                case 'M':
+                    $region_RU = 'Smart'; break;
+
+                case 'P':
+                    $region_RU = 'Агрегаты'; break;
+
+            }
+
             if ($aData) {
                 $result = array(
+                    'marka' => 'SMART',
                     'region' => trim($aVin[0]['MARKET']),
+                    'region_RU' => $region_RU,
                     'model' => trim($aData['CLASS']),
                     'saledes' => trim($aData['SALESDES']),
                     'prod_year' => substr($aInfo['DDATE'], 0, 1) > 6 ? '19' . $aInfo['DDATE'] : '20' . $aInfo['DDATE'],

@@ -17,7 +17,7 @@ trait HyundaiVinFilters {
     {
         $prodDate = $parameters[Constants::PROD_DATE];
         foreach ($oContainer->getActivePnc()->getArticuls() as $key => $articul) {
-            if ($articul->getOption(Constants::START_DATE) > $prodDate || $articul->getOption(Constants::END_DATE) < $prodDate) {
+            if ($articul->getOption(Constants::START_DATE) > $prodDate || $articul->getOption(Constants::END_DATE) <= $prodDate + 1) {
                 $oContainer->getActivePnc()->removeArticul($key);
             }
         }
