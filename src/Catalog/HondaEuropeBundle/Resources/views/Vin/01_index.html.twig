@@ -1,6 +1,6 @@
 {% extends 'CatalogCommonBundle::base.html.twig' %}
 {% use 'CatalogHondaEuropeBundle::hondaeurope.base.html.twig' %}
-{% block vinScript %}
+{#{% block vinScript %}
     <script>
         $("#vin").keyup(function(event){
             if(event.keyCode == 13){
@@ -29,4 +29,56 @@
             });
         });
     </script>
-{% endblock vinScript %}
+{% endblock vinScript %}#}
+
+{% block breadcrumbs %}
+    Поиск по номеру кузова
+{% endblock breadcrumbs %}
+{% block summary_set %}{% endblock summary_set %}
+{% block body %}
+    {% block vin %}
+        <div class="alert alert-dismissable" id="vin-frame-group">
+            <div class="row">
+                <div class="col-xs-6">
+                    {% block head %}<h3>Поиск по VIN</h3>{% endblock head %}
+                    <div class="form-horizontal" action="vin_hondaeurope_complectations">
+                        <div class="form-group">
+                            <div class="col-xs-10">
+                                <input type="text" class="form-control" id="vin" placeholder="Введите VIN"/>
+                            </div>
+                            <input type="submit" class="btn btn-info" value="Искать" id="vin-button"/>
+                        </div>
+                    </div>
+                    <div id="vin-result"></div>
+                </div>
+            </div>
+        </div>
+    {% endblock vin %}
+    {% block frame %}{% endblock frame %}
+    {% block vinScript %}
+        <script>
+            $("#vin-button").on('click', function(){
+                if($("#vin").val(). replace(/\s+/g, '').length !== 17){
+                    alert("VIN должен состоять из 17 знаков!");
+                    return;
+                }
+
+                $("#vin-result").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="20px" />');
+                $.ajax({
+                    async:  false,
+                    url:    "{% block vinAjaxPath %}{{ path('vin_hondaeurope_complectations') }}{% endblock vinAjaxPath %}",
+                    data:   {
+                        vin: $("#vin").val(). replace(/\s+/g, ''),
+                        token: '{{ app.request.get('token') }}',
+                        callbackhost: '{{ app.request.get('callbackhost') }}',
+                        domain: "{{ app.request.get('domain') }}"
+                    },
+                    success: function(data) {
+                        $("#vin-result").html(data);
+                    }
+                });
+            });
+        </script>
+    {% endblock vinScript %}
+    {% block frameScript %}{% endblock frameScript %}
+{% endblock body %}

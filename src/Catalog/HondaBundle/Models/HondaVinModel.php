@@ -30,13 +30,12 @@ class HondaVinModel extends HondaCatalogModel {
         $aData = $query->fetchAll();
                
         $complectations = array();
-        
-		
-		
-			foreach($aData as $item1)
-			{
-			$complectations[]=$item1['hmodtyp'];	
-			}
+
+        foreach($aData as $item1)
+
+        {
+            $complectations[]=$item1['hmodtyp'];
+        }
 		
         return $aData;
     }

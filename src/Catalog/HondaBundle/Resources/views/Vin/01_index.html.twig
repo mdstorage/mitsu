@@ -1,4 +1,4 @@
-{% extends 'CatalogCommonBundle::base.html.twig' %}
+{% extends 'CatalogCommonBundle:Vin:01_index.html.twig' %}
 {% use 'CatalogHondaBundle::honda.base.html.twig' %}
 {% block vinScript %}
     <script>
@@ -16,7 +16,7 @@
             $.ajax({
                 type:   'POST',
                 async:  false,
-                url:    "{% block vinAjaxPath %}{{ path('vin_honda_result') }}{% endblock vinAjaxPath %}",
+                url:    "{% block vinAjaxPath %}{{ path('vin_honda_complectations') }}{% endblock vinAjaxPath %}",
                 data:   {
                     vin: $("#vin").val(). replace(/\s+/g, ''),
                     token: '{{ app.request.get('token') }}',

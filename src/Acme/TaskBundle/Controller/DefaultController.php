@@ -28,7 +28,7 @@ class DefaultController extends Controller
 
             $vin = $request->get('vin');
 
-            $marks = array('Pontiac','Abarth', 'AlfaRomeo', 'Fiat', 'FiatProfessional', 'Lancia', 'Bmw', 'Hyundai', 'RollsRoyce', 'Audi', 'Seat', 'Skoda', 'Volkswagen',
+            $marks = array('Pontiac','Abarth', 'AlfaRomeo', 'Fiat', 'FiatProfessional', 'Lancia', 'Bmw', 'Hyundai', 'Kia', 'RollsRoyce', 'Audi', 'Seat', 'Skoda', 'Volkswagen',
                 'ChevroletUsa', 'Cadillac', 'Pontiac', 'Buick', 'Hummer', 'Saturn', 'GMC', 'Oldsmobile', 'Mercedes', 'Smart');
             $marksVAG = array('Audi', 'Seat', 'Skoda', 'Volkswagen');
 

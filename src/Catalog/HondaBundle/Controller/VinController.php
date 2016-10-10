@@ -46,19 +46,23 @@ class VinController extends BaseController{
     
     public function vinComplectationsAction(Request $request, $token = null)
     {
-       $vin = $request->get('vin');
+        $vin = $request->get('vin');
         $vinComplectations = $this->model()->getVinComplectations($vin);
+
         if (empty($vinComplectations)) {
             setcookie(Constants::VIN, "");
             return $this->index1Action('Автомобиль с таким VIN кодом не найден');
         }
+
         setcookie(Constants::VIN, $vin);
+
         foreach($vinComplectations as $item)
-			{
+        {
 			$regionCode = $item['cmftrepc'];
 			$modelCode =  rawurlencode($item['cmodnamepc']);
 			$modificationCode = $item['dmodyr'];
-			}
+
+        }
 
         $this->addFilter('vinComplectationsFilter', array(
             'vinComplectations' => $vinComplectations
@@ -70,11 +74,14 @@ class VinController extends BaseController{
     public function vinComplectationsFilter($oContainer, $parameters)
     {
         $complectations = $parameters['vinComplectations'];
+
         foreach($complectations as $item)
-			{
-			$vinComplectations[]=$item['hmodtyp'];	
-			}
+        {
+            $vinComplectations[]=$item['hmodtyp'];
+        }
+
         $trans = array();
+
         foreach ($oContainer->getActiveModification()->getComplectations() as $complectation) {
 
             if (!in_array($complectation->getCode(), $vinComplectations, true)) {
@@ -82,11 +89,15 @@ class VinController extends BaseController{
             }
 
         }
+
         $side = array ('RH', 'LH');
         $role = array();
+
         foreach ($oContainer->getActiveModification()->getComplectations() as $complectation)
+
         {
-                $trans[] = $complectation->getOptions()['option2'];
+            $trans[] = $complectation->getOptions()['option2'];
+
             foreach ($side as $index=>$value)
             {
                 if (strpos($complectation->getOptions()['option4'], $value))
@@ -104,8 +115,6 @@ class VinController extends BaseController{
             $complectation->setOptions(array('option6' => count(array_unique($role))>1?array_unique($role):''));
 
         }
-
-
 
         return $oContainer;
     }
