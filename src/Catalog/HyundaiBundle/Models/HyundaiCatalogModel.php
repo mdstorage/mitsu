@@ -105,11 +105,12 @@ class HyundaiCatalogModel extends CatalogModel{
     }
 
     public function getComplectations($regionCode, $modelCode, $modificationCode)
-   
-    {   $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+    {
+        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
 
         $modelCode = rawurldecode($modelCode);
-       $sql = "
+
+        $sql = "
         SELECT *
         FROM vin_model
         WHERE model =:modificationCode
@@ -123,33 +124,35 @@ class HyundaiCatalogModel extends CatalogModel{
              
         $aForPNC = array();
         $aIndexes = array('body_type', 'engine_capacity', 'engine_type', 'fuel_type', 'transaxle', 'field14');
+
         foreach($aData as &$item)
         {
-        foreach($item as $index => $value)
+            foreach($item as $index => $value)
             {
-        if (in_array($index, $aIndexes))
+                if (in_array($index, $aIndexes))
                 {
                     $item[str_pad((array_search($index, $aIndexes)+1), 2, "0", STR_PAD_LEFT)] = $value;
                     $aForPNC[$item['model_index']][] = $value;
                 }
-
 		    }
         }
 
         $complectations = array();
 
-        foreach ($aData as &$item) {
+        foreach ($aData as &$item)
+        {
             $aData1 = array();
             $aOptions = array();
+
             foreach ($item as $index => $value)
             {
                 $sql = "
-        SELECT ucc_type, ucc_type_code, ucc_code_short
-        FROM cats_0_ucc
-        WHERE model =:modificationCode
-        AND ucc = :value
-        AND ucc_type = :index
-        ";
+                SELECT ucc_type, ucc_type_code, ucc_code_short
+                FROM cats_0_ucc
+                WHERE model = :modificationCode
+                AND ucc = :value
+                AND ucc_type = :index
+                ";
 
                 $query = $this->conn->prepare($sql);
                 $query->bindValue('modificationCode', $modificationCode);
@@ -159,6 +162,7 @@ class HyundaiCatalogModel extends CatalogModel{
 
                 $aData1[] = $query->fetch();
             }
+
             foreach ($aData1 as $index1 => $value1)
             {
                 if ($value1 == '')
@@ -168,22 +172,20 @@ class HyundaiCatalogModel extends CatalogModel{
             }
 
             $aProm = array();
+
             foreach ($aData1 as $item1)
             {
                 $aProm[$item1['ucc_type']] = $item1;
-
             }
-
 
             foreach ($aProm as &$item2)
             {
                 foreach ($item2 as &$item3)
                 {
-
                     $sql = "
                     SELECT lex_name
                     FROM hywlex
-                    WHERE lex_code =:item3
+                    WHERE lex_code = :item3
                     AND lang = 'EN'
                     ";
 
@@ -191,13 +193,12 @@ class HyundaiCatalogModel extends CatalogModel{
                     $query->bindValue('item3', $item3);
                     $query->execute();
                     $sData2 = $query->fetch();
+
                     if ($sData2)
                     {
                         $item3 = $sData2['lex_name'];
                     }
-
                 }
-
             }
 
             foreach ($aProm as $item4)
@@ -205,11 +206,10 @@ class HyundaiCatalogModel extends CatalogModel{
                 $aOptions[$item['model_index']][] = ($item4['ucc_type_code'].': '.$item4['ucc_code_short']);
             }
 
-
             $complectations[$item['model_index']] = array(
+
                 Constants::NAME => $item['model_code'],
                 Constants::OPTIONS => array(
-
                     'option1' => $aOptions[$item['model_index']],
                     Constants::START_DATE   => $item['start_data'],
                     Constants::END_DATE   => $item['finish_data'],
@@ -217,18 +217,17 @@ class HyundaiCatalogModel extends CatalogModel{
                 )
             );
         }
-
-         return $complectations;
-     
+        return $complectations;
     }
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-         $sql = "
+
+        $sql = "
         SELECT *
         FROM cats_maj
-        WHERE CATALOG_NAME = :catCode
+        WHERE cats_maj.CATALOG_NAME = :catCode
         ";
 
         $query = $this->conn->prepare($sql);
@@ -240,7 +239,7 @@ class HyundaiCatalogModel extends CatalogModel{
 
         foreach ($aData as &$item2)
         {
-                    $item2['part_index'] = $this->getDesc($item2['part_index'], 'RU');
+            $item2['part_index'] = $this->getDesc($item2['part_index'], 'RU');
         }
 
         foreach($aData as $item){
@@ -305,20 +304,17 @@ class HyundaiCatalogModel extends CatalogModel{
 
 
         $sqlData = "
-        SELECT model_options, compl_name
-        FROM cats_table
-        WHERE catalog_code = :catCode
-        AND main_part = :groupCode
-        ";
-
+            SELECT model_options, compl_name
+            FROM cats_table
+            WHERE catalog_code = :catCode
+            AND main_part = :groupCode
+            ";
         $query = $this->conn->prepare($sqlData);
         $query->bindValue('catCode', $catCode);
         $query->bindValue('groupCode', $groupCode);
         $query->execute();
 
         $aDataCompl = $query->fetchAll();
-
-
 
         foreach ($aDataCompl as $index => $value) {
 
@@ -331,29 +327,27 @@ class HyundaiCatalogModel extends CatalogModel{
                 }
             }
 
-
-            if (count($articulOptions) != count(array_intersect_assoc($articulOptions, $complectationOptions)))
-            {
+            if (count($articulOptions) != count(array_intersect_assoc($articulOptions, $complectationOptions))){
                 unset ($aDataCompl[$index]);
             }
         }
 
-        foreach ($aDataCompl as $item)
-        {
+        foreach ($aDataCompl as $item){
+
             $aDataU4etCompl [$item['compl_name']] = $item['compl_name'];
         }
 
         $subgroups = array();
-        foreach ($aDataU4etCompl as $item)
-        {
+
+        foreach ($aDataU4etCompl as $item){
 
             $sql = "
-        SELECT sector_name, sector_lex_code, sector_id, sector_id_code
-        FROM cats_map
-        WHERE catalog_name =:catCode
-        AND part = :groupCode
-        AND sector_id =:item
-        ";
+                SELECT sector_name, sector_lex_code, sector_id, sector_id_code
+                FROM cats_map
+                WHERE catalog_name =:catCode
+                AND part = :groupCode
+                AND sector_id =:item
+                ";
 
             $query = $this->conn->prepare($sql);
             $query->bindValue('catCode',  $catCode);
@@ -368,7 +362,6 @@ class HyundaiCatalogModel extends CatalogModel{
                 Constants::NAME => '('.$aData['sector_name'].') '.$this->getDesc($aData['sector_lex_code'], 'RU'),
                 Constants::OPTIONS => array()
             );
-
         }
 
         return $subgroups;
@@ -379,12 +372,12 @@ class HyundaiCatalogModel extends CatalogModel{
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
         $sql = "
-        SELECT sector_id
-        FROM cats_map
-        WHERE catalog_name =:catCode
-        AND sector_name = :subGroupCode
-        AND part = :groupCode
-        ";
+            SELECT sector_id
+            FROM cats_map
+            WHERE cats_map.catalog_name = :catCode
+            AND sector_name = :subGroupCode
+            AND part = :groupCode
+            ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('catCode',  $catCode);
@@ -395,6 +388,7 @@ class HyundaiCatalogModel extends CatalogModel{
         $aData = $query->fetchAll();
 
         $schemas = array();
+
         foreach($aData as $item)
         {
 
@@ -433,11 +427,11 @@ class HyundaiCatalogModel extends CatalogModel{
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
         $sqlPnc = "
-        SELECT *
-        FROM cats_table
-        WHERE catalog_code =:catCode
+            SELECT *
+            FROM cats_table
+            WHERE catalog_code =:catCode
         	AND compl_name = :schemaCode
-        ";
+            ";
 
     	$query = $this->conn->prepare($sqlPnc);
         $query->bindValue('catCode', $catCode);
@@ -447,30 +441,30 @@ class HyundaiCatalogModel extends CatalogModel{
         $aPncs = $query->fetchAll();
     	
     	foreach ($aPncs as &$aPnc)
-    	{
-    		
-    	$sqlSchemaLabels = "
-        SELECT x1, y1, x2, y2
-        FROM cats_coord
-        WHERE catalog_code =:catCode
-          AND compl_name =:schemaCode
-          AND name =:pnc_code
-        ";
-
-        $query = $this->conn->prepare($sqlSchemaLabels);
+        {
+            $sqlSchemaLabels = "
+                SELECT x1, y1, x2, y2
+                FROM cats_coord
+                WHERE catalog_code =:catCode
+                AND compl_name =:schemaCode
+                AND name =:pnc_code
+                ";
+            $query = $this->conn->prepare($sqlSchemaLabels);
             $query->bindValue('catCode', $catCode);
             $query->bindValue('schemaCode', $schemaCode);
-        $query->bindValue('pnc_code', $aPnc['detail_pnc']);
-        $query->execute();
+            $query->bindValue('pnc_code', $aPnc['detail_pnc']);
+            $query->execute();
         
-        $aPnc['clangjap'] = $query->fetchAll();
+
+            $aPnc['clangjap'] = $query->fetchAll();
+
 
 
             $sqlPncName = "
-        SELECT lex_code
-        FROM pnclex
-        WHERE pnc_code =:pnc_code
-        ";
+                SELECT lex_code
+                FROM pnclex
+                WHERE pnc_code =:pnc_code
+                ";
 
             $query = $this->conn->prepare($sqlPncName);
             $query->bindValue('pnc_code', $aPnc['detail_pnc']);
@@ -478,42 +472,33 @@ class HyundaiCatalogModel extends CatalogModel{
             $aData = $query->fetch();
 
             $aPnc['name'] = $aData['lex_code'];
-
-
 		}
 
         $pncs = array();
-      foreach ($aPncs as $index=>$value) {
+
+        foreach ($aPncs as $index=>$value) {
             {
                 if (!$value['clangjap'])
                 {
                     unset ($aPncs[$index]);
                 }
-            	foreach ($value['clangjap'] as $item1)
-            	{
-            	$pncs[$value['detail_pnc']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
+
+                foreach ($value['clangjap'] as $item1)
+                {
+                    $pncs[$value['detail_pnc']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
                     Constants::X1 => floor(($item1['x1'])),
                     Constants::Y1 => $item1['y1'],
                     Constants::X2 => $item1['x2'],
                     Constants::Y2 => $item1['y2']);
-            	
             	}
-            
-            
-                
             }
         }
 
         foreach ($aPncs as $item) {
-         	
-         	
 				$pncs[$item['detail_pnc']][Constants::NAME] = $this->getDesc($item['name'], 'RU');
-			
-			
-           
         }
 
-         return $pncs;
+        return $pncs;
     }
 
     public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
@@ -546,7 +531,8 @@ class HyundaiCatalogModel extends CatalogModel{
                 Constants::Y2 => $item['ye'],
             );
         }*/
-$articuls = array();
+        $articuls = array();
+
         return $articuls;
     }
 
@@ -651,37 +637,37 @@ $articuls = array();
 
     public function getDesc($itemCode, $language)
     {
+        $sqlRu = "
+            SELECT lex_name
+            FROM hywlex
+            WHERE lex_code = :itemCode
+            AND lang = :langu
+            ";
 
-                $sqlRu = "
-                    SELECT lex_name
-                    FROM hywlex
-                    WHERE lex_code = :itemCode
-                    AND lang = :language
-                    ";
-
-                $query = $this->conn->prepare($sqlRu);
-                $query->bindValue('itemCode', $itemCode);
-                $query->bindValue('language', $language);
-                $query->execute();
-                $sData = $query->fetch();
+        $query = $this->conn->prepare($sqlRu);
+        $query->bindValue('itemCode', $itemCode);
+        $query->bindValue('langu', $language);
+        $query->execute();
+        $sData = $query->fetch();
 
         $sDesc = $itemCode;
-                if ($sData)
-                {
-                    $sDesc = $sData['lex_name'];
-                }
+
+        if ($sData)
+        {
+            $sDesc = $sData['lex_name'];
+        }
         else
         {
             $sqlEn = "
-                    SELECT lex_name
-                    FROM hywlex
-                    WHERE lex_code = :itemCode
-                    AND lang = :language
-                    ";
+                SELECT lex_name
+                FROM hywlex
+                WHERE lex_code = :itemCode
+                AND lang = :langu
+                ";
 
             $query = $this->conn->prepare($sqlEn);
             $query->bindValue('itemCode', $sDesc);
-            $query->bindValue('language', 'EN');
+            $query->bindValue('langu', 'EN');
             $query->execute();
             $sData1 = $query->fetch();
 
@@ -689,25 +675,21 @@ $articuls = array();
             {
                 $sDesc = $sData1['lex_name'];
             }
-
         }
 
-
         return mb_strtoupper(iconv('cp1251', 'utf8', $sDesc), 'utf8');
-
     }
 
     public function getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
+        $catCode = substr($modificationCode, strpos($modificationCode, '_') + 1, strlen($modificationCode));
 
-
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
         $sqlGroup = "
-        SELECT part
-        FROM cats_map
-        WHERE sector_name = :subGroupCode
-          AND catalog_name = :catCode
-        ";
+            SELECT part
+            FROM cats_map
+            WHERE sector_name = :subGroupCode
+            AND catalog_name = :catCode
+            ";
 
         $query = $this->conn->prepare($sqlGroup);
         $query->bindValue('subGroupCode', $subGroupCode);
@@ -717,8 +699,5 @@ $articuls = array();
         $groupCode = $query->fetchColumn(0);
 
         return $groupCode;
-
     }
-
-    
 } 

@@ -14,6 +14,34 @@ use Catalog\HondaEuropeBundle\Components\HondaEuropeConstants;
 
 class HondaEuropeVinModel extends HondaEuropeCatalogModel {
 
+    public function getVinFinderResult($vin)
+    {
+        $sql = "
+        SELECT *
+        FROM pmotyt
+        WHERE nfrmpf = :vin AND :subvin BETWEEN nfrmseqepcstrt AND nfrmseqepcend
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('vin', substr($vin,0,11));
+        $query->bindValue('subvin', substr($vin,9,8));
+        $query->execute();
+
+        $aData = $query->fetch();
+
+        $result = array();
+
+        if ($aData) {
+            $result = array(
+                'marka' => 'HondaEurope',
+                'region' => $aData['carea'],
+                'model' => $aData['cmodnamepc'],
+                Constants::PROD_DATE => $aData['dmodyr']
+            );
+        }
+        return $result;
+    }
+
     public function getVinComplectations($vin)
     {
         

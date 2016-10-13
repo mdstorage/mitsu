@@ -15,7 +15,9 @@
                         {{ schema.getCode }}
                     </div>
                     <div class="row">
-                        <img src="{{ asset('bundles/catalogkia/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
+                        <img src="{{ ('bundles/catalogkia/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png')|file_exists() ?
+                        asset('bundles/catalogkia/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png') :
+                        asset('bundles/catalogkia/Images/Images/'~schema.getRuname~'/'~schema.getCode~'1.png') }}" width="300" alt="{{ schema.getRuname }}"/>
                     </div>
 
         </a>

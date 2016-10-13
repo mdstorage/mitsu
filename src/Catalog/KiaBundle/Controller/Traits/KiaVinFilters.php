@@ -16,11 +16,11 @@ trait KiaVinFilters {
     public function prodDateFilter($oContainer, $parameters)
     {
         $prodDate = $parameters[Constants::PROD_DATE];
-     /*   foreach ($oContainer->getActivePnc()->getArticuls() as $key => $articul) {
+        foreach ($oContainer->getActivePnc()->getArticuls() as $key => $articul) {
             if ($articul->getOption(Constants::START_DATE) > $prodDate || $articul->getOption(Constants::END_DATE) < $prodDate) {
                 $oContainer->getActivePnc()->removeArticul($key);
             }
-        }*/
+        }
         return $oContainer;
     }
     

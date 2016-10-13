@@ -18,9 +18,33 @@ class HyundaiVinModel extends HyundaiCatalogModel {
     {
         
         $sql = "
-        SELECT *
+        SELECT DISTINCT
+        vin.model_index,
+        hywc.catalog_code,
+        hywc.catalog_folder,
+        hywc.previous_region,
+        hywc.data_regions,
+        hywc.catalog_name,
+        hywc.family,
+        vin_description.region,
+        vin_description.country,
+        vin_description.ext_color,
+        vin_description.int_color,
+        vin_description.date_output,
+        cats_0_extcolor.lex_code_1,
+        cats_0_intcolor.lex_code,
+        cats_0_nation.wheel_location,
+        cats_0_nation.region_name,
+        cats_0_nation.country_name
         FROM vin
-        WHERE vin = :vin
+        INNER JOIN vin_model ON (vin_model.model_index = vin.model_index)
+        INNER JOIN hywc ON (hywc.catalog_code = vin_model.model)
+        INNER JOIN vin_description ON (vin_description.vin = :vin)
+        INNER JOIN cats_0_extcolor ON (cats_0_extcolor.ext_color_1 = vin_description.ext_color)
+        INNER JOIN cats_0_intcolor ON (cats_0_intcolor.int_color = vin_description.int_color)
+        INNER JOIN cats_0_nation ON (cats_0_nation.country = vin_description.country AND cats_0_nation.region = vin_description.region)
+        WHERE vin.vin = :vin
+        ORDER BY hywc.family
         ";
 
         $query = $this->conn->prepare($sql);
@@ -29,34 +53,9 @@ class HyundaiVinModel extends HyundaiCatalogModel {
 
         $aData = $query->fetch();
 
-        $sqlCompl = "
-        SELECT *
-        FROM vin_model
-        WHERE model_index = :model_index
-        ";
+        $complectations = $this->getComplectations('','',$aData['catalog_code'].'_'.$aData['catalog_folder']);
 
-        $query = $this->conn->prepare($sqlCompl);
-        $query->bindValue('model_index', $aData['model_index']);
-        $query->execute();
-        $aDataCompl = $query->fetch();
-
-        $sqlmodif = "
-        SELECT *
-        FROM hywc
-        WHERE catalog_code = :model
-        ORDER BY family
-        ";
-
-        $query = $this->conn->prepare($sqlmodif);
-        $query->bindValue('model', $aDataCompl['model']);
-        $query->execute();
-
-        $aDataModif = $query->fetch();
-
-        $complectations = $this->getComplectations('','',$aDataModif['catalog_code'].'_'.$aDataModif['catalog_folder']);
-
-     /*  print_r($complectations[$aData['model_index']]['options']['option1']); die;*/
-        $sqlDescription = "
+       /* $sqlDescription = "
         SELECT *
         FROM vin_description
         WHERE vin = :vin
@@ -104,40 +103,35 @@ class HyundaiVinModel extends HyundaiCatalogModel {
         $query->bindValue('region', $aDataDescription['region']);
         $query->execute();
 
-        $aDataRegion = $query->fetch();
+        $aDataRegion = $query->fetch();*/
 
-        if ($aDataModif['previous_region'])
+        if ($aData['previous_region'])
         {
-            $region_for_groups = str_replace('|', '', $aDataModif['previous_region']);
+            $region_for_groups = str_replace('|', '', $aData['previous_region']);
         }
         else
         {
-            $region_for_groups = substr($aDataModif['data_regions'], 0, 3);
+            $region_for_groups = substr($aData['data_regions'], 0, 3);
         }
-
-
-
-
 
         $result = array();
 
         if ($aData) {
             $result = array(
-                'model_for_groups' => urlencode($aDataModif['family']),
-                'model' => $aDataModif['catalog_name'],
-                'modif' => $aDataModif['catalog_code'].'_'.$aDataModif['catalog_folder'],
+                'model_for_groups' => urlencode($aData['family']),
+                'model' => $aData['catalog_name'],
+                'modif' => $aData['catalog_code'].'_'.$aData['catalog_folder'],
                 'compl' => $complectations[$aData['model_index']]['options']['option1'],
-                Constants::PROD_DATE => $aDataDescription['date_output'] ,
-                'region' => '('.$aDataDescription['region'].') '.$aDataRegion['region_name'],
-                'country' => '('.$aDataDescription['country'].') '.$aDataRegion['country_name'],
-                'wheel' => $aDataRegion['wheel_location'],
-                'ext_color' => '('.$aDataDescription['ext_color'].') '.$this->getDesc($aDataExtColor['lex_code_1'], 'RU'),
-                'int_color' => '('.$aDataDescription['int_color'].') '.$this->getDesc($aDataIntColor['lex_code'], 'RU'),
+                Constants::PROD_DATE => $aData['date_output'] ,
+                'region' => '('.$aData['region'].') '.$aData['region_name'],
+                'country' => '('.$aData['country'].') '.$aData['country_name'],
+                'wheel' => $aData['wheel_location'],
+                'ext_color' => '('.$aData['ext_color'].') '.$this->getDesc($aData['lex_code_1'], 'RU'),
+                'int_color' => '('.$aData['int_color'].') '.$this->getDesc($aData['lex_code'], 'RU'),
                 'compl_for_groups' => $aData['model_index'],
                 'region_for_groups' => $region_for_groups,
             );
         }
-
 
         return $result;
     }

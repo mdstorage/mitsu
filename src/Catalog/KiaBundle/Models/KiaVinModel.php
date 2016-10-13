@@ -16,11 +16,35 @@ class KiaVinModel extends KiaCatalogModel {
 
     public function getVinFinderResult($vin)
     {
-        
+
         $sql = "
-        SELECT *
+        SELECT DISTINCT
+        vin.model_index,
+        kiac.catalog_code,
+        kiac.catalog_folder,
+        kiac.previous_region,
+        kiac.data_regions,
+        kiac.catalog_name,
+        kiac.family,
+        vin_description.region,
+        vin_description.country,
+        vin_description.ext_color,
+        vin_description.int_color,
+        vin_description.date_output,
+        cats_0_extcolor.lex_code_1,
+        cats_0_intcolor.lex_code,
+        cats_0_nation.wheel_location,
+        cats_0_nation.region_name,
+        cats_0_nation.country_name
         FROM vin
-        WHERE vin = :vin
+        INNER JOIN vin_model ON (vin_model.model_index = vin.model_index)
+        INNER JOIN kiac ON (kiac.catalog_code = vin_model.model)
+        INNER JOIN vin_description ON (vin_description.vin = :vin)
+        INNER JOIN cats_0_extcolor ON (cats_0_extcolor.ext_color_1 = vin_description.ext_color)
+        INNER JOIN cats_0_intcolor ON (cats_0_intcolor.int_color = vin_description.int_color)
+        INNER JOIN cats_0_nation ON (cats_0_nation.country = vin_description.country AND cats_0_nation.region = vin_description.region)
+        WHERE vin.vin = :vin
+        ORDER BY kiac.family
         ";
 
         $query = $this->conn->prepare($sql);
@@ -29,29 +53,7 @@ class KiaVinModel extends KiaCatalogModel {
 
         $aData = $query->fetch();
 
-        $sqlCompl = "
-        SELECT *
-        FROM vin_model
-        WHERE model_index = :model_index
-        ";
 
-        $query = $this->conn->prepare($sqlCompl);
-        $query->bindValue('model_index', $aData['model_index']);
-        $query->execute();
-        $aDataCompl = $query->fetch();
-
-        $sqlmodif = "
-        SELECT *
-        FROM kiac
-        WHERE catalog_code = :model
-        ORDER BY family
-        ";
-
-        $query = $this->conn->prepare($sqlmodif);
-        $query->bindValue('model', $aDataCompl['model']);
-        $query->execute();
-
-        $aDataModif = $query->fetch();
         $modelsReg = array();
 
 
@@ -62,7 +64,7 @@ class KiaVinModel extends KiaCatalogModel {
 
         foreach($aDataRegions as $itemReg)
         {
-            if (strpos($aDataModif['catalog_name'], $itemReg) !== false)
+            if (strpos($aData['catalog_name'], $itemReg) !== false)
             {
                 $modelsReg[] = $itemReg;
 
@@ -72,70 +74,17 @@ class KiaVinModel extends KiaCatalogModel {
         }
 
 
-        $complectations = $this->getComplectations('','',$aDataModif['catalog_code'].'_'.$aDataModif['catalog_folder']);
+        $complectations = $this->getComplectations('','',$aData['catalog_code'].'_'.$aData['catalog_folder']);
 
-     /*  print_r($complectations[$aData['model_index']]['options']['option1']); die;*/
-        $sqlDescription = "
-        SELECT *
-        FROM vin_description
-        WHERE vin = :vin
-        ";
 
-        $query = $this->conn->prepare($sqlDescription);
-        $query->bindValue('vin', $vin);
-        $query->execute();
+        if ($aData['previous_region']) {
 
-        $aDataDescription = $query->fetch();
-
-        $sqlExtColor = "
-        SELECT lex_code_1
-        FROM cats_0_extcolor
-        WHERE ext_color_1 = :ext_color_1
-        ";
-
-        $query = $this->conn->prepare($sqlExtColor);
-        $query->bindValue('ext_color_1', $aDataDescription['ext_color']);
-        $query->execute();
-
-        $aDataExtColor = $query->fetch();
-
-        $sqlIntColor = "
-        SELECT lex_code
-        FROM cats_0_intcolor
-        WHERE int_color = :int_color
-        ";
-
-        $query = $this->conn->prepare($sqlIntColor);
-        $query->bindValue('int_color', $aDataDescription['int_color']);
-        $query->execute();
-
-        $aDataIntColor = $query->fetch();
-
-        $sqlRegion = "
-        SELECT *
-        FROM cats_0_nation
-        WHERE country = :country
-        AND region = :region
-        ";
-
-        $query = $this->conn->prepare($sqlRegion);
-        $query->bindValue('country', $aDataDescription['country']);
-        $query->bindValue('region', $aDataDescription['region']);
-        $query->execute();
-
-        $aDataRegion = $query->fetch();
-
-        if ($aDataModif['previous_region'])
-        {
-            $region_for_groups = str_replace('|', '', $aDataModif['previous_region']);
+            $region_for_groups = str_replace('|', '', $aData['previous_region']);
         }
-        else
-        {
-            $region_for_groups = substr($aDataModif['data_regions'], 0, 3);
+        else {
+
+            $region_for_groups = substr($aData['data_regions'], 0, 3);
         }
-
-
-
 
 
         $result = array();
@@ -143,15 +92,15 @@ class KiaVinModel extends KiaCatalogModel {
         if ($aData) {
             $result = array(
                 'model_for_groups' => $modelsReg[0],
-                'model' => $aDataModif['catalog_name'],
-                'modif' => $aDataModif['catalog_code'].'_'.$aDataModif['catalog_folder'],
+                'model' => $aData['catalog_name'],
+                'modif' => $aData['catalog_code'].'_'.$aData['catalog_folder'],
                 'compl' => $complectations[$aData['model_index']]['options']['option1'],
-                Constants::PROD_DATE => $aDataDescription['date_output'] ,
-                'region' => '('.$aDataDescription['region'].') '.$aDataRegion['region_name'],
-                'country' => '('.$aDataDescription['country'].') '.$aDataRegion['country_name'],
-                'wheel' => $aDataRegion['wheel_location'],
-                'ext_color' => '('.$aDataDescription['ext_color'].') '.$this->getDesc($aDataExtColor['lex_code_1'], 'RU'),
-                'int_color' => '('.$aDataDescription['int_color'].') '.$this->getDesc($aDataIntColor['lex_code'], 'RU'),
+                Constants::PROD_DATE => $aData['date_output'] ,
+                'region' => '('.$aData['region'].') '.$aData['region_name'],
+                'country' => '('.$aData['country'].') '.$aData['country_name'],
+                'wheel' => $aData['wheel_location'],
+                'ext_color' => '('.$aData['ext_color'].') '.$this->getDesc($aData['lex_code_1'], 'RU'),
+                'int_color' => '('.$aData['int_color'].') '.$this->getDesc($aData['lex_code'], 'RU'),
                 'compl_for_groups' => $aData['model_index'],
                 'region_for_groups' => $region_for_groups,
             );
@@ -230,11 +179,11 @@ class KiaVinModel extends KiaCatalogModel {
         foreach(array_unique($subGroups) as $item)
         {
             $sql = "
-        SELECT sector_name
-        FROM cats_map
-        WHERE catalog_name =:catCode
-        AND sector_id = :item
-        AND part = :groupCode
+            SELECT sector_name
+            FROM cats_map
+            WHERE catalog_name =:catCode
+            AND sector_id = :item
+            AND part = :groupCode
         ";
 
             $query = $this->conn->prepare($sql);

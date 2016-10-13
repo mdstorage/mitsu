@@ -46,19 +46,23 @@ class VinController extends BaseController{
     
     public function vinComplectationsAction(Request $request, $token = null)
     {
-       $vin = $request->get('vin');
+
+        $vin = $request->get('vin');
         $vinComplectations = $this->model()->getVinComplectations($vin);
+
         if (empty($vinComplectations)) {
             setcookie(Constants::VIN, "");
             return $this->index1Action('Автомобиль с таким VIN кодом не найден');
         }
+
         setcookie(Constants::VIN, $vin);
+
         foreach($vinComplectations as $item)
-			{
+        {
 			$regionCode = $item['carea'];
 			$modelCode =  rawurlencode($item['cmodnamepc']);
 			$modificationCode = $item['dmodyr'];
-			}
+        }
 
         $this->addFilter('vinComplectationsFilter', array(
             'vinComplectations' => $vinComplectations

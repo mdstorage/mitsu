@@ -78,11 +78,13 @@ class VinController extends BaseController{
     }
 
 
-    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode)
+    public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode, $token = null)
     {
+        $subGroupCode = (substr_count($subGroupCode, '-') > 1) ? substr($subGroupCode, 0, strripos($subGroupCode, '-')+1): $subGroupCode;
 
         $groupCode = $this->model()->getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode);
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+        $parameters['subGroupCode'] = $subGroupCode;
 
         return $this->redirect(
             $this->generateUrl(
