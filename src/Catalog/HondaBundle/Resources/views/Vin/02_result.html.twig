@@ -1,7 +1,31 @@
-{% use 'CatalogHondaBundle::honda.base.html.twig' %}
-{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')] }}
-{% for region in result.options %}
-                   {{ region }}<br/>
-                    {% endfor %}
+{% extends 'CatalogCommonBundle:Vin:02_result.html.twig' %}
+{% block specification %}
+    <div class="row">
+        <div class="col-lg-8">
+            <table class="table table-bordered">
 
+                <tr>
+                    <td>Марка:</td>
+                    <td>{{ result.marka }}</td>
+                </tr>
+                <tr>
 
+                    <td>Регион:</td>
+                    <td>{{ result.region }}</td>
+                </tr>
+                <tr>
+                    <td>Модель:</td>
+                    <td>{{ result.model }}</td>
+                </tr>
+                <tr>
+                    <td>Дата выпуска:</td>
+                    <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')] }}</td>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+{% endblock specification %}
+{% block catalogPath %}
+    {{ path('vin_honda_complectations',({'regionCode': result.region, 'modelCode': result.model, 'modificationCode': result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')], 'token': app.request.get('token')})) }}
+{% endblock catalogPath %}

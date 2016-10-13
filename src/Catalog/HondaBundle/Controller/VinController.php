@@ -37,13 +37,8 @@ class VinController extends BaseController{
            
         }
     }
-    public function index1Action($error_message = null)
-    {
 
-        setcookie(Constants::VIN, '');
-        return $this->render($this->bundle().':01_index.html.twig', array('error_message' => $error_message));
-    }
-    
+
     public function vinComplectationsAction(Request $request, $token = null)
     {
         $vin = $request->get('vin');
@@ -70,7 +65,7 @@ class VinController extends BaseController{
 
         return parent::complectationsAction($request, $regionCode, $modelCode, $modificationCode, $articul = null, $token);
     }
-    
+
     public function vinComplectationsFilter($oContainer, $parameters)
     {
         $complectations = $parameters['vinComplectations'];

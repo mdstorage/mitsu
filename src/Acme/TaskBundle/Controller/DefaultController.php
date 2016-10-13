@@ -29,7 +29,7 @@ class DefaultController extends Controller
             $vin = $request->get('vin');
 
             $marks = array('Pontiac','Abarth', 'AlfaRomeo', 'Fiat', 'FiatProfessional', 'Lancia', 'Bmw', 'Hyundai', 'Kia', 'RollsRoyce', 'Audi', 'Seat', 'Skoda', 'Volkswagen',
-                'ChevroletUsa', 'Cadillac', 'Pontiac', 'Buick', 'Hummer', 'Saturn', 'GMC', 'Oldsmobile', 'Mercedes', 'Smart');
+                'ChevroletUsa', 'Cadillac', 'Pontiac', 'Buick', 'Hummer', 'Saturn', 'GMC', 'Oldsmobile', 'Mercedes', 'Smart', 'Honda', 'Hondaeurope');
             $marksVAG = array('Audi', 'Seat', 'Skoda', 'Volkswagen');
 
             $result = array();
@@ -54,9 +54,9 @@ class DefaultController extends Controller
                     {
                         unset ($result[$mark]);
                     }
-
                 }
             }
+
 
             if (!$result) {
                 return $this->render('CatalogBmwBundle:Vin'.':empty.html.twig');
@@ -78,12 +78,12 @@ class DefaultController extends Controller
                     $this->generateUrl('vin_'.strtolower($markForRender).'_result', array('request' => $request)), 307);
 
             }
+
             else {
                 return $this->redirect(
                     $this->generateUrl('vin_'.strtolower($markForRender).'_region', array('request' => $request)), 307);
 
             }
-
         }
     }
 

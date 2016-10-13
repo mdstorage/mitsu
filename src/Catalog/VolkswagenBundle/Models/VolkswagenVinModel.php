@@ -229,13 +229,14 @@ class VolkswagenVinModel extends VolkswagenCatalogModel {
             );
 
         }
+
         foreach($subgroups as $index => $value)
         {
-            if(($value['options']['prime4'] != '') & (!strpos($value['options']['prime4'],$filtrDvig)) || ($value['options']['dannye'] != '') & (!strpos($value['options']['dannye'],$filtrNameDvig)))
+            if((!empty($value['options']['prime4']) && (stripos($value['options']['prime4'],$filtrDvig) === false))
+                || (!empty($value['options']['dannye']) && (stripos($value['options']['dannye'],$filtrNameDvig) === false)))
             {
                 unset ($subgroups[$index]);
             }
-
         }
 
         foreach($subgroups as $index => $value)

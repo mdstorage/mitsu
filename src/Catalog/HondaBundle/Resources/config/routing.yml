@@ -44,7 +44,16 @@ catalog_honda_group:
 
 vin_honda:
   path:         /honda/vin/0/{token}
-  defaults:     {_controller: CatalogHondaBundle:Vin:index1, token: null}
+  defaults:     {_controller: CatalogHondaBundle:Vin:index, token: null}
+
+vin_honda_result:
+  path:         /honda/vin/1
+  defaults:     {_controller: CatalogHondaBundle:Vin:result}
+  requirements: {_method: POST}
+
+vin_honda_complectations:
+  path:         /honda/vin/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogHondaBundle:Vin:complectations, token: null}
 
 vin_honda_complectations:
   path:         /honda/vin/2/{token}

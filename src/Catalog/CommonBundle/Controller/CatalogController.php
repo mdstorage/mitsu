@@ -404,6 +404,7 @@ abstract class CatalogController extends BaseController{
             );
         };
 
+
         return $this->render($this->bundle() . ':06_schemas.html.twig', array(
             'oContainer' => $oContainer,
             'parameters' => $parameters

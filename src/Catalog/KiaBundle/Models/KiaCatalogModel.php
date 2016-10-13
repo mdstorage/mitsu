@@ -379,14 +379,14 @@ class KiaCatalogModel extends CatalogModel{
         $sql = "
         SELECT sector_id
         FROM cats_map
-        WHERE catalog_name =:catCode
+        WHERE cats_map.catalog_name = :catCode
         AND sector_name = :subGroupCode
         AND part = :groupCode
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('catCode',  $catCode);
-        $query->bindValue('subGroupCode',  $subGroupCode);
+        $query->bindValue('subGroupCode',  (substr_count($subGroupCode, '-') > 1) ? substr($subGroupCode, 0, strripos($subGroupCode, '-')+1) : $subGroupCode);
         $query->bindValue('groupCode',  $groupCode);
         $query->execute();
 
@@ -395,13 +395,11 @@ class KiaCatalogModel extends CatalogModel{
         $schemas = array();
         foreach($aData as $item)
         {
-
 		            $schemas[$item['sector_id']] = array(
                     Constants::NAME => $catCode,
                     Constants::OPTIONS => array(Constants::CD => $item['sector_id'])
                 );
         }
-
 
         return $schemas;
     }
@@ -433,41 +431,39 @@ class KiaCatalogModel extends CatalogModel{
         SELECT *
         FROM cats_table
         WHERE catalog_code =:catCode
-        	AND compl_name = :schemaCode
+        	AND compl_name LIKE :schemaCode
         ";
 
     	$query = $this->conn->prepare($sqlPnc);
         $query->bindValue('catCode', $catCode);
-        $query->bindValue('schemaCode', $schemaCode);
+        $query->bindValue('schemaCode', '%'.$schemaCode.'%');
         $query->execute();
 
         $aPncs = $query->fetchAll();
     	
-    	foreach ($aPncs as &$aPnc)
-    	{
-    		
-    	$sqlSchemaLabels = "
-        SELECT x1, y1, x2, y2
-        FROM cats_coord
-        WHERE catalog_code =:catCode
-          AND compl_name =:schemaCode
-          AND name =:scheme_num
-        ";
+    	foreach ($aPncs as &$aPnc){
 
-        $query = $this->conn->prepare($sqlSchemaLabels);
+            $sqlSchemaLabels = "
+            SELECT x1, y1, x2, y2
+            FROM cats_coord
+            WHERE catalog_code = :catCode
+            AND compl_name LIKE :schemaCode
+            AND cats_coord.name = :scheme_num
+            ";
+
+
+            $query = $this->conn->prepare($sqlSchemaLabels);
             $query->bindValue('catCode', $catCode);
-            $query->bindValue('schemaCode', $schemaCode);
-        $query->bindValue('scheme_num', $aPnc['scheme_num']);
-        $query->execute();
-        
-        $aPnc['clangjap'] = $query->fetchAll();
-
+            $query->bindValue('schemaCode', '%'.$schemaCode.'%');
+            $query->bindValue('scheme_num', $aPnc['scheme_num']);
+            $query->execute();
+            $aPnc['clangjap'] = $query->fetchAll();
 
             $sqlPncName = "
-        SELECT lex_code
-        FROM pnclex
-        WHERE pnc_code =:pnc_code
-        ";
+            SELECT lex_code
+            FROM pnclex
+            WHERE pnc_code =:pnc_code
+            ";
 
             $query = $this->conn->prepare($sqlPncName);
             $query->bindValue('pnc_code', $aPnc['detail_pnc']);
@@ -480,7 +476,8 @@ class KiaCatalogModel extends CatalogModel{
 		}
 
         $pncs = array();
-      foreach ($aPncs as $index=>$value) {
+
+        foreach ($aPncs as $index=>$value) {
             {
                 if (!$value['clangjap'])
                 {
@@ -488,26 +485,21 @@ class KiaCatalogModel extends CatalogModel{
                 }
             	foreach ($value['clangjap'] as $item1)
             	{
-            	$pncs[$value['scheme_num']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
+
+                    $pncs[$value['scheme_num']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
                     Constants::X1 => floor(($item1['x1'])),
                     Constants::Y1 => $item1['y1'],
                     Constants::X2 => $item1['x2'],
                     Constants::Y2 => $item1['y2']);
             	
             	}
-            
-            
-                
             }
         }
 
         foreach ($aPncs as $item) {
-         	
-         	
-				$pncs[$item['scheme_num']][Constants::NAME] = $this->getDesc($item['name'], 'RU');
-			
-			
-           
+
+            $pncs[$item['scheme_num']][Constants::NAME] = $this->getDesc($item['name'], 'RU');
+
         }
 
          return $pncs;
@@ -555,14 +547,14 @@ $articuls = array();
         $sqlSchemaLabels = "
         SELECT name, x1, y1, x2, y2
         FROM cats_coord
-        WHERE catalog_code =:catCode
-          AND compl_name =:schemaCode
+        WHERE catalog_code = :catCode
+          AND compl_name LIKE :schemaCode
           AND quantity = 5
           ";
 
         $query = $this->conn->prepare($sqlSchemaLabels);
         $query->bindValue('catCode', $catCode);
-        $query->bindValue('schemaCode', $schemaCode);
+        $query->bindValue('schemaCode', '%'.$schemaCode.'%');
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -594,13 +586,13 @@ $articuls = array();
         FROM cats_table
         WHERE catalog_code =:catCode
             AND scheme_num = :pncCode
-        	AND compl_name = :schemaCode
+        	AND compl_name LIKE :schemaCode
         ";
 
         $query = $this->conn->prepare($sqlPnc);
         $query->bindValue('catCode', $catCode);
         $query->bindValue('pncCode', $pncCode);
-        $query->bindValue('schemaCode', $options['cd']);
+        $query->bindValue('schemaCode', '%'.$options['cd'].'%');
         $query->execute();
 
         $aArticuls = $query->fetchAll();
@@ -699,6 +691,7 @@ $articuls = array();
 
 
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+
         $sqlGroup = "
         SELECT part
         FROM cats_map
@@ -707,7 +700,7 @@ $articuls = array();
         ";
 
         $query = $this->conn->prepare($sqlGroup);
-        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('subGroupCode', (substr_count($subGroupCode, '-') > 1) ? substr($subGroupCode, 0, strripos($subGroupCode, '-')+1): $subGroupCode);
         $query->bindValue('catCode', $catCode);
         $query->execute();
 

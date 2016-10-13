@@ -14,9 +14,43 @@ use Catalog\HondaBundle\Components\HondaConstants;
 
 class HondaVinModel extends HondaCatalogModel {
 
+    public function getVinFinderResult($vin)
+    {
+        $sql = "
+        SELECT *
+        FROM dba_pmotyt
+        WHERE nfrmpf = :vin AND :subvin BETWEEN nfrmseqepcstrt AND nfrmseqepcend
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('vin', substr($vin,0,11));
+        $query->bindValue('subvin', substr($vin,9,8));
+        $query->execute();
+
+        $aData = $query->fetchAll();
+
+        $result = array();
+
+        if ($aData) {
+            $result = array(
+                'marka' => 'Honda',
+                'region' => $aData['Region'],
+                'model' => $aData['ExtBaureihe'],
+                'modif' => $aData['Modell'],
+                Constants::PROD_DATE => $aData['Produktionsdatum'],
+                'wheel' => $aData['Lenkung'],
+                'modelforGroups' => $aData['Baureihe'].'_'.$aData['Karosserie'],
+                'modifforGroups' => $aData['Modellspalte'],
+                'complectationCode' => $aData['Lenkung'].$aData['Getriebe'].$aData['Produktionsdatum'],
+                'engine' => $aData['Motor'],
+                'korobka' => $aData['Getriebe'],
+            );
+        }
+        return $result;
+    }
+
     public function getVinComplectations($vin)
     {
-        
         $sql = "
         SELECT *
         FROM dba_pmotyt
