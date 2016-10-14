@@ -76,23 +76,24 @@ class InfinitiVinModel extends InfinitiCatalogModel {
         $OnlyCompl = array();
 
 
+        if ($aData){
 
-        $complectations = $this->getComplectations($aData[0]['CATALOG'], $aData[0]['SHASHUKO'], $aData[0]['MODSERIES']);
-        $complectation = $complectations[str_pad($aData[0]['MDLDIR'], 3, "0", STR_PAD_LEFT).'_'.$aData[0]['POSNUM'].'_'.$aData[0]['DATA1']];
+            $complectations = $this->getComplectations($aData[0]['CATALOG'], $aData[0]['SHASHUKO'], $aData[0]['MODSERIES']);
+            $complectation = $complectations[str_pad($aData[0]['MDLDIR'], 3, "0", STR_PAD_LEFT).'_'.$aData[0]['POSNUM'].'_'.$aData[0]['DATA1']];
 
 
-       for ($i = 1; $i < 9; $i++)
-        {
-            $OnlyCompl[] = $complectation['options']['OPTION'.$i];
+            for ($i = 1; $i < 9; $i++)
+            {
+                $OnlyCompl[] = $complectation['options']['OPTION'.$i];
+            }
+
         }
-
-
-
 
         $result = array();
 
         if ($aData) {
             $result = array(
+                'marka' => 'INFINITI',
                 'model' => urlencode($aData[0]['SHASHUKO']),
                 'modif' => $aData[0]['MODSERIES'],
                 'complectation' => $OnlyCompl,
@@ -105,8 +106,6 @@ class InfinitiVinModel extends InfinitiCatalogModel {
                 'kod_complektacii' => str_pad($aData[0]['MDLDIR'], 3, "0", STR_PAD_LEFT).'_'.$aData[0]['POSNUM'].'_'.$aData[0]['DATA1'],
                 );
         }
-
-
 
         return $result;
     }

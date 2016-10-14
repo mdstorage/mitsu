@@ -40,6 +40,7 @@ class MazdaVinModel extends MazdaCatalogModel {
 
         if ($aData) {
             $result = array(
+                'marka' => 'MAZDA',
                 'region' => $aData['catalog'],
                 'model' => $aModel['model_name'],
                 'prod_year' => $aModel['prod_year'],
