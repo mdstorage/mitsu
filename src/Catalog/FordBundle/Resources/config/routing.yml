@@ -1,5 +1,9 @@
+catalog_ford_token:
+  path:         /ford/catalog/0/{token}/{regionCode}
+  defaults:     {_controller: CatalogFordBundle:Catalog:regionsModels, token: null, regionCode: null}
+
 catalog_ford:
-  path:         /ford/catalog/0/{regionCode}
+  path:         /ford/{regionCode}
   defaults:     {_controller: CatalogFordBundle:Catalog:regionsModels, regionCode: null}
 
 catalog_ford_modifications:
@@ -8,24 +12,24 @@ catalog_ford_modifications:
   requirements: {_method: POST}
 
 catalog_ford_complectations:
-  path:         /ford/catalog/2/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogFordBundle:Catalog:complectations}
+  path:         /ford/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogFordBundle:Catalog:complectations, token: null}
 
 catalog_ford_groups:
-  path:         /ford/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogFordBundle:Catalog:groups}
+  path:         /ford/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogFordBundle:Catalog:groups, token: null}
 
 catalog_ford_subgroups:
-  path:         /ford/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogFordBundle:Catalog:subgroups}
+  path:         /ford/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogFordBundle:Catalog:subgroups, token: null}
 
 catalog_ford_schemas:
-  path:         /ford/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogFordBundle:Catalog:schemas}
+  path:         /ford/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogFordBundle:Catalog:schemas, token: null}
 
 catalog_ford_schema:
-  path:         /ford/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogFordBundle:Catalog:schema}
+  path:         /ford/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogFordBundle:Catalog:schema, token: null}
 
 catalog_ford_articuls:
   path:         /ford/catalog/7
@@ -33,14 +37,14 @@ catalog_ford_articuls:
   requirements: {_method: POST}
 
 catalog_ford_group:
-  path:         /ford/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /ford/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogFordBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------
 
 vin_ford:
-  path:         /ford/vin/0
-  defaults:     {_controller: CatalogFordBundle:Vin:index}
+  path:         /ford/vin/0/{token}
+  defaults:     {_controller: CatalogFordBundle:Vin:index, token: null}
 
 vin_ford_result:
   path:         /ford/vin/1
@@ -48,38 +52,42 @@ vin_ford_result:
   requirements: {_method: POST}
 
 vin_ford_groups:
-  path:         /ford/vin/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogFordBundle:Vin:groups}
+  path:         /ford/vin/3/{regionCode}/{modelCode}/{modificationCode}/{token}
+  defaults:     {_controller: CatalogFordBundle:Vin:groups, token: null}
 
 vin_ford_subgroups:
-  path:         /ford/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogFordBundle:Vin:subgroups}
+  path:         /ford/vin/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{token}
+  defaults:     {_controller: CatalogFordBundle:Vin:subgroups, token: null}
 
 vin_ford_schemas:
-  path:         /ford/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogFordBundle:Vin:schemas}
+  path:         /ford/vin/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{token}
+  defaults:     {_controller: CatalogFordBundle:Vin:schemas, token: null}
 
 vin_ford_schema:
-  path:         /ford/vin/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogFordBundle:Vin:schema}
+  path:         /ford/vin/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  defaults:     {_controller: CatalogFordBundle:Vin:schema, token: null}
 
 vin_ford_articuls:
   path:         /ford/vin/7
-  defaults:     {_controller: CatalogFordBundle:Vin:articuls}
+  defaults:     {_controller: CatalogFordBundle:Vin:vinarticuls}
   requirements: {_method: POST}
 
 vin_ford_group:
-  path:         /ford/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /ford/vin/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogFordBundle:Vin:getGroupBySubgroup}
 
 #---------------------------------------------------------------------------------------------
 
 articul_ford:
-  path:         /ford/articul/0
-  defaults:     {_controller: CatalogFordBundle:Articul:index}
+  path:         /ford/articul/0/{token}
+  defaults:     {_controller: CatalogFordBundle:Articul:index, token: null}
+
+articul_ford_find_token:
+  path:         /ford/articul/1/{token}/{regionCode}
+  defaults:     {_controller: CatalogFordBundle:Articul:findByArticul, regionCode: null}
 
 articul_ford_find:
-  path:         /ford/articul/1/{regionCode}
+  path:         /ford/articul/2/{regionCode}
   defaults:     {_controller: CatalogFordBundle:Articul:findByArticul, regionCode: null}
 
 articul_ford_modifications:
@@ -88,32 +96,32 @@ articul_ford_modifications:
   requirements: {_method: POST}
 
 articul_ford_complectations:
-  path:         /ford/articul/4/{regionCode}/{modelCode}/{modificationCode}
-  defaults:     {_controller: CatalogFordBundle:Articul:fordArticulComplectations}
+  path:         /ford/articul/4/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogFordBundle:Articul:fordArticulComplectations, token: null}
 
 articul_ford_groups:
-  path:         /ford/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}
-  defaults:     {_controller: CatalogFordBundle:Articul:fordArticulgroups}
+  path:         /ford/articul/5/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  defaults:     {_controller: CatalogFordBundle:Articul:fordArticulgroups, token: null}
 
 articul_ford_subgroups:
-  path:         /ford/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}
-  defaults:     {_controller: CatalogFordBundle:Articul:fordArticulSubgroups}
+  path:         /ford/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogFordBundle:Articul:fordArticulSubgroups, token: null}
 
 articul_ford_schemas:
-  path:         /ford/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}
-  defaults:     {_controller: CatalogFordBundle:Articul:fordArticulSchemas}
+  path:         /ford/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  defaults:     {_controller: CatalogFordBundle:Articul:fordArticulSchemas, token: null}
 
 articul_ford_schema:
-  path:         /ford/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}
-  defaults:     {_controller: CatalogFordBundle:Articul:fordArticulSchema}
+  path:         /ford/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  defaults:     {_controller: CatalogFordBundle:Articul:fordArticulSchema, token: null}
 
 articul_ford_articuls:
   path:         /ford/articul/9
-  defaults:     {_controller: CatalogFordBundle:Articul:articuls}
+  defaults:     {_controller: CatalogFordBundle:Articul:fordArticularticuls}
   requirements: {_method: POST}
 
 articul_ford_group:
-  path:         /ford/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}
+  path:         /ford/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogFordBundle:Articul:getGroupBySubgroup}
 catalog_ford_homepage:
     path:     /hello/{name}

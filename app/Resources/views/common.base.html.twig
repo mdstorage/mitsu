@@ -4,20 +4,47 @@
     <meta charset="UTF-8" />
     <title>{% block title %}Каталог {% block brand %}{% endblock brand %}{% endblock title%}</title>
     {% block stylesheets %}
+
         <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap.min.css') }}" media="all">
         <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap-theme.min.css') }}" media="all">
-    {% endblock %}
-{#    <link rel="icon" type="image/x-icon" href="{{
+        <link rel="stylesheet" href="{{ asset('bundles/cataloghonda/css/jquery.zoomscroll-2.0.1.css') }}" media="all">
 
- asset('favicon.ico') }}" />#}
+
+    {% endblock %}
+
 </head>
 <body>
 {% block javascripts %}
 	
-    <script src="{{ asset('bundles/catalogcommon/js/jquery-2.1.1.min.js') }}"></script>
-    <script src="{{ asset('bundles/catalogcommon/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/jquery.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/cataloghonda/js/jquery.mousewheel.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/cataloghonda/js/jquery-ui-1.8.16.custom.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/catalogcommon/js/jquery.zoomscroll-2.0.1.js') }}"></script>
     <script src="{{ asset('bundles/catalogcommon/js/jquery.imagemapster.min.js') }}"></script>
     <script src="{{ asset('bundles/cataloghonda/js/jquery-scrolling.js') }}"></script>
+    <script src="{{ asset('bundles/catalogcommon/js/bootstrap.min.js') }}"></script>
+
+    <script src="{{ asset('bundles/cataloghonda/js/detailslist.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/dragscrollable.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/jquery.colorbox.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/jquery.scrollTo-min.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/unit.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/jquery.tooltip.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/mootools-core.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/mootools-more.js') }}"></script>
+
+
+    {#
+    <script src="{{ asset('bundles/cataloghonda/js/jquery-1.6.4.min.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/detailslist.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/dragscrollable.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/jquery.colorbox.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/jquery.mousewheel.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/jquery.scrollTo-min.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/jquery.tooltip.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/mootools-core.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/mootools-more.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/unit.js') }}"></script>#}
 
 {% endblock %}
 {% block source %}{% endblock source %}
@@ -115,8 +142,8 @@
 
 
 <script type="text/javascript">
+
     $(document).ready(function(){
-        /*if(('{{ app.request.headers.get('REFERER') }}'.indexOf("callbackhost=")+1) || ('{{ app.request.get('callbackhost') }}'))*/
         {
             setInterval(publishHeight, 300);
         }
@@ -127,9 +154,7 @@
       var host = '{{ app.request.get('callbackhost') }}';
       var ddomain = get_cookie('DOMAIN');
 
-      if (!host)
-      {
-          /*host = get_cookie('COOKIEHOSTAudi');*/
+      if (!host){
 
           host = get_cookie('COOKIEHOST'.concat($("#span1").text().trim().toLowerCase(), ddomain));
       }

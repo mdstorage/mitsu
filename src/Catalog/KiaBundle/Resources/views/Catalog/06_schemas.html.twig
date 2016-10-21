@@ -13,18 +13,36 @@
 {% block schema %}
     {% if schema.getCode is not empty %}
             <div class="col-xs-3">
-        <a href="{{ path('catalog_kia_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+                {#<a class="picture" href="{{ ('bundles/catalogkia/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png')|file_exists() ?
+                asset('bundles/catalogkia/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png') :
+                asset('bundles/catalogkia/Images/Images/'~schema.getRuname~'/'~schema.getCode~'1.png') }}" title="Увеличить" >
+                    <img src="{{ ('bundles/catalogkia/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png')|file_exists() ?
+                    asset('bundles/catalogkia/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png') :
+                    asset('bundles/catalogkia/Images/Images/'~schema.getRuname~'/'~schema.getCode~'1.png') }}"  width="160" height="107" alt="{{ schema.getRuname }}"/>
+                </a>#}
+
+                <a href="{{ path('catalog_kia_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
                     <div class="row">
+
                         {{ schema.getCode }}
+
                     </div>
 
                     <div class="row">
+
                         <img src="{{ ('bundles/catalogkia/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png')|file_exists() ?
+
                         asset('bundles/catalogkia/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png') :
+
                         asset('bundles/catalogkia/Images/Images/'~schema.getRuname~'/'~schema.getCode~'1.png') }}" width="300" alt="{{ schema.getRuname }}"/>
+
                     </div>
-        </a>
+
+                </a>
+
             </div>
-    {% endif %}
+
+
+{% endif %}
 {% endblock schema %}
