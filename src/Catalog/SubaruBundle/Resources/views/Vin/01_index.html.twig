@@ -8,7 +8,7 @@
                 }
             });
             $("#vin-button").on('click', function(){
-                if($("#vin").val().length !== 17 && $("#vin").val().length !== 9){
+                if($("#vin").val().replace(/\s+/g, '').length !== 17 && $("#vin").val().replace(/\s+/g, '').length !== 9){
                     alert("VIN должен состоять из 17 или 9 (для японских автомобилей) знаков!");
                     return;
                 }
@@ -18,7 +18,7 @@
                     async:  false,
                     url:    "{% block vinAjaxPath %}{{ path('vin_subaru_result') }}{% endblock vinAjaxPath %}",
                     data:   {
-                        vin: $("#vin").val(),
+                        vin: $("#vin").val().trim(),
                         token: '{{ app.request.get('token') }}',
                         callbackhost: "{{ app.request.get('callbackhost') }}",
                         domain: "{{ app.request.get('domain') }}"

@@ -38,7 +38,7 @@ catalog_kia_articuls:
 
 catalog_kia_group:
   path:         /kia/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
-  defaults:     {_controller: CatalogKiaBundle:Catalog:getGroupBySubgroup}
+  defaults:     {_controller: CatalogKiaBundle:Catalog:getGroupBySubgroup, token: null}
 
 #------------------------------------------------------------------------------
 
@@ -74,7 +74,7 @@ vin_kia_articuls:
 
 vin_kia_group:
   path:         /kia/vin/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
-  defaults:     {_controller: CatalogKiaBundle:Vin:getGroupBySubgroup}
+  defaults:     {_controller: CatalogKiaBundle:Vin:getGroupBySubgroup, token: null}
 
 #---------------------------------------------------------------------------------------------
 
@@ -122,7 +122,8 @@ articul_kia_articuls:
 
 articul_kia_group:
   path:         /kia/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{subGroupCode}/{token}
-  defaults:     {_controller: CatalogKiaBundle:Articul:getGroupBySubgroup}
+  defaults:     {_controller: CatalogKiaBundle:Articul:getGroupBySubgroup, token: null}
+
 catalog_kia_homepage:
     path:     /hello/{name}
     defaults: { _controller: CatalogKiaBundle:Default:index }

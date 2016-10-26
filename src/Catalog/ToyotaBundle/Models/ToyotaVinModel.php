@@ -33,27 +33,17 @@ class ToyotaVinModel extends ToyotaCatalogModel {
 
         $aData = $query->fetchAll();
 
+        if ($aData){
+            $complectations = $this->getVinComplectation($aData[0]['catalog'], $aData[0]['model_name'], $aData[0]['catalog_code']);
 
-        if (empty($aData))
-        {
-            print_r('Ничего не найдено');die;
-        }
-
+            $complectation = $complectations[$aData[0]['compl_code']];
 
 
-
-
-
-        $complectations = $this->getVinComplectation($aData[0]['catalog'], $aData[0]['model_name'], $aData[0]['catalog_code']);
-
-        $complectation = $complectations[$aData[0]['compl_code']];
-
-
-
-
-       for ($i = 1; $i < 11; $i++)
+        for ($i = 1; $i < 11; $i++)
         {
             $OnlyCompl[] = $complectation['options']['OPTION'.$i];
+        }
+
         }
 
 
@@ -63,6 +53,7 @@ class ToyotaVinModel extends ToyotaCatalogModel {
 
         if ($aData) {
             $result = array(
+                'marka' => 'TOYOTA',
                 'model' => urlencode($aData[0]['model_name']),
                 'modelf' => ($aData[0]['model_name']),
                 'modif' => $aData[0]['models_codes'],

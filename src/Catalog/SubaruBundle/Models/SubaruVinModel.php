@@ -195,15 +195,16 @@ class SubaruVinModel extends SubaruCatalogModel {
 
             if ($aData){
                 $result = array(
-                'region' => $aData['catalog'].'_'.$aData['sub_wheel'],
-                'model' => '('.$aData['Model_code'].') '.$aData['m_desc'],
-                'prod_year' => $aData['date1'],
-                'modification' => $aData['change_abb'].$aData['mc_desc'],
-                'complectation' => $aData['compl_code'],
-                'com' => $aComplectation,
-                'ext_color' => $aData['color_code'],
-                'Trim_code'=>$aData['Trim_code'],
-                Constants::PROD_DATE => $aData['date1']
+                    'marka' => 'SUBARU',
+                    'region' => $aData['catalog'].'_'.$aData['sub_wheel'],
+                    'model' => '('.$aData['Model_code'].') '.$aData['m_desc'],
+                    'prod_year' => $aData['date1'],
+                    'modification' => $aData['change_abb'].$aData['mc_desc'],
+                    'complectation' => $aData['compl_code'],
+                    'com' => $aComplectation,
+                    'ext_color' => $aData['color_code'],
+                    'Trim_code'=>$aData['Trim_code'],
+                    Constants::PROD_DATE => $aData['date1']
             );
             }
 
