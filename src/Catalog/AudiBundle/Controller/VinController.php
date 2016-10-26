@@ -31,9 +31,6 @@ class VinController extends BaseController{
         if ($request->isXmlHttpRequest()) {
 
             $vin = $request->get('vin');
-            $callbackhost = $request->get('callbackhost');
-
-
 
             $aRegions = $this->model()->getVinRegions($vin);
 
@@ -79,12 +76,53 @@ class VinController extends BaseController{
              * @deprecated Оставлен для совместимости с маздой
              */
 
+
+            setcookie(Constants::VIN, $vin);
+
             $brandSlash = $request->server->get('REQUEST_URI');
+
 
             $brand = explode('/', $brandSlash)[1];
 
-            setcookie(Constants::VIN, $vin);
-            setcookie(Constants::COOKIEHOST.$brand, $callbackhost);
+
+            $callbackhost = trim($request->get('callbackhost'));
+
+
+
+            $domain = trim($request->get('domain'));
+
+            $domain = substr_replace($domain, '', strpos($domain, '.'), 1);
+
+
+
+            $headers = $request->server->getHeaders();
+
+            if (stripos($headers['REFERER'], 'callbackhost=') || stripos($headers['REFERER'], 'modelCode'))
+            {
+                if (!$call = $request->cookies->get(Constants::COOKIEHOST.$brand.urlencode($domain)))
+                {
+                    if ($callbackhost){
+                        setcookie(Constants::COOKIEHOST.$brand.urlencode($domain), $callbackhost);
+                    }
+                }
+            }
+            else{
+                setcookie(Constants::COOKIEHOST.$brand.urlencode($domain), "");
+            }
+
+            if (stripos($headers['REFERER'], 'domain')|| stripos($headers['REFERER'], 'modelCode'))
+            {
+                if (!$call = $request->cookies->get('DOMAIN'))
+                {
+                    if ($domain){
+                        setcookie('DOMAIN', $domain);
+                    }
+
+                }
+            }
+            else {
+                setcookie('DOMAIN', "");
+            }
 
 
             return $this->render($this->bundle().':02_region.html.twig', array(

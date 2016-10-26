@@ -14,12 +14,14 @@
 {% block body %}
     {% block head %}<h3>Выбрать запчасть:</h3>{% endblock head %}
     {% block schema %}
-        <div class="row">
+        <div class="row" id = "g_container">
+
             <map name="{{ oContainer.getActiveSchema.getCode }}">
             <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
                 {% if oContainer.getActiveSchema.getPncs %}
                 <h4>Семейства запчастей</h4>
                 {% block pncs %}
+
                     {% for pnc in oContainer.getActiveSchema.getPncs %}
                         {% block pnc %}
                             <div class="pnc glyphicon-plus small" id="pnc_{{ pnc.getCode }}">
@@ -57,23 +59,28 @@
                                     });
                                 </script>
                             {% endblock pncScript %}
-                            {% for coords in pnc.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
 
 
-                                {#<area shape="rect" coords="
+                    {% block pncArea %}
+                    {% for coords in pnc.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
+                                <area shape="rect" coords="
                                         {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }},
                                         {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }},
                                         {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }},
                                         {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}
                                     " href="#" id="{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" data-name="{% block dataName %}{{ pnc.getCode }}{% endblock dataName %}"/>
-                                #}{% block pncAreaScript %}
-                                    <script>
-                                        $("area#{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}").on("click", function(){
-                                            {{ block('pncClick') }}
-                                        })
-                                    </script>
-                                {% endblock pncAreaScript %}
+
+                    {% block pncAreaScript %}
+                    <script>
+                        $("area#{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}").on("click", function(){
+                            {{ block('pncClick') }}
+                        })
+                    </script>
+                    {% endblock pncAreaScript %}
                             {% endfor %}
+
+                    {% endblock pncArea %}
+
                         {% endblock pnc %}
                         {% block articulForPnc %}
                             <div class="hidden" id="articul_for_pnc{{ pnc.getCode }}"></div>
@@ -101,6 +108,8 @@
                     {% endfor %}
                 {% endblock commonArticuls %}
                 {% endif %}
+
+
                 {% if oContainer.getActiveSchema.getRefGroups %}
                 {% block refGroupsHead %}<h4>Связанные группы</h4>{% endblock refGroupsHead %}
                 {% block refGroups %}
@@ -121,19 +130,19 @@
                     {% endfor %}
                 {% endblock refGroups %}
                 {% endif %}
+
+
             </div>
             </map>
             <div class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
-                <div id="viewport" class="inline_block" style="position: absolute; border: 1px solid rgb(119, 119, 119); background: white none repeat scroll 0% 0%; width: 470px; height: 600px; overflow: auto;">
+                {% block imageviewport %}
+
                     {% block image %}
                     {% endblock image %}
-                </div>
+
+                {% endblock imageviewport %}
             </div>
-            {#<script type="text/javascript">
-                $(window).load(function() {
-                    $('#viewport').dragscrollable();
-                })
-            </script>#}
+
         </div>
     {% endblock schema %}
     {% block mapsterScript %}
