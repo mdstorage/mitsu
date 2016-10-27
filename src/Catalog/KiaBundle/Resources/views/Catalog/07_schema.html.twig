@@ -79,9 +79,8 @@
 {% block imageviewport %}
 
     <div class="row">
-
-
         <div class="row" style="height: 600px;">
+
             <div class="guayaquil_unit_icons">
                 <div class="guayaquil_zoom cboxElement" title="{{ oContainer.getActiveSchema.getCode }}" full="{{ ('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?
                 asset('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png') :
@@ -89,9 +88,10 @@
                     <img src="{{ asset('bundles/catalogcommon/images/zoom.png') }}"/>
                 </div>
             </div>
-            <div id="viewport" class="inline_block" style="position: absolute; border: 1px solid rgb(119, 119, 119); background: white none repeat scroll 0% 0%; width: 470px; height: 600px; overflow: auto;">
+            <div id="viewport" class="inline_block" style="position: absolute; border: 1px solid rgb(119, 119, 119); background: white none repeat scroll 0% 0%; height:600px; overflow: auto;">
                 {{ block('image1') }}
             </div>
+
         </div>
 
         <br>
@@ -179,7 +179,7 @@
 
 
 
-    <img class="dragger" onload="rescaleImage();" src="{{ ('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?
+    <img class="dragger" onload="rescaleImage(-100);" src="{{ ('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?
     asset('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png') :
     asset('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'1.png') }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 
