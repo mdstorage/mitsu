@@ -2,7 +2,7 @@
 {% use 'CatalogKiaBundle::kia.base.html.twig' %}
 {% block breadcrumbs %}
     <a href="{% if  app.request.get('token') %} {{ path('catalog_kia_token', parameters) }} {% else %} {{ path('catalog_kia') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
-   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
     <a href="{{ path('catalog_kia_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> /
     <a href="{{ path('catalog_kia_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
     <a href="{{ path('catalog_kia_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
@@ -16,12 +16,12 @@
                                 <script>
 
                                     $("#pnc_{{ pnc.getCode }}").on("click", function(){
-                                    	
-                                    	{% block pncClick %}
-                                    	
-                                    	$("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
+
+                                        {% block pncClick %}
+
+                                        $("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
                                         $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
-                                        
+
                                         $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
                                         $.ajax({
                                             type:   'POST',
@@ -41,14 +41,14 @@
                                                 $("#articul_for_pnc{{ pnc.getCode }}").html(data);
                                             }
                                         });
-                                        
+
                                         $.scrollTo("#pnc_{{ pnc.getCode }}", {duration:1500});
 
 
 
                                         $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
                                         $("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
-                                        
+
                                         {% endblock pncClick %}
                                     });
                                     $("#pnc_{{ pnc.getCode }}").on("mouseover", function(){
@@ -58,7 +58,7 @@
                                     $("#pnc_{{ pnc.getCode }}").on("mouseout", function(){
                                         $(this).removeClass("btn-info");
                                     });
-   
+
                                 </script>
                             {% endblock pncScript %}
 
@@ -78,36 +78,10 @@
 
 {% block imageviewport %}
 
-<div class="row">
-    <div class="row">
-        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-
-            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-                <img src="{{ asset('bundles/catalogcommon/images/mouse_wheel.png') }}"/>
-            </div>
-
-            <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                - масштабирование изображения
-            </div>
-        </div>
-
-        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-
-            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                <img src="{{ asset('bundles/catalogcommon/images/lmb.png') }}">
-                <img src="{{ asset('bundles/catalogcommon/images/move.png') }}"/>
-            </div>
-
-            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-                - прокрутка
-            </div>
-        </div>
-
-    </div>
-    <br>
-
     <div class="row">
 
+
+        <div class="row" style="height: 600px;">
             <div class="guayaquil_unit_icons">
                 <div class="guayaquil_zoom cboxElement" title="{{ oContainer.getActiveSchema.getCode }}" full="{{ ('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?
                 asset('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png') :
@@ -116,22 +90,49 @@
                 </div>
             </div>
             <div id="viewport" class="inline_block" style="position: absolute; border: 1px solid rgb(119, 119, 119); background: white none repeat scroll 0% 0%; width: 470px; height: 600px; overflow: auto;">
-                {{ block('image') }}
+                {{ block('image1') }}
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+
+                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                    <img src="{{ asset('bundles/catalogcommon/images/mouse_wheel.png') }}"/>
+                </div>
+
+                <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+                    - масштабирование изображения
+                </div>
             </div>
 
+            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+
+                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                    <img src="{{ asset('bundles/catalogcommon/images/lmb.png') }}">
+                    <img src="{{ asset('bundles/catalogcommon/images/move.png') }}"/>
+                </div>
+
+                <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                    - прокрутка
+                </div>
+            </div>
+
+        </div>
+
+
     </div>
-
-
-</div>
 {% endblock imageviewport %}
 
 
 
-{% block image %}
+{% block image1 %}
 
-{% for pnc in oContainer.getActiveSchema.getPncs %}
+    {% for pnc in oContainer.getActiveSchema.getPncs %}
 
-    {% for coords in pnc.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
+        {% for coords in pnc.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
 
             <div class="dragger g_highlight" id="{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" name="{{ pnc.getCode }}" style="position: absolute;
                     width: calc({{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }}px - {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}px);
@@ -151,26 +152,26 @@
 
             </script>
 
-    {% endfor %}
+        {% endfor %}
 
-{% endfor %}
+    {% endfor %}
 
     {% for refGroup in oContainer.getActiveSchema.getRefGroups %}
 
 
         {% for coords in refGroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
 
-                    <a href="{{ block('subGroupPath') }}">
-                    <div class="dragger g_highlight" name="{% block dataNamerefGroup %}{{ refGroup.getCode }}{% endblock dataNamerefGroup %}" id="{{ refGroup.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" style="position: absolute;
-                            width: calc({{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }}px - {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}px);
-                            height: calc({{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}px - {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}px);
-                            margin-top: {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}px;
-                            margin-left: {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}px;
-                            overflow: hidden; cursor: pointer">
+            <a href="{{ block('subGroupPath') }}">
+                <div class="dragger g_highlight" name="{% block dataNamerefGroup %}{{ refGroup.getCode }}{% endblock dataNamerefGroup %}" id="{{ refGroup.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" style="position: absolute;
+                        width: calc({{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }}px - {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}px);
+                        height: calc({{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}px - {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}px);
+                        margin-top: {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}px;
+                        margin-left: {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}px;
+                        overflow: hidden; cursor: pointer">
 
-                        <img src="{{ asset('bundles/catalogcommon/images/spacer.gif') }}"/>
-                    </div>
-                    </a>
+                    <img src="{{ asset('bundles/catalogcommon/images/spacer.gif') }}"/>
+                </div>
+            </a>
 
         {% endfor %}
 
@@ -178,12 +179,12 @@
 
 
 
-    <img class="dragger" onload="rescaleImage(-100000);" src="{{ ('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?
+    <img class="dragger" onload="rescaleImage();" src="{{ ('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?
     asset('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png') :
     asset('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'1.png') }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 
 
-{% endblock image %}
+{% endblock image1 %}
 
 
 {% block subGroupPath %}{{ path('catalog_kia_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
