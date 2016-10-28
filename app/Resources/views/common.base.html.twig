@@ -58,7 +58,23 @@
                     <li class="{{ 'vin' in app.request.getPathInfo ? 'active'}}"><a href="{% block vinPath %}{% endblock vinPath %}">{% block vinMenuItem %}Поиск по VIN{% endblock vinMenuItem %}</a></li>
                     <li class="{{ 'articul' in app.request.getPathInfo ? 'active'}}"><a href="{% block articulPath %}{% endblock articulPath %}">{% block articulMenuItem %}Поиск запчасти по артикулу{% endblock articulMenuItem %}</a></li>
                 </ul>
+
+                {% set locales = ['EN', 'RU'] %}
+                {% for  locale in locales %}
+                <input type="button" name = "button_res" id = "id_{{ locale }}" class="btn btn-default btn-xs" value = "{{ locale }}" style = "float:right;">
+
+                <script>
+                    $("#id_RU").addClass('btn-primary');
+                    $("#id_{{ locale }}").on('click', function(){
+                        $('input[name="button_res"]').removeClass('btn-primary');
+                        $(this).addClass('btn-primary');
+                        app.request.set('callbackhost');
+
+                    });
+                </script>
+                {% endfor %}
             </div><!-- /.navbar-collapse -->
+
         </div><!-- /.container-fluid -->
     </nav>
 

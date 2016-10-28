@@ -269,11 +269,7 @@ class ToyotaCatalogModel extends CatalogModel{
 
             }
 
-
         }
-
-
-
 
         return ($result);
 

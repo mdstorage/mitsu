@@ -17,6 +17,10 @@ STEERING,BRAKE,SUSPENSION: РУЛЕВОЕ УПРАВЛЕНИЕ, ТОРМОЗНА
 BODY PARTS: КУЗОВНЫЕ ДЕТАЛИ
 ACCESSORIES: ДОПОЛНИТЕЛЬНЫЕ ОПЦИИ
 UPHOLSTERY: ВНЕШНЯЯ И ВНУТРЕННЯЯ ОТДЕЛКА
+ENGINE: ДВИГАТЕЛЬ
+BODY: КУЗОВ
+GRADE: КОМПЛЕКТАЦИЯ
+DESTINATION: СТРАНА НАЗНАЧЕНИЯ
 
 #Регионы VIN
 RDW: ЕВРОПА

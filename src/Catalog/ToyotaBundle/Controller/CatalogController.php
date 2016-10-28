@@ -3,11 +3,13 @@ namespace Catalog\ToyotaBundle\Controller;
 
 
 use Catalog\CommonBundle\Components\Factory;
+use Catalog\CommonBundle\Components\CommonElement;
 use Catalog\CommonBundle\Components\Interfaces\CommonInterface;
 use Catalog\CommonBundle\Controller\CatalogController as BaseController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Catalog\ToyotaBundle\Form\ComplectationType;
+use Catalog\ToyotaBundle\Components\ToyotaConstants;
 
 class CatalogController extends BaseController{
 
@@ -49,6 +51,22 @@ class CatalogController extends BaseController{
 
         $complectationsForForm = $this->model()->getComplectationsForForm($complectations);
 
+
+        $this->get('request')->setLocale('en_US');
+        $locale = $this->get('request')->getLocale();
+        
+
+       foreach ($complectationsForForm as $index=>&$value)
+        {
+            foreach ($value['options']['option1'] as $ind => &$val)
+            {
+                $val = $this->get('translator')->trans($val, array(), ToyotaConstants::TRANSLATION_DOMAIN);
+
+                unset($val);
+
+            }
+            unset($value);
+        }
 
         $form = $this->createForm($this->get('myform'), $complectationsForForm);
 
