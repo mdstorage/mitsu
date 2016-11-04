@@ -1,13 +1,13 @@
 {% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
 {% use 'CatalogBmwBundle::bmw.base.html.twig' %}
 {% block breadcrumbs %}
-<a href="{% if  app.request.get('token') %} {{ path('catalog_bmw_token', parameters) }} {% else %} {{ path('catalog_bmw') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
-   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>
-     / <a href="{{ path('catalog_bmw_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> /Группа запчастей
+<a href="{% if  app.request.get('token') %} {{ path('catalog_bmw_token', parameters) }} {% else %} {{ path('catalog_bmw') }} {% endif %}">{{ trans('Регион, модель, модификация', app.request.get('_locale')) }}
+    ({{ oContainer.getActiveRegion.getRuname }}, {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>
+     / <a href="{{ path('catalog_bmw_complectations', parameters) }}">{{ trans('Комплектация', app.request.get('_locale')) }} ({{ oContainer.getActiveComplectation.getRuname}})</a> /{{ trans('Группа запчастей', app.request.get('_locale')) }}
 {% endblock breadcrumbs %}
 
 {% block body %}
-    {% block head %}<h3>Выбрать группу запчастей:</h3>{% endblock head %}
+    {% block head %}<h3>{{ trans('Выбрать группу запчастей', app.request.get('_locale')) }}:</h3>{% endblock head %}
     <div class="row">
     <div class="col-md-10">
 

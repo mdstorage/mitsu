@@ -52,10 +52,6 @@ class CatalogController extends BaseController{
         $complectationsForForm = $this->model()->getComplectationsForForm($complectations);
 
 
-        $this->get('request')->setLocale('en_US');
-        $locale = $this->get('request')->getLocale();
-        
-
        foreach ($complectationsForForm as $index=>&$value)
         {
             foreach ($value['options']['option1'] as $ind => &$val)

@@ -231,6 +231,7 @@ abstract class CatalogController extends BaseController{
 
     public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $articul = null, $token = null)
     {
+        $locale = $this->get('request')->getLocale();
         $data = $this->get('my_token_info')->getStatus($token);
 
         if(empty($data) & !empty($token)){
@@ -238,7 +239,7 @@ abstract class CatalogController extends BaseController{
         }
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
-        $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);
+        $groups = $this->model()->getGroups($locale, $regionCode, $modelCode, $modificationCode, $complectationCode);
 
         if(empty($groups))
             return $this->error($request, 'Группы не найдены.');

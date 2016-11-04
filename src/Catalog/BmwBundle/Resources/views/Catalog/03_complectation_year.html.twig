@@ -1,4 +1,4 @@
-{% block head %}<h3>Выбрать год и месяц производства:</h3>{% endblock head %}
+{% block head %}<h3>{{ trans('Выбрать год и месяц производства', app.request.get('_locale')) }}:</h3>{% endblock head %}
 <div class="modifications">
     <div class="row">
         {% for res in result %}

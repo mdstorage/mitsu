@@ -50,6 +50,11 @@ class CatalogController extends BaseController{
 
     public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
     {
+
+
+        $locale = $this->get('request')->getLocale();
+
+
         $headers = $request->server->getHeaders();
 
         foreach($request->cookies->keys() as $index => $value)
@@ -127,6 +132,7 @@ class CatalogController extends BaseController{
 
     public function modificationsAction(Request $request)
     {
+
         if ($request->isXmlHttpRequest()) {
             $regionCode = $request->get('regionCode');
             $modelCode = $request->get('modelCode');

@@ -5,58 +5,58 @@ catalog_bmw_token:
      _scheme: https
 
 catalog_bmw:
-  path:         /bmw/{regionCode}
-  defaults:     {_controller: CatalogBmwBundle:Catalog:regionsModels, regionCode: null}
+  path:         /bmw/{_locale}/{regionCode}
+  defaults:     {_controller: CatalogBmwBundle:Catalog:regionsModels, _locale: ru, regionCode: null}
   requirements:
      _scheme: https
 
 catalog_bmw_modifications:
-  path:         /bmw/catalog/1
+  path:         /bmw/{_locale}/catalog/1
   defaults:     {_controller: CatalogBmwBundle:Catalog:modifications}
   requirements: {_method: POST}
 
 catalog_bmw_complectations:
-  path:         /bmw/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
+  path:         /bmw/{_locale}/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
   defaults:     {_controller: CatalogBmwBundle:Catalog:complectations1, token: null}
 
 catalog_bmw_complectation_korobka:
-  path:         /bmw/catalog/12
+  path:         /bmw/{_locale}/catalog/12
   defaults:     {_controller: CatalogBmwBundle:Catalog:complectation_korobka}
   requirements: {_method: POST}
 
 catalog_bmw_complectation_year:
-  path:         /bmw/catalog/10
+  path:         /bmw/{_locale}/catalog/10
   defaults:     {_controller: CatalogBmwBundle:Catalog:complectation_year}
   requirements: {_method: POST}
 
 catalog_bmw_complectation_month:
-  path:         /bmw/catalog/11
+  path:         /bmw/{_locale}/catalog/11
   defaults:     {_controller: CatalogBmwBundle:Catalog:complectation_month}
   requirements: {_method: POST}
 
 catalog_bmw_groups:
-  path:         /bmw/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
+  path:         /bmw/{_locale}/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
   defaults:     {_controller: CatalogBmwBundle:Catalog:groups, token: null}
 
 catalog_bmw_subgroups:
-  path:         /bmw/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
+  path:         /bmw/{_locale}/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
   defaults:     {_controller: CatalogBmwBundle:Catalog:subgroups, token: null}
 
 catalog_bmw_schemas:
-  path:         /bmw/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
+  path:         /bmw/{_locale}/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogBmwBundle:Catalog:schemas, token: null}
 
 catalog_bmw_schema:
-  path:         /bmw/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  path:         /bmw/{_locale}/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
   defaults:     {_controller: CatalogBmwBundle:Catalog:schema, token: null}
 
 catalog_bmw_articuls:
-  path:         /bmw/catalog/7
+  path:         /bmw/{_locale}/catalog/7
   defaults:     {_controller: CatalogBmwBundle:Catalog:articuls}
   requirements: {_method: POST}
 
 catalog_bmw_group:
-  path:         /bmw/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
+  path:         /bmw/{_locale}/catalog/8/{regionCode}/{modelCode}/{modificationCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogBmwBundle:Catalog:getGroupBySubgroup}
 
 #------------------------------------------------------------------------------

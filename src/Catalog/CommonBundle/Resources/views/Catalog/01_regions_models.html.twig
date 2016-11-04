@@ -2,7 +2,7 @@
 {% set modelsListLenght = oContainer.getActiveRegion.getModels|length %}
 
 {% block breadcrumbs %}
-    Выбрать регион, модель, модификацию
+    {{ trans('Регион, модель, модификация', app.request.get('_locale')) }}
 {% endblock breadcrumbs %}
 
 {% block regionRuname %}{{ oContainer.getActiveRegion.getRuname }}{% endblock regionRuname %}
@@ -17,7 +17,7 @@
 {% block body %}
 
    {% block regions %}
-        {% block head %}<h3>Выбрать регион:</h3>{% endblock head %}
+        {% block head %}<h3>{{ trans('Выбрать регион', app.request.get('_locale')) }}:</h3>{% endblock head %}
         <ul class="nav nav-pills" role="tablist">
             {% for region in oContainer.getRegions %}
                 <li role="region" class="{% if region.getCode == oContainer.getActiveRegion.getCode %}active{% endif %}" id="{{ region.getCode }}"><a href="{% block regionPath %}{{ path('', {'regionCode': region.getCode}) }}{% endblock regionPath %}">{{ region.getRuname }}</a></li>

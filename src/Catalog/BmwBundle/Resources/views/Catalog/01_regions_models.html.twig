@@ -3,12 +3,12 @@
 
 
 {% block models %}
-    <h3>Модельный ряд:</h3>
+    <h3>{{ trans('Модельный ряд', app.request.get('_locale')) }}:</h3>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs pagination">
         <li class="active"><a href="#" data-toggle="tab" onclick="$('.listLine').each(function(){
             $(this).show().addClass('visible');
-            }); $(this).addClass('active'); return false;"><b>Все</b></a>
+            }); $(this).addClass('active'); return false;"><b>{{ trans('Все', app.request.get('_locale')) }}</b></a>
         </li>
 
         {% for transit in oContainer.getActiveRegion.getModels|first.getOption('firstSymbolsModels') %}
@@ -103,11 +103,11 @@
 
 {% block regionPath %}
     {% if app.request.get('token') %}
-        {{ path('catalog_bmw_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost'), 'domain':  app.request.get('domain'), 'domain':  app.request.get('domain')}) }}
+        {{ path('catalog_bmw_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost'), 'domain':  app.request.get('domain')}) }}
 
         {% else %}
 
-        {{ path('catalog_bmw', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost'), 'domain':  app.request.get('domain'), 'domain':  app.request.get('domain')}) }}
+        {{ path('catalog_bmw', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost'), 'domain':  app.request.get('domain')}) }}
 
     {% endif %}
 

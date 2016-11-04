@@ -314,8 +314,9 @@ class BmwCatalogModel extends CatalogModel{
 
 
 
-    public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
+    public function getGroups($locale, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
+        $this->
 
          $sql = "
         select
@@ -325,12 +326,13 @@ class BmwCatalogModel extends CatalogModel{
         ben_text Benennung
         from w_hgfg_mosp, w_hgfg, w_ben_gk, w_grafik
         where hgfgm_mospid = :modificationCode and hgfgm_hg = hgfg_hg and hgfg_fg = '00' and hgfgm_produktart = hgfg_produktart and hgfg_grafikid = grafik_grafikid
-        and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
+        and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = :locale and ben_regiso = '  '
         ORDER BY Hauptgruppe
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('locale', $locale);
         $query->execute();
         $aData = $query->fetchAll();
 
@@ -390,7 +392,7 @@ class BmwCatalogModel extends CatalogModel{
         return $groupSchemas;
     }
 
-    public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
+    public function getSubgroups($locale, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
 
         $sql = "
@@ -400,7 +402,7 @@ hgfg_fg Funktionsgruppe,
 ben_text Benennung
 from w_hgfg_mosp, w_hgfg, w_ben_gk
 where hgfgm_mospid = :modificationCode and hgfg_hg = :groupCode and hgfgm_hg = hgfg_hg and hgfgm_fg = hgfg_fg and hgfgm_produktart = hgfg_produktart
-and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
+and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = :locale and ben_regiso = '  '
 ORDER BY Funktionsgruppe
         ";
 
@@ -408,6 +410,7 @@ ORDER BY Funktionsgruppe
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('locale', $locale);
         $query->execute();
 
         $aData = $query->fetchAll();

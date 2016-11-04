@@ -1,12 +1,13 @@
 {% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
 {% use 'CatalogBmwBundle::bmw.base.html.twig' %}
 {% block breadcrumbs %}
-   <a href="{% if  app.request.get('token') %} {{ path('catalog_bmw_token', parameters) }} {% else %} {{ path('catalog_bmw') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
-   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / Комплектация
+   <a href="{% if  app.request.get('token') %} {{ path('catalog_bmw_token', parameters) }} {% else %} {{ path('catalog_bmw') }} {% endif %}">
+       {{ trans('Регион, модель, модификация', app.request.get('_locale')) }} ({{ oContainer.getActiveRegion.getRuname }},
+   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / {{ trans('Комплектация', app.request.get('_locale')) }}
 {% endblock breadcrumbs %}
 
 {% block body %}
-    {% block head %}<h3>Положение руля:</h3>{% endblock head %}
+    {% block head %}<h3>{{ trans('Положение руля', app.request.get('_locale')) }}:</h3>{% endblock head %}
     {% block complectations %}
         <div class="row">
 
@@ -23,7 +24,7 @@
                         <div class="radio">
 
                             <input type="radio" name="optionsRadios" id="optionsRadios{{ complectation.getCode }}" value="{{ complectation.getCode }}">
-                            {{ complectation.getRuname }}
+                            {{ trans(complectation.getRuname, app.request.get('_locale')) }}
 
                         </div>
                     </div>

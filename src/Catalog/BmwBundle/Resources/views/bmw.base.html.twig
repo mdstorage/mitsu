@@ -7,9 +7,8 @@
     {% else %}
         {{ path('catalog_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTbmw'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
-
-
 {% endblock catalogPathLogo %}
+
 {% block catalogPath %}
     {% if app.request.get('callbackhost')%}
         {{ path('catalog_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
@@ -17,6 +16,14 @@
         {{ path('catalog_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTbmw'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock catalogPath %}
+
+{% block catalogPathLocale %}
+    {% if app.request.get('callbackhost')%}
+        {{ path('catalog_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain'), '_locale': lang }) }}
+    {% else %}
+        {{ path('catalog_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTbmw'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN'), '_locale': lang }) }}
+    {% endif %}
+{% endblock catalogPathLocale %}
 
 {% block vinPath %}
     {% if app.request.get('callbackhost')%}
