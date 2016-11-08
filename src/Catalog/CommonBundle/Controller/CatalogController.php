@@ -239,7 +239,7 @@ abstract class CatalogController extends BaseController{
         }
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
-        $groups = $this->model()->getGroups($locale, $regionCode, $modelCode, $modificationCode, $complectationCode);
+        $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);
 
         if(empty($groups))
             return $this->error($request, 'Группы не найдены.');

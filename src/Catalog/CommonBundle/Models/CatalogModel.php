@@ -10,9 +10,11 @@ namespace Catalog\CommonBundle\Models;
 
 
 use Doctrine\DBAL\Connection;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 abstract class CatalogModel{
     protected $conn;
+    protected $requestStack;
 
     public function __construct(Connection $connection)
     {
@@ -35,5 +37,11 @@ abstract class CatalogModel{
         }
 
         return $return;
+    }
+
+    public function setRequestStack(RequestStack $requestStack)
+    {
+        $this->requestStack = $requestStack;
+
     }
 }

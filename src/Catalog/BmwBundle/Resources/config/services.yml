@@ -10,7 +10,7 @@ services:
   bmw.catalog.model:
     class: Catalog\BmwBundle\Models\BmwCatalogModel
     calls:
-        - [setRequest, ["@request_stack"]]
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.bmw_connection']
 
   bmw.vin.model:
