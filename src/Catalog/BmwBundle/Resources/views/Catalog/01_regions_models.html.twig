@@ -1,14 +1,15 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:01_regions_models.html.twig' %}
 {% use 'CatalogBmwBundle::bmw.base.html.twig' %}
 
 
 {% block models %}
-    <h3>{{ trans('Модельный ряд', app.request.get('_locale')) }}:</h3>
+    <h3>{{ ('Модельный ряд' | trans) }}:</h3>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs pagination">
         <li class="active"><a href="#" data-toggle="tab" onclick="$('.listLine').each(function(){
             $(this).show().addClass('visible');
-            }); $(this).addClass('active'); return false;"><b>{{ trans('Все', app.request.get('_locale')) }}</b></a>
+            }); $(this).addClass('active'); return false;"><b>{{ ('Все'|trans({}, 'bmw')) }}</b></a>
         </li>
 
         {% for transit in oContainer.getActiveRegion.getModels|first.getOption('firstSymbolsModels') %}
@@ -21,16 +22,16 @@
     <div class="row">
         <div id="result">
 
-            {% for trans in oContainer.getActiveRegion.getModels|first.getOption('firstSymbolsModels') %}
-                <div class="listLine" id="{{ trans }}">
-                    <div class="wordBold">{{ trans }}</div>
+            {% for transl in oContainer.getActiveRegion.getModels|first.getOption('firstSymbolsModels') %}
+                <div class="listLine" id="{{ transl }}">
+                    <div class="wordBold">{{ transl }}</div>
                     <div class="clear"></div>
                     <div class="brandsList">
                         <ul>
 
                             {% for model in oContainer.getActiveRegion.getModels %}
 
-                                {% if  model.getRuname|slice(0,1) == trans or model.getRuname|slice(0,2) == trans %}
+                                {% if  model.getRuname|slice(0,1) == transl or model.getRuname|slice(0,2) == transl %}
                                     {% block halfList %}
                                         {% set modelCode = model.getCode|md5 %}
                                         <li class="liSearch liModels" style="width: 30% !important;">

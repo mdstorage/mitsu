@@ -71,15 +71,15 @@ abstract class VinController extends CatalogController{
 
             if (stripos($headers['REFERER'], 'callbackhost=') || stripos($headers['REFERER'], 'modelCode'))
             {
-                if (!$call = $request->cookies->get(Constants::COOKIEHOST.$brand.urlencode($domain)))
+                if (!$call = $request->cookies->get(Constants::COOKIEHOST.$brand.urlencode(str_replace('.', '', $domain))))
                 {
                     if ($callbackhost){
-                        setcookie(Constants::COOKIEHOST.$brand.urlencode($domain), $callbackhost);
+                        setcookie(Constants::COOKIEHOST.$brand.urlencode(str_replace('.', '', $domain)), $callbackhost);
                     }
                 }
             }
             else{
-                setcookie(Constants::COOKIEHOST.$brand.urlencode($domain), "");
+                setcookie(Constants::COOKIEHOST.$brand.urlencode(str_replace('.', '', $domain)), "");
             }
 
             if (stripos($headers['REFERER'], 'domain')|| stripos($headers['REFERER'], 'modelCode'))

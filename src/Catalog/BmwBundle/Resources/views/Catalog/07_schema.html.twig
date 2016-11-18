@@ -1,15 +1,15 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogBmwBundle::bmw.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{% if  app.request.get('token') %} {{ path('catalog_bmw_token', parameters) }} {% else %} {{ path('catalog_bmw') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_bmw_token', parameters) }} {% else %} {{ path('catalog_bmw') }} {% endif %}">{{ 'Регион, модель, модификация'|trans }} ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
-    <a href="{{ path('catalog_bmw_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> /
-    <a href="{{ path('catalog_bmw_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
-    <a href="{{ path('catalog_bmw_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
-    <a href="{{ path('catalog_bmw_schemas', parameters) }}">Схема</a> / Запчасти
+    <a href="{{ path('catalog_bmw_complectations', parameters) }}">{{ 'Комплектация'|trans }} ({{ oContainer.getActiveComplectation.getRuname}})</a> /
+    <a href="{{ path('catalog_bmw_groups', parameters) }}">{{ 'Группа запчастей'|trans }} ({{ oContainer.getActiveGroup.getRuname}})</a>/
+    <a href="{{ path('catalog_bmw_schemas', parameters) }}">{{ 'Схема'|trans }}</a> / {{ 'Запчасти'|trans }}
 {% endblock breadcrumbs %}
 
-{% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
+{% block refGroupsHead %}<h4>{{ 'Связанные изображения'|trans }}</h4>{% endblock refGroupsHead %}
 
 							{% block pncScript %}
                                 <script>
@@ -78,39 +78,34 @@
     <div class="col-lg-4">
         <div>
             {% block region %}
-                <b>Регион:</b> {% block regionRuname %}{{ oContainer.getActiveRegion.getRuname }}{% endblock regionRuname %}
+                <b>{{ 'Регион'|trans }}:</b> {% block regionRuname %}{{ oContainer.getActiveRegion.getRuname }}{% endblock regionRuname %}
             {% endblock region %}
         </div>
         <div>
             {% block model %}
-                <b>{% block modelTitle %}Модель:{% endblock modelTitle %}</b> {% block modelRuname %}{{ oContainer.getActiveModel.getRuname }}{% endblock modelRuname %}
+                <b>{% block modelTitle %}{{ 'Модель'|trans }}:{% endblock modelTitle %}</b> {% block modelRuname %}{{ oContainer.getActiveModel.getRuname }}{% endblock modelRuname %}
             {% endblock model %}
         </div>
         <div>
             {% block modification %}
-                <b>{% block modificationTitle %}Модификация:{% endblock modificationTitle %}</b> {% block modificationRuname %}{{ oContainer.getActiveModification.getRuname }}{% endblock modificationRuname %}
+                <b>{% block modificationTitle %}{{ 'Модификация'|trans }}:{% endblock modificationTitle %}</b> {% block modificationRuname %}{{ oContainer.getActiveModification.getRuname }}{% endblock modificationRuname %}
             {% endblock modification %}
         </div>
         <div>
             {% block complectation %}
-                <b>Комплектация:</b> {% block complectationRuname %}{{ oContainer.getActiveComplectation.getRuname }}{% endblock complectationRuname %}
+                <b>{{ 'Комплектация'|trans }}:</b> {% block complectationRuname %}{{ oContainer.getActiveComplectation.getRuname }}{% endblock complectationRuname %}
             {% endblock complectation %}
         </div>
     </div>
     <div class="col-lg-4">
         <div>
             {% block group %}
-                <b>Группа запчастей:</b> {% block groupRuname %}{{ oContainer.getActiveGroup.getRuname }}{% endblock groupRuname %}
+                <b>{{ 'Группа запчастей'|trans }}:</b> {% block groupRuname %}{{ oContainer.getActiveGroup.getRuname }}{% endblock groupRuname %}
             {% endblock group %}
         </div>
         <div>
-            {% block subGroup %}
-                <b>Подгруппа запчастей:</b> {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }}{% endblock subGroupRuname %}
-            {% endblock subGroup %}
-        </div>
-        <div>
             {% block schemaSummary%}
-                <b>Схема:</b> {% block schemaRuname %}{{ oContainer.getActiveSchema.getRuname }}{% endblock schemaRuname %}
+                <b>{{ 'Схема'|trans }}:</b> {% block schemaRuname %}{{ oContainer.getActiveSchema.getRuname }}{% endblock schemaRuname %}
             {% endblock schemaSummary %}
         </div>
     </div>

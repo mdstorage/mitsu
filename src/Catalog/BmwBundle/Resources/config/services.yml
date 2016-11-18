@@ -15,8 +15,12 @@ services:
 
   bmw.vin.model:
     class: Catalog\BmwBundle\Models\BmwVinModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.bmw_connection']
 
   bmw.articul.model:
     class: Catalog\BmwBundle\Models\BmwArticulModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.bmw_connection']

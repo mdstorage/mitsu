@@ -1,3 +1,4 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogToyotaBundle:Catalog:08_articuls.html.twig' %}
 {% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': articul.getRuname }) }}{% endblock commonArticulPath %}
 {% block articulItem %}

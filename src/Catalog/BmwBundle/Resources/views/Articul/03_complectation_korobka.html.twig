@@ -1,5 +1,5 @@
 {% block body %}
-    {% block head %}<h3>Коробка передач:</h3>{% endblock head %}
+    {% block head %}<h3> {{ 'Коробка передач'|trans({}, 'bmw') }}:</h3>{% endblock head %}
     {% block complectations %}
         <div class="row">
 
@@ -18,7 +18,7 @@
                         <div class="radio">
 
                             <input type="radio" name="optionsRadiosKor" id="optionsRadios{{ complectation.getCode }}" value="{{ complectation.getCode }}">
-                            {{ complectation.getRuname }}
+                            {{ complectation.getRuname|trans({}, 'bmw') }}
 
                         </div>
                     </div>
@@ -73,11 +73,5 @@
             </script>
 
         {% endfor %}
-        {#
-                            <input type="button" class="btn btn-info" value="Удалить статью" id="vin-button{{ post.id }}"/>
-                       <div id="vin-result"></div>
-
-
-                    #}
     {% endblock complectations %}
 {% endblock body %}

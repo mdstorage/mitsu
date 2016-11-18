@@ -1,15 +1,16 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
 {% use 'CatalogToyotaBundle::toyota.base.html.twig' %}
 {% block breadcrumbs %}
-   <a href="{% if  app.request.get('token') %} {{ path('catalog_toyota_token', parameters) }} {% else %} {{ path('catalog_toyota') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+   <a href="{% if  app.request.get('token') %} {{ path('catalog_toyota_token', parameters) }} {% else %} {{ path('catalog_toyota') }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>
-    / <a href="{{ path('catalog_toyota_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a>
-    / Группа запчастей
+    / <a href="{{ path('catalog_toyota_complectations', parameters) }}">{{'Комплектация'|trans}} ({{ oContainer.getActiveComplectation.getRuname}})</a>
+    / {{'Группа запчастей'|trans}}
 {% endblock breadcrumbs %}
 
 
 {% block body %}
-    {% block head %}<h3>Выбрать группу запчастей:</h3>{% endblock head %}
+    {% block head %}<h3>{{'Выбрать группу запчастей'|trans}}:</h3>{% endblock head %}
     <div class="row">
         <div class="col-lg-12">
             {% block groups %}
@@ -21,7 +22,7 @@
                             <a href="{{ path('catalog_toyota_subgroups', parameters|merge({'groupCode': group.getCode})) }}">
                                 <div class="row">
 
-                                    ({{ group.getCode }}) {{ group.getRuname }}
+                                    ({{ group.getCode }}) {{ group.getRuname|trans({}, 'toyota') }}
 
                                 </div>
 

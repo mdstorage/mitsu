@@ -1,6 +1,6 @@
 {% block body %}
 <div class="row">
-    {% block head %}<h3>{{ trans('Коробка передач', app.request.get('_locale')) }}:</h3>{% endblock head %}
+    {% block head %}<h3> {{ 'Коробка передач'|trans({}, 'bmw') }}:</h3>{% endblock head %}
     {% block complectations %}
         <div class="row">
 
@@ -18,7 +18,7 @@
                         <div class="radio">
 
                             <input type="radio" name="optionsRadiosKor" id="optionsRadios{{ complectation.getCode }}" value="{{ complectation.getCode }}">
-                            {{ trans(complectation.getRuname, app.request.get('_locale')) }}
+                            {{ complectation.getRuname|trans({}, 'bmw') }}
 
                         </div>
                     </div>

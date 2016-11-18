@@ -1,8 +1,9 @@
+{% trans_default_domain 'common' %}
 {% block specification %}{% endblock specification %}
 {% block button %}
     <div class="row">
         <div class="col-lg-3">
-            <a class="btn btn-default" href="{% block catalogPath %}{% endblock catalogPath %}">Перейти в каталог</a>
+            <a class="btn btn-default" href="{% block catalogPath %}{% endblock catalogPath %}">{{ 'Перейти в каталог'|trans }}</a>
         </div>
     </div>
 {% endblock button %}

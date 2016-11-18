@@ -1,0 +1,30 @@
+{% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
+{% use 'CatalogFordBundle::ford.base.html.twig' %}
+{% block breadcrumbs %}
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_ford_token', parameters) }} {% else %} {{ path('catalog_ford') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getCode }})</a> / Комплектация                    
+{% endblock breadcrumbs %}
+
+{% block body %}
+    {% block head %}<h3>Выбрать комплектацию:</h3>{% endblock head %}
+   
+    {% block complectations %}
+    <div class="row">
+    
+        <div class="complectations"><hr />
+
+            <div class="form-group control-group">
+                <form action="{{ path('catalog_ford_groups', parameters|merge({'complectationCode': oContainer.getActiveModification.getComplectations|first.getCode})) }}">
+                    <div class="col-sm-4">   {{ form_widget(form) }} </div>
+
+                    <div class="col-sm-10"> <input type="submit" class="btn btn-primary" value="Далее" /></div>
+                </form>
+            </div>
+
+
+        </div>
+    </div>
+    {% endblock complectations %}
+
+  
+{% endblock body %}

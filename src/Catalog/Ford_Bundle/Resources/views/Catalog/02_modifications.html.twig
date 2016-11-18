@@ -1,0 +1,17 @@
+<div class="modifications">
+<div class="row">
+    {% for modification in oContainer.getActiveModel.getModifications %}
+         <div>
+            {% block modification %}
+
+                <a href="{{ path('catalog_ford_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
+                <img src="{{ asset('bundles/catalogford/Images/'~modification.getOption('grafik')) }}" alt="{{ modification.getCode }}">
+
+                    {{ modification.getRuname }}
+                </a>
+
+            {% endblock modification %}
+        </div>
+    {% endfor %}
+</div>
+</div>

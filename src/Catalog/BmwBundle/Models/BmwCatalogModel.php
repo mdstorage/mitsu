@@ -444,7 +444,6 @@ ORDER BY Funktionsgruppe
     {
         $locale = $this->requestStack->getCurrentRequest()->getLocale();
 
-
         $sql = "
 select distinct
 bildtaf_btnr BildtafelNr,
@@ -457,7 +456,7 @@ bildtaf_pos Pos,
 bildtaf_grafikid Id,
 grafik_blob BlobMod
 from w_bildtaf_suche, w_ben_gk, w_bildtaf, w_grafik
-where bildtafs_hg = :groupCode and bildtafs_mospid = :modificationCode and bildtafs_btnr = bildtaf_btnr and bildtaf_hg = :groupCode and bildtaf_fg = :subGroupCode
+where bildtafs_hg = :groupCode and bildtafs_mospid = :modificationCode and bildtafs_btnr = bildtaf_btnr and bildtaf_hg = :groupCode
 and (bildtafs_lenkg ='' OR bildtafs_lenkg = :role) and (bildtafs_automatik ='' OR bildtafs_automatik = :korobka) and
 (bildtafs_eins ='' OR bildtafs_eins <= :dataCar) and (bildtafs_auslf ='' OR :dataCar <= bildtafs_auslf)
 and bildtaf_sicher = 'N' and bildtaf_textc = ben_textcode and ben_iso = :locale and ben_regiso = '  ' and bildtaf_grafikid = grafik_grafikid
@@ -466,7 +465,6 @@ order by Pos
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode',  $modificationCode);
-        $query->bindValue('subGroupCode',  $subGroupCode);
         $query->bindValue('groupCode',  $groupCode);
         $query->bindValue('role',  substr($complectationCode, 0, 1));
         $query->bindValue('korobka',  substr($complectationCode, 1, 1));

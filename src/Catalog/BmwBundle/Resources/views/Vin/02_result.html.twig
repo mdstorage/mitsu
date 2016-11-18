@@ -1,3 +1,4 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Vin:02_result.html.twig' %}
 {% block specification %}
     <div class="row">
@@ -5,43 +6,43 @@
             <table class="table table-bordered">
 
                 <tr>
-                    <td>Марка:</td>
+                    <td>{{ 'Марка'|trans }}:</td>
                     <td>{{ result.marka }}</td>
                 </tr>
                 <tr>
 
-                    <td>Регион:</td>
+                    <td>{{ 'Регион'|trans }}:</td>
                     <td>{{ result.region }}</td>
                 </tr>
                 <tr>
-                    <td>Модель:</td>
+                    <td>{{ 'Модель'|trans }}:</td>
                     <td>{{ result.model }}</td>
                 </tr>
                 <tr>
-                    <td>Модификация:</td>
+                    <td>{{ 'Модификация'|trans }}:</td>
                     <td>
                         {{ result.modif }}<br/>
 
                     </td>
                 </tr>
                 <tr>
-                    <td>Дата выпуска:</td>
+                    <td>{{ 'Дата выпуска'|trans }}:</td>
                     <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|bmw_date_convertor }}</td>
                 </tr>
 
                 <tr>
 
-                    <td>Положение руля:</td>
+                    <td>{{ 'Положение руля'|trans({}, 'bmw') }}:</td>
                     <td>{{ result.wheel }}</td>
                 </tr>
                 <tr>
 
-                    <td>Двигатель:</td>
+                    <td>{{ 'Двигатель'|trans }}:</td>
                     <td>{{ result.engine }}</td>
                 </tr>
                 <tr>
 
-                    <td>Коробка передач:</td>
+                    <td>{{ 'Коробка передач'|trans({}, 'bmw') }}:</td>
                     <td>{{ result.korobka }}</td>
                 </tr>
 

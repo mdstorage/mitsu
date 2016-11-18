@@ -16,6 +16,7 @@ abstract class CatalogModel{
     protected $conn;
     protected $requestStack;
 
+
     public function __construct(Connection $connection)
     {
         $this->conn = $connection;
@@ -44,4 +45,5 @@ abstract class CatalogModel{
         $this->requestStack = $requestStack;
 
     }
+
 }

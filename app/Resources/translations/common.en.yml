@@ -1,0 +1,57 @@
+#Регионы
+Регион: Market
+Все: All
+Модель: Model
+Модификация: Series
+Комплектация: Complectation
+Группа запчастей: Group
+Подгруппа запчастей: Section
+РЕЗУЛЬТАТЫ ПОИСКА ДЛЯ VIN: SEARCH RESULTS FOR VIN
+Сообщить об ошибке: Report a bug
+Поиск по VIN: Search a car by VIN
+Поиск запчасти по артикулу: Search a part by part number
+Каталог: Catalogue
+Регион, модель, модификация: Market, model, modification
+Выбрать регион: Market selection
+Модельный ряд: Model row
+
+Выбрать комплектацию: Vehicle selection
+
+
+Выбрать группу запчастей: To select the group
+
+Выбрать подгруппу запчастей: To select the section
+
+Выбрать схему: To select the image
+Cхема: Image
+
+Выбрать запчасть: To select the part
+Запчасти: Parts
+
+Общие запчасти: Common parts
+Связанные группы: Related groups
+Связанные подгруппы: Related sections
+Связанные изображения: Related images
+Семейства запчастей: Names of parts
+
+Артикул: Part number
+Наименование: Name
+Кол-во: Count
+Период: Duration
+Доп.информация: Info
+Запчасть не применяется в выбранной комплектации: This part is not applicable in the selected configuration
+VIN должен состоять из 17 или 7 последних символов!: VIN must consist of 17 or last 7 characters!
+
+Поиск по номеру кузова: Search by chassis number
+Введите VIN: Enter VIN
+Искать: Search
+Ничего не найдено: Nothing found
+Перейти в каталог: Go to the parts catalog
+Марка: Brand
+Дата выпуска: Vehicle date
+Двигатель: Engine
+
+Введите артикул запчасти: Enter the part number
+Запчасть с таким артикулом найдена в следующих моделях: This part number was found in the following models
+Артикул должен содержать не менее 8 знаков!: The article must contain at least 8 characters!
+Запчасть с таким артикулом не найдена.: The part with the same part number not found

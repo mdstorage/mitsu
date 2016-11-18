@@ -5,7 +5,7 @@
     {% if app.request.get('callbackhost')%}
         {{ path('catalog_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('catalog_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTbmw'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+        {{ path('catalog_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTbmw'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock catalogPathLogo %}
 
@@ -13,23 +13,15 @@
     {% if app.request.get('callbackhost')%}
         {{ path('catalog_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('catalog_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTbmw'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+        {{ path('catalog_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTbmw'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock catalogPath %}
-
-{% block catalogPathLocale %}
-    {% if app.request.get('callbackhost')%}
-        {{ path('catalog_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain'), '_locale': lang }) }}
-    {% else %}
-        {{ path('catalog_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTbmw'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN'), '_locale': lang }) }}
-    {% endif %}
-{% endblock catalogPathLocale %}
 
 {% block vinPath %}
     {% if app.request.get('callbackhost')%}
         {{ path('vin_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('vin_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTbmw'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+        {{ path('vin_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTbmw'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock vinPath %}
 
@@ -37,7 +29,7 @@
     {% if app.request.get('callbackhost')%}
         {{ path('articul_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('articul_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTbmw'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+        {{ path('articul_bmw', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTbmw'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock articulPath %}
 
@@ -46,7 +38,6 @@
         <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common_callbackhost.css') }}" media="all">
     {% else %}
         <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common.css') }}" media="all">
-        {#<link rel="stylesheet" href="{{ asset('bundles/catalogbmw/css/mobile.css') }}" media="all">#}
 
     {% endif %}
 {% endblock userStylesheets %}

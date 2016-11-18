@@ -1,8 +1,9 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
 {% use 'CatalogHondaBundle::honda.base.html.twig' %}
 {% block breadcrumbs %}
-   <a href="{{ path('vin_honda',parameters) }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
-   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / Комплектация
+   <a href="{{ path('vin_honda',parameters) }}">{{ 'Поиск по номеру кузова'|trans }} ({{ oContainer.getActiveRegion.getRuname }},
+   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / {{ 'Комплектация'|trans }}
 {% endblock breadcrumbs %}
 {% block body %}
     {% block head %}<h3>Уточните комплектацию:</h3>{% endblock head %}
@@ -37,11 +38,11 @@
               {% if oContainer.getActiveModification.getComplectations|first.getOption('option5') %}     
                        <div class="col-lg-4">
                        <b>Трансмиссия:</b>
-                  {% for trans in oContainer.getActiveModification.getComplectations|first.getOption('option5') %}
+                  {% for transl in oContainer.getActiveModification.getComplectations|first.getOption('option5') %}
                                           		
-                      <a href="#" class="btn btn-default" onclick="$('#filter-query').val('{{ trans }}');
+                      <a href="#" class="btn btn-default" onclick="$('#filter-query').val('{{ transl }}');
                       $('#filter-query2').val($('#filter-query').val().concat('+',$('#filter-query1').val()));
-                      repeatact();return false">{{ trans }}</a>
+                      repeatact();return false">{{ transl }}</a>
                       
                   {% endfor %}
                       </div>

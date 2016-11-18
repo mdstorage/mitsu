@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Catalog\ToyotaBundle\Form\ComplectationType;
 use Catalog\ToyotaBundle\Components\ToyotaConstants;
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\Loader\YamlFileLoader;
 
 class CatalogController extends BaseController{
 
@@ -51,12 +53,16 @@ class CatalogController extends BaseController{
 
         $complectationsForForm = $this->model()->getComplectationsForForm($complectations);
 
-
-       foreach ($complectationsForForm as $index=>&$value)
+        foreach ($complectationsForForm as $index=>&$value)
         {
             foreach ($value['options']['option1'] as $ind => &$val)
             {
-                $val = $this->get('translator')->trans($val, array(), ToyotaConstants::TRANSLATION_DOMAIN);
+
+                $locale = $this->get('request')->getLocale();
+
+                if ($locale == 'ru'){
+                    $val = $this->get('translator')->trans($val, array(), ToyotaConstants::TRANSLATION_DOMAIN);
+                }
 
                 unset($val);
 
@@ -145,7 +151,7 @@ class CatalogController extends BaseController{
 
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
-        if(empty($complectationCode) or $complectationCode == '1'){
+        if(empty($complectationCode) or $complectationCode === '1'){
             $a = array();
             $aForm = array();
             $a = $request->get('ComplectationType');
