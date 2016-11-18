@@ -25,8 +25,264 @@ TRANSMISSION MODEL: ТИП ТРАНСМИССИИ
 LOADING CAPACITY: ГРУЗОПОДЪЕМНОСТЬ
 REAR TIRE: ЗАДНЕЕ КОЛЕСО
 
-ELECTRICAL EQUIPMENTS,EXHAUST,HEATER: ЭЛЕКТРИКА, ВПУСКНАЯ И ВЫПУСКНАЯ СИСТЕМА, СИСТЕМА ОХЛАЖДЕНИЯ И ОТОПЛЕНИЯ
-STEERING,BRAKE,SUSPENSION: РУЛЕВОЕ УПРАВЛЕНИЕ, ТОРМОЗНАЯ СИСТЕМА, ПОДВЕСКА
+#ПОДГРУППЫ
+ABS & VSC: ABS & СИСТЕМА КУРСОВОЙ УСТОЙЧИВОСТИ
+ACCELERATOR LINK: ПЕДАЛЬ ГАЗА
+AIR BAG: ПОДУШКА БЕЗОПАСНОСТИ
+AIR CLEANER: ФИЛЬТР ВОЗДУШНЫЙ
+AIR PUMP: ВОЗДУШНЫЙ НАСОС
+AIR PURIFIER OR ION GENERATOR: ОЧИСТИТЕЛЬ ВОЗДУХА, ГЕНЕРАТОР ИОНОВ
+ALTERNATOR: ГЕНЕРАТОР
+ANTENNA: АНТЕННА
+ANTI-THEFT DEVICE: ПРОТИВОУГОННАЯ СИСТЕМА
+ARMREST & VISOR: ПОДЛОКОТНИКИ, КОЗЫРЬКИ
+ASH RECEPTACLE: ПЕПЕЛЬНИЦА
+AUTOMATIC DOOR: АВТОМАТИЧЕСКАЯ ДВЕРЬ
+AUTOMATIC LIGHT CONTROL SYSTEM (CONLIGHT): АВТОМАТИЧЕСКАЯ СИСТЕМА ОСВЕЩЕНИЯ (CONLIGHT)
+AUTOMATIC TIMER: АВТОМАТИЧЕСКИЙ ТАЙМЕР
+BACK DOOR LOCK & HANDLE: ДВЕРЬ БАГАЖНИКА - ЗАМКИ, РУЧКИ
+BACK DOOR LOCK & HINGE: ДВЕРЬ ЗАДНЯЯ - ЗАМОК И ПЕТЛИ
+BACK DOOR PANEL & GLASS: ДВЕРЬ БАГАЖНИКА - ПАНЕЛИ, СТЕКЛА
+BACK UP LAMP: ЗАДНИЙ ФОНАРЬ
+BATTERY & BATTERY CABLE: АКБ И ПРОВОДКА
+BATTERY CARRIER: КРЕПЛЕНИЕ АКБ
+BODY STRIPE: ОТДЕЛКА БАГАЖНОГО ОТДЕЛЕНИЯ
+BRAKE BAND & MULTIPLE DISC CLUTCH (ATM): ТОРМОЗНАЯ ЛЕНТА И СИСТЕМА ФРИКЦИОНОВ
+BRAKE BOOSTER & VACUUM TUBE: УСИЛИТЕЛЬ ТОРМОЗОВ И ВАКУУМНЫЕ ТРУБКИ
+BRAKE MASTER CYLINDER: ГЛАВНЫЙ ТОРМОЗНОЙ ЦИЛИНДР
+BRAKE NO.3, 1ST & REVERSE BRAKE (ATM): ТОРМОЗ NO.3, 1-Й И ОБРАТНЫЙ ТОРМОЗ
+BRAKE PEDAL & BRACKET: ПЕДАЛЬ ТОРМОЗА
+BRAKE TUBE & CLAMP: ТРУБКИ ТОРМОЗНОЙ СИСТЕМЫ, КРЕПЛЕНИЕ
+CAB MOUNTING & BODY MOUNTING: КРЕПЛЕНИЕ КУЗОВА И КАБИНЫ
+CAMSHAFT & VALVE: РАСПРЕДВАЛ И КЛАПАНЫ, РЕМЕНЬ ГРМ
+CARBURETOR: КАРБЮРАТОР
+CARBURETOR ASSEMBLY: КАРБЮРАТОР В СБОРЕ
+CAUTION PLATE: ПРЕДОСТЕРЕГАЮЩИЕ ТАБЛИЧКИ
+CAUTION PLATE (EXTERIOR & INTERIOR): ПРЕДОСТЕРЕГАЮЩИЕ ТАБЛИЧКИ
+CAUTION PLATE & NAME PLATE (ENGINE): ИНФОРМАЦИОННЫЕ ТАБЛИЧКИ И ПРЕДУПРЕЖДЕНИЯ
+CENTER DOOR LOCK & HINGE: ДВЕРЬ ЦЕНТРАЛЬНАЯ - ЗАМОК И ПЕТЛИ
+CENTER DOOR PANEL & GLASS: ДВЕРЬ ЦЕНТРАЛЬНАЯ - СТЕКЛА И ПАНЕЛИ
+CENTER STOP LAMP: ЦЕНТРАЛЬНЫЙ СТОП-СИГНАЛ
+CENTER SUPPORT & PLANETARY SUN GEAR (ATM): ЦЕНТРАЛЬНЫЙ СУППОРТ И ПЛАНЕТАРНАЯ СОЛНЕЧНАЯ ШЕСТЕРНЯ
+CLEARANCE & BACK SONAR: ДАТЧИКИ ПАРКОВКИ, ДАТЧИК ДОРОЖНОГО ПРОСВЕТА
+CLUTCH BOOSTER: УСИЛИТЕЛЬ СЦЕПЛЕНИЯ
+CLUTCH HOUSING & TRANSMISSION CASE (MTM): КОРПУС ТРАНСМИССИИ, КОРПУС СЦЕПЛЕНИЯ
+CLUTCH MASTER CYLINDER: ГЛАВНЫЙ ЦИЛИНДР СЦЕПЛЕНИЯ
+CLUTCH PEDAL & FLEXIBLE HOSE: ПЕДАЛЬ СЦЕПЛЕНИЯ
+CLUTCH RELEASE CYLINDER: ВОЗВРАТНЫЙ ЦИЛИНДР СЦЕПЛЕНИЯ
+CLUTCH & RELEASE FORK: СЦЕПЛЕНИЕ
+COLOR FINDING TABLE: ТАБЛИЧКИ ОПИСАНИЯ ЦВЕТОВ
+CONSOLE BOX & BRACKET: ЦЕНТРАЛЬНАЯ КОНСОЛЬ, БОКС
+COWL PANEL & WINDSHIELD GLASS: ВЕТРОВОЕ СТЕКЛО, ПЕРЕДНЯЯ ПАНЕЛЬ
+COWL VENTILATOR: 
+CRANKSHAFT & PISTON: КОЛЕНВАЛ И ЦИЛИНДРЫ
+CRUISE CONTROL (AUTO DRIVE): КРУИЗ-КОНТРОЛЬ
+CYLINDER BLOCK: БЛОК ЦИЛИНДРОВ
+CYLINDER HEAD: ГОЛОВКА БЛОКА ЦИЛИНДРОВ
+DASH SILENCER BOARD & FLOOR SILENCER PAD: ШУМОИЗОЛЯЦИЯ
+DAYTIME RUNNING LAMP OR ILLUMINATION LAMP: ФАРЫ ДНЕВНОГО СВЕТА
+DECK BOARD & DECK TRIM COVER: ОТДЕЛКА И ПОКРЫТИЕ БАГАЖНОГО ОТДЕЛЕНИЯ
+DIAPHRAGM CYLINDER & TRANSFER VACUUM ACTUATOR: РАЗДАТОЧНАЯ КОРОБКА - ВАКУУМНЫЙ ПРИВОД И МЕМБРАННЫЙ ЦИЛИНДР
+DISC WHEEL & WHEEL CAP: КОЛЕСНЫЕ ДИСКИ, КОЛПАКИ
+DISTRIBUTOR: РАСПРЕДЕЛИТЕЛЬ ЗАЖИГАНИЯ
+DOOR MOTOR & DOOR SOLENOID: СТЕКЛОПОДЪЕМНИКИ
+ECO-RUN SYSTEM: 
+ELECTRONIC CONTROLED DIESEL (ECD): ЭЛЕКТРОННАЯ СИСТЕМА УПРАВЛЕНИЯ ДИЗЕЛЯ (ECD)
+ELECTRONIC DIESEL INJECTION CONTROL SYSTEM: ЭЛЕКТРОННАЯ СИСТЕМА ВПРЫСКА ДИЗЕЛЬНОГО ТОПЛИВА
+ELECTRONIC FUEL INJECTION SYSTEM: ЭЛЕКТРОННАЯ СИСТЕМА ВПРЫСКА ТОПЛИВА
+ELECTRONIC HEIGHT CONTROL: ЭЛЕКТРОННАЯ СИСТЕМА УПРАВЛЕНИЯ ВЫСОТЫ
+ELECTRONIC MODULATED SUSPENSION: 
+EMBLEM & NAME PLATE: ЭМБЛЕМЫ, НАКЛЕЙКИ
+EMBLEM & NAME PLATE (EXTERIOR & INTERIOR): ЭМБЛЕМЫ, НАКЛЕЙКИ
+ENGINE OIL COOLER: МАСЛЯНЫЙ РАДИАТОР
+ENGINE OIL PUMP: МАСЛЯНЫЙ НАСОС
+ENGINE OVERHAUL GASKET KIT: КОМПЛЕКТ ПРОКЛАДОК ДВИГАТЕЛЯ
+EXHAUST BRAKE ASSEMBLY & VACUUM CYLINDER: 
+EXHAUST BRAKE TUBE & CLAMP: 
+EXHAUST GAS RECIRCULATION SYSTEM: СИСТЕМЫ РЕЦИРКУЛЯЦИИ ОТРАБОТАННЫХ ГАЗОВ
+EXHAUST PIPE: ГЛУШИТЕЛЬ
+EXTENSION HOUSING (ATM): КОРПУС АКПП
+EXTENSION HOUSING (MTM): КОРПУС МКПП
+FLOOR INSULATOR: ИЗОЛЯЦИЯ ПОЛА
+FLOOR MAT: НАПОЛЬНОЕ ПОКРЫТИЕ
+FLOOR MAT & SILENCER PAD: НАПОЛЬНОЕ ПОКРЫТИЕ, ЗВУКОИЗОЛЯЦИЯ
+FLOOR PAN & LOWER BACK PANEL: ПАНЕЛИ ПОЛА И БАГАЖНИКА
+FLOOR SIDE MEMBER: БОКОВЫЕ КОМПОНЕНТЫ ПОЛА
+FOG LAMP: ПРОТИВОТУМАННЫЕ ФАРЫ
+FRAME: РАМА
+FREE TRONIC: 
+FRONT AXLE ARM & STEERING KNUCKLE: ПЕРЕДНИЙ РЫЧАГ, ПОВОРОТНЫЙ КУЛАК
+FRONT AXLE HOUSING & DIFFERENTIAL: КОРПУС ПЕРЕДНЕЙ ОСИ, ДИФФЕРЕНЦИАЛ
+FRONT AXLE HUB: ПЕРЕДНЯЯ ОСЬ, СТУПИЦА, ТОРМОЗНЫЕ ДИСКИ
+FRONT BUMPER & BUMPER STAY: БАМПЕР ПЕРЕДНИЙ
+FRONT CLEARANCE LAMP: ПЕРЕДНИЕ ГАБАРИТНЫЕ ФАРЫ
+FRONT DISC BRAKE CALIPER & DUST COVER: ТОРМОЗА ПЕРЕДНИЕ ДИСКОВЫЕ - СУППОРТ, КОЛОДКИ
+FRONT DOOR LOCK & HANDLE: ДВЕРЬ ПЕРЕДНЯЯ - ЗАМКИ, РУЧКИ
+FRONT DOOR PANEL & GLASS: ДВЕРЬ ПЕРЕДНЯЯ - ПАНЕЛИ, СТЕКЛА
+FRONT DOOR VENTILATOR WINDOW: ДВЕРЬ ПЕРЕДНЯЯ - ОКОННАЯ ФОРТОЧКА
+FRONT DOOR WINDOW REGULATOR & HINGE: ДВЕРЬ ПЕРЕДНЯЯ - СТЕКЛОПОДЪЕМНИК, ПЕТЛИ
+FRONT DRIVE CLUTCH & GEAR: ПЕРЕДНИЙ ПРИВОД СЦЕПЛЕНИЯ И ПЕРЕДАЧ
+FRONT DRIVE SHAFT: ПЕРЕДНИЕ ПРИВОДНЫЕ ВАЛЫ
+FRONT DRUM BRAKE WHEEL CYLINDER & BACKING PLATE: ТОРМОЗА ПЕРЕДНИЕ БАРАБАННЫЕ - КОЛОДКИ, ТОРМОЗНОЙ ЦИЛИНДР
+FRONT FENDER APRON & DASH PANEL: ФАРТУК ПЕРЕДНИХ КРЫЛЬЕВ И ПРИБОРНОЙ ПАНЕЛИ
+FRONT FLOOR PANEL & FRONT FLOOR MEMBER: ПЕРЕДНИЕ ПАНЕЛИ И КОМПОНЕНТЫ ПОЛА
+FRONT MARKER LAMP: 
+FRONT MOULDING: ПЕРЕДНИЕ МОЛДИНГИ
+FRONT PANEL & WINDSHIELD GLASS: ВЕТРОВОЕ СТЕКЛО, ПЕРЕДНЯЯ ПАНЕЛЬ
+FRONT SEAT & SEAT TRACK: ПЕРЕДНИЕ СИДЕНИЯ
+FRONT SPRING & SHOCK ABSORBER: ПЕРЕДНИЕ ПРУЖИНЫ И АМОРТИЗАТОРЫ, СТАБИЛИЗАТОР
+FRONT STEERING GEAR & LINK: БЛОК ПЕРЕКЛЮЧЕНИЯ ПЕРЕДАЧ
+FRONT TURN SIGNAL LAMP: ПЕРЕДНИЙ СИГНАЛ ПОВОРОТА
+FRONT VENTILATOR: ПЕРЕДНЯЯ ВЕНТИЛЯЦИЯ
+FUEL FEED PUMP: НАСОС, ПОДАЮЩИЙ ТОПЛИВО
+FUEL FILTER: ТОПЛИВНЫЙ ФИЛЬТР
+FUEL INJECTION SYSTEM: СИСТЕМА ВПРЫСКА ТОПЛИВА
+FUEL PIPE & CLAMP: ТОПЛИВНЫЕ ТРУБКИ И КРЕПЛЕНИЕ
+FUEL PUMP & PIPE: ТОПЛИВНЫЙ НАСОС И ПАТРУБКИ
+FUEL TANK & TUBE: ТОПЛИВНЫЙ БАК И ТРУБКИ
+GEAR SHIFT FORK & LEVER SHAFT (MTM): ВИЛКА И РЫЧАГ ПЕРЕКЛЮЧЕНИЯ ПЕРЕДАЧ (MTM)
+HEADLAMP: ПЕРЕДНИЕ ФАРЫ
+HEADLAMP CLEANER: ОЧИСТИТЕЛЬ ПЕРЕДНИХ ФАР
+HEATING & AIR CONDITIONING - BLOWER MOTOR: КОНДИЦИОНИРОВАНИЕ И ОБОГРЕВ - ВЕНТИЛЯТОР
+HEATING & AIR CONDITIONING - COMPRESSOR: КОНДИЦИОНИРОВАНИЕ И ОБОГРЕВ - КОМПРЕССОР
+HEATING & AIR CONDITIONING - CONTROL & AIR DUCT: КОНДИЦИОНИРОВАНИЕ И ОБОГРЕВ - БЛОК УПРАВЛЕНИЯ, ВОЗДУХОВОДЫ
+HEATING & AIR CONDITIONING - COOLER PIPING: КОНДИЦИОНИРОВАНИЕ И ОБОГРЕВ - ТРУБКИ СИСТЕМЫ ОХЛАЖДЕНИЯ
+HEATING & AIR CONDITIONING - COOLER UNIT: КОНДИЦИОНИРОВАНИЕ И ОБОГРЕВ - БЛОК ОХЛАДИТЕЛЯ
+HEATING & AIR CONDITIONING - HEATER UNIT & BLOWER: КОНДИЦИОНИРОВАНИЕ И ОБОГРЕВ - БЛОК ОТОПИТЕЛЯ, ВЕНТИЛЯТОР
+HEATING & AIR CONDITIONING - SET: КОНДИЦИОНИРОВАНИЕ И ОБОГРЕВ – КОМПЛЕКТ
+HEATING & AIR CONDITIONING - VACUUM PIPING: КОНДИЦИОНИРОВАНИЕ И ОБОГРЕВ - ТРУБКИ ВАКУУМНОЙ СИСТЕМЫ
+HEATING & AIR CONDITIONING - WATER PIPING: КОНДИЦИОНИРОВАНИЕ И ОБОГРЕВ – ПАТРУБКИ
+HEIGHT CONTROL (AUTO-LEVELER): АВТОМАТИЧЕСКАЯ РЕГУЛИРОВКА ВЫСОТЫ ПОДВЕСКИ
+HOLE PLUG: ЗАГЛУШКИ
+HOOD & FRONT FENDER: КАПОТ, ПЕРЕДНИЕ КРЫЛЬЯ
+HOOD LOCK & HINGE: ЗАМОК КАПОТА, ПЕТЛИ
+HORN: СИГНАЛ
+HV INVERTER: ИНВЕРТОР
+IGNITION COIL & SPARK PLUG: КАТУШКА ЗАЖИГАНИЯ И СВЕЧИ
+INDICATOR: ИНДИКАТОРЫ
+INJECTION NOZZLE: ФОРСУНКИ
+INJECTION PUMP ASSEMBLY: ТОПЛИВНЫЙ НАСОС В СБОРЕ
+INJECTION PUMP BODY: КОМПОНЕНТЫ ТОПЛИВНОГО НАСОСА
+INSIDE TRIM BOARD: ВНУТРЕННЯЯ ОТДЕЛКА
+INSIDE TRIM BOARD & DOOR OPENING TRIM MOULDING: ВНУТРЕННЯЯ ОТДЕЛКА СТОЕК И ДВЕРНЫХ ПРОЕМОВ
+INSTRUMENT PANEL & GLOVE COMPARTMENT: ПЕРЕДНЯЯ ПАНЕЛЬ, ПЕРЧАТОЧНЫЙ ЯЩИК
+INTERIOR LAMP: ОСВЕЩЕНИЕ САЛОНА
+INVERTER COOLING: ОХЛАЖДЕНИЕ ИНВЕРТОРА
+LOCK CYLINDER SET: ЗАМКИ
+LUGGAGE COMPARTMENT DOOR & LOCK: ДВЕРЬ БАГАЖНИКА, ЗАМОК
+MANIFOLD: КОЛЛЕКТОР
+MANIFOLD AIR INJECTION SYSTEM: СИСТЕМА НАДДУВА ДОБАВОЧНОГО ВОЗДУХА
+MAT & CARPET: КОВРИКИ, ПОКРЫТИЕ ПОЛА
+METER: ПРИБОРЫ, ЧАСЫ, ДАТЧИК СКОРОСТИ
+MIRROR: ЗЕРКАЛА
+MOULDING: МОЛДИНГИ
+MOUNTING: КРЕПЛЕНИЕ ДВИГАТЕЛЯ
+MUDGUARD & SPOILER: БРЫЗГОВИКИ, СПОЙЛЕРЫ
+NAVIGATION & FRONT MONITOR DISPLAY: НАВИГАЦИОННАЯ СИСТЕМА, ДИСПЛЕЙ
+OIL COOLER & TUBE (ATM): МАСЛЯНЫЙ РАДИАТОР И ТРУБКИ (ATM)
+OIL FILTER: МАСЛЯНЫЙ ФИЛЬТР
+OIL PUMP, OIL COOLER & PIPE (MTM): МАСЛЯНЫЙ НАСОС, МАСЛЯНЫЙ РАДИАТОР И ТРУБКИ (MTM)
+OVERDRIVE GEAR (ATM): ПОВЫШАЮЩАЯ ПЕРЕДАЧА (ATM)
+OVERDRIVE & ELECTRONIC CONTROLLED TRANSMISSION: ОВЕРДРАЙВ , ЭЛЕКТРОННАЯ СИСТЕМА УПРАВЛЕНИЯ ТРАНМИССИИ
+PACKAGE TRAY PANEL: ОТДЕЛКА БАГАЖНОГО ОТДЕЛЕНИЯ
+PACKAGE TRAY PANEL & LUGGAGE COMPARTMENT MAT: ОТДЕЛКА И ПОКРЫТИЕ БАГАЖНОГО ОТДЕЛЕНИЯ
+PARKING BRAKE & CABLE: СТОЯНОЧНЫЙ ТОРМОЗ
+PARTIAL ENGINE ASSEMBLY: ДВИГАТЕЛЬ В СБОРЕ
+PLANETARY GEAR, REVERSE PISTON & COUNTER GEAR(ATM): ПЛАНЕТАРНЫЕ ПЕРЕДАЧИ, ОБРАТНЫЙ ПОРШЕНЬ И ЗУБЧАТЫЕ ПЕРЕДАЧИ (ATM)
+PNEUMATIC GOVERNOR: ПНЕВМАТИЧЕСКИЙ РЕГУЛЯТОР
+POWER CURTAIN: 
+POWER STEERING TUBE: ТРУБКИ УСИЛИТЕЛЯ РУЛЯ
+PROPELLER SHAFT & UNIVERSAL JOINT: КАРДАННЫЙ ВАЛ, КРЕСТОВИНЫ
+PROTECTOR PIPE, ROLL BAR & HANDRAIL: ЗАЩИТНЫЕ ПОРУЧНИ, ПЕРИЛА
+PUMP & ACTUATOR, SEQUENTIAL OR MULTI-MODE MANUAL TRANSAXLE: НАСОС И ПРИВОД, ПОСЛЕДОВАТЕЛЬНАЯ ИЛИ МНОГОРЕЖИМНАЯ ТРАНСМИССИЯ
+QUARTER WINDOW: БОКОВОЕ НЕОПУСКАЕМОЕ ОКНО
+RADIATOR GRILLE: РЕШЕТКА РАДИАТОРА
+RADIATOR & WATER OUTLET: РАДИАТОР И ПАТРУБКИ
+RADIO RECEIVER & AMPLIFIER & CONDENSER: РАДИО, УСИЛИТЕЛЬ
+RADIATOR SUPPORT & WIND GUIDE: СУППОРТ РАДИАТОРА, ПОДВОД ВОЗДУХА К РАДИАТОРУ
+REAR AXLE HOUSING & DIFFERENTIAL: КОРПУС ЗАДНЕЙ ОСИ, ДИФФЕРЕНЦИАЛ
+REAR AXLE SHAFT & HUB: ЗАДНЯЯ ОСЬ, СТУПИЦА, ТОРМОЗНЫЕ ДИСКИ И БАРАБАНЫ
+REAR BODY ASSEMBLY TMM USA: ЗАДНЯЯ ЧАСТЬ КУЗОВА - СБОРКА США
+REAR BODY FLOOR & FENDER: ЗАДНЯЯ ЧАСТЬ КУЗОВА - ПОЛ И КРЫЛЬЯ
+REAR BODY GUARD FRAME & TAIL GATE: ЗАДНЯЯ ЧАСТЬ КУЗОВА - ЗАЩИТНАЯ РЕШЕТКА И ОТКИДНОЙ БОРТ
+REAR BODY MOUNTING: ЗАДНЯЯ ЧАСТЬ КУЗОВА - КРЕПЛЕНИЕ
+REAR BODY SIDE PANEL: ЗАДНЯЯ ЧАСТЬ КУЗОВА - БОКОВЫЕ ПАНЕЛИ
+REAR BUMPER & BUMPER STAY: БАМПЕР ЗАДНИЙ
+REAR COMBINATION LAMP: ЗАДНИЕ ФАРЫ
+REAR DISC BRAKE CALIPER & DUST COVER: ТОРМОЗА ЗАДНИЕ ДИСКОВЫЕ - СУППОРТ, КОЛОДКИ
+REAR DOOR LOCK & HANDLE: ДВЕРЬ ЗАДНЯЯ - ЗАМКИ, РУЧКИ
+REAR DOOR PANEL & GLASS: ДВЕРЬ ЗАДНЯЯ - ПАНЕЛИ, СТЕКЛА
+REAR DOOR WINDOW REGULATOR & HINGE: ДВЕРЬ ЗАДНЯЯ - СТЕКЛОПОДЪЕМНИК, ПЕТЛИ
+REAR DRUM BRAKE WHEEL CYLINDER & BACKING PLATE: ТОРМОЗА ЗАДНИЕ БАРАБАННЫЕ - КОЛОДКИ, ТОРМОЗНОЙ ЦИЛИНДР
+REAR FOG LAMP: ЗАДНИЕ ПРОТИВОТУМАНКИ
+REAR FLOOR PANEL & REAR FLOOR MEMBER: ПАНЕЛИ И КОМПОНЕНТЫ ЗАДНЕЙ ЧАСТИ ПОЛА
+REAR LICENSE PLATE LAMP: ПОДСВЕТКА ЗАДНЕГО НОМЕРНОГО ЗНАКА
+REAR MONITOR DISPLAY & CAMERA: КАМЕРА ЗАДЕНО ВИДА, ДИСПЛЕЙ
+REAR MOULDING: ЗАДНИЕ МОЛДИНГИ
+REAR OIL PUMP & GOVERNOR (ATM): ЗАДНИЙ МАСЛЯНЫЙ НАСОС И ЦЕНТРОБЕЖНЫЙ РЕГУЛЯТОР (ATM)
+REAR SEAT & SEAT TRACK: ЗАДНИЕ СИДЕНИЯ
+REAR SIDE MARKER LAMP: ЗАДНИЕ ГАБАРИТНЫЕ ФОНАРИ
+REAR SPRING & SHOCK ABSORBER: ЗАДНИЕ ПРУЖИНЫ И АМОРТИЗАТОРЫ
+REAR VENTILATOR & ROOF VENTILATOR: ВЕНТИЛЯЦИЯ ЗАДНЕЙ ЧАСТИ И КРЫШИ
+REAR WASHER: СТЕКЛООМЫВАТЕЛЬ ЗАДНИЙ
+REAR WIPER: СТЕКЛООЧИСТИТЕЛЬ ЗАДНИЙ
+REFLEX REFLECTOR: ОТРАЖАТЕЛЬ
+ROOF HEADLINING & SILENCER PAD: ОТДЕЛКА КРЫШИ
+ROOF PANEL & BACK PANEL: КРЫША, ЗАДНЯЯ ПАНЕЛЬ
+ROOF PANEL & BACK WINDOW GLASS: КРЫША, ЗАДНЕЕ СТЕКЛО
+ROOF SIDE VENTILATOR: ВЕНТИЛЯЦИЯ КУЗОВА
+ROOM CURTAIN & ROOM RACK: 
+SEAT BELT: РЕМЕНЬ БЕЗОПАСНОСТИ
+SEAT BELT & CHILD RESTRAINT SEAT: РЕМНИ БЕЗОПАСНОСТИ, ДЕТСКИЕ КРЕСЛА
+SEAT MOTOR & SEAT HEATER: ПОДОГРЕВ СИДЕНИЙ
+SEAT & SEAT TRACK: СИДЕНИЯ
+SEAT TRUCK: КРЕПЛЕНИЕ СИДЕНИЙ
+SHIFT LEVER & RETAINER: РУЛЕВАЯ РЕЙКА
+SHORT BLOCK ASSEMBLY: БЛОК ЦИЛИНДРОВ В СБОРЕ
+SHORT WAVE ADAPTOR: КОРОТКОВОЛНОВЫЙ ПЕРЕХОДНИК
+SIDE MEMBER: БОКОВЫЕ КОМПОНЕНТЫ КУЗОВА
+SIDE MOULDING: БОКОВЫЕ МОЛДИНГИ
+SIDE TURN SIGNAL LAMP & OUTER MIRROR LAMP: БОКОВЫЕ СИГНАЛЫ ПОВОРОТА И СИГНАЛЫ НА ЗЕРКАЛАХ
+SIDE WINDOW: БОКОВЫЕ ОКНА
+SPARE WHEEL CARRIER: КРЕПЛЕНИЕ ЗАПАСНОГО КОЛЕСА
+SPEAKER: ДИНАМИК
+SPEEDOMETER DRIVEN GEAR (ATM): ШЕСТЕРНЯ ПРИВОДА СПИДОМЕТРА (ATM)
+SPEEDOMETER DRIVEN GEAR (MTM): ШЕСТЕРНЯ ПРИВОДА СПИДОМЕТРА (MTM)
+STARTER: СТАРТЕР
+STEERING COLUMN & SHAFT: РУЛЕВАЯ КОЛОНКА И ВАЛ
+STEERING WHEEL: РУЛЕВОЕ КОЛЕСО
+SUSPENSION CROSSMEMBER & UNDER COVER: ПОПЕРЕЧНЫЙ ЭЛЕМЕНТ ПОДВЕСКИ, ЗАЩИТА ДВИГАТЕЛЯ
+SWITCH & RELAY & COMPUTER: ДАТЧИКИ, ПЕРЕКЛЮЧАТЕЛИ, РЕЛЕ
+TELEPHONE & MAYDAY: ТЕЛЕФОН
+THROTTLE LINK & VALVE LEVER (ATM): ДРОССЕЛЬ И РЫЧАГ КЛАПАНА
+TIMING CHAIN: ЦЕПЬ ГРМ
+TIMING GEAR COVER & REAR END PLATE: КРЫШКА ГРМ, ЗАДНЯЯ ПЛАСТИНА
+TIRE PRESSURE WARNING SYSTEM: СИСТЕМА СЛЕЖЕНИЯ ЗА ДАВЛЕНИЕМ В КОЛЕСАХ
+TOOL BOX & LICENSE PLATE BRACKET: КРЕПЛЕНИЕ ИНСТРУМЕНТОВ, КРОНШТЕЙН НОМЕРНОГО ЗНАКА
+TORQUE CONVERTER, FRONT OIL PUMP & CHAIN (ATM): ГИДРОТРАНСФОРМАТОР, ПЕРЕДНИЙ МАСЛЯНЫЙ НАСОС И ЦЕПЬ (ATM)
+TRANSAXLE ASSY, HV OR FCV: ТРАНСМИССИЯ В СБОРЕ, ГИБРИДНЫЙ АВТОМОБИЛЬ
+TRANSAXLE OR TRANSMISSION ASSY & GASKET KIT (ATM): ТРАНСМИССИЯ В СБОРЕ, КОМПЛЕКТ ПРОКЛАДОК (ATM)
+TRANSAXLE OR TRANSMISSION ASSY & GASKET KIT (MTM): ТРАНСМИССИЯ В СБОРЕ, КОМПЛЕКТ ПРОКЛАДОК (MTM)
+TRANSFER ASSEMBLY & GASKET KIT: РАЗДАТОЧНАЯ КОРОБКА - В СБОРЕ, КОМПЛЕКТ ПРОКЛАДОК
+TRANSFER CASE & EXTENSION HOUSING: РАЗДАТОЧНАЯ КОРОБКА – КОРПУС
+TRANSFER GEAR: РАЗДАТОЧНАЯ КОРОБКА – ПЕРЕДАЧИ
+TRANSFER LEVER & SHIFT ROD: РАЗДАТОЧНАЯ КОРОБКА - РЫЧАГ, ТЯГИ
+TRANSFER VACUUM PIPING: РАЗДАТОЧНАЯ КОРОБКА - ВАККУМНЫЕ ТРУБКИ
+TRANSMISSION CASE & OIL PAN (ATM): КОРПУС ТРАНСМИССИИ И МАСЛЯНЫЙ ПОДДОН (ATM)
+TRANSMISSION GEAR (MTM): ПЕРЕДАЧИ ТРАНМИССИИ (MTM)
+VACUUM PIPING: ТРУБКИ ВАКУУМНОЙ СИСТЕМЫ
+VACUUM PUMP: ВАКУУМНЫЙ НАСОС
+VALVE BODY & OIL STRAINER (ATM): КОРПУС КЛАПАНА И МАСЛЯНЫЙ ФИЛЬТР (ATM)
+VANE PUMP & RESERVOIR (POWER STEERING): НАСОС И БАЧОК (ГИДРОУСИЛИТЕЛЬ)
+V-BELT: ПРИВОДНЫЕ РЕМНИ
+VENTILATION HOSE: ПАТРУБКИ ВЕНТИЛЯЦИИ
+VENTURI: VENTURI
+WATER PUMP: ВОДЯНАЯ ПОМПА
+WINCH: ЛЕБЕДКА
+WINDSHIELD WASHER: СТЕКЛООМЫВАТЕЛЬ ПЕРЕДНИЙ
+WINDSHIELD WIPER: СТЕКЛООЧИСТИТЕЛЬ ПЕРЕДНИЙ
+WIRELESS DOOR LOCK: БЕСПРОВОДНОЙ ЦЕНТРАЛЬНЫЙ ЗАМОК
+WIRING & CLAMP: ПРОВОДКА, КРЕПЛЕНИЕ И КОННЕКТОРЫ
 
 #Регионы VIN
 RDW: ЕВРОПА
