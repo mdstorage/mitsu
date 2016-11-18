@@ -5,7 +5,7 @@
     {% if app.request.get('callbackhost')%}
         {{ path('catalog_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('catalog_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTcadillac'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+        {{ path('catalog_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTcadillac'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 
 
@@ -14,7 +14,7 @@
     {% if app.request.get('callbackhost')%}
         {{ path('catalog_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('catalog_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTcadillac'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+        {{ path('catalog_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTcadillac'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock catalogPath %}
 
@@ -22,7 +22,7 @@
     {% if app.request.get('callbackhost')%}
         {{ path('vin_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('vin_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTcadillac'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+        {{ path('vin_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTcadillac'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock vinPath %}
 
@@ -30,7 +30,7 @@
     {% if app.request.get('callbackhost')%}
         {{ path('articul_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('articul_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTcadillac'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+        {{ path('articul_cadillac', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTcadillac'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock articulPath %}
 

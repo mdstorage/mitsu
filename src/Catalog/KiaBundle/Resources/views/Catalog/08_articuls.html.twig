@@ -1,6 +1,7 @@
-<table class="table small">
+<div class="table-responsive">
+    <table class="table small">
     {% if oContainer.getActivePnc.getArticuls %}
-    <thead>
+    <thead class="initialism">
         <tr>
             <th>Артикул</th>
             <th>Наименование</th>
@@ -10,7 +11,7 @@
         </tr>
     </thead>
 
-    <tbody>
+    <tbody class="initialism">
     {% for articul in oContainer.getActivePnc.getArticuls %}
         <tr>
             <td><a href="{{ parameters.redirectAdress|replace({ '{article}': articul.getCode }) }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a></td>
@@ -28,5 +29,5 @@
     Запчасть не применяется в выбранной комплектации
     </tbody>
     {% endif %}
-
-</table>
+    </table>
+</div>

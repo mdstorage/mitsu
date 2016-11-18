@@ -6,7 +6,7 @@
 
     <a href="{{ path('catalog_bmw_groups', parameters|merge({'complectationCode': complectation.getCode})) }}">
 
-        <b>    {{ complectation.getRuname|bmw_date_month_convertor }} </b>
+        <b>{{ complectation.getRuname|bmw_date_month_convertor|trans({}, 'bmw') }}</b>
     </a> <br/>
 
 

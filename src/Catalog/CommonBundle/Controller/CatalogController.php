@@ -123,15 +123,15 @@ abstract class CatalogController extends BaseController{
 
             if (stripos($headers['REFERER'], 'callbackhost=') || stripos($headers['REFERER'], 'modelCode'))
             {
-                if (!$call = $request->cookies->get(Constants::COOKIEHOST.$brand.urlencode($domain)))
+                if (!$call = $request->cookies->get(Constants::COOKIEHOST.$brand.urlencode(str_replace('.', '', $domain))))
                 {
                     if ($callbackhost){
-                        setcookie(Constants::COOKIEHOST.$brand.urlencode($domain), $callbackhost);
+                        setcookie(Constants::COOKIEHOST.$brand.urlencode(str_replace('.', '', $domain)), $callbackhost);
                     }
                 }
             }
             else{
-                setcookie(Constants::COOKIEHOST.$brand.urlencode($domain), "");
+                setcookie(Constants::COOKIEHOST.$brand.urlencode(str_replace('.', '', $domain)), "");
             }
 
             if (stripos($headers['REFERER'], 'domain')|| stripos($headers['REFERER'], 'modelCode'))
@@ -231,6 +231,7 @@ abstract class CatalogController extends BaseController{
 
     public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $articul = null, $token = null)
     {
+        $locale = $this->get('request')->getLocale();
         $data = $this->get('my_token_info')->getStatus($token);
 
         if(empty($data) & !empty($token)){

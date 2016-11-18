@@ -1,6 +1,7 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle::base.html.twig' %}
 {% block breadcrumbs %}
-    Поиск по номеру кузова
+    {{ 'Поиск по номеру кузова'|trans }}
 {% endblock breadcrumbs %}
 {% block summary_set %}{% endblock summary_set %}
 {% block body %}
@@ -8,13 +9,13 @@
         <div class="alert alert-dismissable" id="vin-frame-group">
             <div class="row">
                 <div class="col-xs-6">
-                    {% block head %}<h3>Поиск по VIN</h3>{% endblock head %}
+                    {% block head %}<h3>{{ 'Поиск по VIN'|trans }}</h3>{% endblock head %}
                     <div class="form-horizontal">
                         <div class="form-group">
                             <div class="col-xs-10">
-                                <input type="text" class="form-control" id="vin" placeholder="Введите VIN"/>
+                                <input type="text" class="form-control" id="vin" placeholder="{{ 'Введите VIN'|trans }}"/>
                             </div>
-                            <input type="button" class="btn btn-info" value="Искать" id="vin-button"/>
+                            <input type="button" class="btn btn-info" value="{{ 'Искать'|trans }}" id="vin-button"/>
                         </div>
                     </div>
                     <div id="vin-result"></div>

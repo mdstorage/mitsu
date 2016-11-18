@@ -1,6 +1,7 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle::base.html.twig' %}
 {% block breadcrumbs %}
-    Поиск запчасти по артикулу
+    {{ 'Поиск запчасти по артикулу'|trans }}
 {% endblock breadcrumbs %}
 {% block summary_set %}{% endblock summary_set %}
 {% block body %}
@@ -8,16 +9,16 @@
         <div class="alert alert-dismissable" id="articul-group">
             <div class="row">
                 <div class="col-xs-6">
-                    {% block head %}<h3>Поиск запчасти по артикулу</h3>{% endblock head %}
+                    {% block head %}<h3>{{ 'Поиск запчасти по артикулу'|trans }}</h3>{% endblock head %}
                     <form class="form-horizontal" action="{% block formAction %}{% endblock formAction %}">
                         <div class="form-group">
                             <div class="col-xs-10">
-                                <input type="text" class="form-control" id="articul" name="articul" placeholder="Введите артикул запчасти"/>
+                                <input type="text" class="form-control" id="articul" name="articul" placeholder="{{ 'Введите артикул запчасти'|trans }}"/>
                                 <input type="text" class="form-control" id="callbackhost" name="callbackhost" value ="{{ app.request.get('callbackhost') }}" style="display:none;"/>
                                 <input type="text" class="form-control" id="callbackhost" name="domain" value ="{{ app.request.get('domain') }}" style="display:none;"/>
-                                <div class="label label-danger">{{ error_message }}</div>
+                                <div class="label label-danger">{{ error_message|trans }}</div>
                             </div>
-                            <input type="submit" class="btn btn-info" value="Искать" id="articul-button"/>
+                            <input type="submit" class="btn btn-info" value="{{ 'Искать'|trans }}" id="articul-button"/>
                         </div>
                     </form>
                     <div id="articul-result"></div>
@@ -27,7 +28,7 @@
                 <script>
                     $("#articul-button").on('click', function(){
                         if($("#articul").val(). replace(/\s+/g, '').length < 8){
-                            alert("Артикул должен содержать не менее 8 знаков!");
+                            alert("{{ 'Артикул должен содержать не менее 8 знаков!'|trans }}");
                             return;
                         }
                     });

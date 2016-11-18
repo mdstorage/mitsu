@@ -1,12 +1,13 @@
+{% trans_default_domain "common" %}
 {% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
 {% use 'CatalogBmwBundle::bmw.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{% if  app.request.get('token') %} {{ path('articul_bmw_find_token', parameters) }} {% else %} {{ path('articul_bmw_find') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
-        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / Комплектация
+    <a href="{% if  app.request.get('token') %} {{ path('articul_bmw_find_token', parameters) }} {% else %} {{ path('articul_bmw_find') }} {% endif %}">{{ 'Регион, модель, модификация'|trans }} ({{ oContainer.getActiveRegion.getRuname }},
+        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / {{ 'Комплектация'|trans }}
 {% endblock breadcrumbs %}
 
 {% block body %}
-    {% block head %}<h3>Положение руля:</h3>{% endblock head %}
+    {% block head %}<h3>{{ 'Положение руля'|trans({}, 'bmw') }}:</h3>{% endblock head %}
     {% block complectations %}
         <div class="row">
 
@@ -23,7 +24,7 @@
                         <div class="radio">
 
                             <input type="radio" name="optionsRadios" id="optionsRadios{{ complectation.getCode }}" value="{{ complectation.getCode }}">
-                            {{ complectation.getRuname }}
+                            {{ complectation.getRuname|trans({}, 'bmw') }}
 
                         </div>
                     </div>
@@ -71,18 +72,12 @@
                         if (count == 1) {$("#optionsRadios{{ complectation.getCode }}").prop("checked", true);
                             $("#optionsRadios{{ complectation.getCode }}").trigger('change');
                         }
-                        {#$('#optionsRadiosM').trigger('change');#}
 
                     });
                 </script>
 
             {% endblock vinScript %}
         {% endfor %}
-        {#
-                            <input type="button" class="btn btn-info" value="Удалить статью" id="vin-button{{ post.id }}"/>
-                       <div id="vin-result"></div>
 
-
-                    #}
     {% endblock complectations %}
 {% endblock body %}

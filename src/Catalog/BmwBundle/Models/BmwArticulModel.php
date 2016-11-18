@@ -40,17 +40,19 @@ class BmwArticulModel extends BmwCatalogModel{
 
     public function getArticulModels($articul, $regionCode)
     {
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
 
         $sql = "
         select fztyp_karosserie Kuzov, fztyp_baureihe Baureihe, b.ben_text ExtBaureihe
         from w_fztyp, w_btzeilen_verbauung, w_baureihe, w_ben_gk b
-        where (baureihe_textcode = b.ben_textcode AND b.ben_iso = 'ru' AND b.ben_regiso = '') AND btzeilenv_sachnr = :articulCode and fztyp_mospid = btzeilenv_mospid and fztyp_karosserie NOT LIKE 'ohne'
+        where (baureihe_textcode = b.ben_textcode AND b.ben_iso = :locale AND b.ben_regiso = '') AND btzeilenv_sachnr = :articulCode and fztyp_mospid = btzeilenv_mospid and fztyp_karosserie NOT LIKE 'ohne'
         and fztyp_ktlgausf = :regionCode AND fztyp_baureihe = baureihe_baureihe
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', substr($articul, 4, strlen($articul)));
         $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('locale', $locale);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -74,17 +76,21 @@ class BmwArticulModel extends BmwCatalogModel{
 
     public function getArticulModelNavs($articul, $regionCode)
     {
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
 
         $sql = "
         select fztyp_karosserie Kuzov, fztyp_baureihe Baureihe, b.ben_text ExtBaureihe
         from w_fztyp, w_btzeilen_verbauung, w_baureihe, w_ben_gk b
-        where (baureihe_textcode = b.ben_textcode AND b.ben_iso = 'ru' AND b.ben_regiso = '') AND btzeilenv_sachnr = :articulCode and fztyp_mospid = btzeilenv_mospid and fztyp_karosserie NOT LIKE 'ohne'
+        where (baureihe_textcode = b.ben_textcode AND b.ben_iso = :locale AND b.ben_regiso = '') AND btzeilenv_sachnr = :articulCode and fztyp_mospid = btzeilenv_mospid and fztyp_karosserie NOT LIKE 'ohne'
         and fztyp_ktlgausf = :regionCode AND fztyp_baureihe = baureihe_baureihe
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', substr($articul, 4, strlen($articul)));
         $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('locale', $locale);
+
+
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -361,7 +367,7 @@ class BmwArticulModel extends BmwCatalogModel{
         return array_unique($subgroups);
     }
     
-    public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
+    public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
 
 
@@ -373,14 +379,12 @@ class BmwArticulModel extends BmwCatalogModel{
         and bildtaf_btnr = btzeilenv_btnr
         and btzeilenv_mospid = :modificationCode
         and bildtaf_hg = :groupCode
-        and bildtaf_fg = :subGroupCode
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articul', substr($articul, 4, strlen($articul)));
         $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('groupCode', $groupCode);
-        $query->bindValue('subGroupCode', $subGroupCode);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -401,7 +405,7 @@ class BmwArticulModel extends BmwCatalogModel{
         return array_unique($schemas);
     }
          
-     public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
+     public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $schemaCode)
     {
 
         $articulCode = substr($articul, 4, strlen($articul));
@@ -409,17 +413,16 @@ class BmwArticulModel extends BmwCatalogModel{
         SELECT btzeilenv_mospid, btzeilenv_btnr, btzeilenv_pos Pos, btzeilen_bildposnr Bildnummer, btzeilenv_sachnr, bildtafs_hg, bildtafs_fg, btzeilen_automatik, btzeilen_lenkg,
         btzeilen_eins, btzeilen_auslf
         FROM w_btzeilen_verbauung
-        left JOIN w_bildtaf_suche ON (bildtafs_mospid = :modificationCode and bildtafs_fg = :subGroupCode and bildtafs_hg = :groupCode)
+        left JOIN w_bildtaf_suche ON (bildtafs_mospid = :modificationCode and bildtafs_hg = :groupCode)
         INNER JOIN w_btzeilen ON (btzeilenv_btnr = btzeilen_btnr AND btzeilenv_pos = btzeilen_pos)
         WHERE btzeilenv_mospid = :modificationCode
         AND btzeilenv_btnr = bildtafs_btnr and (btzeilen_lenkg ='' OR btzeilen_lenkg = :role) and (btzeilen_automatik ='' OR btzeilen_automatik = :korobka) and
-(btzeilen_eins ='0' OR btzeilen_eins <= :dataCar) and (btzeilen_auslf ='0' OR :dataCar <= btzeilen_auslf)
+        (btzeilen_eins ='0' OR btzeilen_eins <= :dataCar) and (btzeilen_auslf ='0' OR :dataCar <= btzeilen_auslf)
         ";
 
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('groupCode', $groupCode);
-        $query->bindValue('subGroupCode', $subGroupCode);
         $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('role',  substr($complectationCode, 0, 1));
         $query->bindValue('korobka',  substr($complectationCode, 1, 1));

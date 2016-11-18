@@ -1,3 +1,4 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle::base.html.twig' %}
 
 {% block breadcrumbs %}
@@ -12,14 +13,14 @@
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }}{% endblock subGroupRuname %}
 
 {% block body %}
-    {% block head %}<h3>Выбрать запчасть:</h3>{% endblock head %}
+    {% block head %}<h3>{{ 'Выбрать запчасть'|trans }}:</h3>{% endblock head %}
     {% block schema %}
         <div class="row" id = "g_container">
 
             <map name="{{ oContainer.getActiveSchema.getCode }}">
             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 {% if oContainer.getActiveSchema.getPncs %}
-                <h4>Семейства запчастей</h4>
+                <h4>{{ 'Семейства запчастей'|trans }}</h4>
                 {% block pncs %}
 
                     {% for pnc in oContainer.getActiveSchema.getPncs %}
@@ -89,7 +90,7 @@
                 {% endblock pncs %}
                 {% endif %}
                 {% if oContainer.getActiveSchema.getCommonArticuls %}
-                <h4>Общие запчасти</h4>
+                <h4>{{ 'Общие запчасти'|trans }}</h4>
                 {% block commonArticuls %}
                     {% for commonArticul in oContainer.getActiveSchema.getCommonArticuls %}
                         {% block commonArticul %}
@@ -111,7 +112,7 @@
 
 
                 {% if oContainer.getActiveSchema.getRefGroups %}
-                {% block refGroupsHead %}<h4>Связанные группы</h4>{% endblock refGroupsHead %}
+                {% block refGroupsHead %}<h4>{{ 'Связанные группы'|trans }}</h4>{% endblock refGroupsHead %}
                 {% block refGroups %}
                     {% for refGroup in oContainer.getActiveSchema.getRefGroups %}
                         {% block refGroup %}
@@ -134,7 +135,7 @@
 
             </div>
             </map>
-            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            <div id = "idrow" class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 {% block imageviewport %}
 
                     {% block image %}

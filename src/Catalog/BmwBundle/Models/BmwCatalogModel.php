@@ -13,7 +13,16 @@ use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Models\CatalogModel;
 use Catalog\BmwBundle\Components\BmwConstants;
 
+
 class BmwCatalogModel extends CatalogModel{
+
+    /*public function __construct(Connection $connection, RequestStack $requestStack)
+    {
+        parent::__construct($connection);
+        $this->locale = $requestStack->getCurrentRequest()->getLocale();
+        $this->conn = $connection;
+
+    }*/
 
     public function getRegions(){
 
@@ -316,6 +325,7 @@ class BmwCatalogModel extends CatalogModel{
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
 
          $sql = "
         select
@@ -325,12 +335,13 @@ class BmwCatalogModel extends CatalogModel{
         ben_text Benennung
         from w_hgfg_mosp, w_hgfg, w_ben_gk, w_grafik
         where hgfgm_mospid = :modificationCode and hgfgm_hg = hgfg_hg and hgfg_fg = '00' and hgfgm_produktart = hgfg_produktart and hgfg_grafikid = grafik_grafikid
-        and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
+        and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = :locale and ben_regiso = '  '
         ORDER BY Hauptgruppe
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('locale', $locale);
         $query->execute();
         $aData = $query->fetchAll();
 
@@ -392,6 +403,7 @@ class BmwCatalogModel extends CatalogModel{
 
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
 
         $sql = "
         select
@@ -400,7 +412,7 @@ hgfg_fg Funktionsgruppe,
 ben_text Benennung
 from w_hgfg_mosp, w_hgfg, w_ben_gk
 where hgfgm_mospid = :modificationCode and hgfg_hg = :groupCode and hgfgm_hg = hgfg_hg and hgfgm_fg = hgfg_fg and hgfgm_produktart = hgfg_produktart
-and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = 'ru' and ben_regiso = '  '
+and hgfgm_bereich = hgfg_bereich and hgfg_textcode = ben_textcode and ben_iso = :locale and ben_regiso = '  '
 ORDER BY Funktionsgruppe
         ";
 
@@ -408,6 +420,7 @@ ORDER BY Funktionsgruppe
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('locale', $locale);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -429,7 +442,7 @@ ORDER BY Funktionsgruppe
 
     public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
-
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
 
         $sql = "
 select distinct
@@ -443,20 +456,20 @@ bildtaf_pos Pos,
 bildtaf_grafikid Id,
 grafik_blob BlobMod
 from w_bildtaf_suche, w_ben_gk, w_bildtaf, w_grafik
-where bildtafs_hg = :groupCode and bildtafs_mospid = :modificationCode and bildtafs_btnr = bildtaf_btnr and bildtaf_hg = :groupCode and bildtaf_fg = :subGroupCode
+where bildtafs_hg = :groupCode and bildtafs_mospid = :modificationCode and bildtafs_btnr = bildtaf_btnr and bildtaf_hg = :groupCode
 and (bildtafs_lenkg ='' OR bildtafs_lenkg = :role) and (bildtafs_automatik ='' OR bildtafs_automatik = :korobka) and
 (bildtafs_eins ='' OR bildtafs_eins <= :dataCar) and (bildtafs_auslf ='' OR :dataCar <= bildtafs_auslf)
-and bildtaf_sicher = 'N' and bildtaf_textc = ben_textcode and ben_iso = 'ru' and ben_regiso = '  ' and bildtaf_grafikid = grafik_grafikid
+and bildtaf_sicher = 'N' and bildtaf_textc = ben_textcode and ben_iso = :locale and ben_regiso = '  ' and bildtaf_grafikid = grafik_grafikid
 order by Pos
 ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode',  $modificationCode);
-        $query->bindValue('subGroupCode',  $subGroupCode);
         $query->bindValue('groupCode',  $groupCode);
         $query->bindValue('role',  substr($complectationCode, 0, 1));
         $query->bindValue('korobka',  substr($complectationCode, 1, 1));
         $query->bindValue('dataCar',  substr($complectationCode, 2, 8));
+        $query->bindValue('locale', $locale);
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -495,6 +508,8 @@ order by Pos
 
     public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
     {
+
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
 
 
         $sqlPnc = "
@@ -543,14 +558,14 @@ and (btzeilen_lenkg ='' OR btzeilen_lenkg = :role) and (btzeilen_automatik ='' O
 (btzeilen_eins ='0' OR btzeilen_eins <= :dataCar) and (btzeilen_auslf ='0' OR :dataCar <= btzeilen_auslf)
 )
 inner join w_teil on (btzeilen_sachnr = teil_sachnr)
-inner join w_ben_gk tben on (teil_textcode = tben.ben_textcode and tben.ben_iso = 'ru' and tben.ben_regiso = '')
+inner join w_ben_gk tben on (teil_textcode = tben.ben_textcode and tben.ben_iso = :locale and tben.ben_regiso = '')
 left join w_kompl_satz on (btzeilen_sachnr = ks_sachnr_satz and ks_marke_tps = 'BMW')
 left join w_tc_performance on (tcp_mospid = :modificationCode and tcp_sachnr = btzeilen_sachnr)
 left join w_grp_information on (btzeilenv_mospid = grpinfo_mospid and grpinfo_sachnr = btzeilen_sachnr and grpinfo_typ = 'FE81')
 left join w_ben_gk tkben on (teil_textcode_kom = tkben.ben_textcode and tkben.ben_iso = 'ru' and tkben.ben_regiso = '')
 left join w_si on (si_sachnr = teil_sachnr)
 left join w_bildtaf_bnbben on (bildtafb_btnr = btzeilenv_btnr and bildtafb_bildposnr = btzeilen_bildposnr)
-left join w_ben_gk bnbben on (bildtafb_textcode = bnbben.ben_textcode and bnbben.ben_iso = 'ru' and bnbben.ben_regiso = '')
+left join w_ben_gk bnbben on (bildtafb_textcode = bnbben.ben_textcode and bnbben.ben_iso = :locale and bnbben.ben_regiso = '')
 where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId order by Bildnummer, Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
 ";
 
@@ -560,6 +575,8 @@ where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId orde
         $query->bindValue('role',  substr($complectationCode, 0, 1));
         $query->bindValue('korobka',  substr($complectationCode, 1, 1));
         $query->bindValue('dataCar',  substr($complectationCode, 2, 8));
+        $query->bindValue('locale', $locale);
+
         $query->execute();
 
         $aPncs = $query->fetchAll();
@@ -692,6 +709,8 @@ $articuls = array();
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, $options)
     {
 
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
+
 
         $sqlPnc = "select distinct
 btzeilen_bildposnr Bildnummer,
@@ -744,18 +763,18 @@ and (btzeilen_lenkg ='' OR btzeilen_lenkg = :role) and (btzeilen_automatik ='' O
 (btzeilen_eins ='0' OR btzeilen_eins <= :dataCar) and (btzeilen_auslf ='0' OR :dataCar <= btzeilen_auslf)
 )
 inner join w_teil on (btzeilen_sachnr = teil_sachnr)
-inner join w_ben_gk tben on (teil_textcode = tben.ben_textcode and tben.ben_iso = 'ru' and tben.ben_regiso = '  ')
+inner join w_ben_gk tben on (teil_textcode = tben.ben_textcode and tben.ben_iso = :locale and tben.ben_regiso = '  ')
 left join w_komm nuch on (btzeilen_kommnach = nuch.komm_id)
-left join w_ben_gk kommnuch on (nuch.komm_textcode = kommnuch.ben_textcode and kommnuch.ben_iso = 'ru' and kommnuch.ben_regiso = '  ')
+left join w_ben_gk kommnuch on (nuch.komm_textcode = kommnuch.ben_textcode and kommnuch.ben_iso = :locale and kommnuch.ben_regiso = '  ')
 left join w_komm vor on (btzeilen_kommvor = vor.komm_id)
-left join w_ben_gk kommvor on (vor.komm_textcode = kommvor.ben_textcode and kommvor.ben_iso = 'ru' and kommvor.ben_regiso = '  ')
+left join w_ben_gk kommvor on (vor.komm_textcode = kommvor.ben_textcode and kommvor.ben_iso = :locale and kommvor.ben_regiso = '  ')
 left join w_kompl_satz on (btzeilen_sachnr = ks_sachnr_satz and ks_marke_tps = 'BMW')
 left join w_tc_performance on (tcp_mospid = :modificationCode and tcp_sachnr = btzeilen_sachnr  and tcp_datum_von <= 20150816 and (tcp_datum_bis is null or tcp_datum_bis >= 20150816))
 left join w_grp_information on (btzeilenv_mospid = grpinfo_mospid and grpinfo_sachnr = btzeilen_sachnr and grpinfo_typ = 'FE81')
-left join w_ben_gk tkben on (teil_textcode_kom = tkben.ben_textcode and tkben.ben_iso = 'ru' and tkben.ben_regiso = '  ')
+left join w_ben_gk tkben on (teil_textcode_kom = tkben.ben_textcode and tkben.ben_iso = :locale and tkben.ben_regiso = '  ')
 left join w_si on (si_sachnr = teil_sachnr)
 left join w_bildtaf_bnbben on (bildtafb_btnr = btzeilenv_btnr and bildtafb_bildposnr = btzeilen_bildposnr)
-left join w_ben_gk bnbben on (bildtafb_textcode = bnbben.ben_textcode and bnbben.ben_iso = 'ru' and bnbben.ben_regiso = '  ')
+left join w_ben_gk bnbben on (bildtafb_textcode = bnbben.ben_textcode and bnbben.ben_iso = :locale and bnbben.ben_regiso = '  ')
 where btzeilenv_mospid = :modificationCode and btzeilenv_btnr = :subGroupId and (btzeilen_bildposnr = :pncCode or btzeilen_bildposnr = '--')
 order by Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
 ";
@@ -768,6 +787,7 @@ order by Pos, GRP_PA, GRP_HG, GRP_UG, GRP_lfdNr, SI_DokArt
         $query->bindValue('role',  substr($complectationCode, 0, 1));
         $query->bindValue('korobka',  substr($complectationCode, 1, 1));
         $query->bindValue('dataCar',  substr($complectationCode, 2, 8));
+        $query->bindValue('locale', $locale);
 
         $query->execute();
 

@@ -1,3 +1,4 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle::base.html.twig' %}
 {% block breadcrumbs %}
     Выбрать регион, модель, модификацию / Выбрать комплектацию / Выбрать группу запчастей / Выбрать подгруппу запчастей
@@ -12,7 +13,7 @@
 {% block subGroup %}{% endblock subGroup %}
 
 {% block body %}
-    {% block head %}<h3>Выбрать подгруппу запчастей:</h3>{% endblock head %}
+    {% block head %}<h3>{{ 'Выбрать подгруппу запчастей'|trans }}:</h3>{% endblock head %}
     <div class="row">
         {% block subgroupImage %}
         <div class="col-lg-8">

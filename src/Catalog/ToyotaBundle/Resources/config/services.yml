@@ -9,14 +9,20 @@ services:
             - { name: twig.extension}
   toyota.catalog.model:
     class: Catalog\ToyotaBundle\Models\ToyotaCatalogModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.toyota_connection']
 
   toyota.vin.model:
     class: Catalog\ToyotaBundle\Models\ToyotaVinModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.toyota_connection']
 
   toyota.articul.model:
     class: Catalog\ToyotaBundle\Models\ToyotaArticulModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.toyota_connection']
 
 

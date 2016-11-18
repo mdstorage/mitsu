@@ -1,8 +1,9 @@
+{% trans_default_domain "common" %}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>{% block title %}Каталог {% block brand %}{% endblock brand %}{% endblock title%}</title>
+    <title>{% block title %}{{ 'Каталог'|trans }} {% block brand %}{% endblock brand %}{% endblock title%}</title>
     {% block stylesheets %}
 
         <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap.min.css') }}" media="all">
@@ -18,6 +19,7 @@
 </head>
 <body>
 {% block javascripts %}
+
 	
     <script src="{{ asset('bundles/cataloghonda/js/jquery.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/cataloghonda/js/jquery.mousewheel.js') }}"></script>
@@ -49,16 +51,47 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{% block catalogPathLogo %}{% endblock catalogPathLogo %}">Каталог <span id="span1">{{ block('brand') }}</span></a>
+                <a class="navbar-brand" href="{% block catalogPathLogo %}{% endblock catalogPathLogo %}"> {{ 'Каталог'|trans }} <span id="span1">{{ block('brand') }}</span></a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="{{ 'catalog' in app.request.getPathInfo ? 'active'}}"><a href="{% block catalogPath %}{% endblock catalogPath %}">{% block catalogMenuItem %}Каталог{% endblock catalogMenuItem %}</a></li>
-                    <li class="{{ 'vin' in app.request.getPathInfo ? 'active'}}"><a href="{% block vinPath %}{% endblock vinPath %}">{% block vinMenuItem %}Поиск по VIN{% endblock vinMenuItem %}</a></li>
-                    <li class="{{ 'articul' in app.request.getPathInfo ? 'active'}}"><a href="{% block articulPath %}{% endblock articulPath %}">{% block articulMenuItem %}Поиск запчасти по артикулу{% endblock articulMenuItem %}</a></li>
+                    <li class="{{ 'catalog' in app.request.getPathInfo ? 'active'}}"><a href="{% block catalogPath %}{% endblock catalogPath %}">{% block catalogMenuItem %}{{ 'Каталог'|trans }}{% endblock catalogMenuItem %}</a></li>
+                    <li class="{{ 'vin' in app.request.getPathInfo ? 'active'}}"><a href="{% block vinPath %}{% endblock vinPath %}">{% block vinMenuItem %}{{ 'Поиск по VIN'|trans }}{% endblock vinMenuItem %}</a></li>
+                    <li class="{{ 'articul' in app.request.getPathInfo ? 'active'}}"><a href="{% block articulPath %}{% endblock articulPath %}">{% block articulMenuItem %}{{ 'Поиск запчасти по артикулу'|trans }}{% endblock articulMenuItem %}</a></li>
                 </ul>
+
+                {% set langes = ['en', 'ru'] %}
+
+                {% for  lang in langes %}
+
+                <a type="button" name = "button_res" id = "id_{{ lang }}" class="btn btn-default btn-xs"
+
+                   href="{% if parameters is defined %}{{ path(app.request.get('_route'), parameters|merge({'_locale': lang})) }}{% else %} {{ path(app.request.get('_route'), {'_locale': lang}) }} {% endif %}"
+
+                   style = "float:right;">{{ lang }}</a>
+
+                    <script>
+                        $('#id_{{ lang }}').each(function(){
+                            {
+                                var tr = '{{ app.request.get('_locale') }}';
+                                if (tr == '') { tr = 'ru' };
+                                ($(this).text() == tr) ? $(this).addClass('btn-primary'): $(this).removeClass('btn-primary');
+
+
+                            }
+                        });
+
+                        $("#id_{{ lang }}").on('click', function(){
+                        $('a[name="button_res"]').removeClass('btn-primary');
+                            $(this).addClass('btn-primary');
+                    });
+                    </script>
+
+                {% endfor %}
+
             </div><!-- /.navbar-collapse -->
+
         </div><!-- /.container-fluid -->
     </nav>
 
@@ -72,48 +105,61 @@
         {% endblock breadcrumbs_set %}
         {% block summary_set%}
             <div class="alert alert-info">
+
+                {% if 'vin' in app.request.getPathInfo %}
+                    <div class="row">
+                        <div class="col-lg-4 col-xs-4 col-md-8 col-sm-8">
+                            <div style="font-family: Helvetica, Arial;font-size: 15px; color: #000088">
+                                {% block vinCode %}
+                                    <b>{{ 'РЕЗУЛЬТАТЫ ПОИСКА ДЛЯ VIN'|trans }}:</b> {% block vinNumber %}{{ app.request.cookies.get('VIN')|upper }}{% endblock vinNumber %}
+                                {% endblock vinCode %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
                 <div class="row">
                     {% block summary %}
                         <div class="col-lg-4 col-xs-4 col-md-8 col-sm-8">
                             <div>
                                 {% block region %}
-                                    <b>Регион:</b> {% block regionRuname %}{% endblock regionRuname %}
+                                    <b>{{ 'Регион'|trans }}:</b> {% block regionRuname %}{% endblock regionRuname %}
                                 {% endblock region %}
                             </div>
                             <div>
                                 {% block model %}
-                                    <b>{% block modelTitle %}Модель:{% endblock modelTitle %}</b> {% block modelRuname %}{% endblock modelRuname %}
+                                    <b>{% block modelTitle %}{{ 'Модель'|trans }}:{% endblock modelTitle %}</b> {% block modelRuname %}{% endblock modelRuname %}
                                 {% endblock model %}
                             </div>
                             <div>
                                 {% block modification %}
-                                    <b>{% block modificationTitle %}Модификация:{% endblock modificationTitle %}</b> {% block modificationRuname %}{% endblock modificationRuname %}
+                                    <b>{% block modificationTitle %}{{ 'Модификация'|trans }}:{% endblock modificationTitle %}</b> {% block modificationRuname %}{% endblock modificationRuname %}
                                 {% endblock modification %}
                             </div>
                             <div>
                                 {% block complectation %}
-                                    <b>Комплектация:</b> {% block complectationRuname %}{% endblock complectationRuname %}
+                                    <b>{{ 'Комплектация'|trans }}:</b> {% block complectationRuname %}{% endblock complectationRuname %}
                                 {% endblock complectation %}
                             </div>
                         </div>
                         <div class="col-lg-4 col-xs-4 col-md-8 col-sm-8">
                             <div>
                                 {% block group %}
-                                    <b>Группа запчастей:</b> {% block groupRuname %}{% endblock groupRuname %}
+                                    <b>{{ 'Группа запчастей'|trans }}:</b> {% block groupRuname %}{% endblock groupRuname %}
                                 {% endblock group %}
                             </div>
                             <div>
                                 {% block subGroup %}
-                                    <b>Подгруппа запчастей:</b> {% block subGroupRuname %}{% endblock subGroupRuname %}
+                                    <b>{{ 'Подгруппа запчастей'|trans }}:</b> {% block subGroupRuname %}{% endblock subGroupRuname %}
                                 {% endblock subGroup %}
                             </div>
                         </div>
-                        <div class=".col-md-1 .col-md-offset-2 .col-lg-1 .col-lg-offset-2 .col-xs-2 .col-sm-2" style = "position: relative; text-align: right; cursor: pointer">
 
-                            <div class="jivo-btn jivo-offline-btn jivo-btn-dark jivo-btn-gradient" onclick="jivo_api.open();" style="font-family: Helvetica, Arial;font-size: 15px;background-color: #FFEB3B;border-radius: 3px;-moz-border-radius: 3px;-webkit-border-radius: 3px;height: 30px;line-height: 30px;padding: 0 15px 0 15px;display: none;font-weight: normal;font-style: normal">Сообщить о проблеме</div>
-
+                        <div style = "position: relative; text-align: right; cursor: pointer">
+                            <div class="jivo-btn jivo-offline-btn jivo-btn-dark jivo-btn-gradient" onclick="jivo_api.open();" style="font-family: Helvetica, Arial;font-size: 15px;background-color: #FFEB3B;border-radius: 3px;-moz-border-radius: 3px;-webkit-border-radius: 3px;height: 30px;line-height: 30px;padding: 0 15px 0 15px;display: none;font-weight: normal;font-style: normal">
+                                {{ 'Сообщить об ошибке'|trans }}
+                            </div>
                         </div>
-
 
                     {% endblock summary%}
                 </div>
@@ -124,11 +170,22 @@
 </div>
 
 
+{% if app.request.get('_locale') == 'ru' %}
 
 <script type='text/javascript'>
     (function(){ var widget_id = 'cmEqz9a23Q';var d=document;var w=window;function l(){
         var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = '//code.jivosite.com/script/widget/'+widget_id; var ss = document.getElementsByTagName('script')[0]; ss.parentNode.insertBefore(s, ss);}if(d.readyState=='complete'){l();}else{if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
 </script>
+
+{% else %}
+
+<!-- BEGIN JIVOSITE_EN CODE {literal} -->
+<script type='text/javascript'>
+    (function(){ var widget_id = 'DUfhDygEeA';var d=document;var w=window;function l(){
+        var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = '//code.jivosite.com/script/widget/'+widget_id; var ss = document.getElementsByTagName('script')[0]; ss.parentNode.insertBefore(s, ss);}if(d.readyState=='complete'){l();}else{if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
+</script>
+<!-- {/literal} END JIVOSITE_EN CODE -->
+{% endif %}
 
 
 <script type="text/javascript">

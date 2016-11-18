@@ -1,12 +1,13 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogToyotaBundle::toyota.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('vin_toyota',parameters) }}">Поиск по номеру кузова</a> /
-    <a href="{{ path('vin_toyota_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
-    <a href="{{ path('vin_toyota_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему
+    <a href="{{ path('vin_toyota',parameters) }}">{{ 'Поиск по номеру кузова'|trans({}, 'toyota') }}</a> /
+    <a href="{{ path('vin_toyota_groups', parameters) }}">{{'Группа запчастей'|trans}} ({{ oContainer.getActiveGroup.getRuname|trans({}, 'toyota') }})</a>/
+    <a href="{{ path('vin_toyota_subgroups', parameters) }}">{{'Подгруппа запчастей'|trans}} ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / {{ 'Выбрать схему'|trans }}
 {% endblock breadcrumbs %}
 
-
+{% block groupRuname %}{{ oContainer.getActiveGroup.getRuname|trans({}, 'toyota') }}{% endblock groupRuname %}
 
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
 

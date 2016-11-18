@@ -9,12 +9,18 @@ services:
             - { name: twig.extension}
   bmw.catalog.model:
     class: Catalog\BmwBundle\Models\BmwCatalogModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.bmw_connection']
 
   bmw.vin.model:
     class: Catalog\BmwBundle\Models\BmwVinModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.bmw_connection']
 
   bmw.articul.model:
     class: Catalog\BmwBundle\Models\BmwArticulModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.bmw_connection']

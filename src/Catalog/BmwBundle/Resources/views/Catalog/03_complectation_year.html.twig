@@ -1,4 +1,4 @@
-{% block head %}<h3>Выбрать год и месяц производства:</h3>{% endblock head %}
+{% block head %}<h3>{{ 'Выбрать год и месяц производства'|trans({}, 'bmw') }}:</h3>{% endblock head %}
 <div class="modifications">
     <div class="row">
         {% for res in result %}

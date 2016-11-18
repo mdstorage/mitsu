@@ -1,3 +1,4 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Articul:01_index.html.twig' %}
 {% use 'CatalogToyotaBundle::toyota.base.html.twig' %}
 {% block formAction %}
@@ -15,7 +16,7 @@
     <script>
         $("#articul-button").on('click', function(){
             if($("#articul").val(). replace(/\s+/g, '').length < 7){
-                alert("Артикул должен содержать не менее 7 знаков!");
+                alert("{{ 'Артикул должен содержать не менее 8 знаков!'|trans }}");
                 return;
             }
         });

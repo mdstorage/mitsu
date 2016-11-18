@@ -78,16 +78,17 @@
 
 {% block imageviewport %}
 
+
     <div class="row">
         <div class="row" style="height: 600px;">
-
             <div class="guayaquil_unit_icons">
-                <div class="guayaquil_zoom cboxElement" title="{{ oContainer.getActiveSchema.getCode }}" full="{{ ('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?
+                <div class="guayaquil_zoom cboxElement" title="Схема: {{ oContainer.getActiveSchema.getCode }}" full="{{ ('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?
                 asset('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png') :
                 asset('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'1.png') }}">
                     <img src="{{ asset('bundles/catalogcommon/images/zoom.png') }}"/>
                 </div>
             </div>
+
             <div id="viewport" class="inline_block" style="position: absolute; border: 1px solid rgb(119, 119, 119); background: white none repeat scroll 0% 0%; height:600px; overflow: auto;">
                 {{ block('image1') }}
             </div>
@@ -110,12 +111,12 @@
 
             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 
-                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                     <img src="{{ asset('bundles/catalogcommon/images/lmb.png') }}">
                     <img src="{{ asset('bundles/catalogcommon/images/move.png') }}"/>
                 </div>
 
-                <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                     - прокрутка
                 </div>
             </div>
@@ -176,7 +177,6 @@
         {% endfor %}
 
     {% endfor %}
-
 
 
     <img class="dragger" onload="rescaleImage(-100);" src="{{ ('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?

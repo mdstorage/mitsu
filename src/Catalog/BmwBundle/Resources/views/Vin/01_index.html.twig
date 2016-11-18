@@ -1,3 +1,4 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Vin:01_index.html.twig' %}
 {% use 'CatalogBmwBundle::bmw.base.html.twig' %}
 
@@ -10,7 +11,7 @@
         });
             $("#vin-button").on('click', function () {
                 if (($("#vin").val().replace(/\s+/g, '').length !== 17) && ($("#vin").val().replace(/\s+/g, '').length !== 7)) {
-                    alert("VIN должен состоять из 17 или 7 последних знаков!");
+                    alert("{{ 'VIN должен состоять из 17 или 7 последних символов!'|trans }}");
                     return;
                 }
                 $("#vin-result").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="20px" />');

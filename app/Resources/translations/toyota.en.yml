@@ -1,0 +1,18 @@
+#Группы
+ИНСТРУМЕНТЫ: TOOLS
+ДВИГАТЕЛЬ: ENGINE
+ТОПЛИВНАЯ СИСТЕМА: FUEL SYSTEM
+ТРАНСМИССИЯ, ПОДВЕСКА, ТОРМОЗНАЯ СИСТЕМА: TRANSMISSION, SUSPENSION, BRAKE SYSTEM
+КУЗОВНЫЕ ДЕТАЛИ, ЭКСТЕРЬЕР, ИНТЕРЬЕР: BODY PARTS, EXTERIOR, INTERIOR
+ЭЛЕКТРИКА, КЛИМАТ-КОНТРОЛЬ: ELECTRICS, CLIMATE CONTROL
+
+
+#Форма
+Далее: Next
+
+#Запчасти
+Применяемость: Applicability
+
+#VIN_result
+Цвет кузова: Body color
+Цвет салона: Interior color

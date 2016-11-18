@@ -4,7 +4,7 @@
     {% if app.request.get('callbackhost')%}
         {{ path('catalog_volvo', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('catalog_volvo', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTvolvo'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+        {{ path('catalog_volvo', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTvolvo'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 
 
@@ -13,7 +13,7 @@
     {% if app.request.get('callbackhost')%}
         {{ path('catalog_volvo', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('catalog_volvo', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTvolvo'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+        {{ path('catalog_volvo', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTvolvo'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock catalogPath %}
 
@@ -21,7 +21,7 @@
     {% if app.request.get('callbackhost')%}
         {{ path('vin_volvo', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('vin_volvo', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTvolvo'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+        {{ path('vin_volvo', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTvolvo'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock vinPath %}
 
@@ -29,7 +29,7 @@
     {% if app.request.get('callbackhost')%}
         {{ path('articul_volvo', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
-        {{ path('articul_volvo', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTvolvo'~app.request.cookies.get('DOMAIN')), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+        {{ path('articul_volvo', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTvolvo'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
 {% endblock articulPath %}
 

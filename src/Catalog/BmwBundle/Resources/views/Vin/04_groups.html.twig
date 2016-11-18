@@ -1,22 +1,23 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
 {% use 'CatalogBmwBundle::bmw.base.html.twig' %}
 {% block breadcrumbs %}
-   <a href="{{ path('vin_bmw',parameters) }}">Поиск по номеру кузова ({{ oContainer.getActiveRegion.getRuname }},
+   <a href="{{ path('vin_bmw',parameters) }}">{{ 'Поиск по номеру кузова'|trans }} ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }}, {{ oContainer.getActiveComplectation.getRuname}})</a>
-    / Группа запчастей
+    / {{ 'Группа запчастей'|trans }}
 {% endblock breadcrumbs %}
 
 
 {% block body %}
-    {% block head %}<h3>Выбрать группу запчастей:</h3>{% endblock head %}
+    {% block head %}<h3>{{ 'Выбрать группу запчастей'|trans }}:</h3>{% endblock head %}
     <div class="row">
-    <div class="col-lg-10 col-sm-10 col-md-10">
+        <div class="col-sm-12 col-md-12 col-xs-12 col-lg-12">
         {% block groups %}
             <div class="groups">
                 {% for group in oContainer.getGroups %}
-                    <div style=" height: 250px; " class="col-sm-2 col-sm-offset-5 col-md-2 col-md-offset-0">
+                    <div style=" height: 250px; " class="col-lg-2 col-md-3 col-sm-6 col-xs-6">
 
-                        <a href="{{ path('vin_bmw_subgroups', parameters|merge({'groupCode': group.getCode})) }}">
+                        <a href="{{ path('vin_bmw_schemas', parameters|merge({'groupCode': group.getCode})) }}">
 
                             <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~group.getOption('Id')) }}" width="100%" alt="{{ group.getRuname }}"/>
                             {{ group.getRuname }}
@@ -27,6 +28,6 @@
                 {% endfor %}
             </div>
         {% endblock groups %}
-    </div>
+        </div>
     </div>
 {% endblock body %}

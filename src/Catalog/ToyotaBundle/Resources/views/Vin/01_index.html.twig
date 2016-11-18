@@ -1,3 +1,4 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Vin:01_index.html.twig' %}
 {% use 'CatalogToyotaBundle::toyota.base.html.twig' %}
 {% block vinScript %}
@@ -9,7 +10,7 @@
         });
         $("#vin-button").on('click', function(){
             if($("#vin").val(). replace(/\s+/g, '').length !== 17){
-                alert("VIN должен состоять из 17 знаков!");
+                alert("{{ 'VIN должен состоять из 17 знаков!'|trans }}");
                 return;
             }
             $("#vin-result").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="20px" />');

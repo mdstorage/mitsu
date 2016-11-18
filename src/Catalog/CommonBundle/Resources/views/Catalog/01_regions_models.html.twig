@@ -1,8 +1,9 @@
+{% trans_default_domain "common" %}
 {% extends 'CatalogCommonBundle::base.html.twig' %}
 {% set modelsListLenght = oContainer.getActiveRegion.getModels|length %}
 
 {% block breadcrumbs %}
-    Выбрать регион, модель, модификацию
+    {{ 'Регион, модель, модификация'|trans }}
 {% endblock breadcrumbs %}
 
 {% block regionRuname %}{{ oContainer.getActiveRegion.getRuname }}{% endblock regionRuname %}
@@ -17,7 +18,7 @@
 {% block body %}
 
    {% block regions %}
-        {% block head %}<h3>Выбрать регион:</h3>{% endblock head %}
+        {% block head %}<h3>{{ 'Выбрать регион'|trans }}:</h3>{% endblock head %}
         <ul class="nav nav-pills" role="tablist">
             {% for region in oContainer.getRegions %}
                 <li role="region" class="{% if region.getCode == oContainer.getActiveRegion.getCode %}active{% endif %}" id="{{ region.getCode }}"><a href="{% block regionPath %}{{ path('', {'regionCode': region.getCode}) }}{% endblock regionPath %}">{{ region.getRuname }}</a></li>
@@ -25,7 +26,7 @@
         </ul>
     {% endblock regions %}
      {% block models %}
-        <h3>Модельный ряд:</h3>
+        <h3>{{ 'Модельный ряд'|trans }}:</h3>
         <div class="row">
             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div id="result">
