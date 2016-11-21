@@ -149,7 +149,7 @@ abstract class ArticulController extends CatalogController{
                 if (!$call = $request->cookies->get('DOMAIN'))
                 {
                     if ($domain){
-                        setcookie('DOMAIN', $domain);
+                        setcookie('DOMAIN', str_replace('.', '', $domain));
                     }
 
                 }

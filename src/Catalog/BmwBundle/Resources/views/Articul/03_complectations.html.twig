@@ -14,7 +14,7 @@
             <div class="complectations">
                 {% set token = parameters['token']%}
 
-                <div class="col-lg-4">
+                <div class="col-lg-4 col-xs-4 col-md-4 col-sm-4">
 
                 {% for complectation in oContainer.getActiveModification.getComplectations %}
 
@@ -52,7 +52,7 @@
                     </script>
                 {% endfor %}
                 </div>
-                <div class="col-lg-8">
+                <div class="col-lg-8 col-xs-8 col-md-8 col-sm-8">
                     <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~oContainer.getActiveModification.getComplectations|first.getOption('grafik')) }}"
                          alt="{{ oContainer.getActiveModification.getComplectations|first.getOption('grafik') }}"/>
                 </div>

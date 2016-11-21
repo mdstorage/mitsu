@@ -161,7 +161,7 @@ class CatalogController extends BaseController{
                 if (!$call = $request->cookies->get('DOMAIN'))
                 {
                     if ($domain){
-                        setcookie('DOMAIN', $domain);
+                        setcookie('DOMAIN', str_replace('.', '', $domain));
                     }
 
                 }
