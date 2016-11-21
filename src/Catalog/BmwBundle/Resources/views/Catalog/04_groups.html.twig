@@ -20,8 +20,13 @@
 
                         <a href="{{ path('catalog_bmw_schemas', parameters|merge({'groupCode': group.getCode})) }}">
 
-                            <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~group.getOption('Id')) }}" width="100%" alt="{{ group.getRuname }}"/>
+                            <div class="row">
+                            <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~group.getOption('Id')) }}" width="60%" alt="{{ group.getRuname }}"/>
+                            </div>
+
+                            <div class="row">
                             {{ group.getRuname }}
+                            </div>
 
                         </a>
 

@@ -62,13 +62,9 @@
                 </ul>
 
                 {% set langes = ['en', 'ru'] %}
-
                 {% for  lang in langes %}
-
                 <a type="button" name = "button_res" id = "id_{{ lang }}" class="btn btn-default btn-xs"
-
-                   href="{% if parameters is defined %}{{ path(app.request.get('_route'), parameters|merge({'_locale': lang})) }}{% else %} {{ path(app.request.get('_route'), {'_locale': lang}) }} {% endif %}"
-
+                   href="{% block langPath %}{% endblock langPath %}"
                    style = "float:right;">{{ lang }}</a>
 
                     <script>
@@ -77,21 +73,15 @@
                                 var tr = '{{ app.request.get('_locale') }}';
                                 if (tr == '') { tr = 'ru' };
                                 ($(this).text() == tr) ? $(this).addClass('btn-primary'): $(this).removeClass('btn-primary');
-
-
                             }
                         });
-
                         $("#id_{{ lang }}").on('click', function(){
                         $('a[name="button_res"]').removeClass('btn-primary');
                             $(this).addClass('btn-primary');
                     });
                     </script>
-
                 {% endfor %}
-
             </div><!-- /.navbar-collapse -->
-
         </div><!-- /.container-fluid -->
     </nav>
 
