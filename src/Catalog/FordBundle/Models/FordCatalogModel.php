@@ -63,13 +63,20 @@ class FordCatalogModel extends CatalogModel{
     {
         $modelCode = rawurldecode($modelCode);
         $dir = 'bundles/catalogford/Images';
-        $files1 = scandir($dir, 1);
-        var_dump($files1); die;
+        $aFiles = scandir($dir, 1);
+        foreach($aFiles as $index => $aFile){
+            if (stripos($aFile, '.png') == false)
+            {
+                unset($aFiles[$index]);
+            }
+
+        }
+
 
         $sql  = "
         SELECT *
         FROM feuc
-        WHERE SUBSTRING_INDEX(auto_name, ' ', 1) = :modelCode
+        /*WHERE SUBSTRING_INDEX(auto_name, ' ', 1) = :modelCode*/
         ORDER BY auto_name
         ";
 
@@ -80,12 +87,28 @@ class FordCatalogModel extends CatalogModel{
         $aData = $query->fetchAll();
 
         $modifications = array();
-        foreach($aData as $item){
-            $modifications[$item['model_id']] = array(
-                Constants::NAME     => $item['auto_name'],
-                Constants::OPTIONS  => array('grafik' =>
-                    ($item['engine_type'])));
+
+        foreach($aFiles as $aFile) {
+
+            foreach($aData as &$item){
+                if (stripos($aFile, $item['engine_type']) !== false)
+                {
+                    $item['engine_type'] = $aFile;
+                }
+                unset($item);
+            }
         }
+
+        foreach($aData as $item){
+
+            {
+                $modifications[$item['model_id']] = array(
+                    Constants::NAME     => $item['auto_name'],
+                    Constants::OPTIONS  => array('grafik' =>
+                        $item['engine_type']));
+            }
+        }
+
 
         return $modifications;
     }
