@@ -30,10 +30,9 @@ class FordCatalogModel extends CatalogModel{
     public function getModels($regionCode)
     {
         $sql  = "
-        SELECT
-        vincodes_models.Name modelName
-        FROM vincodes_models
-        ORDER BY modelName
+        SELECT auto_name
+        FROM feuc
+        ORDER BY auto_name
         ";
 
 
@@ -45,7 +44,13 @@ class FordCatalogModel extends CatalogModel{
         $models = array();
         foreach($aData as $item) {
 
-            $models[rawurlencode($item['modelName'])] = array(Constants::NAME => strtoupper($item['modelName']),
+            $mod = $item['auto_name'];
+            if (stripos($item['auto_name'], ' ') !== false)
+            {
+                $mod = strtoupper(substr($item['auto_name'], 0 ,stripos($item['auto_name'], ' ')));
+            }
+
+            $models[urlencode($mod)] = array(Constants::NAME => $mod,
                 Constants::OPTIONS => array());
 
         }
@@ -57,18 +62,15 @@ class FordCatalogModel extends CatalogModel{
     public function getModifications($regionCode, $modelCode)
     {
         $modelCode = rawurldecode($modelCode);
+        $dir = 'bundles/catalogford/Images';
+        $files1 = scandir($dir, 1);
+        var_dump($files1); die;
 
         $sql  = "
-        SELECT
-        URL, MIME, Description, AttributeId, vincodes_models.CatalogueCode, catalogue.CatalogueId Id, avs
-        FROM vincodes_models, attachmentdata, componentattachment, cataloguecomponent, catalogue
-        WHERE vincodes_models.CatalogueCode = catalogue.CatalogueCode and cataloguecomponent.CatalogueId = catalogue.CatalogueId and
-        cataloguecomponent.ComponentId = componentattachment.ComponentId AND
-        attachmentdata.AttachmentId = componentattachment.AttachmentId
-        and Name = :modelCode
-        and componentattachment.AttachmentTypeId = 3
-        and cataloguecomponent.AssemblyLevel = 1
-        ORDER BY Description
+        SELECT *
+        FROM feuc
+        WHERE SUBSTRING_INDEX(auto_name, ' ', 1) = :modelCode
+        ORDER BY auto_name
         ";
 
         $query = $this->conn->prepare($sql);
@@ -79,13 +81,11 @@ class FordCatalogModel extends CatalogModel{
 
         $modifications = array();
         foreach($aData as $item){
-            $modifications[$item['Id'].'_'.$item['avs']] = array(
-                Constants::NAME     => $item['Description']. '('.$item['CatalogueCode'].')',
+            $modifications[$item['model_id']] = array(
+                Constants::NAME     => $item['auto_name'],
                 Constants::OPTIONS  => array('grafik' =>
-                    substr($item['URL'], strpos($item['URL'], 'png')+4, strlen($item['URL'])).'.'.$item['MIME']));
-
+                    ($item['engine_type'])));
         }
-
 
         return $modifications;
     }
