@@ -30,10 +30,9 @@ class FordCatalogModel extends CatalogModel{
     public function getModels($regionCode)
     {
         $sql  = "
-        SELECT
-        vincodes_models.Name modelName
-        FROM vincodes_models
-        ORDER BY modelName
+        SELECT auto_name
+        FROM feuc
+        ORDER BY auto_name
         ";
 
 
@@ -45,7 +44,13 @@ class FordCatalogModel extends CatalogModel{
         $models = array();
         foreach($aData as $item) {
 
-            $models[rawurlencode($item['modelName'])] = array(Constants::NAME => strtoupper($item['modelName']),
+            $mod = $item['auto_name'];
+            if (stripos($item['auto_name'], ' ') !== false && $item['auto_name'] != 'Fluids and Maintenance Products')
+            {
+                $mod = strtoupper(substr($item['auto_name'], 0 ,stripos($item['auto_name'], ' ')));
+            }
+
+            $models[urlencode($mod)] = array(Constants::NAME => $mod,
                 Constants::OPTIONS => array());
 
         }
@@ -57,18 +62,31 @@ class FordCatalogModel extends CatalogModel{
     public function getModifications($regionCode, $modelCode)
     {
         $modelCode = rawurldecode($modelCode);
+        $dir = 'bundles/catalogford/Images';
+
+        /*Считывание имен картинок всех моделей в искомой папке, их обработка*/
+        $aFiles = scandir($dir, 1);
+
+        foreach($aFiles as $index => $aFile){
+            $aPicture = explode('-', $aFile);
+            if ((stripos($aFile, '.png') == false)||((strlen($aPicture[0])>2)))
+            {
+                unset($aFiles[$index]);
+            }
+        }
+
+        $aOnlyName = array();
+
+        foreach($aFiles as $index => $aFile){
+            $aPicture = explode('.', $aFile);
+            $aOnlyName[$index] = $aPicture[0];
+        }
 
         $sql  = "
-        SELECT
-        URL, MIME, Description, AttributeId, vincodes_models.CatalogueCode, catalogue.CatalogueId Id, avs
-        FROM vincodes_models, attachmentdata, componentattachment, cataloguecomponent, catalogue
-        WHERE vincodes_models.CatalogueCode = catalogue.CatalogueCode and cataloguecomponent.CatalogueId = catalogue.CatalogueId and
-        cataloguecomponent.ComponentId = componentattachment.ComponentId AND
-        attachmentdata.AttachmentId = componentattachment.AttachmentId
-        and Name = :modelCode
-        and componentattachment.AttachmentTypeId = 3
-        and cataloguecomponent.AssemblyLevel = 1
-        ORDER BY Description
+        SELECT *
+        FROM feuc
+        WHERE SUBSTRING_INDEX(auto_name, ' ', 1) = :modelCode
+        ORDER BY auto_name
         ";
 
         $query = $this->conn->prepare($sql);
@@ -78,14 +96,25 @@ class FordCatalogModel extends CatalogModel{
         $aData = $query->fetchAll();
 
         $modifications = array();
-        foreach($aData as $item){
-            $modifications[$item['Id'].'_'.$item['avs']] = array(
-                Constants::NAME     => $item['Description']. '('.$item['CatalogueCode'].')',
-                Constants::OPTIONS  => array('grafik' =>
-                    substr($item['URL'], strpos($item['URL'], 'png')+4, strlen($item['URL'])).'.'.$item['MIME']));
 
+        foreach($aOnlyName as $index => $aFile) {
+            foreach($aData as &$item){
+                if ((stripos($aFile, $item['engine_type']) !== false) || (substr($aFile,-2) == substr($item['engine_type'],-2)))
+                {
+                    $item['picture'] = $aFiles[$index];
+                }
+                unset($item);
+            }
         }
 
+        foreach($aData as $item){
+            {
+                $modifications[$item['model_id'].'_'.$item['auto_code'].'_'.$item['engine_type']] = array(
+                    Constants::NAME     => $item['auto_name'],
+                    Constants::OPTIONS  => array('grafik' =>
+                        $item['picture']));
+            }
+        }
 
         return $modifications;
     }
@@ -95,29 +124,42 @@ class FordCatalogModel extends CatalogModel{
      */
 
     public function getComplectations($regionCode, $modelCode, $modificationCode)
-    {$modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+    {
+        $modificationCode = explode('_', $modificationCode);
 
         $sql = "
-        SELECT familyLex.Description famDesc,
-        attributeLex.Description attrDesc,
-        attribute.FamilyId famId,
-        attribute.AttributeId Id
-        FROM catalogueattribute
-        INNER JOIN attribute ON (attribute.AttributeId = catalogueattribute.AttributeId)
-        INNER JOIN lexicon attributeLex ON (attribute.DescriptionId = attributeLex.DescriptionId and attributeLex.LanguageId IN ('1') AND attributeLex.SourceId = '18')
-        INNER JOIN attributefamily ON (attributefamily.FamilyId = attribute.FamilyId)
-        INNER JOIN lexicon familyLex ON (attributefamily.DescriptionId = familyLex.DescriptionId and familyLex.LanguageId IN ('1') AND familyLex.SourceId = '19')
-        WHERE catalogueattribute.CatalogueId = :modificationCode
+        SELECT CONCAT(
+              CASE
+              WHEN SUBSTRING_INDEX(SUBSTRING_INDEX(f.params, '!', 43) , '!', -1) = '1'
+              THEN 'GC'
+              ELSE 'CT'
+              END , f.rigidity) model_auto_f, am.*, l_gr.lex_name group_name, l.lex_name param_value
+        FROM feu.feuc f
+        INNER JOIN feu.avsmodel am ON (am.model_auto = CONCAT(
+              CASE
+              WHEN SUBSTRING_INDEX(SUBSTRING_INDEX(f.params, '!', 43) , '!', -1) = '1'
+              THEN 'GC'
+              ELSE 'CT'
+              END , f.rigidity))
+        LEFT JOIN feu.lex l_gr ON l_gr.lang = 'EN' AND l_gr.lex_code = am.main_part
+        LEFT JOIN feu.lex l ON l.lang = 'EN' AND l.lex_code = am.param_code
+        WHERE CONCAT(',', f.auto_code, ',') LIKE CONCAT('%,', :auto_code, ',%')
+        AND engine_type = :engine_type
         ";
+
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('auto_code', $modificationCode[1]);
+        $query->bindValue('engine_type', $modificationCode[2]);
         $query->execute();
+        $aData = $query->fetchAll();
+
+        var_dump($aData); die;
 
         $complectations = array();
         $complectationsPartIndexNoUnique = array();
         $complectationsPartIndex = array();
         $result = array();
-        $aData = $query->fetchAll();
+
 
         foreach ($aData as &$item)
         {
@@ -157,7 +199,6 @@ class FordCatalogModel extends CatalogModel{
 
 
         return $complectations;
-
     }
 
     public function getComplectation ($complectationCode)

@@ -4,9 +4,10 @@
          <div>
             {% block modification %}
 
-                <a href="{{ path('catalog_ford_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
-                <img src="{{ asset('bundles/catalogford/Images/'~modification.getOption('grafik')) }}" alt="{{ modification.getCode }}">
+                {% set files = get_files('bundles/catalogford/Images') %}
 
+                <a href="{{ path('catalog_ford_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
+                <img src="{{ asset('bundles/catalogford/Images/'~modification.getOption('grafik')) }}" style ="width: 20%;" alt="{{ modification.getCode }}">
                     {{ modification.getRuname }}
                 </a>
 
