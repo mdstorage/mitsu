@@ -95,7 +95,8 @@ class FordCatalogModel extends CatalogModel{
      */
 
     public function getComplectations($regionCode, $modelCode, $modificationCode)
-    {$modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+    {
+        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
 
         $sql = "
         SELECT familyLex.Description famDesc,

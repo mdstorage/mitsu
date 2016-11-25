@@ -15,9 +15,10 @@
 
             <div class="form-group control-group">
                 <form action="{{ path('catalog_ford_groups', parameters|merge({'complectationCode': oContainer.getActiveModification.getComplectations|first.getCode})) }}">
-                    <div class="col-sm-4">   {{ form_widget(form) }} </div>
-
-                    <div class="col-sm-10"> <input type="submit" class="btn btn-primary" value="Далее" /></div>
+                    <div class="col-sm-4">   {{ form_widget(form) }}
+                    <br>
+                    <input type="submit" class="btn btn-primary" value="{{ 'Далее'|trans({}, 'ford') }}" />
+                    </div>
                 </form>
             </div>
 

@@ -153,50 +153,33 @@ class FordCatalogModel extends CatalogModel{
         $query->execute();
         $aData = $query->fetchAll();
 
-        var_dump($aData); die;
+
 
         $complectations = array();
         $complectationsPartIndexNoUnique = array();
         $complectationsPartIndex = array();
         $result = array();
 
-
         foreach ($aData as &$item)
         {
-            $item['famDesc'] = str_replace(' ', '_', $item['famDesc']);
-            $complectationsPartIndexNoUnique[] = $item ['famId'];
-
+            $item['group_name'] = str_replace(' ', '_', $item['group_name']);
+            unset($item);
         }
-        $complectationsPartIndex = array_unique($complectationsPartIndexNoUnique);
+
 
 
         foreach ($aData as $item)
         {
-            foreach ($complectationsPartIndex as $itemPartIndex)
-            {
-
-                if ($item['famId'] === $itemPartIndex)
-                {
-
-                    $result[($item['famDesc'])][$item['attrDesc']] = $item['attrDesc'];
-
-                }
-            }
-
+            $result[($item['group_name'])][$item['param_value']] = $item['param_value'];
         }
 
-
-
         foreach ($result as $index => $value) {
-
-
 
             $complectations[($index)] = array(
                 Constants::NAME => $value,
                 Constants::OPTIONS => array('option1'=>$value)
             );
         }
-
 
         return $complectations;
     }
@@ -215,25 +198,37 @@ class FordCatalogModel extends CatalogModel{
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
-        $submodificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+
+        $modificationCode = explode('_', $modificationCode);
 
 
-         $sql = "
-        SELECT attributeLex.Description famDesc, Code
-        FROM cataloguecomponent, lexicon attributeLex
-       where attributeLex.DescriptionId = cataloguecomponent.DescriptionId and attributeLex.LanguageId IN ('15') AND attributeLex.SourceId = '4'
-        and AssemblyLevel = '2' and CatalogueId = :modificationCode
-
-
-
+        $sql = "
+        SELECT z.main_group, z.name_main
+        FROM (
+        SELECT q.main_group, q.name_main,
+              CASE WHEN main_group = @main_group THEN @n := @n + 1 ELSE @n := 1 END AS num,
+              @main_group := main_group AS main_group_doubl
+        FROM (
+              SELECT DISTINCT
+                     CASE
+                         WHEN chi.pnc_code <> '' THEN SUBSTR(chi.pnc_code, 1, 1)
+                         ELSE SUBSTR(chi.name_group, 1, LENGTH(chi.name_group) - 2)
+                     END main_group,
+                     l_main.lex_name name_main
+              FROM feu.coord_header_info chi
+              LEFT JOIN lex l_main ON l_main.lang = 'EN' AND l_main.index_lex = chi.id_main
+              WHERE chi.model_id = :model_id
+            ) q
+        ) z
+        WHERE z.num = 1;
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode', $modificationCode);
-
+        $query->bindValue('model_id', $modificationCode[0]);
         $query->execute();
         $aData = $query->fetchAll();
+
+        var_dump($aData); die;
 
 
         $aDataExplodeDesc = explode('|', base64_decode($complectationCode));
