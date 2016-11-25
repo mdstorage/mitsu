@@ -1,5 +1,5 @@
 catalog_toyota_token:
-  path:         /toyota/{_locale}/catalog/0/{token}/{regionCode}
+  path:         /toyota/catalog/0/{token}/{_locale}/{regionCode}
   defaults:     {_controller: CatalogToyotaBundle:Catalog:regionsModels, _locale: ru, token: null, regionCode: null}
 
 catalog_toyota:
