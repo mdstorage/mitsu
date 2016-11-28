@@ -9,12 +9,18 @@ services:
             - { name: twig.extension}
   ford.catalog.model:
     class: Catalog\FordBundle\Models\FordCatalogModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.ford_connection']
 
   ford.vin.model:
     class: Catalog\FordBundle\Models\FordVinModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.ford_connection']
 
   ford.articul.model:
     class: Catalog\FordBundle\Models\FordArticulModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.ford_connection']

@@ -50,6 +50,12 @@ class CatalogController extends BaseController{
 
     public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null,  $articul = NULL, $token = NULL)
     {
+        $data = $this->get('my_token_info')->getStatus($token);
+
+        if(empty($data) & !empty($token)){
+            return $this->errorBilling('Сервис не оплачен');
+        }
+
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
 
         $regions = $this->model()->getRegions();
@@ -95,18 +101,21 @@ class CatalogController extends BaseController{
         ));
     }
 
-    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null,  $articul = NULL, $token = NULL)
+    public function groupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $articul = NULL, $token = NULL)
     {
-        /*   $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
+        $data = $this->get('my_token_info')->getStatus($token);
 
+        if(empty($data) & !empty($token)){
+            return $this->errorBilling('Сервис не оплачен');
+        }
 
-          $form = $this->createForm(new ComplectationType(), $complectations);
-           $form->handleRequest($this->get('request'));
-                $username = $form->get('title')->getData();
-                     $Positive_Territories = $form->get('title')->getData();*/
+        if(empty($complectationCode) or $complectationCode === '1'){
 
-
-        $complectationCode = base64_encode(implode('|',$request->get('ComplectationType')));
+            $complectationCode = $request->get('complectationCode');
+        }
+        else{
+            $complectationCode = base64_encode(implode('|',$request->get('ComplectationType')));
+        }
 
 
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());

@@ -125,42 +125,87 @@ class FordCatalogModel extends CatalogModel{
 
     public function getComplectations($regionCode, $modelCode, $modificationCode)
     {
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
         $modificationCode = explode('_', $modificationCode);
 
         $sql = "
-        SELECT CONCAT(
+        SELECT DISTINCT CONCAT(
               CASE
               WHEN SUBSTRING_INDEX(SUBSTRING_INDEX(f.params, '!', 43) , '!', -1) = '1'
               THEN 'GC'
               ELSE 'CT'
-              END , f.rigidity) model_auto_f, am.*, l_gr.lex_name group_name, l.lex_name param_value
+              END , SUBSTRING(f.rigidity, -2, 2)) model_auto_f
         FROM feu.feuc f
-        INNER JOIN feu.avsmodel am ON (am.model_auto = CONCAT(
-              CASE
-              WHEN SUBSTRING_INDEX(SUBSTRING_INDEX(f.params, '!', 43) , '!', -1) = '1'
-              THEN 'GC'
-              ELSE 'CT'
-              END , f.rigidity))
+        WHERE CONCAT(',', f.auto_code, ',') LIKE CONCAT('%,', :auto_code, ',%')
+        ";
+
+            $query = $this->conn->prepare($sql);
+            $query->bindValue('auto_code', $modificationCode[1]);
+            $query->execute();
+            $aData = $query->fetch();
+
+
+
+        $sqlEmptyData = "
+        SELECT am.*, l_gr.lex_name group_name, l.lex_name param_value
+        FROM feu.feuc f
+        INNER JOIN feu.avsmodel am ON (am.model_auto = :model_auto_f)
         LEFT JOIN feu.lex l_gr ON l_gr.lang = 'EN' AND l_gr.lex_code = am.main_part
         LEFT JOIN feu.lex l ON l.lang = 'EN' AND l.lex_code = am.param_code
         WHERE CONCAT(',', f.auto_code, ',') LIKE CONCAT('%,', :auto_code, ',%')
         AND engine_type = :engine_type
         ";
-
-        $query = $this->conn->prepare($sql);
+        $query = $this->conn->prepare($sqlEmptyData);
         $query->bindValue('auto_code', $modificationCode[1]);
         $query->bindValue('engine_type', $modificationCode[2]);
+        $query->bindValue('model_auto_f', $aData['model_auto_f']);
         $query->execute();
-        $aData = $query->fetchAll();
+        $aDataEmptyData = $query->fetchAll();
 
 
+
+        if (empty($aDataEmptyData))
+        {
+            $sql = "
+        SELECT DISTINCT
+              CONCAT(
+              CASE
+              WHEN SUBSTRING_INDEX(SUBSTRING_INDEX(f.params, '!', 43) , '!', -1) = ''
+              THEN 'GC'
+              ELSE 'CT'
+              END , SUBSTRING(f.rigidity, -2, 2)) model_auto_fu
+        FROM feu.feuc f
+        WHERE CONCAT(',', f.auto_code, ',') LIKE CONCAT('%,', :auto_code, ',%')
+        ";
+
+            $query = $this->conn->prepare($sql);
+            $query->bindValue('auto_code', $modificationCode[1]);
+            $query->execute();
+            $aData = $query->fetch();
+
+            $sqlEmptyData = "
+        SELECT am.*, l_gr.lex_name group_name, l.lex_name param_value
+        FROM feu.feuc f
+        INNER JOIN feu.avsmodel am ON (am.model_auto = :model_auto_fu)
+        LEFT JOIN feu.lex l_gr ON l_gr.lang = 'EN' AND l_gr.lex_code = am.main_part
+        LEFT JOIN feu.lex l ON l.lang = 'EN' AND l.lex_code = am.param_code
+        WHERE CONCAT(',', f.auto_code, ',') LIKE CONCAT('%,', :auto_code, ',%')
+        AND engine_type = :engine_type
+        ";
+            $query = $this->conn->prepare($sqlEmptyData);
+            $query->bindValue('auto_code', $modificationCode[1]);
+            $query->bindValue('engine_type', $modificationCode[2]);
+            $query->bindValue('model_auto_fu', $aData['model_auto_fu']);
+            $query->execute();
+            $aDataEmptyData = $query->fetchAll();
+        }
 
         $complectations = array();
         $complectationsPartIndexNoUnique = array();
         $complectationsPartIndex = array();
         $result = array();
 
-        foreach ($aData as &$item)
+        foreach ($aDataEmptyData as &$item)
         {
             $item['group_name'] = str_replace(' ', '_', $item['group_name']);
             unset($item);
@@ -168,7 +213,7 @@ class FordCatalogModel extends CatalogModel{
 
 
 
-        foreach ($aData as $item)
+        foreach ($aDataEmptyData as $item)
         {
             $result[($item['group_name'])][$item['param_value']] = $item['param_value'];
         }
@@ -198,6 +243,7 @@ class FordCatalogModel extends CatalogModel{
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
 
         $modificationCode = explode('_', $modificationCode);
 
@@ -205,111 +251,43 @@ class FordCatalogModel extends CatalogModel{
         $sql = "
         SELECT z.main_group, z.name_main
         FROM (
+
         SELECT q.main_group, q.name_main,
-              CASE WHEN main_group = @main_group THEN @n := @n + 1 ELSE @n := 1 END AS num,
-              @main_group := main_group AS main_group_doubl
+        CASE WHEN main_group = @main_group
+        THEN @n := @n +1
+        ELSE @n :=1
+        END AS num, @main_group := main_group AS main_group_doubl
         FROM (
-              SELECT DISTINCT
-                     CASE
-                         WHEN chi.pnc_code <> '' THEN SUBSTR(chi.pnc_code, 1, 1)
-                         ELSE SUBSTR(chi.name_group, 1, LENGTH(chi.name_group) - 2)
-                     END main_group,
-                     l_main.lex_name name_main
-              FROM feu.coord_header_info chi
-              LEFT JOIN lex l_main ON l_main.lang = 'EN' AND l_main.index_lex = chi.id_main
-              WHERE chi.model_id = :model_id
-            ) q
-        ) z
-        WHERE z.num = 1;
+
+        SELECT DISTINCT
+        CASE
+        WHEN chi.pnc_code <> ''
+        THEN SUBSTR( chi.pnc_code, 1, 1 )
+        ELSE SUBSTR( chi.name_group, 1, LENGTH( chi.name_group ) -2)
+        END main_group, l_main.lex_name name_main
+        FROM feu.coord_header_info chi
+        LEFT JOIN lex l_main ON l_main.lang = :locale
+        AND l_main.index_lex = chi.id_main
+        WHERE chi.model_id = :model_id
+        )q
+        )z
+        WHERE z.num =1
+        ORDER BY z.main_group
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('model_id', $modificationCode[0]);
+        $query->bindValue('locale', $locale);
         $query->execute();
         $aData = $query->fetchAll();
-
-        var_dump($aData); die;
-
-
-        $aDataExplodeDesc = explode('|', base64_decode($complectationCode));
-        $aDataExplodeCode = $this->getCodeByDescription($aDataExplodeDesc);
-        $aDataExplodeConditions = $this->getConditions($aDataExplodeCode);
-
-        $aDataGroup = array();
-        $aDataLex = array();
-        $aDataSourse = array();
-
-
-
-            $sqlLex = "
-        SELECT attribute.DescriptionId Id, cataloguecomponent.ComponentId
-        FROM cataloguecomponent
-        LEFT JOIN componentcp on (componentcp.ComponentId = cataloguecomponent.ComponentId)
-        LEFT JOIN condition_ on (condition_.ConditionId = componentcp.ConditionId)
-        LEFT JOIN attribute on (attribute.AttributeId = condition_.FilterCondition)
-        where cataloguecomponent.AssemblyLevel = '1' and cataloguecomponent.CatalogueId IS NULL
-        ";
-
-            $query = $this->conn->prepare($sqlLex);
-            $query->execute();
-            $aDataLex = $query->fetchAll();
-
-
-        foreach($aDataLex as $item)
-        {
-            $aDataGroup[$item['ComponentId']] = $item['ComponentId'];
-        }
-
-        foreach($aDataLex as $item)
-        {
-            foreach($aDataGroup as $value)
-            {
-               if  ($value == $item['ComponentId'])
-               {
-                   $aDataSourse[$item['ComponentId']][] = $item['Id'];
-               }
-            }
-        }
-
-
-  /*      $number = array(4,5,6);
-
-        foreach($aDataExplodeCode as $index=>$value)
-        {
-            if (!in_array($index, $number))
-            {
-                unset ($aDataExplodeCode[$index]);
-            }
-        }*/
-
-
-        foreach($aDataSourse as $index=>$value)
-        {
-            $n = 0;
-            foreach($aDataExplodeCode as $item)
-
-                {
-                    if (in_array($item, $value))
-                    {
-                       $n ++;
-                    }
-                }
-                if ($n == 0)
-                {
-                    unset ($aDataSourse[$index]);
-                }
-
-            }
-
-
 
 
         $groups = array();
 
 
         foreach($aData as $item){
-            $groups[$item['Code']] = array(
-                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['famDesc']),'utf8'),
+            $groups[$item['main_group']] = array(
+                Constants::NAME     => iconv('cp1251', 'utf8', $item['name_main']),
                 Constants::OPTIONS  => array()
             );
         }
@@ -319,7 +297,10 @@ class FordCatalogModel extends CatalogModel{
 
     public function getGroupSchemas($regionCode, $modelCode, $modificationCode, $groupCode)
     {
-  /*      $sqlNumPrigroup = "
+  /* искать схему по номеру модели в таблице 'coordinates_names', координаты для нее в таблице 'coordinates'
+
+
+       $sqlNumPrigroup = "
         SELECT *
         FROM pri_groups_full
         WHERE catalog = :regionCode
