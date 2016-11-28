@@ -83,9 +83,11 @@ class FordCatalogModel extends CatalogModel{
         }
 
         $sql  = "
-        SELECT *
-        FROM feuc
-        WHERE SUBSTRING_INDEX(auto_name, ' ', 1) = :modelCode
+        SELECT f.*, coordinates_names.num_index
+        FROM feuc f
+        INNER JOIN coordinates_names ON (coordinates_names.model_id = f.model_id AND group_detail_sign LIKE '1'
+        AND coordinates_names.num_model_group LIKE '0')
+        WHERE SUBSTRING_INDEX(f.auto_name, ' ', 1) = :modelCode
         ORDER BY auto_name
         ";
 
@@ -102,6 +104,8 @@ class FordCatalogModel extends CatalogModel{
                 if ((stripos($aFile, $item['engine_type']) !== false) || (substr($aFile,-2) == substr($item['engine_type'],-2)))
                 {
                     $item['picture'] = $aFiles[$index];
+                    $item['folder'] = explode('-', $aFile)[1];
+
                 }
                 unset($item);
             }
@@ -109,10 +113,13 @@ class FordCatalogModel extends CatalogModel{
 
         foreach($aData as $item){
             {
-                $modifications[$item['model_id'].'_'.$item['auto_code'].'_'.$item['engine_type']] = array(
+                $modifications[$item['model_id'].'_'.$item['auto_code'].'_'.$item['engine_type'].'_'.$item['folder']] = array(
                     Constants::NAME     => $item['auto_name'],
-                    Constants::OPTIONS  => array('grafik' =>
-                        $item['picture']));
+                    Constants::OPTIONS  => array(
+                        'grafik' => $item['picture'],
+                        'group_picture' => $item['num_index'],
+                        'folder' => $item['folder']
+                        ));
             }
         }
 
@@ -139,10 +146,10 @@ class FordCatalogModel extends CatalogModel{
         WHERE CONCAT(',', f.auto_code, ',') LIKE CONCAT('%,', :auto_code, ',%')
         ";
 
-            $query = $this->conn->prepare($sql);
-            $query->bindValue('auto_code', $modificationCode[1]);
-            $query->execute();
-            $aData = $query->fetch();
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('auto_code', $modificationCode[1]);
+        $query->execute();
+        $aData = $query->fetch();
 
 
 
@@ -162,21 +169,19 @@ class FordCatalogModel extends CatalogModel{
         $query->execute();
         $aDataEmptyData = $query->fetchAll();
 
-
-
         if (empty($aDataEmptyData))
         {
             $sql = "
-        SELECT DISTINCT
-              CONCAT(
-              CASE
-              WHEN SUBSTRING_INDEX(SUBSTRING_INDEX(f.params, '!', 43) , '!', -1) = ''
-              THEN 'GC'
-              ELSE 'CT'
-              END , SUBSTRING(f.rigidity, -2, 2)) model_auto_fu
-        FROM feu.feuc f
-        WHERE CONCAT(',', f.auto_code, ',') LIKE CONCAT('%,', :auto_code, ',%')
-        ";
+            SELECT DISTINCT
+                CONCAT(
+                CASE
+                WHEN SUBSTRING_INDEX(SUBSTRING_INDEX(f.params, '!', 43) , '!', -1) = ''
+                THEN 'GC'
+                ELSE 'CT'
+                END , SUBSTRING(f.rigidity, -2, 2)) model_auto_fu
+            FROM feu.feuc f
+            WHERE CONCAT(',', f.auto_code, ',') LIKE CONCAT('%,', :auto_code, ',%')
+            ";
 
             $query = $this->conn->prepare($sql);
             $query->bindValue('auto_code', $modificationCode[1]);
@@ -184,14 +189,14 @@ class FordCatalogModel extends CatalogModel{
             $aData = $query->fetch();
 
             $sqlEmptyData = "
-        SELECT am.*, l_gr.lex_name group_name, l.lex_name param_value
-        FROM feu.feuc f
-        INNER JOIN feu.avsmodel am ON (am.model_auto = :model_auto_fu)
-        LEFT JOIN feu.lex l_gr ON l_gr.lang = 'EN' AND l_gr.lex_code = am.main_part
-        LEFT JOIN feu.lex l ON l.lang = 'EN' AND l.lex_code = am.param_code
-        WHERE CONCAT(',', f.auto_code, ',') LIKE CONCAT('%,', :auto_code, ',%')
-        AND engine_type = :engine_type
-        ";
+            SELECT am.*, l_gr.lex_name group_name, l.lex_name param_value
+            FROM feu.feuc f
+            INNER JOIN feu.avsmodel am ON (am.model_auto = :model_auto_fu)
+            LEFT JOIN feu.lex l_gr ON l_gr.lang = 'EN' AND l_gr.lex_code = am.main_part
+            LEFT JOIN feu.lex l ON l.lang = 'EN' AND l.lex_code = am.param_code
+            WHERE CONCAT(',', f.auto_code, ',') LIKE CONCAT('%,', :auto_code, ',%')
+            AND engine_type = :engine_type
+            ";
             $query = $this->conn->prepare($sqlEmptyData);
             $query->bindValue('auto_code', $modificationCode[1]);
             $query->bindValue('engine_type', $modificationCode[2]);
@@ -201,8 +206,6 @@ class FordCatalogModel extends CatalogModel{
         }
 
         $complectations = array();
-        $complectationsPartIndexNoUnique = array();
-        $complectationsPartIndex = array();
         $result = array();
 
         foreach ($aDataEmptyData as &$item)
@@ -213,13 +216,11 @@ class FordCatalogModel extends CatalogModel{
 
 
 
-        foreach ($aDataEmptyData as $item)
-        {
+        foreach ($aDataEmptyData as $item){
             $result[($item['group_name'])][$item['param_value']] = $item['param_value'];
         }
 
         foreach ($result as $index => $value) {
-
             $complectations[($index)] = array(
                 Constants::NAME => $value,
                 Constants::OPTIONS => array('option1'=>$value)
@@ -246,10 +247,11 @@ class FordCatalogModel extends CatalogModel{
         $locale = $this->requestStack->getCurrentRequest()->getLocale();
 
         $modificationCode = explode('_', $modificationCode);
+        $folder = $modificationCode[3];
 
 
         $sql = "
-        SELECT z.main_group, z.name_main
+        SELECT z.main_group, z.name_main, coordinates_names.num_index, x1, x2, y1, y2
         FROM (
 
         SELECT q.main_group, q.name_main,
@@ -271,7 +273,11 @@ class FordCatalogModel extends CatalogModel{
         WHERE chi.model_id = :model_id
         )q
         )z
-        WHERE z.num =1
+        LEFT JOIN coordinates_names ON (coordinates_names.model_id = :model_id AND group_detail_sign LIKE '1'
+        AND coordinates_names.num_model_group LIKE '0')
+        LEFT JOIN coordinates ON (coordinates.model_id = coordinates_names.model_id AND coordinates.num_index = coordinates_names.num_index
+        AND SUBSTRING_INDEX(SUBSTRING_INDEX(coordinates.label_name,'|',2),'|',-1) = z.main_group)
+        WHERE z.num = 1
         ORDER BY z.main_group
         ";
 
@@ -288,7 +294,12 @@ class FordCatalogModel extends CatalogModel{
         foreach($aData as $item){
             $groups[$item['main_group']] = array(
                 Constants::NAME     => iconv('cp1251', 'utf8', $item['name_main']),
-                Constants::OPTIONS  => array()
+                Constants::OPTIONS  => array('picture' => $item ['num_index'], 'folder' => $folder,
+                    Constants::X1 => floor($item['x1']),
+                    Constants::X2 => floor($item['x2']),
+                    Constants::Y1 => floor($item['y1']),
+                    Constants::Y2 => floor($item['y2']),
+                )
             );
         }
 
