@@ -15,7 +15,9 @@ use Catalog\LexusBundle\Components\LexusConstants;
 
 class LexusCatalogModel extends CatalogModel{
 
+
     public function getRegions(){
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
 
         $sql = "
         SELECT catalog
@@ -36,21 +38,27 @@ class LexusCatalogModel extends CatalogModel{
         $regions = array();
 
         foreach($aData as $item) {
-            switch ($item['catalog']) {
-                case 'EU':
-                    $name[$item['catalog']] = 'ЕВРОПА';
-                    break;
-                case 'US':
-                    $name[$item['catalog']] = 'США';
-                    break;
-                case 'JP':
-                    $name[$item['catalog']] = 'ЯПОНИЯ';
-                    break;
-                case 'GR':
-                    $name[$item['catalog']] = 'БЛИЖНИЙ ВОСТОК';
-                    break;
+
+            $name[$item['catalog']] = $item['catalog'];
+            if ($locale == 'ru'){
+                switch ($item['catalog']) {
+                    case 'EU':
+                        $name[$item['catalog']] = 'ЕВРОПА';
+                        break;
+                    case 'US':
+                        $name[$item['catalog']] = 'США';
+                        break;
+                    case 'JP':
+                        $name[$item['catalog']] = 'ЯПОНИЯ';
+                        break;
+                    case 'GR':
+                        $name[$item['catalog']] = 'БЛИЖНИЙ ВОСТОК';
+                        break;
+
+                }
 
             }
+
         }
 
 
@@ -67,7 +75,7 @@ class LexusCatalogModel extends CatalogModel{
     {
 
 
-        $sql = "
+            $sql = "
         SELECT model_name
         FROM shamei
         WHERE shamei.catalog = :regionCode
@@ -269,11 +277,7 @@ class LexusCatalogModel extends CatalogModel{
 
             }
 
-
         }
-
-
-
 
         return ($result);
 

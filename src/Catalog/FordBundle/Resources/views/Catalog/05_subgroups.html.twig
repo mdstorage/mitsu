@@ -1,19 +1,83 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
 {% use 'CatalogFordBundle::ford.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{% if  app.request.get('token') %} {{ path('catalog_ford_token', parameters) }} {% else %} {{ path('catalog_ford') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_ford_token', parameters) }} {% else %} {{ path('catalog_ford') }} {% endif %}">{{ 'Регион, модель, модификация'|trans }} ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
-    <a href="{{ path('catalog_ford_complectations', parameters) }}">Комплектация</a> /
-    <a href="{{ path('catalog_ford_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getCode}})</a> / 
+    <a href="{{ path('catalog_ford_complectations', parameters) }}">{{ 'Комплектация'|trans }}</a> /
+    <a href="{{ path('catalog_ford_groups', parameters) }}">{{ 'Группа запчастей'|trans }} ({{ oContainer.getActiveGroup.getRuname}})</a> /
 
 {% endblock breadcrumbs %}
 
 {% block complectation %}{% endblock complectation %}
 
 
-{% block subgroupImage %}{% endblock subgroupImage %}
-{% block subgroupItem %}
-          <div id="subgroup{{ subgroup.getCode }}">
-          <a href="{{ path('catalog_ford_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
-          </div>
-{% endblock subgroupItem %}
+{% block body %}
+    {% block head %}<h3>{{ 'Выбрать подгруппу запчастей'|trans }}:</h3>{% endblock head %}
+    <div class="row">
+        <div class="col-lg-8 col-xs-8 col-md-8 col-sm-8">
+        {% block subgroupImage %}
+
+        {% for schema in oContainer.getSchemas %}
+            <img src="{{ asset('bundles/catalogford/Images/'~oContainer.getActiveModification.getOption('folder')~'/'~schema.getCode~'.png') }}" style="width: auto;" alt="{{ schema.getCode }}" usemap="#{{ schema.getCode }}" />
+        {% endfor %}
+
+        {% endblock subgroupImage %}
+        </div>
+        <div class="col-lg-4 col-xs-4 col-md-4 col-sm-4">
+            {% block subgroups %}
+                <div class="subgroups">
+                    {% block subGroupsMap %}
+
+                    {% for schema in oContainer.getSchemas %}
+                        <map name={{ schema.getCode }}>
+                            {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
+                                {% if schema.getCode ==  subgroup.getOption('picture') %}
+                                {% block area %}
+                            <area shape="rect" coords="
+                                    {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }},
+                                    {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y1')) }},
+                                    {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X2')) }},
+                                    {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y2')) }}
+                                " href="#" id="{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}" data-name="{% block dataName %}{{ subgroup.getCode }}{% endblock dataName %}"/>
+                                {% endblock area %}
+
+                                {% block subgroupItem %}
+                                <div id="subgroup{{ subgroup.getCode }}">
+                                    <a href="{{ path('catalog_ford_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
+                                </div>
+                                {% endblock subgroupItem %}
+                                {% block cycleScript %}
+                                <script>
+                                    $("#{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}").on('mouseover', function(){
+                                        $("#subgroup{{ subgroup.getCode }}").toggleClass("btn-default");
+                                    });
+                                    $("#{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}").on('mouseout', function(){
+                                        $("#subgroup{{ subgroup.getCode }}").toggleClass("btn-default");
+                                    });
+                                    $("#{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}").on('click', function(){
+                                        $("#subgroup{{ subgroup.getCode }}").toggleClass("btn-info");
+                                    });
+                                </script>
+                                {% endblock cycleScript %}
+                                {% endif %}
+                            {% endfor %}
+                        </map>
+                    {% endfor %}
+                    {% endblock subGroupsMap %}
+                </div>
+            {% endblock subgroups %}
+        </div>
+    </div>
+    {% block mapsterScript %}
+        <script>
+            $('img').mapster({
+                fillColor: '70daf1',
+                fillOpacity: 0.3,
+                mapKey: 'data-name',
+                staticState: true
+            });
+        </script>
+    {% endblock mapsterScript %}
+    {% block pageScript %}{% endblock pageScript %}
+{% endblock body %}

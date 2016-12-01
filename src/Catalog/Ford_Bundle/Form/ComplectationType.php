@@ -12,8 +12,6 @@ class ComplectationType extends AbstractType{
     {
         foreach ($options['data'] as $index=>$value) {
 
-
-
                 $builder
                     ->add('title' . $index, 'choice', array(
                         'label' => str_replace('_', ' ', $index),

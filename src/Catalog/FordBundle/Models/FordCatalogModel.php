@@ -83,9 +83,11 @@ class FordCatalogModel extends CatalogModel{
         }
 
         $sql  = "
-        SELECT *
-        FROM feuc
-        WHERE SUBSTRING_INDEX(auto_name, ' ', 1) = :modelCode
+        SELECT f.*, coordinates_names.num_index
+        FROM feuc f
+        INNER JOIN coordinates_names ON (coordinates_names.model_id = f.model_id AND group_detail_sign LIKE '1'
+        AND coordinates_names.num_model_group LIKE '0')
+        WHERE SUBSTRING_INDEX(f.auto_name, ' ', 1) = :modelCode
         ORDER BY auto_name
         ";
 
@@ -102,6 +104,8 @@ class FordCatalogModel extends CatalogModel{
                 if ((stripos($aFile, $item['engine_type']) !== false) || (substr($aFile,-2) == substr($item['engine_type'],-2)))
                 {
                     $item['picture'] = $aFiles[$index];
+                    $item['folder'] = explode('-', $aFile)[1];
+
                 }
                 unset($item);
             }
@@ -111,8 +115,11 @@ class FordCatalogModel extends CatalogModel{
             {
                 $modifications[$item['model_id'].'_'.$item['auto_code'].'_'.$item['engine_type']] = array(
                     Constants::NAME     => $item['auto_name'],
-                    Constants::OPTIONS  => array('grafik' =>
-                        $item['picture']));
+                    Constants::OPTIONS  => array(
+                        'grafik' => $item['picture'],
+                        'group_picture' => $item['num_index'],
+                        'folder' => $item['folder']
+                        ));
             }
         }
 
@@ -125,78 +132,100 @@ class FordCatalogModel extends CatalogModel{
 
     public function getComplectations($regionCode, $modelCode, $modificationCode)
     {
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
         $modificationCode = explode('_', $modificationCode);
 
         $sql = "
-        SELECT CONCAT(
+        SELECT DISTINCT CONCAT(
               CASE
               WHEN SUBSTRING_INDEX(SUBSTRING_INDEX(f.params, '!', 43) , '!', -1) = '1'
               THEN 'GC'
               ELSE 'CT'
-              END , f.rigidity) model_auto_f, am.*, l_gr.lex_name group_name, l.lex_name param_value
+              END , SUBSTRING(f.rigidity, -2, 2)) model_auto_f
         FROM feu.feuc f
-        INNER JOIN feu.avsmodel am ON (am.model_auto = CONCAT(
-              CASE
-              WHEN SUBSTRING_INDEX(SUBSTRING_INDEX(f.params, '!', 43) , '!', -1) = '1'
-              THEN 'GC'
-              ELSE 'CT'
-              END , f.rigidity))
+        WHERE CONCAT(',', f.auto_code, ',') LIKE CONCAT('%,', :auto_code, ',%')
+        ";
+
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('auto_code', $modificationCode[1]);
+        $query->execute();
+        $aData = $query->fetch();
+
+
+
+        $sqlEmptyData = "
+        SELECT am.*, l_gr.lex_name group_name, l.lex_name param_value
+        FROM feu.feuc f
+        INNER JOIN feu.avsmodel am ON (am.model_auto = :model_auto_f)
         LEFT JOIN feu.lex l_gr ON l_gr.lang = 'EN' AND l_gr.lex_code = am.main_part
         LEFT JOIN feu.lex l ON l.lang = 'EN' AND l.lex_code = am.param_code
         WHERE CONCAT(',', f.auto_code, ',') LIKE CONCAT('%,', :auto_code, ',%')
         AND engine_type = :engine_type
         ";
-
-        $query = $this->conn->prepare($sql);
+        $query = $this->conn->prepare($sqlEmptyData);
         $query->bindValue('auto_code', $modificationCode[1]);
         $query->bindValue('engine_type', $modificationCode[2]);
+        $query->bindValue('model_auto_f', $aData['model_auto_f']);
         $query->execute();
-        $aData = $query->fetchAll();
+        $aDataEmptyData = $query->fetchAll();
 
-        var_dump($aData); die;
+        if (empty($aDataEmptyData))
+        {
+            $sql = "
+            SELECT DISTINCT
+                CONCAT(
+                CASE
+                WHEN SUBSTRING_INDEX(SUBSTRING_INDEX(f.params, '!', 43) , '!', -1) = ''
+                THEN 'GC'
+                ELSE 'CT'
+                END , SUBSTRING(f.rigidity, -2, 2)) model_auto_fu
+            FROM feu.feuc f
+            WHERE CONCAT(',', f.auto_code, ',') LIKE CONCAT('%,', :auto_code, ',%')
+            ";
+
+            $query = $this->conn->prepare($sql);
+            $query->bindValue('auto_code', $modificationCode[1]);
+            $query->execute();
+            $aData = $query->fetch();
+
+            $sqlEmptyData = "
+            SELECT am.*, l_gr.lex_name group_name, l.lex_name param_value
+            FROM feu.feuc f
+            INNER JOIN feu.avsmodel am ON (am.model_auto = :model_auto_fu)
+            LEFT JOIN feu.lex l_gr ON l_gr.lang = 'EN' AND l_gr.lex_code = am.main_part
+            LEFT JOIN feu.lex l ON l.lang = 'EN' AND l.lex_code = am.param_code
+            WHERE CONCAT(',', f.auto_code, ',') LIKE CONCAT('%,', :auto_code, ',%')
+            AND engine_type = :engine_type
+            ";
+            $query = $this->conn->prepare($sqlEmptyData);
+            $query->bindValue('auto_code', $modificationCode[1]);
+            $query->bindValue('engine_type', $modificationCode[2]);
+            $query->bindValue('model_auto_fu', $aData['model_auto_fu']);
+            $query->execute();
+            $aDataEmptyData = $query->fetchAll();
+        }
 
         $complectations = array();
-        $complectationsPartIndexNoUnique = array();
-        $complectationsPartIndex = array();
         $result = array();
 
-
-        foreach ($aData as &$item)
+        foreach ($aDataEmptyData as &$item)
         {
-            $item['famDesc'] = str_replace(' ', '_', $item['famDesc']);
-            $complectationsPartIndexNoUnique[] = $item ['famId'];
-
-        }
-        $complectationsPartIndex = array_unique($complectationsPartIndexNoUnique);
-
-
-        foreach ($aData as $item)
-        {
-            foreach ($complectationsPartIndex as $itemPartIndex)
-            {
-
-                if ($item['famId'] === $itemPartIndex)
-                {
-
-                    $result[($item['famDesc'])][$item['attrDesc']] = $item['attrDesc'];
-
-                }
-            }
-
+            $item['group_name'] = str_replace(' ', '_', $item['group_name']);
+            unset($item);
         }
 
 
+
+        foreach ($aDataEmptyData as $item){
+            $result[($item['group_name'])][$item['param_value']] = $item['param_value'];
+        }
 
         foreach ($result as $index => $value) {
-
-
-
             $complectations[($index)] = array(
                 Constants::NAME => $value,
                 Constants::OPTIONS => array('option1'=>$value)
             );
         }
-
 
         return $complectations;
     }
@@ -215,107 +244,61 @@ class FordCatalogModel extends CatalogModel{
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
-        $submodificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
+
+        $modificationCode = explode('_', $modificationCode);
 
 
-         $sql = "
-        SELECT attributeLex.Description famDesc, Code
-        FROM cataloguecomponent, lexicon attributeLex
-       where attributeLex.DescriptionId = cataloguecomponent.DescriptionId and attributeLex.LanguageId IN ('15') AND attributeLex.SourceId = '4'
-        and AssemblyLevel = '2' and CatalogueId = :modificationCode
+        $sql = "
+        SELECT z.main_group, z.name_main, coordinates_names.num_index, x1, x2, y1, y2
+        FROM (
 
+        SELECT q.main_group, q.name_main,
+        CASE WHEN main_group = @main_group
+        THEN @n := @n +1
+        ELSE @n :=1
+        END AS num, @main_group := main_group AS main_group_doubl
+        FROM (
 
-
+        SELECT DISTINCT
+        CASE
+        WHEN chi.pnc_code <> ''
+        THEN SUBSTR( chi.pnc_code, 1, 1 )
+        ELSE SUBSTR( chi.name_group, 1, LENGTH( chi.name_group ) -2)
+        END main_group, l_main.lex_name name_main
+        FROM feu.coord_header_info chi
+        LEFT JOIN lex l_main ON l_main.lang = :locale
+        AND l_main.index_lex = chi.id_main
+        WHERE chi.model_id = :model_id
+        )q
+        )z
+        LEFT JOIN coordinates_names ON (coordinates_names.model_id = :model_id AND group_detail_sign LIKE '1'
+        AND coordinates_names.num_model_group LIKE '0')
+        LEFT JOIN coordinates ON (coordinates.model_id = coordinates_names.model_id AND coordinates.num_index = coordinates_names.num_index
+        AND SUBSTRING_INDEX(SUBSTRING_INDEX(coordinates.label_name,'|',2),'|',-1) = z.main_group)
+        WHERE z.num = 1
+        ORDER BY z.main_group
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode', $modificationCode);
-
+        $query->bindValue('model_id', $modificationCode[0]);
+        $query->bindValue('locale', $locale);
         $query->execute();
         $aData = $query->fetchAll();
-
-
-        $aDataExplodeDesc = explode('|', base64_decode($complectationCode));
-        $aDataExplodeCode = $this->getCodeByDescription($aDataExplodeDesc);
-        $aDataExplodeConditions = $this->getConditions($aDataExplodeCode);
-
-        $aDataGroup = array();
-        $aDataLex = array();
-        $aDataSourse = array();
-
-
-
-            $sqlLex = "
-        SELECT attribute.DescriptionId Id, cataloguecomponent.ComponentId
-        FROM cataloguecomponent
-        LEFT JOIN componentcp on (componentcp.ComponentId = cataloguecomponent.ComponentId)
-        LEFT JOIN condition_ on (condition_.ConditionId = componentcp.ConditionId)
-        LEFT JOIN attribute on (attribute.AttributeId = condition_.FilterCondition)
-        where cataloguecomponent.AssemblyLevel = '1' and cataloguecomponent.CatalogueId IS NULL
-        ";
-
-            $query = $this->conn->prepare($sqlLex);
-            $query->execute();
-            $aDataLex = $query->fetchAll();
-
-
-        foreach($aDataLex as $item)
-        {
-            $aDataGroup[$item['ComponentId']] = $item['ComponentId'];
-        }
-
-        foreach($aDataLex as $item)
-        {
-            foreach($aDataGroup as $value)
-            {
-               if  ($value == $item['ComponentId'])
-               {
-                   $aDataSourse[$item['ComponentId']][] = $item['Id'];
-               }
-            }
-        }
-
-
-  /*      $number = array(4,5,6);
-
-        foreach($aDataExplodeCode as $index=>$value)
-        {
-            if (!in_array($index, $number))
-            {
-                unset ($aDataExplodeCode[$index]);
-            }
-        }*/
-
-
-        foreach($aDataSourse as $index=>$value)
-        {
-            $n = 0;
-            foreach($aDataExplodeCode as $item)
-
-                {
-                    if (in_array($item, $value))
-                    {
-                       $n ++;
-                    }
-                }
-                if ($n == 0)
-                {
-                    unset ($aDataSourse[$index]);
-                }
-
-            }
-
-
 
 
         $groups = array();
 
 
         foreach($aData as $item){
-            $groups[$item['Code']] = array(
-                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['famDesc']),'utf8'),
-                Constants::OPTIONS  => array()
+            $groups[$item['main_group']] = array(
+                Constants::NAME     => iconv('cp1251', 'utf8', $item['name_main']),
+                Constants::OPTIONS  => array('picture' => $item ['num_index'],
+                    Constants::X1 => floor($item['x1']),
+                    Constants::X2 => floor($item['x2']),
+                    Constants::Y1 => floor($item['y1']),
+                    Constants::Y2 => floor($item['y2']),
+                )
             );
         }
 
@@ -324,108 +307,173 @@ class FordCatalogModel extends CatalogModel{
 
     public function getGroupSchemas($regionCode, $modelCode, $modificationCode, $groupCode)
     {
-  /*      $sqlNumPrigroup = "
-        SELECT *
-        FROM pri_groups_full
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-            AND pri_group = :groupCode
+        $modificationCode = explode('_', $modificationCode);
+
+        $sqlNumPrigroup = "
+        SELECT num_index
+        FROM `coordinates`
+        WHERE `model_id` LIKE :model_id
+        AND `label_name` LIKE CONCAT('1|', :groupCode, '%')
         ";
     	$query = $this->conn->prepare($sqlNumPrigroup);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('model_code', $modelCode);
+        $query->bindValue('model_id', $modificationCode[0]);
         $query->bindValue('groupCode', $groupCode);
         $query->execute();
 
-        $aData = $query->fetch();  
-       
-        $sqlNumModel = "
-        SELECT num_model
-        FROM part_images
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-        GROUP BY num_model
-        ";
-    	$query = $this->conn->prepare($sqlNumModel);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('model_code', $modelCode);
-        $query->execute();
-
-        $aNumModel = $query->fetch();
+        $aData = $query->fetchAll();
 
         $groupSchemas = array();
-    /*    foreach ($aData as $item)*//* {
-            $groupSchemas[$aData['num_image']] = array(Constants::NAME => $aData['num_image'], Constants::OPTIONS => array(
-              Constants::CD => $aData['catalog'].$aData['sub_dir'].$aData['sub_wheel'],
-                    	'num_model' => $aNumModel['num_model'],
-                        'num_image' => $aData['num_image']
-                ));
-        }*/
-		$groupSchemas = array();
+        foreach ($aData as $item) {
+            $groupSchemas[$item['num_index']] = array(Constants::NAME => $item['num_index'], Constants::OPTIONS => array());
+        }
+
         return $groupSchemas;
     }
 
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
 
-        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+        $modificationCode = explode('_', $modificationCode);
+
         $sql = "
-        SELECT attributeLex.Description famDesc, Code, attachmentdata.URL URL
-        FROM cataloguecomponent
-        INNER JOIN lexicon attributeLex ON (cataloguecomponent.DescriptionId = attributeLex.DescriptionId and attributeLex.LanguageId IN ('15') AND attributeLex.SourceId = '4')
-        LEFT JOIN  catalogueshortcuttocomponent ON (cataloguecomponent.ComponentId = catalogueshortcuttocomponent.ComponentId)
-        LEFT JOIN  catalogueshortcut ON (catalogueshortcuttocomponent.ShortcutId = catalogueshortcut.ShortcutId)
-        LEFT JOIN attachmentdata ON (catalogueshortcut.AttachmentId = attachmentdata.AttachmentId)
-        WHERE AssemblyLevel = '3' and cataloguecomponent.CatalogueId = :modificationCode and Code LIKE :groupCode
+        SELECT q.main_group, q.name_main, q.sub_group, q.name_subgroup, q.x1, q.x2, q.y1, q.y2, q.num_index
+        FROM (
+        SELECT DISTINCT
+              CASE
+                   WHEN chi.pnc_code <> '' THEN SUBSTR(chi.pnc_code, 1, 1)
+                   ELSE SUBSTR(chi.name_group, 1, LENGTH(chi.name_group) - 2)
+              END main_group,
+              CASE
+                  WHEN chi.pnc_code <> '' THEN CONCAT(SUBSTR(chi.pnc_code, 1, 3), '-',  SUBSTR(chi.pnc_code, 4, 2))
+                  ELSE SUBSTR(chi.name_group, LENGTH(chi.name_group) - 2, 2)
+              END sub_group,
+              l_main.lex_name name_main,
+              l_sector.lex_name name_subgroup,
+              co.x1 x1, co.x2 x2, co.y1 y1, co.y2 y2, co.num_index num_index
+        FROM feu.coord_header_info chi
+        LEFT JOIN coordinates co ON (co.model_id = :model_id AND SUBSTRING_INDEX(SUBSTRING_INDEX(co.label_name,'|',2),'|',-1) = REPLACE(CASE
+                  WHEN chi.pnc_code <> '' THEN CONCAT(SUBSTR(chi.pnc_code, 1, 3), '-',  SUBSTR(chi.pnc_code, 4, 2))
+                  ELSE SUBSTR(chi.name_group, LENGTH(chi.name_group) - 2, 2)
+              END, '-', ''))
+        LEFT JOIN lex l_main ON l_main.lang = :locale AND l_main.index_lex = chi.id_main
+        LEFT JOIN lex l_sector ON l_sector.lang = :locale AND l_sector.index_lex = chi.id_sector
+        WHERE chi.model_id = :model_id AND CASE
+                   WHEN chi.pnc_code <> '' THEN SUBSTR(chi.pnc_code, 1, 1)
+                   ELSE SUBSTR(chi.name_group, 1, LENGTH(chi.name_group) - 2)
+              END = :groupCode
+        ) q
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('groupCode', '%'.$groupCode.'%');
+        $query->bindValue('model_id', $modificationCode[0]);
+        $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('locale', $locale);
         $query->execute();
         $aData = $query->fetchAll();
+
 
         $subgroups = array();
 
 
         foreach($aData as $item){
-            $subgroups[$item['Code']] = array(
-                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['famDesc']),'utf8'),
-                Constants::OPTIONS  => array()
+            $subgroups[$item['sub_group']] = array(
+                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['name_subgroup']),'utf8'),
+                Constants::OPTIONS => array(
+                    'picture' => $item['num_index'],
+                    Constants::X1 => floor($item['x1']),
+                    Constants::X2 => floor($item['x2']),
+                    Constants::Y1 => floor($item['y1']),
+                    Constants::Y2 => floor($item['y2']),
+                )
             );
         }
-
-
         return $subgroups;
     }
 
     public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
-
-        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
+        $modificationCode = explode('_', $modificationCode);
+        $complectationCode = explode('|', base64_decode($complectationCode));
+        $subGroupCode = str_replace('-', '', $subGroupCode);
 
         $sql = "
-        SELECT attributeLex.Description famDesc, Code1.Code schemaCode, Code2.Code pncCode, attachmentdata.URL URL, attachmentdata.MIME MIME
-        FROM cataloguecomponent Code1
-        INNER JOIN lexicon attributeLex ON (Code1.DescriptionId = attributeLex.DescriptionId and attributeLex.LanguageId IN ('15') AND attributeLex.SourceId = '4')
-        INNER JOIN  cataloguecomponent Code2 ON (Code1.ComponentId = Code2.ParentComponentId and Code2.AssemblyLevel = 5)
-        INNER JOIN  hotspot ON (Code2.HotspotKey = hotspot.HotspotKey and Code2.ParentComponentId = hotspot.ComponentId)
-        INNER JOIN attachmentdata ON (hotspot.AttachmentId = attachmentdata.AttachmentId)
-        WHERE Code1.AssemblyLevel = '4' and Code1.CatalogueId = :modificationCode and Code1.Code LIKE :subGroupCode
+        SELECT cdi.*, cn.num_index
+        FROM feu.coord_detail_info cdi
+        LEFT JOIN coordinates_names cn ON (cn.model_id = :model_id AND cn.group_detail_sign = 2 AND cn.num_model_group = cdi.num_model_group)
+        WHERE cdi.model_id = :model_id
+        AND cdi.model_3gr LIKE CONCAT('%', :subGroupCode)
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('subGroupCode', '%'.$subGroupCode.'%');
+        $query->bindValue('model_id', $modificationCode[0]);
+        $query->bindValue('subGroupCode', $subGroupCode);
         $query->execute();
         $aData = $query->fetchAll();
 
+        foreach($aData as $index => &$item){
+            $alexs = explode(' ', $item['lex_filter']);
+            $aNames = explode(' ', $item['id_detail']);
+
+            $aDataLex = array();
+            $aDataName = array();
+
+            foreach ($alexs as $alex){
+
+                $sqllex = "
+                SELECT lex_name
+                FROM lex
+                WHERE lex.index_lex = :alex
+                AND lex.lang = 'EN'
+                ";
+                $query = $this->conn->prepare($sqllex);
+                $query->bindValue('alex', $alex);
+                $query->execute();
+                $aDataLex[] = $query->fetchColumn(0);
+            }
+
+            foreach ($aNames as $indexName => $sName){
+
+                $sqlname = "
+                SELECT lex_name
+                FROM lex
+                WHERE lex.index_lex = :sName
+                AND lex.lang = :locale
+                ";
+                $query = $this->conn->prepare($sqlname);
+                $query->bindValue('sName', $sName);
+                $query->bindValue('locale', $locale);
+                $query->execute();
+                $aDataName[$indexName] = $query->fetchColumn(0);
+
+                if ($aDataName[$indexName] == null) {
+                    $sqlname = "
+                    SELECT lex_name
+                    FROM lex
+                    WHERE lex.index_lex = :sName
+                    AND lex.lang = 'EN'
+                ";
+                    $query = $this->conn->prepare($sqlname);
+                    $query->bindValue('sName', $sName);
+                    $query->execute();
+                    $aDataName[$indexName] = $query->fetchColumn(0);
+                }
+            }
+
+            $item['id_detail'] = implode(', ', $aDataName);
+            $item['lex_filter'] = $aDataLex;
+
+            if (count(array_intersect($complectationCode, $aDataLex)) != count($aDataLex)){
+                unset ($aData[$index]);
+            }
+        }
+
         $schemas = array();
         foreach($aData as $item){
-            $schemas[$item['schemaCode']] = array(
-                Constants::NAME     => mb_strtoupper(iconv('cp1251', 'utf8', $item ['famDesc']),'utf8'),
-                Constants::OPTIONS  => array('grafik' =>
-                    substr($item['URL'], strpos($item['URL'], 'cgm')+4, strlen($item['URL'])).'.'.str_replace('cgm', 'jpg',$item['MIME']))
+            $schemas[$item['num_index']] = array(
+                Constants::NAME     => iconv('cp1251', 'utf8', $item['id_detail']),
+                Constants::OPTIONS  => array('cd' => $item['num_index'])
             );
         }
 
@@ -434,63 +482,103 @@ class FordCatalogModel extends CatalogModel{
 
     public function getSchema($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
-
-
-
-
         $schema = array();
-
-			
-		            $schema[urldecode($schemaCode)] = array(
+        $schema[urldecode($schemaCode)] = array(
                     Constants::NAME => $schemaCode,
                         Constants::OPTIONS => array()
                 );
-
         return $schema;
     }
 
     public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
     {
-        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
-
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
+        $modificationCode = explode('_', $modificationCode);
 
         $sqlPnc = "
-        SELECT attributeLex.Description famDesc, cataloguecomponent.Code pncCode, HotspotKey
-        FROM cataloguecomponent
-        INNER JOIN lexicon attributeLex ON (cataloguecomponent.DescriptionId = attributeLex.DescriptionId and attributeLex.LanguageId IN ('15') AND attributeLex.SourceId = '4')
-        WHERE cataloguecomponent.AssemblyLevel = 5 and cataloguecomponent.CatalogueId = :modificationCode and cataloguecomponent.Code LIKE :schemaCode
+        SELECT mp.*, SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 1), ',', -1) label,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 2), ',', -1) number,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 3), ',', -1) val_un,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 6), ',', -1) desc_lex_codes,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 8), ',', -1) start_date,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 9), ',', -1) end_date,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 10), ',', -1) quantity,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 16), ',', -1) number2,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 17), ',', -1) dates,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 29), ',', -1) new_lex_codes,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 30), ',', -1) kol,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 32), ',', -1) pr1,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 34), ',', -1) pr2,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 35), ',', -1) orig_dates,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 1), '!', -1) name_group,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 2), '!', -1) main_lex,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 3), '!', -1) group_lex,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 8), '!', -1) code_detail_full,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 9), '!', -1) id_detail,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 11), '!', -1) code_filter,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 14), '!', -1) name_detail,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 15), '!', -1) path_code_detail,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 17), '!', -1) model,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 18), '!', -1) model_1gr,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 19), '!', -1) model_2gr,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 20), '!', -1) model_3gr
+        FROM feu.mcpart1 mp
+        WHERE mp.pict_index = :schemaCode
         ";
 
     	$query = $this->conn->prepare($sqlPnc);
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('schemaCode', '%'.$schemaCode.'%');
+        $query->bindValue('schemaCode', $schemaCode);
         $query->execute();
 
         $aPncs = $query->fetchAll();
 
-
-
         foreach ($aPncs as &$aPnc)
         {
-            $aPnc['coords'] = array(0 => 0, 1 => 0, 2 => 0, 3 => 0);
+            $sqlSchemaLabels = "
+            SELECT x1, x2, y1, y2
+            FROM coordinates
+            WHERE model_id = :model_id
+            AND num_index = :schemaCode
+            AND label_name = :pnc
+           ";
+
+            $query = $this->conn->prepare($sqlSchemaLabels);
+            $query->bindValue('model_id', $modificationCode[0]);
+            $query->bindValue('schemaCode', $schemaCode);
+            $query->bindValue('pnc',  $aPnc['label']);
+
+
+            $query->execute();
+
+            $aPnc['clangjap'] = $query->fetchAll();
+            unset($aPnc);
         }
+
+        $aPncs = $this->getLexNames($aPncs, 1);
 
 
         $pncs = array();
 
+        foreach ($aPncs as $index=>$value) {
 
-        foreach ($aPncs as $item) {
+            if (!$value['clangjap'])
+            {
+                unset ($aPncs[$index]);
 
-            $pncs[$item['HotspotKey']][Constants::OPTIONS][Constants::COORDS][$item['HotspotKey']] = array(
-                Constants::X1 => 0,
-                Constants::Y1 => 0,
-                Constants::X2 => 0,
-                Constants::Y2 => 0);
+            }
 
-            $pncs[$item['HotspotKey']][Constants::NAME] = mb_strtoupper(iconv('cp1251', 'utf8', $item['famDesc']), 'utf8');
-
-
-
+            foreach ($value['clangjap'] as $item1)
+            {
+                $pncs[$value['label']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
+                    Constants::X1 => floor($item1['x1']),
+                    Constants::Y1 => ($item1['y1']),
+                    Constants::X2 => ($item1['x2']),
+                    Constants::Y2 => ($item1['y2']));
+            }
+        }
+        foreach ($aPncs as $item)
+        {
+            $pncs[$item['label']][Constants::NAME] = mb_strtoupper(iconv('cp1251', 'utf8', $item['desc_lex_codes']), 'utf8');
         }
 
 
@@ -568,159 +656,64 @@ $articuls = array();
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, $options)
     {
 
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
+        $modificationCode = explode('_', $modificationCode);
 
         $sqlPnc = "
-";
+        SELECT mp.*, SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 1), ',', -1) label,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 2), ',', -1) number,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 3), ',', -1) val_un,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 6), ',', -1) desc_lex_codes,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 8), ',', -1) start_date,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 9), ',', -1) end_date,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 10), ',', -1) quantity,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 16), ',', -1) number2,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 17), ',', -1) dates,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 29), ',', -1) new_lex_codes,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 30), ',', -1) kol,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 32), ',', -1) pr1,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 34), ',', -1) pr2,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 35), ',', -1) orig_dates,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 1), '!', -1) name_group,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 2), '!', -1) main_lex,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 3), '!', -1) group_lex,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 8), '!', -1) code_detail_full,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 9), '!', -1) id_detail,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 11), '!', -1) code_filter,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 14), '!', -1) name_detail,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 15), '!', -1) path_code_detail,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 17), '!', -1) model,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 18), '!', -1) model_1gr,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 19), '!', -1) model_2gr,
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 20), '!', -1) model_3gr
+        FROM feu.mcpart1 mp
+        WHERE mp.pict_index = :schemaCode
+        AND SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 1), ',', -1) = :pnc
+        ";
 
         $query = $this->conn->prepare($sqlPnc);
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('complectationCode', substr($complectationCode,1,strlen($complectationCode)-1));
-        $query->bindValue('subGroupId', $options['GrId']);
-        $query->bindValue('pncCode', $pncCode);
-        $query->bindValue('role',  substr($complectationCode, 0, 1));
-        $query->bindValue('korobka',  substr($complectationCode, 1, 1));
-        $query->bindValue('dataCar',  substr($complectationCode, 2, 8));
-
+        $query->bindValue('schemaCode', $options['cd']);
+        $query->bindValue('pnc', $pncCode);
         $query->execute();
 
         $aArticuls = $query->fetchAll();
 
-
-
-        $nach = array();
-
-
-
-
-        foreach ($aArticuls as $index => $value)
-        {
-
-            if (($value['Bildnummer'] != '--') && ((iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='только в комбинации с') ||
-                    (iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='подходит только при') || $value['KommNach']!='0'))
-            {
-                $nach[]=$value['KommNach'];
-            }
-
-        }
-
-
-        foreach ($aArticuls as $index => $value)
-        {
-
-            if (($value['Bildnummer'] == '--') && (count($nach) == 0))
-            {
-                unset ($aArticuls[$index]);
-            }
-
-        }
-
-        $aPred = array();
-        $aCurrent = array();
-        $aNext = array();
-        $nachIndex = 0;
-
-
-        foreach ($aArticuls as $index => $value)
-        {
-
-            if (($value['Bildnummer'] != '--') && ((iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='только в комбинации с') ||
-            (iconv('cp1251', 'utf8',trim($value['Komm_Benennung'])) ==='подходит только при') || $value['KommNach']!='0'))
-            {
-
-                $nachIndex = $index;
-                $nachPos = $value['Pos'];
-
-            }
-
-        }
-
-       $min = 10;
-        foreach ($aArticuls as $index => $value)
-        {
-                if (($value['Bildnummer'] == '--') && ($value['Pos'] > $aArticuls[$nachIndex]['Pos'])
-                    && (($value['Pos'] - $aArticuls[$nachIndex]['Pos']) < $min)) {
-                    $min =  $value['Pos'] - $aArticuls[$nachIndex]['Pos'];
-                    $minIndex = $index;
-                    $minPos = $value['Pos'];
-
-                }
-        }
-
-        $ba = array();
-        foreach ($aArticuls as $index => $value)
-        {
-            if (($value['Bildnummer'] == '--') && (($index==$minIndex)))
-            {
-
-                $pos = $value['Pos'];
-
-            }
-        }
-
-
-     foreach ($aArticuls as $index => $value)
-        {
-
-            if (($value['Bildnummer'] == '--') && ((($value['Pos']-$pos) > 2) || ($value['Pos']-$pos) < 0)) {
-
-                unset ($aArticuls[$index]);
-            }
-        }
-
-
-
+        $aArticuls = $this->getLexNames($aArticuls, 0);
 
         $articuls = array();
-        $kommnach = array();
-        $kommanach = array();
 
-        $kommvor = array();
-        $kommavor = array();
-
-        foreach ($aArticuls as $item)
-        {
-            if ($item ['KomVz']=='+') {$string[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = ' применяется';}
-            else if ($item ['KomVz']=='-') {$string[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = ' не применяется';}
-            else {$string[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = NULL;}
-            $a = $string[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']];
-
-            $kommnach[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']][$item['Komnach']] = iconv('cp1251', 'utf8', $item ['Komm_Benennung']);
-            (ksort($kommnach[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']]));
-            $kommanach[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = implode (' ', $kommnach[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']]);
-
-            $kommvor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']][$item['Komvor']] = iconv('cp1251', 'utf8', $item ['Komm_Vor']).' '.$item ['KomCode'];
-            (ksort($kommvor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']]));
-            $kommavor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = implode (' ', $kommvor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']]);
-
-        }
-
-      
         foreach ($aArticuls as $item) {
-        	 
-            
-            
-				$articuls[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']] = array(
-                Constants::NAME => mb_strtoupper(iconv('cp1251', 'utf8', $item ['Teil_Benennung']), 'utf8'),
+				$articuls[$item['number']] = array(
+                Constants::NAME =>  mb_strtoupper(iconv('cp1251', 'utf8', $item['desc_lex_codes']), 'utf8'),
                 Constants::OPTIONS => array(
-                    Constants::QUANTITY => $item['Menge'],
-                    Constants::START_DATE => ($item['Einsatz'] != '(null)')?$item['Einsatz']:99999999,
-                    Constants::END_DATE => ($item['Auslauf'] != '(null)')?$item['Auslauf']:99999999,
-                    'dopinf' => ($item['Teil_Zusatz'] != '(null)')?$item['Teil_Zusatz']:'',
-                    'kommanach' => $kommanach[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']],
-                    'kommavor' => ($item['Bildnummer'] != '--')?($kommavor[$item['Teil_HG'].$item['Teil_UG'].$item['Teil_Sachnummer']].($a?$a:NULL)):' ',
-
-
-
-
-                )
+                    Constants::QUANTITY => $item['quantity'],
+                    Constants::START_DATE => $item['start_date'],
+                    Constants::END_DATE => $item['end_date'],
+                    )
             );
-            
         }
-
-
         return $articuls;
     }
-
 
 
     public function getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode)
@@ -793,6 +786,58 @@ $articuls = array();
 
 
         return $Code;
+
+    }
+
+    private function getLexNames($aPncs, $removeHandDrive)
+    {
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
+
+        foreach ($aPncs as $index => &$aPnc){
+
+            $aNames = explode(' ', $aPnc['desc_lex_codes']);
+            $aDataName = array();
+
+            foreach ($aNames as $indexName => $sName){
+
+                $sqlname = "
+                SELECT lex_name
+                FROM lex
+                WHERE lex.index_lex = :sName
+                AND lex.lang = :locale
+                ";
+                $query = $this->conn->prepare($sqlname);
+                $query->bindValue('sName', $sName);
+                $query->bindValue('locale', $locale);
+                $query->execute();
+                $aDataName[$indexName] = $query->fetchColumn(0);
+
+                if ($aDataName[$indexName] == null) {
+                    $sqlname = "
+                    SELECT lex_name
+                    FROM lex
+                    WHERE lex.index_lex = :sName
+                    AND lex.lang = 'EN'
+                ";
+                    $query = $this->conn->prepare($sqlname);
+                    $query->bindValue('sName', $sName);
+                    $query->execute();
+                    $aDataName[$indexName] = $query->fetchColumn(0);
+                }
+
+            }
+            foreach ($aDataName as $indexaDataName =>$valueaDataName){
+                if (($valueaDataName == 'RH' or $valueaDataName == 'LH') & $removeHandDrive)
+                {
+                    unset($aDataName[$indexaDataName]);
+                }
+            }
+            $aPnc['desc_lex_codes'] = strtoupper(implode(', ', $aDataName));
+
+            unset($aPnc);
+        }
+
+        return ($aPncs);
 
     }
 
