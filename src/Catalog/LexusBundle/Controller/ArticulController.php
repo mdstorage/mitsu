@@ -7,6 +7,9 @@ use Catalog\CommonBundle\Controller\ArticulController as BaseController;
 use Symfony\Component\HttpFoundation\Request;
 use Catalog\LexusBundle\Controller\Traits\LexusArticulFilters;
 use Catalog\LexusBundle\Form\ComplectationType;
+use Catalog\LexusBundle\Components\LexusConstants;
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\Loader\YamlFileLoader;
 
 class ArticulController extends BaseController
 {
@@ -67,6 +70,23 @@ class ArticulController extends BaseController
 
         $complectationsForForm = $this->model()->getComplectationsForForm(array_intersect_key($complectations, array_flip($articulComplectations)));
 
+
+        foreach ($complectationsForForm as $index=>&$value)
+        {
+            foreach ($value['options']['option1'] as $ind => &$val)
+            {
+                $locale = $this->get('request')->getLocale();
+
+                if ($locale == 'ru'){
+                    $val = $this->get('translator')->trans($val, array(), LexusConstants::TRANSLATION_DOMAIN);
+                }
+
+                unset($val);
+
+            }
+            unset($value);
+        }
+
         $form = $this->createForm(new ComplectationType(), $complectationsForForm);
 
 
@@ -85,7 +105,7 @@ class ArticulController extends BaseController
         $complectationsKeys = array_keys($oContainer->getActiveModification()->getComplectations());
 
 
-        if (1 == count($complectationsKeys)) {
+        /*if (1 == count($complectationsKeys)) {
             return $this->redirect(
                 $this->generateUrl(
                     str_replace('complectations', 'groups', $this->get('request')->get('_route')),
@@ -95,7 +115,7 @@ class ArticulController extends BaseController
                     )
                 ), 301
             );
-        };
+        };*/
 
         return $this->render($this->bundle() . ':03_complectations.html.twig', array(
             'oContainer' => $oContainer,

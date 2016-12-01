@@ -1,16 +1,17 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogLexusBundle::lexus.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{% if  app.request.get('token') %} {{ path('catalog_lexus_token', parameters) }} {% else %} {{ path('catalog_lexus') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_lexus_token', parameters) }} {% else %} {{ path('catalog_lexus') }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
-    <a href="{{ path('catalog_lexus_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a>/
-    <a href="{{ path('catalog_lexus_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
-    <a href="{{ path('catalog_lexus_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
-    <a href="{{ path('catalog_lexus_schemas', parameters) }}">Схема</a> / Запчасти
+    <a href="{{ path('catalog_lexus_complectations', parameters) }}">{{'Комплектация'|trans}} ({{ oContainer.getActiveComplectation.getRuname}})</a>/
+    <a href="{{ path('catalog_lexus_groups', parameters) }}">{{'Группа запчастей'|trans}} ({{ oContainer.getActiveGroup.getRuname|trans({}, 'lexus') }})</a>/
+    <a href="{{ path('catalog_lexus_subgroups', parameters) }}">{{'Подгруппа запчастей'|trans}} ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
+    <a href="{{ path('catalog_lexus_schemas', parameters) }}">{{ 'Cхема'|trans }}</a> / {{'Запчасти'|trans}}
 {% endblock breadcrumbs %}
 
 
-{% block refGroupsHead %}<h4>Связанные подгруппы</h4>{% endblock refGroupsHead %}
+{% block refGroupsHead %}<h4>{{'Связанные подгруппы'|trans}}</h4>{% endblock refGroupsHead %}
 
 							{% block pncScript %}
                                 <script>
@@ -34,6 +35,7 @@
                                                 groupCode: '{{ oContainer.getActiveGroup.getCode }}',
                                                 subGroupCode: '{{ parameters.subGroupCode }}',
                                                 pncCode: '{{ pnc.getCode }}',
+                                                articul: '{{ parameters.articul }}',
                                                 options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}',
                                                 token: '{{ parameters.token }}'
                                             },
@@ -63,9 +65,11 @@
                             
 {% block image %}
 
-    <img src="{{ asset('bundles/cataloglexus/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveSchema.getOption('disk')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="600px" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+    <img src="{{ asset('bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveSchema.getOption('disk')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="600px" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 
 {% endblock image %}
+
+{% block groupRuname %}{{ oContainer.getActiveGroup.getRuname|trans({}, 'lexus') }}{% endblock groupRuname %}
 
 
 

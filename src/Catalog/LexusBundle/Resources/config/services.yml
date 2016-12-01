@@ -9,14 +9,20 @@ services:
             - { name: twig.extension}
   lexus.catalog.model:
     class: Catalog\LexusBundle\Models\LexusCatalogModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.lexus_connection']
 
   lexus.vin.model:
     class: Catalog\LexusBundle\Models\LexusVinModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.lexus_connection']
 
   lexus.articul.model:
     class: Catalog\LexusBundle\Models\LexusArticulModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.lexus_connection']
 
 

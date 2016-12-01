@@ -1,11 +1,12 @@
+{% trans_default_domain 'common' %}
 <table class="table small">
     {% if oContainer.getActivePnc.getArticuls %}
     <thead>
         <tr>
-            <th>Артикул</th>
-            <th>Период выпуска</th>
-            <th>Кол-во</th>
-            <th>Применяемость</th>
+            <th>{{ 'Артикул'|trans }}</th>
+            <th>{{ 'Период'|trans }}</th>
+            <th>{{ 'Кол-во'|trans }}</th>
+            <th>{{ 'Применяемость'|trans({}, 'lexus') }}</th>
         </tr>
     </thead>
 
@@ -25,7 +26,7 @@
     {% endif %}
     {% if not oContainer.getActivePnc.getArticuls %}
         <tbody>
-    Запчасть не применяется в выбранной комплектации
+        {{ 'Запчасть не применяется в выбранной комплектации'|trans }}
     </tbody>
     {% endif %}
 

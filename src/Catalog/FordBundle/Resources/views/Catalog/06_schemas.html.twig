@@ -21,10 +21,8 @@
                     </div>
 
                     <div class="row">
-                        <img src="{{ asset('bundles/catalogford/Images/'~schema.getOption('grafik')) }}" width="200" alt="{{ schema.getRuname }}"/>
+                        <img src="{{ asset('bundles/catalogford/Images/'~oContainer.getActiveModification.getOption('folder')~'/'~schema.getCode~'.png') }}" width="200" alt="{{ schema.getRuname }}"/>
                     </div>
-
-
         </a>
             </div>
     {% endif %}

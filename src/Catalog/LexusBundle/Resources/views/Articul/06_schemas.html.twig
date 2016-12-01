@@ -1,7 +1,8 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogLexusBundle::lexus.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{% if  app.request.get('token') %} {{ path('articul_lexus_find_token', parameters) }} {% else %} {{ path('articul_lexus_find') }} {% endif %}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_lexus_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('articul_lexus_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
+    <a href="{% if  app.request.get('token') %} {{ path('articul_lexus_find_token', parameters) }} {% else %} {{ path('articul_lexus_find') }} {% endif %}">{{'Регион, модель, модификация'|trans}}</a> / <a href="{{ path('articul_lexus_groups', parameters) }}">{{'Группа запчастей'|trans}}</a> / <a href="{{ path('articul_lexus_subgroups', parameters) }}">{{'Подгруппа запчастей'|trans}}</a> / {{'Схема'|trans}}
 {% endblock breadcrumbs %}
 
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
@@ -21,7 +22,7 @@
 
 
                 <div class="row">
-                    <img src="{{ asset('bundles/cataloglexus/Img/'~oContainer.getActiveRegion.getCode~'/'~schema.getOption('disk')~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getCode }}"/>
+                    <img src="{{ asset('bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~schema.getOption('disk')~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getCode }}"/>
                 </div>
 
 

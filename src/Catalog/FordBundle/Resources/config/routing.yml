@@ -16,19 +16,19 @@ catalog_ford_complectations:
   defaults:     {_controller: CatalogFordBundle:Catalog:complectations, token: null}
 
 catalog_ford_groups:
-  path:         /ford/{_locale}/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{token}
+  path:         /ford/{_locale}/catalog/3/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{token}
   defaults:     {_controller: CatalogFordBundle:Catalog:groups, token: null}
 
 catalog_ford_subgroups:
-  path:         /ford/{_locale}/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{token}
+  path:         /ford/{_locale}/catalog/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
   defaults:     {_controller: CatalogFordBundle:Catalog:subgroups, token: null}
 
 catalog_ford_schemas:
-  path:         /ford/{_locale}/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{token}
+  path:         /ford/{_locale}/catalog/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}
   defaults:     {_controller: CatalogFordBundle:Catalog:schemas, token: null}
 
 catalog_ford_schema:
-  path:         /ford/{_locale}/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
+  path:         /ford/{_locale}/catalog/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{token}
   defaults:     {_controller: CatalogFordBundle:Catalog:schema, token: null}
 
 catalog_ford_articuls:

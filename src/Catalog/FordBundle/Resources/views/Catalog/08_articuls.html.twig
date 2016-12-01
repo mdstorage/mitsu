@@ -3,10 +3,10 @@
     <thead>
         <tr>
             <th>Артикул</th>
-            <th>Наименование</th>
+            <th>Наменование</th>
             <th>Кол-во</th>
             <th>Период</th>
-            <th>Доп.информация</th>
+
         </tr>
     </thead>
 
@@ -16,8 +16,8 @@
             <td><a href="{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ articul.getCode }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a></td>
             <td>{{ articul.getRuname }}</td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }}</td>
-            <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|huyndai_date_convertor}} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|huyndai_date_convertor}}</td>
-            <td>{% if articul.getOption('option3') %} Код замены: </br> {{ articul.getOption('option3')}} {% endif %}</td>
+            <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))}} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))}}</td>
+
             
         </tr>
     {% endfor %}

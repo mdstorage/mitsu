@@ -1,3 +1,4 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Vin:02_result.html.twig' %}
 {% block specification %}
     <div class="row">
@@ -5,27 +6,27 @@
             <table class="table table-bordered">
 
                 <tr>
-                    <td>Марка:</td>
+                    <td>{{'Марка'|trans}}:</td>
                     <td>{{ result.marka }}</td>
                 </tr>
 
                 <tr>
-                    <td>Регион:</td>
+                    <td>{{'Регион'|trans}}:</td>
                     <td>{{ result.region }}</td>
                 </tr>
 
                 <tr>
-                    <td>Модель:</td>
+                    <td>{{'Модель'|trans}}:</td>
                     <td>{{ result.modelf }}</td>
                 </tr>
 
                 <tr>
-                    <td>Модификация:</td>
+                    <td>{{'Модификация'|trans}}:</td>
                     <td>{{ result.modif }}</td>
                 </tr>
 
                 <tr>
-                    <td>Комплектация:</td>
+                    <td>{{'Комплектация'|trans}}:</td>
                     <td>{% for compl in result.complectation %}
                         {% if compl %}
                         {{ compl }}<br>
@@ -35,17 +36,17 @@
                 </tr>
 
                 <tr>
-                    <td>Дата выпуска:</td>
+                    <td>{{'Дата выпуска'|trans}}:</td>
                     <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|lexus_date_convertor }}</td>
                 </tr>
 
                 <tr>
-                    <td>Цвет салона:</td>
+                    <td>{{'Цвет салона'|trans({}, 'lexus')}}:</td>
                     <td>{{ result.cvet_salona }}</td>
                 </tr>
 
                 <tr>
-                    <td>Цвет кузова:</td>
+                    <td>{{'Цвет кузова'|trans({}, 'lexus')}}:</td>
                     <td>{{ result.cvet_kuzova }}</td>
                 </tr>
 

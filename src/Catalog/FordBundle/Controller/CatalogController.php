@@ -109,12 +109,12 @@ class CatalogController extends BaseController{
             return $this->errorBilling('Сервис не оплачен');
         }
 
-        if(empty($complectationCode) or $complectationCode === '1'){
 
-            $complectationCode = $request->get('complectationCode');
-        }
-        else{
+        if(empty($complectationCode) or $complectationCode === '1'){
             $complectationCode = base64_encode(implode('|',$request->get('ComplectationType')));
+        }
+        else {
+            $complectationCode = $request->get('complectationCode');
         }
 
 
@@ -170,6 +170,12 @@ class CatalogController extends BaseController{
 
     public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null,  $articul = NULL, $token = NULL)
     {
+        $data = $this->get('my_token_info')->getStatus($token);
+
+        if(empty($data) & !empty($token)){
+            return $this->errorBilling('Сервис не оплачен');
+        }
+
         $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
         $oContainer = Factory::createContainer();
         $regions = $this->model()->getRegions();
@@ -197,7 +203,7 @@ class CatalogController extends BaseController{
             ->setActiveRegion($regionsCollection[$regionCode])
             ->setActiveModel($modelsCollection[$modelCode])
             ->setActiveModification($modificationsCollection[$modificationCode])
-            ->setActiveSchema(reset($schemas)?:Factory::createSchema())
+            ->setSchemas(Factory::createCollection($groupSchemas, Factory::createSchema()))
             ->setActiveGroup($groupsCollection[$groupCode]
                 ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup()))
             );
@@ -264,7 +270,7 @@ class CatalogController extends BaseController{
         };
 
         $schemaCodes = array_keys($oContainer->getSchemas());
-        if (1 == count($schemaCodes)) {
+        /*if (1 == count($schemaCodes)) {
             return $this->redirect(
                 $this->generateUrl(
                     str_replace('schemas', 'schema', $this->get('request')->get('_route')),
@@ -274,7 +280,7 @@ class CatalogController extends BaseController{
                     )
                 ), 301
             );
-        };
+        };*/
 
         return $this->render($this->bundle() . ':06_schemas.html.twig', array(
             'oContainer' => $oContainer,

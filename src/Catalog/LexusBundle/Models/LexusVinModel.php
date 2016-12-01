@@ -33,20 +33,27 @@ class LexusVinModel extends LexusCatalogModel {
 
         $aData = $query->fetchAll();
 
-        if ($aData) {
+        if ($aData){
             $complectations = $this->getVinComplectation($aData[0]['catalog'], $aData[0]['model_name'], $aData[0]['catalog_code']);
+
             $complectation = $complectations[$aData[0]['compl_code']];
 
-            for ($i = 1; $i < 11; $i++) {
-                $OnlyCompl[] = $complectation['options']['OPTION' . $i];
-            }
+
+        for ($i = 1; $i < 11; $i++)
+        {
+            $OnlyCompl[] = $complectation['options']['OPTION'.$i];
         }
+
+        }
+
+
+
 
         $result = array();
 
         if ($aData) {
             $result = array(
-                'marka' => 'LEXUS',
+                'marka' => 'TOYOTA',
                 'model' => urlencode($aData[0]['model_name']),
                 'modelf' => ($aData[0]['model_name']),
                 'modif' => $aData[0]['models_codes'],

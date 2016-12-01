@@ -1,17 +1,15 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogLexusBundle:Catalog:01_regions_models.html.twig' %}
 {% use 'CatalogLexusBundle::lexus.base.html.twig' %}
 {% block regionPath %}
-
-
-   {% if app.request.get('token') %}
-        {{ path('articul_lexus_find_token', {'regionCode': region.getCode, 'articul': app.request.get('articul')|trim, 'token': app.request.get('token'), 'callbackhost': app.request.get('callbackhost')}) }}
+    {% if app.request.get('token') %}
+        {{ path('articul_lexus_find_token', {'regionCode': region.getCode, 'token': app.request.get('token'), 'articul': app.request.get('articul')|trim, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% else %}
 
         {{ path('articul_lexus_find', {'regionCode': region.getCode, 'articul': app.request.get('articul')|trim, 'callbackhost': app.request.get('callbackhost')}) }}
 
     {% endif %}
-
 {% endblock regionPath %}
 
 {% block modificationScript %}
@@ -48,6 +46,6 @@
 {% endblock modificationScript %}
 
 {% block head %}
-    <h3>Запчасть с таким артикулом найдена в следующих моделях:</h3>
+    <h3>{{ 'Запчасть с таким артикулом найдена в следующих моделях'|trans }}:</h3>
     {{ parent() }}
 {% endblock head %}

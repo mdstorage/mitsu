@@ -1,12 +1,13 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogLexusBundle::lexus.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('vin_lexus',parameters) }}">Поиск по номеру кузова</a> /
-    <a href="{{ path('vin_lexus_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
-    <a href="{{ path('vin_lexus_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему
+    <a href="{{ path('vin_lexus',parameters) }}">{{ 'Поиск по номеру кузова'|trans({}, 'lexus') }}</a> /
+    <a href="{{ path('vin_lexus_groups', parameters) }}">{{'Группа запчастей'|trans}} ({{ oContainer.getActiveGroup.getRuname|trans({}, 'lexus') }})</a>/
+    <a href="{{ path('vin_lexus_subgroups', parameters) }}">{{'Подгруппа запчастей'|trans}} ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / {{ 'Выбрать схему'|trans }}
 {% endblock breadcrumbs %}
 
-
+{% block groupRuname %}{{ oContainer.getActiveGroup.getRuname|trans({}, 'lexus') }}{% endblock groupRuname %}
 
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
 
@@ -24,7 +25,7 @@
 
 
                 <div class="row">
-                    <img src="{{ asset('bundles/cataloglexus/Img/'~oContainer.getActiveRegion.getCode~'/'~schema.getOption('disk')~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getCode }}"/>
+                    <img src="{{ asset('bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~schema.getOption('disk')~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getCode }}"/>
                 </div>
 
 
