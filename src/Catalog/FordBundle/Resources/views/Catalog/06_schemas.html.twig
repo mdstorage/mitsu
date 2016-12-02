@@ -1,11 +1,12 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogFordBundle::ford.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{% if  app.request.get('token') %} {{ path('catalog_ford_token', parameters) }} {% else %} {{ path('catalog_ford') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_ford_token', parameters) }} {% else %} {{ path('catalog_ford') }} {% endif %}">{{ 'Регион, модель, модификация'|trans }} ({{ oContainer.getActiveRegion.getRuname }},
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
-    <a href="{{ path('catalog_ford_complectations', parameters) }}">Комплектация</a> /
-    <a href="{{ path('catalog_ford_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
-    <a href="{{ path('catalog_ford_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему
+    <a href="{{ path('catalog_ford_complectations', parameters) }}">{{ 'Комплектация'|trans }}</a> /
+    <a href="{{ path('catalog_ford_groups', parameters) }}">{{ 'Группа запчастей'|trans }} ({{ oContainer.getActiveGroup.getRuname}})</a>/
+    <a href="{{ path('catalog_ford_subgroups', parameters) }}">{{ 'Подгруппа запчастей'|trans }} ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / {{ 'Выбрать схему'|trans }}
 {% endblock breadcrumbs %}
 {% block complectation %}{% endblock complectation %}
 
