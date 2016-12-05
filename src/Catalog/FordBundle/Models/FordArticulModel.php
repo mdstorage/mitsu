@@ -6,32 +6,23 @@
  * Time: 16:58
  */
 
-namespace Catalog\BmwBundle\Models;
+namespace Catalog\FordBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
-use Catalog\BmwBundle\Components\BmwConstants;
+use Catalog\FordBundle\Components\FordConstants;
 use Symfony\Component\HttpFoundation\Request;
 
-class BmwArticulModel extends BmwCatalogModel{
+class FordArticulModel extends FordCatalogModel{
 
-    public function getArticulRegions($articulCode){
+    public function getArticulRegions($articulCode)
+    {
+        $aData = array('region' => 'EU');
 
-
-        $sql = "
-        select fztyp_ktlgausf from w_fztyp, w_btzeilen_verbauung
-        where btzeilenv_sachnr = :articulCode and fztyp_mospid = btzeilenv_mospid and fztyp_karosserie NOT LIKE 'ohne'
-        ";
-
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', substr($articulCode, 4, strlen($articulCode)));
-        $query->execute();
-
-        $aData = $query->fetchAll();
         $regions = array();
                   
         foreach($aData as $item)
         {
-            $regions[] = $item['fztyp_ktlgausf'];
+            $regions[] = $item;
 
 		}
         return array_unique($regions);
@@ -42,24 +33,29 @@ class BmwArticulModel extends BmwCatalogModel{
     {
 
         $sql = "
-        select fztyp_karosserie Kuzov, fztyp_baureihe Baureihe
-        from w_fztyp, w_btzeilen_verbauung
-        where btzeilenv_sachnr = :articulCode and fztyp_mospid = btzeilenv_mospid and fztyp_karosserie NOT LIKE 'ohne'
-        and fztyp_ktlgausf = :regionCode
+        SELECT feuc.auto_name
+        FROM mcpart1 mp
+        INNER JOIN coordinates_names cn ON (cn.num_index = mp.pict_index)
+        INNER JOIN feuc ON (feuc.model_id = cn.model_id)
+        WHERE SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 2), ',', -1) = :articulCode
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', substr($articul, 4, strlen($articul)));
-        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('articulCode', $articul);
         $query->execute();
 
         $aData = $query->fetchAll();
         $models = array();
 
+        foreach($aData as $item) {
 
-        foreach($aData as $item)
-        {
-            $models[] = $item['Baureihe'].'_'.$item['Kuzov'];
+            $mod = $item['auto_name'];
+            if (stripos($item['auto_name'], ' ') !== false && $item['auto_name'] != 'Fluids and Maintenance Products')
+            {
+                $mod = strtoupper(substr($item['auto_name'], 0 ,stripos($item['auto_name'], ' ')));
+            }
+
+            $models[] = urlencode($mod);
 
         }
 
@@ -69,13 +65,14 @@ class BmwArticulModel extends BmwCatalogModel{
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
         $sql = "
-        select btzeilenv_mospid
-        from w_btzeilen_verbauung
-        where btzeilenv_sachnr = :articulCode
+        SELECT f.*
+        FROM feuc f
+        WHERE SUBSTRING_INDEX(f.auto_name, ' ', 1) = :modelCode
+        ORDER BY auto_name
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articulCode', substr($articul, 4, strlen($articul)));
+        $query->bindValue('modelCode', urldecode($modelCode));
         $query->execute();
 
         $aData = $query->fetchAll();
@@ -84,7 +81,7 @@ class BmwArticulModel extends BmwCatalogModel{
 
         foreach($aData as $item)
         {
-            $modifications[] = $item['btzeilenv_mospid'];
+            $modifications[] = $item['model_id'].'_'.$item['auto_code'].'_'.$item['engine_type'];
 
         }
 

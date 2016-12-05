@@ -126,10 +126,6 @@ class FordCatalogModel extends CatalogModel{
         return $modifications;
     }
 
-    /**
-     Функция getComplectations() учитывает все положения руля и даты производства модификаций. Используется только в каталог_контроллере коммонБандла.
-     */
-
     public function getComplectations($regionCode, $modelCode, $modificationCode)
     {
         $locale = $this->requestStack->getCurrentRequest()->getLocale();
