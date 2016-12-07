@@ -99,7 +99,7 @@
 
 {% block image %}
 
-    <img src="{{ asset('bundles/cataloginfiniti/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/SECIMG/'~oContainer.getActiveSchema.getCode|slice(0,6)~'.gif') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+    <img src="{{ asset('bundles/catalognissan/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/SECIMG/'~oContainer.getActiveSchema.getCode|slice(0,6)~'.gif') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 
 {% endblock image %}
 

@@ -244,30 +244,30 @@ class FordCatalogModel extends CatalogModel{
 
         $modificationCode = explode('_', $modificationCode);
 
-
         $sql = "
         SELECT z.main_group, z.name_main, coordinates_names.num_index, x1, x2, y1, y2
         FROM (
 
-        SELECT q.main_group, q.name_main,
-        CASE WHEN main_group = @main_group
-        THEN @n := @n +1
-        ELSE @n :=1
-        END AS num, @main_group := main_group AS main_group_doubl
-        FROM (
+            SELECT q.main_group, q.name_main,
+            CASE WHEN main_group = @main_group
+            THEN @n := @n +1
+            ELSE @n := 1
+            END AS num, @main_group := main_group AS main_group_doubl
+            FROM (
 
-        SELECT DISTINCT
-        CASE
-        WHEN chi.pnc_code <> ''
-        THEN SUBSTR( chi.pnc_code, 1, 1 )
-        ELSE SUBSTR( chi.name_group, 1, LENGTH( chi.name_group ) -2)
-        END main_group, l_main.lex_name name_main
-        FROM feu.coord_header_info chi
-        LEFT JOIN lex l_main ON l_main.lang = :locale
-        AND l_main.index_lex = chi.id_main
-        WHERE chi.model_id = :model_id
-        )q
-        )z
+              SELECT DISTINCT
+              CASE
+              WHEN chi.pnc_code <> ''
+              THEN SUBSTR( chi.pnc_code, 1, 1 )
+              ELSE SUBSTR( chi.name_group, 1, LENGTH( chi.name_group ) -2)
+              END main_group, l_main.lex_name name_main
+                FROM feu.coord_header_info chi
+                LEFT JOIN lex l_main ON l_main.lang = :locale
+                AND l_main.index_lex = chi.id_main
+                WHERE chi.model_id = :model_id
+                )q
+
+            )z
         LEFT JOIN coordinates_names ON (coordinates_names.model_id = :model_id AND group_detail_sign LIKE '1'
         AND coordinates_names.num_model_group LIKE '0')
         LEFT JOIN coordinates ON (coordinates.model_id = coordinates_names.model_id AND coordinates.num_index = coordinates_names.num_index
@@ -460,7 +460,7 @@ class FordCatalogModel extends CatalogModel{
             $item['id_detail'] = implode(', ', $aDataName);
             $item['lex_filter'] = $aDataLex;
 
-            if (count(array_intersect($complectationCode, $aDataLex)) != count($aDataLex)){
+            if (count(array_intersect($complectationCode, $aDataLex)) != count($aDataLex) & $item['lex_filter'] != array('')){
                 unset ($aData[$index]);
             }
         }
@@ -785,8 +785,9 @@ $articuls = array();
 
     }
 
-    private function getLexNames($aPncs, $removeHandDrive)
+    public function getLexNames($aPncs, $removeHandDrive)
     {
+        /*$removeHandDrive - признак для удаления ненужных RH, LH (для Pncs равен 1, для articuls - 0)*/
         $locale = $this->requestStack->getCurrentRequest()->getLocale();
 
         foreach ($aPncs as $index => &$aPnc){

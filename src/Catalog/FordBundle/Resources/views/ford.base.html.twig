@@ -1,13 +1,11 @@
 {% block brand %}Ford{% endblock brand %}
 
-
 {% block catalogPathLogo %}
     {% if app.request.get('callbackhost')%}
         {{ path('catalog_ford', {'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain') }) }}
     {% else %}
         {{ path('catalog_ford', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTford'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }}
     {% endif %}
-
 
 {% endblock catalogPathLogo %}
 {% block catalogPath %}

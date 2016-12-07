@@ -15,7 +15,7 @@ class DefaultController extends Controller
     {
         $marks = array('Hyundai', 'KIA', 'Honda', 'Suzuki', 'Subaru', 'Mazda', 'Mercedes', 'Smart', 'BMW', 'BMWMoto', 'Mini', 'RollsRoyce', 'Saab', 'Audi', 'Volkswagen',
             'Seat', 'Skoda', 'HondaEurope', 'Fiat', 'FiatProfessional', 'Lancia', 'AlfaRomeo', 'Abarth', 'Nissan', 'Infiniti', 'LandRover', 'ChevroletUsa', 'Cadillac', 'Pontiac',
-            'Buick', 'Hummer', 'Saturn', 'GMC', 'Oldsmobile', 'Toyota', 'Lexus');
+            'Buick', 'Hummer', 'Saturn', 'GMC', 'Oldsmobile', 'Toyota', 'Lexus', 'Ford');
         sort($marks);
         reset($marks);
         return $this->render('AcmeTaskBundle:Default:index.html.twig', array('marks' => $marks));
