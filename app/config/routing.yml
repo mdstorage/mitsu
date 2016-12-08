@@ -26,7 +26,7 @@ catalog_landrover:
     requirements:
        _scheme: https
 
-ford:
+catalog_ford:
     resource: "@CatalogFordBundle/Resources/config/routing.yml"
     prefix:   /
     requirements:
