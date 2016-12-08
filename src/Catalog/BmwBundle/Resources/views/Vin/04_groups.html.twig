@@ -12,22 +12,31 @@
     {% block head %}<h3>{{ 'Выбрать группу запчастей'|trans }}:</h3>{% endblock head %}
     <div class="row">
         <div class="col-sm-12 col-md-12 col-xs-12 col-lg-12">
-        {% block groups %}
-            <div class="groups">
-                {% for group in oContainer.getGroups %}
-                    <div style=" height: 250px; " class="col-lg-2 col-md-3 col-sm-6 col-xs-6">
 
-                        <a href="{{ path('vin_bmw_schemas', parameters|merge({'groupCode': group.getCode})) }}">
+            {% block groups %}
+                <div class="groups">
+                    {% for group in oContainer.getGroups %}
 
-                            <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~group.getOption('Id')) }}" width="100%" alt="{{ group.getRuname }}"/>
-                            {{ group.getRuname }}
+                        <div style=" height: 250px; " class="col-lg-2 col-md-3 col-sm-6 col-xs-6">
 
-                        </a>
+                            <a href="{{ path('vin_bmw_schemas', parameters|merge({'groupCode': group.getCode})) }}">
 
-                    </div>
-                {% endfor %}
-            </div>
-        {% endblock groups %}
+                                <div class="row">
+                                    <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~group.getOption('Id')) }}" width="60%" alt="{{ group.getRuname }}"/>
+                                </div>
+
+                                <div class="row">
+                                    {{ group.getRuname }}
+                                </div>
+
+                            </a>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+            {% endblock groups %}
         </div>
     </div>
 {% endblock body %}

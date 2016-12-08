@@ -735,56 +735,6 @@ $articuls = array();
 
     }
 
-    public function getCodeByDescription($Description)
-    {
-        $Code = array();
-
-        foreach ($Description as $item)
-        {
-            $sqlCode = "
-        SELECT DescriptionId
-        FROM lexicon
-        where lexicon.Description = :item
-        ";
-
-            $query = $this->conn->prepare($sqlCode);
-            $query->bindValue('item', $item);
-            $query->execute();
-
-            $Code[] = $query->fetchColumn(0);
-
-        }
-
-
-        return $Code;
-
-    }
-
-    public function getConditions($Description)
-    {
-        $Code = array();
-
-        foreach ($Description as $item)
-        {
-            $sqlCode = "
-        SELECT AttributeId
-        FROM attribute
-        where DescriptionId = :item
-        ";
-
-            $query = $this->conn->prepare($sqlCode);
-            $query->bindValue('item', $item);
-            $query->execute();
-
-            $Code[] = $query->fetchColumn(0);
-
-        }
-
-
-        return $Code;
-
-    }
-
     public function getLexNames($aPncs, $removeHandDrive)
     {
         /*$removeHandDrive - признак для удаления ненужных RH, LH (для Pncs равен 1, для articuls - 0)*/
