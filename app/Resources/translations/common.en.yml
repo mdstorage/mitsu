@@ -23,7 +23,7 @@
 Выбрать подгруппу запчастей: To select the section
 
 Выбрать схему: To select the image
-Cхема: Image
+Схема: Image
 
 Выбрать запчасть: To select the part
 Запчасти: Parts
@@ -55,3 +55,6 @@ VIN должен состоять из 17 или 7 последних симво
 Запчасть с таким артикулом найдена в следующих моделях: This part number was found in the following models
 Артикул должен содержать не менее 8 знаков!: The article must contain at least 8 characters!
 Запчасть с таким артикулом не найдена.: The part with the same part number not found
+
+масштабирование изображения: image scaling
+прокрутка: scrolling

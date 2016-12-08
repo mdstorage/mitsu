@@ -4,9 +4,8 @@
             <div>
                 {% block modification %}
 
-                    <a href="{{ path('articul_huyndai_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
-                        <img src="{{ asset('bundles/cataloghuyndai/Images/titles/'~modification.getOption('option1')~'.png') }}" alt="{{ modification.getCode }}">
-
+                    <a href="{{ path('articul_ford_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
+                        <img src="{{ asset('bundles/catalogford/Images/'~modification.getOption('grafik')) }}" style ="width: 20%;" alt="{{ modification.getCode }}">
                         {{ modification.getRuname }}
                     </a>
 

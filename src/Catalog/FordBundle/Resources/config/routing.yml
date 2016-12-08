@@ -100,24 +100,24 @@ articul_ford_complectations:
   defaults:     {_controller: CatalogFordBundle:Articul:fordArticulComplectations, token: null}
 
 articul_ford_groups:
-  path:         /ford/{_locale}/articul/5/{regionCode}/{modelCode}/{modificationCode}/{articul}/{token}
+  path:         /ford/{_locale}/articul/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{articul}/{token}
   defaults:     {_controller: CatalogFordBundle:Articul:fordArticulgroups, token: null}
 
 articul_ford_subgroups:
-  path:         /ford/{_locale}/articul/6/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{articul}/{token}
+  path:         /ford/{_locale}/articul/6/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{articul}/{token}
   defaults:     {_controller: CatalogFordBundle:Articul:fordArticulSubgroups, token: null}
 
 articul_ford_schemas:
-  path:         /ford/{_locale}/articul/7/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
+  path:         /ford/{_locale}/articul/7/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{articul}/{token}
   defaults:     {_controller: CatalogFordBundle:Articul:fordArticulSchemas, token: null}
 
 articul_ford_schema:
-  path:         /ford/{_locale}/articul/8/{regionCode}/{modelCode}/{modificationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
+  path:         /ford/{_locale}/articul/8/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{schemaCode}/{articul}/{token}
   defaults:     {_controller: CatalogFordBundle:Articul:fordArticulSchema, token: null}
 
 articul_ford_articuls:
   path:         /ford/{_locale}/articul/9
-  defaults:     {_controller: CatalogFordBundle:Articul:fordArticularticuls}
+  defaults:     {_controller: CatalogFordBundle:Articul:articuls}
   requirements: {_method: POST}
 
 articul_ford_group:

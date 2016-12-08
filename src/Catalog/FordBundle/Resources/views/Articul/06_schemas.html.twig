@@ -1,24 +1,32 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
-{% use 'CatalogHuyndaiBundle::huyndai.base.html.twig' %}
+{% use 'CatalogFordBundle::ford.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('articul_huyndai_find') }}">Выбрать регион, модель, модификацию</a> / <a href="{{ path('articul_huyndai_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('articul_huyndai_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
+    <a href="{% if  app.request.get('token') %} {{ path('articul_ford_find_token', parameters) }} {% else %} {{ path('articul_ford_find') }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getRuname }},
+        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
+    <a href="{{ path('articul_ford_complectations', parameters) }}">{{'Комплектация'|trans}}</a> /
+    <a href="{{ path('articul_ford_groups', parameters) }}">{{'Группа запчастей'|trans}} ({{ oContainer.getActiveGroup.getRuname}})</a> /
+    <a href="{{ path('articul_ford_subgroups', parameters) }}">{{'Подгруппа запчастей'|trans}} ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
+    {{'Схема'|trans}}
 {% endblock breadcrumbs %}
 
+{% block complectation %}{% endblock complectation %}
 
+{% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
 
 {% block schema %}
     {% if schema.getCode is not empty %}
-            <div class="col-xs-3">
-        <a href="{{ path('articul_huyndai_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+        <div class="col-xs-3">
+            <a href="{{ path('articul_ford_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
 
-                    <div class="row">
-                        {{ schema.getCode }}
-                    </div>
-                    <div class="row">
-                        <img src="{{ asset('bundles/cataloghuyndai/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
-                    </div>
+                <div class="row">
+                    {{ schema.getRuname }}
+                </div>
 
-        </a>
-            </div>
+                <div class="row">
+                    <img src="{{ asset('bundles/catalogford/Images/'~oContainer.getActiveModification.getOption('folder')~'/'~schema.getCode~'.png') }}" width="200" alt="{{ schema.getRuname }}"/>
+                </div>
+            </a>
+        </div>
     {% endif %}
 {% endblock schema %}

@@ -168,7 +168,7 @@ class CatalogController extends BaseController{
         ));
     }
 
-    public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null,  $articul = NULL, $token = NULL)
+    public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $articul = NULL, $token = NULL)
     {
         $data = $this->get('my_token_info')->getStatus($token);
 
@@ -194,7 +194,6 @@ class CatalogController extends BaseController{
         $groupsCollection = Factory::createCollection($groups, Factory::createGroup())->getCollection();
         $subgroups = $this->model()->getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
 
-        $schemas = Factory::createCollection($groupSchemas, Factory::createSchema())->getCollection();
 
         if(empty($subgroups))
             return $this->error($request, 'Подгруппы не найдены.');
@@ -270,7 +269,7 @@ class CatalogController extends BaseController{
         };
 
         $schemaCodes = array_keys($oContainer->getSchemas());
-        /*if (1 == count($schemaCodes)) {
+        if (1 == count($schemaCodes)) {
             return $this->redirect(
                 $this->generateUrl(
                     str_replace('schemas', 'schema', $this->get('request')->get('_route')),
@@ -280,7 +279,7 @@ class CatalogController extends BaseController{
                     )
                 ), 301
             );
-        };*/
+        };
 
         return $this->render($this->bundle() . ':06_schemas.html.twig', array(
             'oContainer' => $oContainer,

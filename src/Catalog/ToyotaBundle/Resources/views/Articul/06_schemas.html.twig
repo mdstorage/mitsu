@@ -2,7 +2,10 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogToyotaBundle::toyota.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{% if  app.request.get('token') %} {{ path('articul_toyota_find_token', parameters) }} {% else %} {{ path('articul_toyota_find') }} {% endif %}">{{'Регион, модель, модификация'|trans}}</a> / <a href="{{ path('articul_toyota_groups', parameters) }}">{{'Группа запчастей'|trans}}</a> / <a href="{{ path('articul_toyota_subgroups', parameters) }}">{{'Подгруппа запчастей'|trans}}</a> / {{'Схема'|trans}}
+    <a href="{% if  app.request.get('token') %} {{ path('articul_toyota_find_token', parameters) }} {% else %} {{ path('articul_toyota_find') }} {% endif %}">{{'Регион, модель, модификация'|trans}}</a> /
+    <a href="{{ path('articul_toyota_groups', parameters) }}">{{'Группа запчастей'|trans}}</a> /
+    <a href="{{ path('articul_toyota_subgroups', parameters) }}">{{'Подгруппа запчастей'|trans}}</a> /
+    {{'Схема'|trans}}
 {% endblock breadcrumbs %}
 
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}

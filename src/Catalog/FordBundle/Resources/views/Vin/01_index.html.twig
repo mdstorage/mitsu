@@ -1,5 +1,5 @@
 {% extends 'CatalogCommonBundle:Vin:01_index.html.twig' %}
-{% use 'CatalogHuyndaiBundle::huyndai.base.html.twig' %}
+{% use 'CatalogFordBundle::ford.base.html.twig' %}
 {% block vinScript %}
     <script>
         $("#vin").keyup(function(event){
@@ -16,7 +16,7 @@
             $.ajax({
                 type:   'POST',
                 async:  false,
-                url:    "{% block vinAjaxPath %}{{ path('vin_huyndai_result') }}{% endblock vinAjaxPath %}",
+                url:    "{% block vinAjaxPath %}{{ path('vin_ford_result') }}{% endblock vinAjaxPath %}",
                 data:   { vin: $("#vin").val(). replace(/\s+/g, '') },
                 success: function(data) {
                     $("#vin-result").html(data);
