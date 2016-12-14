@@ -129,7 +129,7 @@
 
         {% for coords in pnc.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
 
-            <div class="dragger g_highlight" id="{{ pnc.getCode|md5 ~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" name="{{ pnc.getCode }}" style="position: absolute;
+            <div class="dragger g_highlight" id="{{ pnc.getCode|md5 ~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" name="{{ pnc.getCode|md5 }}" style="position: absolute;
                     width: calc({{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }}px - {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}px);
                     height: calc({{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}px - {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}px);
                     margin-top: {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}px;

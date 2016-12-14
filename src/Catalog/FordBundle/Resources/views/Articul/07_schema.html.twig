@@ -1,5 +1,5 @@
 {% trans_default_domain 'common' %}
-{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% extends 'CatalogFordBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogFordBundle::ford.base.html.twig' %}
 {% block breadcrumbs %}
     <a href="{% if  app.request.get('token') %} {{ path('articul_ford_find_token', parameters) }} {% else %} {{ path('articul_ford_find') }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getRuname }},
@@ -13,13 +13,11 @@
 
 {% block refGroupsHead %}<h4>{{ 'Связанные изображения'|trans }}</h4>{% endblock refGroupsHead %}
 
-{% block pnc %}
-    <div class="pnc glyphicon-plus small" id="pnc_{{ pnc.getCode|md5 }}">
-        ({{ pnc.getCode }}) {{ pnc.getRuname }}
-    </div>
-    {% block pncScript %}
+
+{% block pncScript %}
+        {% if pnc.isActive %}
         <script>
-            $(("#pnc_{{ pnc.getCode|md5 }}")).on("click", function(){
+            $(document).ready(function(){
                 {% block pncClick %}
                 $(("#articul_for_pnc{{ pnc.getCode|md5 }}")).toggleClass("hidden");
                 $(("#pnc_{{ pnc.getCode|md5 }}")).toggleClass("glyphicon-plus");
@@ -31,7 +29,7 @@
                     data:   { {% block ajaxData %}
                         regionCode: '{{ oContainer.getActiveRegion.getCode }}',
                         modelCode: '{{ oContainer.getActiveModel.getCode }}',
-                        modificationCode: '{{ oContainer.getActiveModification.getRuname }}',
+                        modificationCode: '{{ oContainer.getActiveModification.getCode }}',
                         complectationCode: '{{ oContainer.getActiveComplectation.getCode}}',
                         groupCode: '{{ oContainer.getActiveGroup.getCode}}',
                         subgroupCode: '{{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getCode }}',
@@ -48,20 +46,16 @@
                 $(("#pnc_{{ pnc.getCode|md5 }}")).toggleClass("small btn-default");
                 {% endblock pncClick %}
             });
-            $(("#pnc_{{ pnc.getCode|md5 }}")).on("mouseover", function(){
-                $(this).css("cursor", "pointer");
-                $(this).addClass("btn-info");
-            });
-            $(("#pnc_{{ pnc.getCode|md5 }}")).on("mouseout", function(){
-                $(this).removeClass("btn-info");
-            });
-        </script>
-    {% endblock pncScript %}
 
-{% endblock pnc %}
-                        {% block articulForPnc %}
-                            <div class="hidden" id="articul_for_pnc{{ pnc.getCode|md5  }}"></div>
-                        {% endblock articulForPnc %}
+        </script>
+        {% endif %}
+        {{ parent() }}
+{% endblock pncScript %}
+
+
+{% block articulForPnc %}
+        <div class="hidden" id="articul_for_pnc{{ pnc.getCode|md5  }}"></div>
+{% endblock articulForPnc %}
 
 {% block pncArea %}{% endblock pncArea %}
 {% set a = [] %}
@@ -82,7 +76,7 @@
     {% endfor %}
 {% endblock refGroups %}
 
-
+{#
 {% block imageviewport %}
 
     <div class="row">
@@ -130,6 +124,7 @@
 
     </div>
 {% endblock imageviewport %}
+
 
 {% block image1 %}
 
@@ -187,6 +182,7 @@
 {% endblock image1 %}
 
 
+
 {% block subGroupPath %}{{ path('articul_ford_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
 
 {% block summary %}
@@ -226,3 +222,4 @@
         </div>
     </div>
 {% endblock summary%}
+#}

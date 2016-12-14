@@ -149,10 +149,15 @@ class FordArticulModel extends FordCatalogModel{
 
         $sql = "
         SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 2), ',', -1) number,
-        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 20), '!', -1) model_3gr
+        CASE
+              WHEN chi.pnc_code <> ''
+              THEN SUBSTR( chi.pnc_code, 1, 1 )
+              ELSE SUBSTR( chi.name_group, 1, LENGTH( chi.name_group ) - 2)
+              END main_group
         FROM feu.mcpart1 mp
         LEFT JOIN coordinates_names cn ON (cn.num_index = mp.pict_index AND cn.model_id = :model_id AND cn.group_detail_sign = 2)
         LEFT JOIN feu.coord_detail_info cdi ON (cn.num_model_group = cdi.num_model_group AND cdi.model_id = :model_id)
+        INNER JOIN feu.coord_header_info chi ON (chi.model_id = :model_id AND chi.name_group = SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 1), '!', -1))
         HAVING
         number = :articul
         ";
@@ -168,7 +173,7 @@ class FordArticulModel extends FordCatalogModel{
 
         foreach($aData as $item)
 		{
-			$groups[] = substr($item['model_3gr'], 0, 1);
+			$groups[] = $item['main_group'];
 		}
 
         return array_unique($groups);
@@ -182,13 +187,16 @@ class FordArticulModel extends FordCatalogModel{
 
         $sql = "
         SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 2), ',', -1) number,
-        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 20), '!', -1) model_3gr
+              CASE
+                  WHEN chi.pnc_code <> '' THEN CONCAT(SUBSTR(chi.pnc_code, 1, 3), '-',  SUBSTR(chi.pnc_code, 4, 2))
+                  ELSE SUBSTR(chi.name_group, LENGTH(chi.name_group) - 2, 2)
+              END sub_group
         FROM feu.mcpart1 mp
-        LEFT JOIN coordinates_names cn ON (cn.num_index = mp.pict_index AND cn.model_id = :model_id AND cn.group_detail_sign = 2)
-        LEFT JOIN feu.coord_detail_info cdi ON (cn.num_model_group = cdi.num_model_group AND cdi.model_id = :model_id)
+        INNER JOIN coordinates_names cn ON (cn.num_index = mp.pict_index AND cn.model_id = :model_id AND cn.group_detail_sign = 2)
+        INNER JOIN feu.coord_detail_info cdi ON (cn.num_model_group = cdi.num_model_group AND cdi.model_id = :model_id)
+        INNER JOIN feu.coord_header_info chi ON (chi.model_id = :model_id AND chi.name_group = SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 1), '!', -1))
         HAVING
         number = :articul
-        AND SUBSTRING(model_3gr, 1, 1) = :groupCode
         ";
 
         $query = $this->conn->prepare($sql);
@@ -203,7 +211,7 @@ class FordArticulModel extends FordCatalogModel{
 
         foreach($aData as $item)
         {
-            $subgroups[] = substr($item['model_3gr'], 0, 3).'-'.substr($item['model_3gr'], -2);
+            $subgroups[] = $item['sub_group'];
         }
         return array_unique($subgroups);
     }
@@ -215,14 +223,12 @@ class FordArticulModel extends FordCatalogModel{
 
         $sql = "
         SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 2), ',', -1) number,
-               SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 20), '!', -1) model_3gr,
                pict_index
         FROM feu.mcpart1 mp
         INNER JOIN coordinates_names cn ON (cn.num_index = mp.pict_index AND cn.model_id = :model_id AND cn.group_detail_sign = 2)
-        INNER JOIN feu.coord_detail_info cdi ON (cn.num_model_group = cdi.num_model_group AND cdi.model_id = :model_id)
+        INNER JOIN feu.coord_detail_info cdi ON (cn.num_model_group = cdi.num_model_group AND cdi.model_id = :model_id AND cdi.model_3gr LIKE CONCAT('%', :subGroupCode, '%'))
         HAVING
         number = :articul
-        AND model_3gr = :subGroupCode
         ";
 
         $query = $this->conn->prepare($sql);
@@ -232,7 +238,6 @@ class FordArticulModel extends FordCatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
-
         $schemas = array();
 
         foreach($aData as $item)
@@ -260,6 +265,7 @@ class FordArticulModel extends FordCatalogModel{
         HAVING
         number = :articul
         AND pict_index = :schemaCode
+        ORDER BY label
         ";
 
         $query = $this->conn->prepare($sql);
