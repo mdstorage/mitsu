@@ -32,7 +32,7 @@
                     {% for schema in oContainer.getSchemas %}
                         <map name={{ schema.getCode }}>
                             {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
-                                {% if schema.getCode ==  subgroup.getOption('picture') %}
+                                {% if schema.getCode ==  subgroup.getOption('picture') or subgroup.getOption('picture') == NULL %}
                                 {% block area %}
                             <area shape="rect" coords="
                                     {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }},

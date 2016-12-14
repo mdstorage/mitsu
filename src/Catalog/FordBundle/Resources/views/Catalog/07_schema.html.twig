@@ -13,55 +13,56 @@
 
 {% block refGroupsHead %}<h4>{{ 'Связанные изображения'|trans }}</h4>{% endblock refGroupsHead %}
 
-							{% block pncScript %}
-                                <script>
-                                    $("#pnc_{{ pnc.getCode }}").on("click", function(){
-                                    	
-                                    	{% block pncClick %}
-                                    	
-                                    	$("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
-                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
-                                        
-                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
-                                        $.ajax({
-                                            type:   'POST',
-                                            async:  false,
-                                            url:    "{{ path('catalog_ford_articuls') }}",
-                                            data:   {
-                                                regionCode: '{{ oContainer.getActiveRegion.getCode }}',
-                                                modelCode: '{{ oContainer.getActiveModel.getCode }}',
-                                                modificationCode: '{{ oContainer.getActiveModification.getCode }}',
-                                                complectationCode: '{{ oContainer.getActiveComplectation.getCode }}',
-                                                groupCode: '{{ parameters.groupCode }}',
-                                                subGroupCode: '{{ parameters.subGroupCode }}',
-                                                pncCode: '{{ pnc.getCode }}',
-                                                options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'
-                                            },
-                                            success: function(data) {
-                                                $("#articul_for_pnc{{ pnc.getCode }}").html(data);
-                                            }
-                                        });
-                                        
-                                        $.scrollTo("#pnc_{{ pnc.getCode }}", {duration:1500});
-                                        
-                                        
-                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
-                                        $("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
-                                        
-                                        {% endblock pncClick %}
-                                    });
-                                    $("#pnc_{{ pnc.getCode }}").on("mouseover", function(){
-                                        $(this).css("cursor", "pointer");
-                                        $(this).addClass("btn-info");
-                                    });
-                                    $("#pnc_{{ pnc.getCode }}").on("mouseout", function(){
-                                        $(this).removeClass("btn-info");
-                                    });
-   
-                                </script>
-                            {% endblock pncScript %}
+{% block pnc %}
+    <div class="pnc glyphicon-plus small" id="pnc_{{ pnc.getCode|md5 }}">
+        ({{ pnc.getCode }}) {{ pnc.getRuname }}
+    </div>
+    {% block pncScript %}
+        <script>
+            $(("#pnc_{{ pnc.getCode|md5 }}")).on("click", function(){
+                {% block pncClick %}
+                $(("#articul_for_pnc{{ pnc.getCode|md5 }}")).toggleClass("hidden");
+                $(("#pnc_{{ pnc.getCode|md5 }}")).toggleClass("glyphicon-plus");
+                $(("#articul_for_pnc{{ pnc.getCode|md5 }}")).html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                $.ajax({
+                    type:   'POST',
+                    async:  false,
+                    url:    "{% block ajaxUrl %}{{ path('catalog_ford_articuls') }}{% endblock ajaxUrl %}",
+                    data:   { {% block ajaxData %}
+                        regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                        modelCode: '{{ oContainer.getActiveModel.getCode }}',
+                        modificationCode: '{{ oContainer.getActiveModification.getRuname }}',
+                        complectationCode: '{{ oContainer.getActiveComplectation.getCode}}',
+                        groupCode: '{{ oContainer.getActiveGroup.getCode}}',
+                        subgroupCode: '{{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getCode }}',
+                        pncCode: '{{ pnc.getCode }}',
+                        articul: '{{ parameters.articul }}',
+                        token: '{{ parameters.token }}',
+                        options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'
+                        {% endblock ajaxData %} },
+                    success: function(data) {
+                        $(("#articul_for_pnc{{ pnc.getCode|md5 }}")).html(data);
+                    }
+                });
+                $(("#pnc_{{ pnc.getCode|md5 }}")).toggleClass("glyphicon-minus");
+                $(("#pnc_{{ pnc.getCode|md5 }}")).toggleClass("small btn-default");
+                {% endblock pncClick %}
+            });
+            $(("#pnc_{{ pnc.getCode|md5 }}")).on("mouseover", function(){
+                $(this).css("cursor", "pointer");
+                $(this).addClass("btn-info");
+            });
+            $(("#pnc_{{ pnc.getCode|md5 }}")).on("mouseout", function(){
+                $(this).removeClass("btn-info");
+            });
+        </script>
+    {% endblock pncScript %}
 
-{% block pncArea %}{% endblock pncArea %}
+{% endblock pnc %}
+                        {% block articulForPnc %}
+                            <div class="hidden" id="articul_for_pnc{{ pnc.getCode|md5  }}"></div>
+                        {% endblock articulForPnc %}
+
 
 {% block refGroups %}
     {% for refGroup in oContainer.getActiveSchema.getRefGroups %}
@@ -128,7 +129,7 @@
 
         {% for coords in pnc.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
 
-            <div class="dragger g_highlight" id="{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" name="{{ pnc.getCode }}" style="position: absolute;
+            <div class="dragger g_highlight" id="{{ pnc.getCode|md5 ~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" name="{{ pnc.getCode|md5 }}" style="position: absolute;
                     width: calc({{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }}px - {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}px);
                     height: calc({{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}px - {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}px);
                     margin-top: {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}px;
@@ -140,7 +141,7 @@
             </div>
 
             <script>
-                $("#{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}").on("click", function(){
+                $(("#{{ pnc.getCode|md5 ~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}")).on("click", function(){
                     {{ block('pncClick') }}
                 });
 

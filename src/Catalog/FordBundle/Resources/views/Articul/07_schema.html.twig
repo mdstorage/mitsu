@@ -1,5 +1,5 @@
 {% trans_default_domain 'common' %}
-{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% extends 'CatalogFordBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogFordBundle::ford.base.html.twig' %}
 {% block breadcrumbs %}
     <a href="{% if  app.request.get('token') %} {{ path('articul_ford_find_token', parameters) }} {% else %} {{ path('articul_ford_find') }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getRuname }},
@@ -13,51 +13,55 @@
 
 {% block refGroupsHead %}<h4>{{ 'Связанные изображения'|trans }}</h4>{% endblock refGroupsHead %}
 
-							{% block pncScript %}
-                                {% if pnc.isActive %}
-                                    <script>
-                                        $(document).ready(function(){
-                                            {% block pncClick %}
-                                            $("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
-                                            $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
 
-                                            $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
-                                            $.ajax({
-                                                type:   'POST',
-                                                async:  false,
-                                                url:    "{% block ajaxUrl %}{{ path('articul_ford_articuls') }}{% endblock ajaxUrl %}",
-                                                data:   {
-                                                    regionCode: '{{ oContainer.getActiveRegion.getCode }}',
-                                                    modelCode: '{{ oContainer.getActiveModel.getCode }}',
-                                                    modificationCode: '{{ oContainer.getActiveModification.getCode }}',
-                                                    complectationCode: '{{ oContainer.getActiveComplectation.getCode }}',
-                                                    groupCode: '{{ oContainer.getActiveGroup.getCode }}',
-                                                    subGroupCode: '{{ parameters.subGroupCode }}',
-                                                    pncCode: '{{ pnc.getCode }}',
-                                                    articul: '{{ parameters.articul }}',
-                                                    token: '{{ app.request.get('token') }}',
-                                                    options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'  },
-                                                success: function(data) {
-                                                    $("#articul_for_pnc{{ pnc.getCode }}").html(data);
-                                                }
-                                            });
-                                            $.scrollTo("#pnc_{{ pnc.getCode }}", {duration:1500});
+{% block pncScript %}
+        {% if pnc.isActive %}
+        <script>
+            $(document).ready(function(){
+                {% block pncClick %}
+                $(("#articul_for_pnc{{ pnc.getCode|md5 }}")).toggleClass("hidden");
+                $(("#pnc_{{ pnc.getCode|md5 }}")).toggleClass("glyphicon-plus");
+                $(("#articul_for_pnc{{ pnc.getCode|md5 }}")).html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                $.ajax({
+                    type:   'POST',
+                    async:  false,
+                    url:    "{% block ajaxUrl %}{{ path('articul_ford_articuls') }}{% endblock ajaxUrl %}",
+                    data:   { {% block ajaxData %}
+                        regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                        modelCode: '{{ oContainer.getActiveModel.getCode }}',
+                        modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                        complectationCode: '{{ oContainer.getActiveComplectation.getCode}}',
+                        groupCode: '{{ oContainer.getActiveGroup.getCode}}',
+                        subgroupCode: '{{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getCode }}',
+                        pncCode: '{{ pnc.getCode }}',
+                        articul: '{{ parameters.articul }}',
+                        token: '{{ parameters.token }}',
+                        options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'
+                        {% endblock ajaxData %} },
+                    success: function(data) {
+                        $(("#articul_for_pnc{{ pnc.getCode|md5 }}")).html(data);
+                    }
+                });
+                $(("#pnc_{{ pnc.getCode|md5 }}")).toggleClass("glyphicon-minus");
+                $(("#pnc_{{ pnc.getCode|md5 }}")).toggleClass("small btn-default");
+                {% endblock pncClick %}
+            });
 
-                                            $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
-                                            $("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
-                                            {% endblock pncClick %}
-                                        });
-                                    </script>
+        </script>
+        {% endif %}
+        {{ parent() }}
+{% endblock pncScript %}
 
-                                {% endif %}
-                                {{ parent() }}
-                            {% endblock pncScript %}
+
+{% block articulForPnc %}
+        <div class="hidden" id="articul_for_pnc{{ pnc.getCode|md5  }}"></div>
+{% endblock articulForPnc %}
 
 {% block pncArea %}{% endblock pncArea %}
 {% set a = [] %}
 {% for pnc in oContainer.getActiveSchema.getPncs %}
     {% if pnc.isActive %}
-        {% set a = a|merge([pnc.getCode]) %}
+        {% set a = a|merge([pnc.getCode|md5]) %}
     {% endif %}
 {% endfor %}
 {% block activeLabel %}{{ a|join(',') }}{% endblock activeLabel %}
@@ -72,7 +76,7 @@
     {% endfor %}
 {% endblock refGroups %}
 
-
+{#
 {% block imageviewport %}
 
     <div class="row">
@@ -120,6 +124,7 @@
 
     </div>
 {% endblock imageviewport %}
+
 
 {% block image1 %}
 
@@ -177,6 +182,7 @@
 {% endblock image1 %}
 
 
+
 {% block subGroupPath %}{{ path('articul_ford_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
 
 {% block summary %}
@@ -216,3 +222,4 @@
         </div>
     </div>
 {% endblock summary%}
+#}

@@ -399,7 +399,7 @@ class FordCatalogModel extends CatalogModel{
         FROM feu.coord_detail_info cdi
         LEFT JOIN coordinates_names cn ON (cn.model_id = :model_id AND cn.group_detail_sign = 2 AND cn.num_model_group = cdi.num_model_group)
         WHERE cdi.model_id = :model_id
-        AND cdi.model_3gr LIKE CONCAT('%', :subGroupCode)
+        AND cdi.model_3gr LIKE CONCAT('%', :subGroupCode, '%')
         ";
 
         $query = $this->conn->prepare($sql);
@@ -408,12 +408,21 @@ class FordCatalogModel extends CatalogModel{
         $query->execute();
         $aData = $query->fetchAll();
 
+        /* $num = array('0', '33339');
+
+        foreach($aData as $index => $item){
+
+            if (!in_array($item['num_index'], $num))
+                unset ($aData[$index]);
+        }*/
+
         foreach($aData as $index => &$item){
             $alexs = explode(' ', $item['lex_filter']);
             $aNames = explode(' ', $item['id_detail']);
 
             $aDataLex = array();
             $aDataName = array();
+            $aDataLexCountParameters = array();
 
             foreach ($alexs as $alex){
 
@@ -427,7 +436,14 @@ class FordCatalogModel extends CatalogModel{
                 $query->bindValue('alex', $alex);
                 $query->execute();
                 $aDataLex[] = $query->fetchColumn(0);
+
+                $query = $this->conn->prepare($sqllex);
+                $query->bindValue('alex', $alex);
+                $query->execute();
+                $aDataLexCountParameters[substr($alex, 1, 1)][] = $query->fetchColumn(0);
+
             }
+
 
             foreach ($aNames as $indexName => $sName){
 
@@ -460,8 +476,11 @@ class FordCatalogModel extends CatalogModel{
             $item['id_detail'] = implode(', ', $aDataName);
             $item['lex_filter'] = $aDataLex;
 
-            if (count(array_intersect($complectationCode, $aDataLex)) != count($aDataLex) & $item['lex_filter'] != array('')){
-                unset ($aData[$index]);
+            /*var_dump($aDataLexCountParameters); die;
+            var_dump(array_intersect($complectationCode, $aDataLex)); die;*/
+
+            if (count(array_intersect($complectationCode, $aDataLex)) != count($aDataLexCountParameters) & $item['lex_filter'] != array('')){
+                /*unset ($aData[$index]);*/
             }
         }
 
@@ -520,6 +539,7 @@ class FordCatalogModel extends CatalogModel{
         SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 20), '!', -1) model_3gr
         FROM feu.mcpart1 mp
         WHERE mp.pict_index = :schemaCode
+        ORDER BY label
         ";
 
     	$query = $this->conn->prepare($sqlPnc);
@@ -565,7 +585,7 @@ class FordCatalogModel extends CatalogModel{
 
             foreach ($value['clangjap'] as $item1)
             {
-                $pncs[$value['label']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
+                $pncs[addslashes($value['label'])][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
                     Constants::X1 => floor($item1['x1']),
                     Constants::Y1 => ($item1['y1']),
                     Constants::X2 => ($item1['x2']),
@@ -574,7 +594,7 @@ class FordCatalogModel extends CatalogModel{
         }
         foreach ($aPncs as $item)
         {
-            $pncs[$item['label']][Constants::NAME] = mb_strtoupper(iconv('cp1251', 'utf8', $item['desc_lex_codes']), 'utf8');
+            $pncs[addslashes($item['label'])][Constants::NAME] = mb_strtoupper(iconv('cp1251', 'utf8', $item['desc_lex_codes']), 'utf8');
         }
 
 
@@ -652,6 +672,9 @@ $articuls = array();
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, $options)
     {
 
+        if (strpos($pncCode, 'lt;')){
+            $pncCode = substr($pncCode, strpos($pncCode, 'lt;')+3, strlen($pncCode));
+        }
         $locale = $this->requestStack->getCurrentRequest()->getLocale();
         $modificationCode = explode('_', $modificationCode);
 
@@ -683,13 +706,13 @@ $articuls = array();
         SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 19), '!', -1) model_2gr,
         SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 20), '!', -1) model_3gr
         FROM feu.mcpart1 mp
-        WHERE mp.pict_index = :schemaCode
-        AND SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 1), ',', -1) = :pnc
+        HAVING mp.pict_index = :schemaCode
+        AND label LIKE :pnc
         ";
 
         $query = $this->conn->prepare($sqlPnc);
         $query->bindValue('schemaCode', $options['cd']);
-        $query->bindValue('pnc', $pncCode);
+        $query->bindValue('pnc', '%'.$pncCode.'%');
         $query->execute();
 
         $aArticuls = $query->fetchAll();
