@@ -158,8 +158,8 @@ class FordArticulModel extends FordCatalogModel{
         LEFT JOIN coordinates_names cn ON (cn.num_index = mp.pict_index AND cn.model_id = :model_id AND cn.group_detail_sign = 2)
         LEFT JOIN feu.coord_detail_info cdi ON (cn.num_model_group = cdi.num_model_group AND cdi.model_id = :model_id)
         INNER JOIN feu.coord_header_info chi ON (chi.model_id = :model_id AND chi.name_group = SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 1), '!', -1))
-        HAVING
-        number = :articul
+        WHERE
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 2), ',', -1) = :articul
         ";
 
         $query = $this->conn->prepare($sql);
@@ -195,8 +195,8 @@ class FordArticulModel extends FordCatalogModel{
         INNER JOIN coordinates_names cn ON (cn.num_index = mp.pict_index AND cn.model_id = :model_id AND cn.group_detail_sign = 2)
         INNER JOIN feu.coord_detail_info cdi ON (cn.num_model_group = cdi.num_model_group AND cdi.model_id = :model_id)
         INNER JOIN feu.coord_header_info chi ON (chi.model_id = :model_id AND chi.name_group = SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param2, '!', 1), '!', -1))
-        HAVING
-        number = :articul
+        WHERE
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 2), ',', -1) = :articul
         ";
 
         $query = $this->conn->prepare($sql);
@@ -227,8 +227,8 @@ class FordArticulModel extends FordCatalogModel{
         FROM feu.mcpart1 mp
         INNER JOIN coordinates_names cn ON (cn.num_index = mp.pict_index AND cn.model_id = :model_id AND cn.group_detail_sign = 2)
         INNER JOIN feu.coord_detail_info cdi ON (cn.num_model_group = cdi.num_model_group AND cdi.model_id = :model_id AND cdi.model_3gr LIKE CONCAT('%', :subGroupCode, '%'))
-        HAVING
-        number = :articul
+        WHERE
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 2), ',', -1) = :articul
         ";
 
         $query = $this->conn->prepare($sql);
@@ -262,8 +262,8 @@ class FordArticulModel extends FordCatalogModel{
         FROM feu.mcpart1 mp
         LEFT JOIN coordinates_names cn ON (cn.num_index = mp.pict_index AND cn.model_id = :model_id AND cn.group_detail_sign = 2)
         LEFT JOIN feu.coord_detail_info cdi ON (cn.num_model_group = cdi.num_model_group AND cdi.model_id = :model_id)
-        HAVING
-        number = :articul
+        WHERE
+        SUBSTRING_INDEX(SUBSTRING_INDEX(mp.param1, ',', 2), ',', -1) = :articul
         AND pict_index = :schemaCode
         ORDER BY label
         ";
