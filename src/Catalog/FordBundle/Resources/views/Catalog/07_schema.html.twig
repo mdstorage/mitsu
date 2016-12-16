@@ -59,10 +59,11 @@
     {% endblock pncScript %}
 
 {% endblock pnc %}
-                        {% block articulForPnc %}
-                            <div class="hidden" id="articul_for_pnc{{ pnc.getCode|md5  }}"></div>
-                        {% endblock articulForPnc %}
 
+
+{% block articulForPnc %}
+    <div class="hidden" id="articul_for_pnc{{ pnc.getCode|md5  }}"></div>
+{% endblock articulForPnc %}
 
 {% block refGroups %}
     {% for refGroup in oContainer.getActiveSchema.getRefGroups %}
@@ -74,9 +75,7 @@
     {% endfor %}
 {% endblock refGroups %}
 
-
 {% block imageviewport %}
-
     <div class="row">
         <div class="row" style="height: 600px;">
             <div class="guayaquil_unit_icons">
@@ -84,78 +83,53 @@
                     <img src="{{ asset('bundles/catalogcommon/images/zoom.png') }}"/>
                 </div>
             </div>
-
             <div id="viewport" class="inline_block" style="position: absolute; border: 1px solid rgb(119, 119, 119); background: white none repeat scroll 0% 0%; height:600px; overflow: auto;">
                 {{ block('image1') }}
             </div>
-
         </div>
-
         <br>
-
         <div class="row">
             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-
                 <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                     <img src="{{ asset('bundles/catalogcommon/images/mouse_wheel.png') }}"/>
                 </div>
-
                 <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
                     - {{ 'масштабирование изображения'|trans }}
                 </div>
             </div>
-
             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-
                 <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                     <img src="{{ asset('bundles/catalogcommon/images/lmb.png') }}">
                     <img src="{{ asset('bundles/catalogcommon/images/move.png') }}"/>
                 </div>
-
                 <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                     - {{ 'прокрутка'|trans }}
                 </div>
             </div>
-
         </div>
-
-
     </div>
 {% endblock imageviewport %}
 
 {% block image1 %}
-
     {% for pnc in oContainer.getActiveSchema.getPncs %}
-
         {% for coords in pnc.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
-
             <div class="dragger g_highlight" id="{{ pnc.getCode|md5 ~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" name="{{ pnc.getCode|md5 }}" style="position: absolute;
                     width: calc({{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }}px - {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}px);
                     height: calc({{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}px - {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}px);
                     margin-top: {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}px;
                     margin-left: {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}px;
                     overflow: hidden; cursor: pointer">
-
                 <img src="{{ asset('bundles/catalogcommon/images/spacer.gif') }}" title="{{ pnc.getCode }}" />
-
             </div>
-
             <script>
                 $(("#{{ pnc.getCode|md5 ~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}")).on("click", function(){
                     {{ block('pncClick') }}
                 });
-
             </script>
-
         {% endfor %}
-
     {% endfor %}
-
     {% for refGroup in oContainer.getActiveSchema.getRefGroups %}
-
-
         {% for coords in refGroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
-
             <a href="{{ block('subGroupPath') }}">
                 <div class="dragger g_highlight" name="{% block dataNamerefGroup %}{{ refGroup.getCode }}{% endblock dataNamerefGroup %}" id="{{ refGroup.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" style="position: absolute;
                         width: calc({{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }}px - {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}px);
@@ -163,21 +137,13 @@
                         margin-top: {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}px;
                         margin-left: {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}px;
                         overflow: hidden; cursor: pointer">
-
                     <img src="{{ asset('bundles/catalogcommon/images/spacer.gif') }}"/>
                 </div>
             </a>
-
         {% endfor %}
-
     {% endfor %}
-
-
     <img class="dragger" onload="rescaleImage(-100);" src="{{ asset('bundles/catalogford/Images/'~oContainer.getActiveModification.getOption('folder')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
-
-
 {% endblock image1 %}
-
 
 {% block subGroupPath %}{{ path('catalog_ford_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
 
