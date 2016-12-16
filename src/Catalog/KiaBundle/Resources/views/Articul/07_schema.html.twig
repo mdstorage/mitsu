@@ -1,4 +1,5 @@
-{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% trans_default_domain 'common' %}
+{% extends 'CatalogKiaBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogKiaBundle::kia.base.html.twig' %}
 {% block breadcrumbs %}
     <a href="{% if  app.request.get('token') %} {{ path('articul_kia_find_token', parameters) }} {% else %} {{ path('articul_kia_find') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
@@ -9,13 +10,9 @@
     <a href="{{ path('articul_kia_schemas', parameters) }}">Схема</a> / Запчасти
 {% endblock breadcrumbs %}
 
-{% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
+{% block refGroupsHead %}<h4>{{ 'Связанные изображения'|trans }}</h4>{% endblock refGroupsHead %}
 
-{% block image %}
-    <img src="{{ ('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?
-    asset('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png') :
-    asset('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'1.png') }}" width="500px" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
-{% endblock image %}
+
 
 {% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{{ path('catalog_kia_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
@@ -23,48 +20,37 @@
     {% if pnc.isActive %}
         <script>
             $(document).ready(function(){
+
                 {% block pncClick %}
-                                    	
-                                    	$("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
-                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
-                                        
-                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
-                                        $.ajax({
-                                            type:   'POST',
-                                            async:  false,
-                                            url:    "{{ path('articul_kia_articuls') }}",
-                                            data:   {
-                                                regionCode: '{{ oContainer.getActiveRegion.getCode }}',
-                                                modelCode: '{{ oContainer.getActiveModel.getCode }}',
-                                                modificationCode: '{{ oContainer.getActiveModification.getCode }}',
-                                                complectationCode: '{{ oContainer.getActiveComplectation.getCode }}',
-                                                subGroupCode: '{{ parameters.subGroupCode }}',
-                                                pncCode: '{{ pnc.getCode }}',
-                                                articul: '{{ parameters.articul }}',
-                                                token: '{{ parameters.token }}',
-                                                options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'  },
-                                            success: function(data) {
-                                                $("#articul_for_pnc{{ pnc.getCode }}").html(data);
-                                            }
-                                        });
-                                        
-                                        $.scrollTo("#pnc_{{ pnc.getCode }}", {duration:1500});
-                                        
-                                        
-                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
-                                        $("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
-                                        
-                                        {% endblock pncClick %}
+                $(("#articul_for_pnc{{ pnc.getCode }}")).toggleClass("hidden");
+                $(("#pnc_{{ pnc.getCode }}")).toggleClass("glyphicon-plus");
+                $(("#articul_for_pnc{{ pnc.getCode }}")).html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                $.ajax({
+                    type:   'POST',
+                    async:  false,
+                    url:    "{% block ajaxUrl %}{{ path('articul_kia_articuls') }}{% endblock ajaxUrl %}",
+                    data:   { {% block ajaxData %}
+                        regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                        modelCode: '{{ oContainer.getActiveModel.getCode }}',
+                        modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                        complectationCode: '{{ oContainer.getActiveComplectation.getCode}}',
+                        subgroupCode: '{{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getCode }}',
+                        pncCode: '{{ pnc.getCode }}',
+                        articul: '{{ parameters.articul }}',
+                        token: '{{ parameters.token }}',
+                        options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}'
+                        {% endblock ajaxData %} },
+                    success: function(data) {
+                        $(("#articul_for_pnc{{ pnc.getCode }}")).html(data);
+                    }
+                });
+                $(("#pnc_{{ pnc.getCode }}")).toggleClass("glyphicon-minus");
+                $(("#pnc_{{ pnc.getCode }}")).toggleClass("small btn-default");
+                $('.g_highlight[name="{{ pnc.getCode }}"]').toggleClass('g_highlight_lock');
+                {% endblock pncClick %}
             });
         </script>
 
     {% endif %}
     {{ parent() }}
 {% endblock pncScript %}
-{% set a = [] %}
-{% for pnc in oContainer.getActiveSchema.getPncs %}
-    {% if pnc.isActive %}
-        {% set a = a|merge([pnc.getCode]) %}
-    {% endif %}
-{% endfor %}
-{% block activeLabel %}{{ a|join(',') }}{% endblock activeLabel %}
