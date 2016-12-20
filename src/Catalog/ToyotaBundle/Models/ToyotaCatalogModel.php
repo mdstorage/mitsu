@@ -661,7 +661,8 @@ class ToyotaCatalogModel extends CatalogModel{
 
                Constants::NAME => $item['desc_en'],
                    Constants::OPTIONS => array(
-                       'picture' => $item['pic_code']
+                       'picture' => $item['pic_code'],
+                       'locale_name' => $item['desc_en']
                    )
 
                );

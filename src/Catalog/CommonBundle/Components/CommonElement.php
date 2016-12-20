@@ -3,6 +3,8 @@ namespace Catalog\CommonBundle\Components;
 
 
 use Catalog\CommonBundle\Components\Interfaces\CommonInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
 

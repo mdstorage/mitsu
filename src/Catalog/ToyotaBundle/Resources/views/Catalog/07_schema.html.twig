@@ -1,13 +1,14 @@
 {% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogToyotaBundle::toyota.base.html.twig' %}
+    {% set loc = app.request.get('_locale')~'_'~app.request.get('_locale')|upper %}
 {% block breadcrumbs %}
     <a href="{% if  app.request.get('token') %} {{ path('catalog_toyota_token', parameters) }} {% else %} {{ path('catalog_toyota') }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
     <a href="{{ path('catalog_toyota_complectations', parameters) }}">{{'Комплектация'|trans}} ({{ oContainer.getActiveComplectation.getRuname}})</a>/
     <a href="{{ path('catalog_toyota_groups', parameters) }}">{{'Группа запчастей'|trans}} ({{ oContainer.getActiveGroup.getRuname|trans({}, 'toyota') }})</a>/
-    <a href="{{ path('catalog_toyota_subgroups', parameters) }}">{{'Подгруппа запчастей'|trans}} ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
-    <a href="{{ path('catalog_toyota_schemas', parameters) }}">{{ 'Cхема'|trans }}</a> / {{'Запчасти'|trans}}
+    <a href="{{ path('catalog_toyota_subgroups', parameters) }}">{{'Подгруппа запчастей'|trans}} ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getOption('locale_name')|trans({}, 'toyota', loc) }})</a> /
+    <a href="{{ path('catalog_toyota_schemas', parameters) }}">{{ 'Схема'|trans }}</a> / {{'Запчасти'|trans}}
 {% endblock breadcrumbs %}
 
 
@@ -70,6 +71,9 @@
 {% endblock image %}
 
 {% block groupRuname %}{{ oContainer.getActiveGroup.getRuname|trans({}, 'toyota') }}{% endblock groupRuname %}
+{% block subGroupRuname %}
+    {{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getOption('locale_name')|trans({}, 'toyota', loc) }}
+{% endblock subGroupRuname %}
 
 
 
