@@ -21,7 +21,7 @@ class TokenData
 
         $aData = array();
         if($curl = curl_init()) {
-            curl_setopt($curl, CURLOPT_URL, "http://billing.iauto.by/get/?token=".$token);
+            curl_setopt($curl, CURLOPT_URL, "https://icar.by/get/?token=".$token);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($curl, CURLOPT_POST, true);
             curl_setopt($curl, CURLOPT_POSTFIELDS, '_server='.json_encode($_SERVER));

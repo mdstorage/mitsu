@@ -7,7 +7,7 @@
  */
 namespace Catalog\ToyotaBundle\Components;
 class ToyotaConstants {
-    const LOCALE    = 'ru_RU';
+    const LOCALE    = 'en_EN';
     const TRANSLATION_RESOURCE = '/../../../../app/Resources/translations/toyota.ru.yml';
     const TRANSLATION_DOMAIN = 'toyota';
     const PROD_YEAR = 'prod_year';
