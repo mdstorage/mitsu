@@ -5,7 +5,7 @@
             {% block modification %}
 
                 <a href="{{ path('catalog_kia_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
-                <img src="{{ asset('bundles/catalogkia/Images/titles/'~modification.getOption('option1')~'.png') }}" alt="{{ modification.getCode }}">
+                <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Images/titles/'~modification.getOption('option1')~'.png') }}" alt="{{ modification.getCode }}">
 
                     {{ modification.getRuname }}
                 </a>

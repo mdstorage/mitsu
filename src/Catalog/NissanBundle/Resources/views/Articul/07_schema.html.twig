@@ -14,7 +14,7 @@
 {% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
 
 {% block image %}
-    <img src="{{ asset('bundles/catalognissan/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/SECIMG/'~oContainer.getActiveSchema.getCode|slice(0,6)~'.gif') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>{% endblock image %}
+    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalognissan/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/SECIMG/'~oContainer.getActiveSchema.getCode|slice(0,6)~'.gif') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>{% endblock image %}
 
 {% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{{ path('articul_nissan_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
@@ -25,7 +25,7 @@
                 {% block pncClick %}
                 $(addslashes("#articul_for_pnc{{ pnc.getCode }}")).toggleClass("hidden");
                 $(addslashes("#pnc_{{ pnc.getCode }}")).toggleClass("glyphicon-plus");
-                $(addslashes("#articul_for_pnc{{ pnc.getCode }}")).html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                $(addslashes("#articul_for_pnc{{ pnc.getCode }}")).html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogcommon/images/loading.gif") }} height="15px" />');
                 $.ajax({
                     type:   'POST',
                     async:  false,

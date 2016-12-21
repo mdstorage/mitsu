@@ -25,7 +25,7 @@
                                     {{ subgroup.getRuname }}
                                 </div>
                                 <div class="row">
-                                    <img src="{{ asset('bundles/catalogmitsubishi/images/'~oContainer.getActiveRegion.getCode~'/'~subgroup.getOption('picture')~'.png') }}" alt="{{ subgroup.getRuname }}"/>
+                                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmitsubishi/images/'~oContainer.getActiveRegion.getCode~'/'~subgroup.getOption('picture')~'.png') }}" alt="{{ subgroup.getRuname }}"/>
                                 </div>
                             </a>
 

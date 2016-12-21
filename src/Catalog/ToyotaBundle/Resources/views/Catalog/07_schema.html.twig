@@ -23,7 +23,7 @@
                                         $("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
                                         $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
 
-                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogcommon/images/loading.gif") }} height="15px" />');
                                         $.ajax({
                                             type:   'POST',
                                             async:  false,
@@ -66,12 +66,12 @@
                             
 {% block image %}
 
-    <img src="{{ asset('bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveSchema.getOption('disk')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="600px" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveSchema.getOption('disk')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="600px" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 
 {% endblock image %}
 
 {% block groupRuname %}{{ oContainer.getActiveGroup.getRuname|trans({}, 'toyota') }}{% endblock groupRuname %}
-{% block subGroupRuname %}
+{% block subGroupRuname %}    {% set loc = app.request.get('_locale')~'_'~app.request.get('_locale')|upper %}
     {{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getOption('locale_name')|trans({}, 'toyota', loc) }}
 {% endblock subGroupRuname %}
 

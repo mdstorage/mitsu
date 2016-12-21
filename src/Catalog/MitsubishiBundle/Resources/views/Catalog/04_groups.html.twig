@@ -15,7 +15,7 @@
     <div class="row">
         {% block groupImage %}
             <div class="col-lg-8">
-                <img src="{{ asset('bundles/catalogmitsubishi/images/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getGroups|first.getOption('picture')~'.png') }}" alt="{{ oContainer.getActiveComplectation.getRuname }}" usemap="#{{ oContainer.getActiveComplectation.getCode }}" />
+                <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmitsubishi/images/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getGroups|first.getOption('picture')~'.png') }}" alt="{{ oContainer.getActiveComplectation.getRuname }}" usemap="#{{ oContainer.getActiveComplectation.getCode }}" />
             </div>
         {% endblock groupImage %}
         <div class="col-lg-4">

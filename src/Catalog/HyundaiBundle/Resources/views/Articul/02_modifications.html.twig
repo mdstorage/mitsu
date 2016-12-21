@@ -5,7 +5,7 @@
                 {% block modification %}
 
                     <a href="{{ path('articul_hyundai_complectations', parameters|merge({'modificationCode': modification.getCode, 'articul': app.request.get('articul')})) }}">
-                        <img src="{{ asset('bundles/cataloghyundai/Images/titles/'~modification.getOption('option1')~'.png') }}" alt="{{ modification.getCode }}">
+                        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghyundai/Images/titles/'~modification.getOption('option1')~'.png') }}" alt="{{ modification.getCode }}">
 
                         {{ modification.getRuname }}
                     </a>

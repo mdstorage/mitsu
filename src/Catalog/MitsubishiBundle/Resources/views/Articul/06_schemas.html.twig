@@ -25,7 +25,7 @@
 
 
                 <div class="row">
-                    <img src="{{ asset('bundles/catalogmitsubishi/images/'~oContainer.getActiveRegion.getCode~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
+                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmitsubishi/images/'~oContainer.getActiveRegion.getCode~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
                 </div>
 
 

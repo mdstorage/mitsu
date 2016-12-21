@@ -21,7 +21,7 @@
                                     	$("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
                                         $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
                                         
-                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogcommon/images/loading.gif") }} height="15px" />');
                                         $.ajax({
                                             type:   'POST',
                                             async:  false,
@@ -62,7 +62,7 @@
 
 {% block image %}
 
-    <img src="{{ asset('bundles/catalogfiat/Imgs/images/'~oContainer.getActiveSchema.getOption('catalog')~'/'~oContainer.getActiveSchema.getOption('picture')) }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogfiat/Imgs/images/'~oContainer.getActiveSchema.getOption('catalog')~'/'~oContainer.getActiveSchema.getOption('picture')) }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 {% endblock image %}
 
 {% block ajaxUrl %}{{ path('vin_fiat_articuls') }}{% endblock ajaxUrl %}

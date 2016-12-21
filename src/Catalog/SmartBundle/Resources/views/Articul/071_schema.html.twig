@@ -11,7 +11,7 @@
 {% block complectation %}{% endblock complectation %}
 {% set schema = oContainer.getActiveSchema %}
 {% block image %}
-    <img src="{{ asset('bundles/catalogsmart/images/SA_IMAGES/'~schema.getCode~'.png')|file_exists() ? asset('bundles/catalogsmart/images/SA_IMAGES/'~schema.getCode~'.png') : asset('bundles/catalogsmart/images/SA_IMAGES_ARC/'~schema.getCode~'.png') }}" width="100%" usemap="#{{ schema.getCode }}" alt="{{ schema.getRuname }}"/>
+    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogsmart/images/SA_IMAGES/'~schema.getCode~'.png')|file_exists() ? asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogsmart/images/SA_IMAGES/'~schema.getCode~'.png') : asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogsmart/images/SA_IMAGES_ARC/'~schema.getCode~'.png') }}" width="100%" usemap="#{{ schema.getCode }}" alt="{{ schema.getRuname }}"/>
 {% endblock image %}
 
 {% block ajaxUrl %}{{ path('articul_smart_saarticuls') }}{% endblock ajaxUrl %}

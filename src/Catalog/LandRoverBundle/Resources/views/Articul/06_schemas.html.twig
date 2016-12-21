@@ -51,7 +51,7 @@
 
 
                 <div class="row">
-                    <img src="{{ asset('bundles/cataloglandrover/Images/'~schema.getOption('pictureFolder')~'/'~schema.getCode~'.png') }}" width="150" alt="{{ schema.getRuname }}"/>
+                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloglandrover/Images/'~schema.getOption('pictureFolder')~'/'~schema.getCode~'.png') }}" width="150" alt="{{ schema.getRuname }}"/>
                 </div>
 
 

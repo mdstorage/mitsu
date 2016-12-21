@@ -31,7 +31,7 @@
 
 
                     <div class="row">
-                        <img src="{{ asset('bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~schema.getOption('disk')~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getCode }}"/>
+                        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~schema.getOption('disk')~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getCode }}"/>
                     </div>
 
 

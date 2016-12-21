@@ -19,7 +19,7 @@
                         ({{ group.getCode }}) {{ group.getRuname }}
                     </div>
                     <div class="row">
-                        <img src="{{ asset('bundles/catalogsuzuki/images/GROUP_IMAGE/IMAGE'~(group.getCode-1)~'.psd') }}" alt="{{ group.getRuname }}"/>
+                        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogsuzuki/images/GROUP_IMAGE/IMAGE'~(group.getCode-1)~'.psd') }}" alt="{{ group.getRuname }}"/>
                     </div>
                         </a>
                    

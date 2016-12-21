@@ -2,7 +2,7 @@
 {% use 'CatalogMercedesBundle::mercedes.base.html.twig' %}
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('bundles/catalogmercedes/css/mercedes.css') }}" media="all">
+    <link rel="stylesheet" href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmercedes/css/mercedes.css') }}" media="all">
 {% endblock %}
 
 {% block subGroup %}<b>Подгруппа запчастей:</b> {{ oContainer.getActiveGroup.getSubGroup(parameters['sanum']).getRuname }}{% endblock subGroup %}

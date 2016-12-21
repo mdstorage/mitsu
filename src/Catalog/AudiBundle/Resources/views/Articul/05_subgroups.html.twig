@@ -78,7 +78,7 @@
                 <td>
                     <div class="row">
                         <a href="{{ path('articul_audi_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">
-                            <img src="{{ asset('bundles/catalogaudi/Images/Minis/'~subgroup.getOption('grafik')~'.png') }}" width="100" alt="{{ subgroup.getRuname }}"/>
+                            <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogaudi/Images/Minis/'~subgroup.getOption('grafik')~'.png') }}" width="100" alt="{{ subgroup.getRuname }}"/>
                         </a>
                     </div>
                 </td>

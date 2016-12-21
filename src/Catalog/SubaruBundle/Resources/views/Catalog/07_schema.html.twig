@@ -15,13 +15,13 @@
 {% block refGroupsHead %}<h4>{{ 'Связанные изображения'|trans }}</h4>{% endblock refGroupsHead %}
 
 {% block image %}
-    <img src="{{ asset('bundles/catalogsubaru/Subaru_Images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="900" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
+    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogsubaru/Subaru_Images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="900" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
 {% endblock image %}
 
 {% block pncClick %}
     $("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
     $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
-    $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+    $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogcommon/images/loading.gif") }} height="15px" />');
     $.ajax({
     type:   'POST',
     async:  false,
@@ -62,8 +62,8 @@
     <div class="row">
         <div class="row" style="height: 600px;">
             <div class="guayaquil_unit_icons">
-                <div class="guayaquil_zoom cboxElement" title="Схема: {{ oContainer.getActiveSchema.getCode }}" full="{{ asset('bundles/catalogsubaru/Subaru_Images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~oContainer.getActiveSchema.getCode~'.png') }}">
-                    <img src="{{ asset('bundles/catalogcommon/images/zoom.png') }}"/>
+                <div class="guayaquil_zoom cboxElement" title="Схема: {{ oContainer.getActiveSchema.getCode }}" full="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogsubaru/Subaru_Images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~oContainer.getActiveSchema.getCode~'.png') }}">
+                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/images/zoom.png') }}"/>
                 </div>
             </div>
             <div id="viewport" class="inline_block" style="position: absolute; border: 1px solid rgb(119, 119, 119); background: white none repeat scroll 0% 0%; height:600px; overflow: auto;">
@@ -74,7 +74,7 @@
         <div class="row">
             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-                    <img src="{{ asset('bundles/catalogcommon/images/mouse_wheel.png') }}"/>
+                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/images/mouse_wheel.png') }}"/>
                 </div>
                 <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
                     - масштабирование изображения
@@ -82,8 +82,8 @@
             </div>
             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                    <img src="{{ asset('bundles/catalogcommon/images/lmb.png') }}">
-                    <img src="{{ asset('bundles/catalogcommon/images/move.png') }}"/>
+                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/images/lmb.png') }}">
+                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/images/move.png') }}"/>
                 </div>
                 <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                     - прокрутка
@@ -102,7 +102,7 @@
                     margin-top: {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}px;
                     margin-left: {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}px;
                     overflow: hidden; cursor: pointer">
-                <img src="{{ asset('bundles/catalogcommon/images/spacer.gif') }}" title="{{ pnc.getCode }}" />
+                <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/images/spacer.gif') }}" title="{{ pnc.getCode }}" />
             </div>
             <script>
                 $("#{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}").on("click", function(){
@@ -120,12 +120,12 @@
                         margin-top: {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}px;
                         margin-left: {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}px;
                         overflow: hidden; cursor: pointer">
-                    <img src="{{ asset('bundles/catalogcommon/images/spacer.gif') }}"/>
+                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/images/spacer.gif') }}"/>
                 </div>
             </a>
         {% endfor %}
     {% endfor %}
-    <img class="dragger" onload="rescaleImage(-100);" src="{{ asset('bundles/catalogsubaru/Subaru_Images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~oContainer.getActiveSchema.getCode~'.png') }}"/>
+    <img class="dragger" onload="rescaleImage(-100);" src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogsubaru/Subaru_Images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~oContainer.getActiveSchema.getCode~'.png') }}"/>
 {% endblock image1 %}
 
 

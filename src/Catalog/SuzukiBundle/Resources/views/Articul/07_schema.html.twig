@@ -12,7 +12,7 @@
 {% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
 
 {% block image %}
-    <img src="{{ asset('bundles/catalogsuzuki/images/'~oContainer.getActiveSchema.getCode~'.png') }}" width="900" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
+    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogsuzuki/images/'~oContainer.getActiveSchema.getCode~'.png') }}" width="900" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
 {% endblock image %}
 
 {% block ajaxUrl %}{{ path('articul_suzuki_articuls') }}{% endblock ajaxUrl %}

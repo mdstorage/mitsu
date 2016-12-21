@@ -20,7 +20,7 @@
                 {% block pncClick %}
                 $(("#articul_for_pnc{{ pnc.getCode|md5 }}")).toggleClass("hidden");
                 $(("#pnc_{{ pnc.getCode|md5 }}")).toggleClass("glyphicon-plus");
-                $(("#articul_for_pnc{{ pnc.getCode|md5 }}")).html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                $(("#articul_for_pnc{{ pnc.getCode|md5 }}")).html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogcommon/images/loading.gif") }} height="15px" />');
                 $.ajax({
                     type:   'POST',
                     async:  false,

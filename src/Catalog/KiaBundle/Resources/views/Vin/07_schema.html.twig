@@ -19,7 +19,7 @@
                                     	$("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
                                         $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
                                         
-                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogcommon/images/loading.gif") }} height="15px" />');
                                         $.ajax({
                                             type:   'POST',
                                             async:  false,
@@ -61,8 +61,8 @@
 {% block image %}
 
     <img src="{{ ('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?
-    asset('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png') :
-    asset('bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'1.png') }}" width="500px" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+    asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png') :
+    asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'1.png') }}" width="500px" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 
 {% endblock image %}
 

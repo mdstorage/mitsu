@@ -20,7 +20,7 @@
                     <div>
                         {{ data.descEn | trans }} ({{ data.subGroup }})
                     </div>
-                    <img src="{{ asset('bundles/catalogmitsubishi/images/'~catalog~'/'~data.illustration~'.png') }}" />
+                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmitsubishi/images/'~catalog~'/'~data.illustration~'.png') }}" />
                 </a>
             </div>
         {% endfor %}

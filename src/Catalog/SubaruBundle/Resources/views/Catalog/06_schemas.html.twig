@@ -20,7 +20,7 @@
                      </div>
 
                     <div class="row">
-                        <img src="{{ asset('bundles/catalogsubaru/Subaru_Images/'~schema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getCode }}" class="highqual">
+                        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogsubaru/Subaru_Images/'~schema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getCode }}" class="highqual">
                     </div>
 
         </a>

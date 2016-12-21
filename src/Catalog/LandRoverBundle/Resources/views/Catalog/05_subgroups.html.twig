@@ -16,7 +16,7 @@
 
 {% block subgroupImage %}
     <div class="col-lg-8">
-        <img src="{{ asset('bundles/cataloglandrover/Images/'~oContainer.getActiveGroup.getOption('pictureFolder')~'/'~oContainer.getActiveGroup.getOption('picture')~'.png') }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
+        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloglandrover/Images/'~oContainer.getActiveGroup.getOption('pictureFolder')~'/'~oContainer.getActiveGroup.getOption('picture')~'.png') }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
 
     </div>
 {% endblock subgroupImage %}
