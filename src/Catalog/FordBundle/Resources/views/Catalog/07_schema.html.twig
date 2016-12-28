@@ -46,6 +46,7 @@
                 });
                 $(("#pnc_{{ pnc.getCode|md5 }}")).toggleClass("glyphicon-minus");
                 $(("#pnc_{{ pnc.getCode|md5 }}")).toggleClass("small btn-default");
+                $('.g_highlight[name="{{ pnc.getCode|md5 }}"]').toggleClass('g_highlight_lock');
                 {% endblock pncClick %}
             });
             $(("#pnc_{{ pnc.getCode|md5 }}")).on("mouseover", function(){
@@ -55,6 +56,7 @@
             $(("#pnc_{{ pnc.getCode|md5 }}")).on("mouseout", function(){
                 $(this).removeClass("btn-info");
             });
+
         </script>
     {% endblock pncScript %}
 

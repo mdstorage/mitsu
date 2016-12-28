@@ -8,7 +8,7 @@
 namespace Catalog\SubaruBundle\Components;
 class SubaruConstants {
     const LOCALE    = 'ru_RU';
-    const TRANSLATION_RESOURCE = '/../../../../app/Resources/translations/subaru.ru.yml';
+    const TRANSLATION_RESOURCE = '/../../../../app/Resources/translations/subaru.';
     const TRANSLATION_DOMAIN = 'subaru';
     const PROD_YEAR = 'prod_year';
     const PROD_DATE = 'prod_date';

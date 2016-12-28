@@ -1,3 +1,4 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Vin:01_index.html.twig' %}
 {% use 'CatalogSubaruBundle::subaru.base.html.twig' %}
 {% block vinScript %}
@@ -9,7 +10,7 @@
             });
             $("#vin-button").on('click', function(){
                 if($("#vin").val().replace(/\s+/g, '').length !== 17 && $("#vin").val().replace(/\s+/g, '').length !== 9){
-                    alert("VIN должен состоять из 17 или 9 (для японских автомобилей) знаков!");
+                    alert("{{ 'VIN должен состоять из 17 или 9 (для японских автомобилей) знаков!'|trans({}, 'subaru') }}");
                     return;
                 }
                 $("#vin-result").html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogcommon/images/loading.gif") }} height="20px" />');

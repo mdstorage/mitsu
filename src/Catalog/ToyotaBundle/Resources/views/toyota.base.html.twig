@@ -44,10 +44,10 @@
 
 {% block langPath %}
     {% if app.request.get('callbackhost')%}
-        {% if parameters is defined %}{{ path(app.request.get('_route'), parameters|merge({'_locale': lang, 'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain')})) }}
-        {% else %} {{ path(app.request.get('_route'), {'_locale': lang, 'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain')}) }} {% endif %}
+        {% if parameters is defined %}{{ path(app.request.get('_route'), parameters|merge({'_locale': key, 'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain')})) }}
+        {% else %} {{ path(app.request.get('_route'), {'_locale': key, 'token': app.request.get('token'), 'callbackhost':  app.request.get('callbackhost'), 'domain':  app.request.get('domain')}) }} {% endif %}
     {% else %}
-        {% if parameters is defined %}{{ path(app.request.get('_route'), parameters|merge({'_locale': lang, 'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTtoyota'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN')})) }}
-        {% else %} {{ path(app.request.get('_route'), {'_locale': lang, 'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTtoyota'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN')}) }} {% endif %}
+        {% if parameters is defined %}{{ path(app.request.get('_route'), parameters|merge({'_locale': key, 'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTtoyota'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN')})) }}
+        {% else %} {{ path(app.request.get('_route'), {'_locale': key, 'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTtoyota'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN')}) }} {% endif %}
     {% endif %}
 {% endblock langPath %}

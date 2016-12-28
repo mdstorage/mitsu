@@ -1,7 +1,8 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
 {% use 'CatalogSubaruBundle::subaru.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('vin_subaru', parameters) }}">Поиск по номеру кузова</a> / <a href="{{ path('vin_subaru_groups', parameters) }}">Выбрать группу запчастей</a> / Выбрать подгруппу запчастей
+    <a href="{{ path('vin_subaru', parameters) }}">{{ 'Поиск по номеру кузова'|trans }}</a> / <a href="{{ path('vin_subaru_groups', parameters) }}">{{ 'Группа запчастей'|trans }}</a> / {{ 'Подгруппа запчастей'|trans }}
 {% endblock breadcrumbs %}
 
 
@@ -15,3 +16,4 @@
 {% block pathToSchemas %}
     {{ path('vin_subaru_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}
 {% endblock pathToSchemas %}
+{% block groupRuname %}{{ oContainer.getActiveGroup.getRuname(app.request.get('_locale')) }}{% endblock groupRuname %}

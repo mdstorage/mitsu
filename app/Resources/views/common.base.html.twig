@@ -32,7 +32,7 @@
     <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/dragscrollable.js') }}"></script>
     <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/jquery.colorbox.js') }}"></script>
     <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/jquery.scrollTo-min.js') }}"></script>
-    <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/unit.js') }}"></script>
+    <script src="{{ asset('bundles/cataloghonda/js/unit.js') }}"></script>
     <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/jquery.tooltip.js') }}"></script>
     <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/mootools-core.js') }}"></script>
     <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/mootools-more.js') }}"></script>
@@ -60,26 +60,15 @@
                     <li class="{{ 'articul' in app.request.getPathInfo ? 'active'}}"><a href="{% block articulPath %}{% endblock articulPath %}">{% block articulMenuItem %}{{ 'Поиск запчасти по артикулу'|trans }}{% endblock articulMenuItem %}</a></li>
                 </ul>
 
-                {% set langes = ['en', 'ru'] %}
-                {% for  lang in langes %}
-                <a type="button" name = "button_res" id = "id_{{ lang }}" class="btn btn-default btn-xs"
-                   href="{% block langPath %}{% endblock langPath %}"
-                   style = "float:right;">{{ lang }}</a>
+                {% set langes = {'en':'En', 'ru':'Рус'} %}
 
-                    <script>
-                        $('#id_{{ lang }}').each(function(){
-                            {
-                                var tr = '{{ app.request.get('_locale') }}';
-                                if (tr == '') { tr = 'ru' };
-                                ($(this).text() == tr) ? $(this).addClass('btn-primary'): $(this).removeClass('btn-primary');
-                            }
-                        });
-                        $("#id_{{ lang }}").on('click', function(){
-                        $('a[name="button_res"]').removeClass('btn-primary');
-                            $(this).addClass('btn-primary');
-                    });
-                    </script>
-                {% endfor %}
+                <ul class="nav navbar-nav navbar-right">
+                    {% for key, lang in langes %}
+                        <li class="{{ key in app.request.get('_locale') ? 'active'}}">
+                            <a href="{% block langPath %}{% endblock langPath %}">{{ lang }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>

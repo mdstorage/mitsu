@@ -1,10 +1,12 @@
+{% trans_default_domain 'common' %}
+<div class="table-responsive">
 <table class="table small">
     {% if oContainer.getActivePnc.getArticuls %}
     <thead>
         <tr>
-            <th>Артикул</th>
-            <th>Период производства</th>
-            <th>Применение</th>
+            <th>{{ 'Артикул'|trans }}</th>
+            <th>{{ 'Период'|trans }}</th>
+            <th>{{ 'Применение'|trans }}</th>
         </tr>
     </thead>
     <tbody>
@@ -19,7 +21,8 @@
     {% endif %}
     {% if not oContainer.getActivePnc.getArticuls %}
         <tbody>
-        Запчасть не применяется в выбранной комплектации
+        {{ 'Запчасть не применяется в выбранной комплектации'|trans }}
         </tbody>
     {% endif %}
 </table>
+</div>
