@@ -32,7 +32,7 @@
                                 'domain':  app.request.get('domain')
                             }) }}">
                                 {% endblock pathToGroups %}
-                                <img src="{{ asset('bundles/cataloglandrover/Images/'~(model.getOption('key')!=''?model.getOption('key'):'0')~'-'~model.getOption('type')~'.png') }}" width="100%" alt="{{ model.getRuname }}"/>
+                                <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloglandrover/Images/'~(model.getOption('key')!=''?model.getOption('key'):'0')~'-'~model.getOption('type')~'.png') }}" width="100%" alt="{{ model.getRuname }}"/>
                                 {{ model.getRuname }}
 
                             </a>

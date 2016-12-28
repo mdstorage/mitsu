@@ -21,7 +21,7 @@
                 </div>
 
                 <div class="row">
-                    <img src="{{ asset('bundles/catalogsaab/Pictures/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
+                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogsaab/Pictures/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
                 </div>
 
 

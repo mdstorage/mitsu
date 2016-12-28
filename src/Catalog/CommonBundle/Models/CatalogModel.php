@@ -11,10 +11,12 @@ namespace Catalog\CommonBundle\Models;
 
 use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Translation\Translator;
 
 abstract class CatalogModel{
     protected $conn;
     protected $requestStack;
+    protected $translat;
 
 
     public function __construct(Connection $connection)
@@ -44,6 +46,12 @@ abstract class CatalogModel{
     {
         $this->requestStack = $requestStack;
 
+    }
+
+    public function setTranslation(Translator $translator)
+    {
+        /*var_dump($translator->trans('EU_LH', array(), 'subaru')); die;*/
+        $this->translat = $translator;
     }
 
 }

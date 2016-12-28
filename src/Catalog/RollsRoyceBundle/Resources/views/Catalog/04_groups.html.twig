@@ -25,7 +25,7 @@
 
                         <a href="{{ path('catalog_rollsroyce_subgroups', parameters|merge({'groupCode': group.getCode})) }}">
 
-                            <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~group.getOption('Id')) }}" width="100%" alt="{{ group.getRuname }}"/>
+                            <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogbmw/grafik/w_grafik/'~group.getOption('Id')) }}" width="100%" alt="{{ group.getRuname }}"/>
                             {{ group.getRuname }}
 
                         </a>

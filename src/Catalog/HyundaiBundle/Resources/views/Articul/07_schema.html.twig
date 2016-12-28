@@ -12,7 +12,7 @@
 {% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
 
 {% block image %}
-    <img src="{{ asset('bundles/cataloghyundai/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>{% endblock image %}
+    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghyundai/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>{% endblock image %}
 
 {% block commonArticulPath %}{{ constant('Catalog\\CommonBundle\\Components\\Constants::FIND_PATH') }}{{ commonArticul.getCode }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{{ path('catalog_hyundai_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
@@ -25,7 +25,7 @@
                                     	$("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
                                         $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
                                         
-                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogcommon/images/loading.gif") }} height="15px" />');
                                         $.ajax({
                                             type:   'POST',
                                             async:  false,

@@ -2,9 +2,9 @@
     <meta charset="UTF-8" />
     <title>{% block title %}{% block brand %}Оригинальные каталоги автозапчастей{% endblock brand %}{% endblock title%}</title>
     {% block stylesheets %}
-        <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap.min.css') }}" media="all">
-        <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap-theme.min.css') }}" media="all">
-        <link rel="stylesheet" href="{{ asset('bundles/catalogaudi/css/common.css') }}" media="all">
+        <link rel="stylesheet" href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/css/bootstrap.min.css') }}" media="all">
+        <link rel="stylesheet" href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/css/bootstrap-theme.min.css') }}" media="all">
+        <link rel="stylesheet" href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogaudi/css/common.css') }}" media="all">
 
     {% endblock %}
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
@@ -12,10 +12,10 @@
 </head>
 {% block javascripts %}
 
-    <script src="{{ asset('bundles/catalogcommon/js/jquery-2.1.1.min.js') }}"></script>
-    <script src="{{ asset('bundles/catalogcommon/js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('bundles/catalogcommon/js/jquery.imagemapster.min.js') }}"></script>
-    <script src="{{ asset('bundles/cataloghonda/js/jquery-scrolling.js') }}"></script>
+    <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/js/jquery-2.1.1.min.js') }}"></script>
+    <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/js/jquery.imagemapster.min.js') }}"></script>
+    <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/jquery-scrolling.js') }}"></script>
 
 {% endblock %}
 
@@ -55,7 +55,7 @@
                                    alert("VIN должен состоять из 17 знаков!");
                                    return;
                                }
-                               $("#vin-result").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="20px" />');
+                               $("#vin-result").html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogcommon/images/loading.gif") }} height="20px" />');
 
                                $.ajax({
                                    type:   'POST',

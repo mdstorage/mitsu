@@ -21,7 +21,7 @@
                     </div>
 
                     <div class="row">
-                        <img src="{{ asset('bundles/catalogford/Images/'~schema.getOption('grafik')) }}" width="200" alt="{{ schema.getRuname }}"/>
+                        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogford/Images/'~schema.getOption('grafik')) }}" width="200" alt="{{ schema.getRuname }}"/>
                     </div>
 
 

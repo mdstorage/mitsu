@@ -82,7 +82,7 @@
                 {% endif %}
     {% endfor %}
     </map>
-    <img src="{{ asset('bundles/catalogmitsubishi/images/'~catalog~'/'~illustration~'.png') }}" usemap="#{{ illustration }}" />
+    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmitsubishi/images/'~catalog~'/'~illustration~'.png') }}" usemap="#{{ illustration }}" />
 
     </div>
 </div>

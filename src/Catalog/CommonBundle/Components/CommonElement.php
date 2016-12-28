@@ -42,9 +42,9 @@ abstract class CommonElement implements CommonInterface{
         return $this->name;
     }
 
-    public function getRuname()
+    public function getRuname($locale = null)
     {
-        return $this->translate($this->name);
+        return $this->translate($this->name, $locale);
     }
 
     public function getCode()
@@ -87,13 +87,13 @@ abstract class CommonElement implements CommonInterface{
         return $this->options;
     }
 
-    private function translate($name)
+    private function translate($name, $locale)
     {
         $constants = $this->getConstants();
-
-        $translator = new Translator($constants::LOCALE);
+        if ($locale == null) {$locale = $constants::LOCALE;}
+        $translator = new Translator($locale);
         $translator->addLoader('yaml', new YamlFileLoader());
-        $translator->addResource('yaml', __DIR__.$constants::TRANSLATION_RESOURCE, $constants::LOCALE, $constants::TRANSLATION_DOMAIN);
+        $translator->addResource('yaml', __DIR__.$constants::TRANSLATION_RESOURCE.$locale.'.yml', $locale, $constants::TRANSLATION_DOMAIN);
 
         return $translator->trans($name, array(), $constants::TRANSLATION_DOMAIN);
     }

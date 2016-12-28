@@ -52,7 +52,7 @@
                 {% endfor %}
                 </div>
                 <div class="col-lg-8">
-                    <img src="{{ asset('bundles/catalogbmwmoto/grafik/w_grafik/'~oContainer.getActiveModification.getComplectations|first.getOption('grafik')) }}"
+                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogbmwmoto/grafik/w_grafik/'~oContainer.getActiveModification.getComplectations|first.getOption('grafik')) }}"
                          alt="{{ oContainer.getActiveModification.getComplectations|first.getOption('grafik') }}"/>
                 </div>
             </div>

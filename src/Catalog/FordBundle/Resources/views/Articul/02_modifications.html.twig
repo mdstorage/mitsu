@@ -5,7 +5,7 @@
                 {% block modification %}
 
                     <a href="{{ path('articul_ford_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
-                        <img src="{{ asset('bundles/catalogford/Images/'~modification.getOption('grafik')) }}" style ="width: 20%;" alt="{{ modification.getCode }}">
+                        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogford/Images/'~modification.getOption('grafik')) }}" style ="width: 20%;" alt="{{ modification.getCode }}">
                         {{ modification.getRuname }}
                     </a>
 

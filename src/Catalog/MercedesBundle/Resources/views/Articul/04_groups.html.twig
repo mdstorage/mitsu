@@ -2,7 +2,7 @@
 {% use 'CatalogMercedesBundle::mercedes.base.html.twig' %}
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('bundles/catalogmercedes/css/mercedes.css') }}" media="all">
+    <link rel="stylesheet" href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmercedes/css/mercedes.css') }}" media="all">
 {% endblock %}
 {% block breadcrumbs %}
     <a href="{% if  app.request.get('token') %} {{ path('articul_mercedes_find_token', parameters) }} {% else %} {{ path('articul_mercedes_find') }} {% endif %}">Выбрать регион, модель, модификацию</a> /

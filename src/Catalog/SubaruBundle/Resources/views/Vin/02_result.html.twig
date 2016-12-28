@@ -1,34 +1,35 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Vin:02_result.html.twig' %}
 {% block specification %}
     <div class="row">
     <div class="col-lg-8">
             <table class="table table-bordered">
                 <tr>
-                    <td>Марка:</td>
+                    <td>{{'Марка'|trans}}:</td>
                     <td>{{ result.marka }}</td>
                 </tr>
                 <tr>
-                    <td>Регион:</td>
+                    <td>{{'Регион'|trans}}:</td>
                     <td>{{ result.region }}</td>
                 </tr>
                 <tr>
-                    <td>Модель:</td>
+                    <td>{{'Модель'|trans}}:</td>
                     <td>{{ result.model }}</td>
                 </tr>
                 <tr>
-                    <td>Дата выпуска:</td>
+                    <td>{{'Дата выпуска'|trans}}:</td>
                     <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|subaru_date_convertor }}</td>
                 </tr>
                 <tr>
-                    <td>Модификация:</td>
+                    <td>{{'Модификация'|trans}}:</td>
                     <td>{{ result.modification }}</td>
                 </tr>
                 <tr>
-                    <td>Код комплектации:</td>
+                    <td>{{'Код комплектации'|trans({}, 'subaru')}}:</td>
                     <td>{{ result.complectation }}</td>
                 </tr>
                 <tr>
-                    <td>Комплектация:</td>
+                    <td>{{'Комплектация'|trans}}:</td>
 
                     <td>
                         {% for  compl in result.com%}
@@ -37,11 +38,11 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>Цвет:</td>
+                    <td>{{'Цвет'|trans({}, 'subaru')}}:</td>
                     <td>{{ result.ext_color }}</td>
                 </tr>
                 <tr>
-                    <td>Код отделки:</td>
+                    <td>{{'Код отделки'|trans({}, 'subaru')}}:</td>
                     <td>{{ result.Trim_code }}</td>
                 </tr>
             </table>

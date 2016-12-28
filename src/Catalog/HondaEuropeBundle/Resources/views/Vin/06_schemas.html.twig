@@ -15,7 +15,7 @@
                         {{ schema.getRuname }}
                     </div>
                     <div class="row">
-                         <img src="{{ asset('bundles/catalogsuzuki/images/'~schema.getCode~'.jpg') }}" width="300" alt="{{ schema.getRuname }}"/>
+                         <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogsuzuki/images/'~schema.getCode~'.jpg') }}" width="300" alt="{{ schema.getRuname }}"/>
                     </div>
 
         </a>

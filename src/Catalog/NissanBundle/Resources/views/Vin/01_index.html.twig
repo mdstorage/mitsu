@@ -12,7 +12,7 @@
                 alert("VIN должен состоять из 17 знаков!");
                 return;
             }
-            $("#vin-result").html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="20px" />');
+            $("#vin-result").html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogcommon/images/loading.gif") }} height="20px" />');
             $.ajax({
                 type:   'POST',
                 async:  false,

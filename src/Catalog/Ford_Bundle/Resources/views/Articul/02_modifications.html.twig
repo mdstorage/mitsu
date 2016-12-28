@@ -5,7 +5,7 @@
                 {% block modification %}
 
                     <a href="{{ path('articul_huyndai_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
-                        <img src="{{ asset('bundles/cataloghuyndai/Images/titles/'~modification.getOption('option1')~'.png') }}" alt="{{ modification.getCode }}">
+                        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghuyndai/Images/titles/'~modification.getOption('option1')~'.png') }}" alt="{{ modification.getCode }}">
 
                         {{ modification.getRuname }}
                     </a>

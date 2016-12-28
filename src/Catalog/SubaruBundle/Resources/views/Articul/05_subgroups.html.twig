@@ -1,17 +1,18 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
 {% use 'CatalogSubaruBundle::subaru.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{% if  app.request.get('token') %} {{ path('articul_subaru_find_token', parameters) }} {% else %} {{ path('articul_subaru_find') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{% if  app.request.get('token') %} {{ path('articul_subaru_find_token', parameters) }} {% else %} {{ path('articul_subaru_find') }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getRuname }},
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
-    <a href="{{ path('articul_subaru_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> /
-    Подгруппа запчастей
+    <a href="{{ path('articul_subaru_groups', parameters) }}">{{'Группа запчастей'|trans}} ({{ oContainer.getActiveGroup.getRuname(app.request.get('_locale')) }})</a> /
+    {{'Подгруппа запчастей'|trans}}
 {% endblock breadcrumbs %}
 
 
 
 {% block subgroupImage %}
         <div class="col-lg-8">
-            <img src="{{ asset('bundles/catalogsubaru/Subaru_Images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~oContainer.getActiveSchema.getOption('sub_dir')~'/'~oContainer.getActiveSchema.getOption('sub_wheel')~'/model'~oContainer.getActiveSchema.getOption('num_model')~'/part1/'~oContainer.getActiveSchema.getOption('num_image')~'.png') }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}" />
+            <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogsubaru/Subaru_Images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~oContainer.getActiveSchema.getOption('sub_dir')~'/'~oContainer.getActiveSchema.getOption('sub_wheel')~'/model'~oContainer.getActiveSchema.getOption('num_model')~'/part1/'~oContainer.getActiveSchema.getOption('num_image')~'.png') }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}" />
         </div>
         {% endblock subgroupImage %}
 
@@ -19,3 +20,5 @@
 {% block pathToSchemas %}
     {{ path('articul_subaru_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}
 {% endblock pathToSchemas %}
+
+{% block groupRuname %}{{ oContainer.getActiveGroup.getRuname(app.request.get('_locale')) }}{% endblock groupRuname %}

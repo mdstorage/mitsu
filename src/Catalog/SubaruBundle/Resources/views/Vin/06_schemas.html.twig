@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogSubaruBundle::subaru.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{{ path('vin_subaru', parameters) }}">Поиск по номеру кузова</a> / <a href="{{ path('vin_subaru_groups', parameters) }}">Выбрать группу запчастей</a> / <a href="{{ path('vin_subaru_subgroups', parameters) }}">Выбрать подгруппу запчастей</a> / Выбрать схему
+    <a href="{{ path('vin_subaru', parameters) }}">{{ 'Поиск по номеру кузова'|trans }}</a> / <a href="{{ path('vin_subaru_groups', parameters) }}">{{'Группа запчастей'|trans}}</a> / <a href="{{ path('vin_subaru_subgroups', parameters) }}">{{'Подгруппа запчастей'|trans}}</a> / {{'Схема'|trans}}
 {% endblock breadcrumbs %}
 
 
@@ -9,7 +9,7 @@
 {% block schema %}
     {% if schema.getCode is not empty %}
             <div class="col-xs-3">
-        <a href="{{ path('vin_subaru_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+        <a href="{{ path('vin_subaru_schema', parameters|merge({'schemaCode': schema.getCode})) }}" class="thumbnail">
 
                     <div class="row">
                         {{ schema.getRuname }}
@@ -20,10 +20,11 @@
                     </div>
 
                     <div class="row">
-                        <img src="{{ asset('bundles/catalogsubaru/Subaru_Images/'~schema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
+                        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogsubaru/Subaru_Images/'~schema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
                     </div>
 
         </a>
             </div>
     {% endif %}
 {% endblock schema %}
+{% block groupRuname %}{{ oContainer.getActiveGroup.getRuname(app.request.get('_locale')) }}{% endblock groupRuname %}

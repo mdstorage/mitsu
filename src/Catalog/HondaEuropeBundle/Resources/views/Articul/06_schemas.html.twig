@@ -15,7 +15,7 @@
                         {{ schema.getRuname }}
                     </div>
                     <div class="row">
-                         <img src="{{ asset('bundles/cataloghondaeurope/images/'~schema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(0,2)~'/'~schema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(2,9)~'/'~schema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(11,2)~'/model'~schema.getOption('num_model')~'/part1/'~schema.getCode~'.jpg') }}" width="300" alt="{{ schema.getRuname }}"/>
+                         <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghondaeurope/images/'~schema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(0,2)~'/'~schema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(2,9)~'/'~schema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))|slice(11,2)~'/model'~schema.getOption('num_model')~'/part1/'~schema.getCode~'.jpg') }}" width="300" alt="{{ schema.getRuname }}"/>
                     </div>
 
         </a>

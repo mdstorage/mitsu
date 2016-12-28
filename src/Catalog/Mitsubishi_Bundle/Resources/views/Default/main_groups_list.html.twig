@@ -12,7 +12,7 @@
 <h3>Выбрать группу запчастей:</h3>
     <div class="row">
         <div class="col-xs-10">
-            <img src="{{ asset('bundles/catalogmitsubishi/images/'~catalog~'/'~illustration~'.png') }}" usemap="#{{ illustration }}" />
+            <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmitsubishi/images/'~catalog~'/'~illustration~'.png') }}" usemap="#{{ illustration }}" />
             <map name="{{ illustration }}">
                 {% for data in mgroup %}
                     {% if data.code in mgroups|keys %}

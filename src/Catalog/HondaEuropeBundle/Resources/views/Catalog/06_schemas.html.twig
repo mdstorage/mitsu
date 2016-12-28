@@ -15,7 +15,7 @@
                         {{ schema.getRuname }}
                     </div>
                     <div class="row">
-                        <img src="{{ asset('bundles/cataloghondaeurope/Pictures/'~oContainer.getActiveSchema.getCode~'/IMGE/'~oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getCode~'.TIF') }}"/>
+                        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghondaeurope/Pictures/'~oContainer.getActiveSchema.getCode~'/IMGE/'~oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getCode~'.TIF') }}"/>
                     </div>
 
         </a>

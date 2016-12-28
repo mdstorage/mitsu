@@ -24,7 +24,7 @@
                     alert("Артикул должен состоять из 8 знаков!");
                     return;
                 }
-                $("#articul-result").html('<img src={{ asset("bundles/catalogmitsubishi/images/loading.gif") }} height="150px" />');
+                $("#articul-result").html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogmitsubishi/images/loading.gif") }} height="150px" />');
                 $.ajax({
                     type:   'POST',
                     async:  false,
@@ -76,7 +76,7 @@
                 alert("VIN должен состоять из 17 знаков!");
                 return;
             }
-            $("#vin-result").html('<img src={{ asset("bundles/catalogmitsubishi/images/loading.gif") }} height="150px" />');
+            $("#vin-result").html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogmitsubishi/images/loading.gif") }} height="150px" />');
             $.ajax({
                 type:   'POST',
                 async:  false,
@@ -89,7 +89,7 @@
         });
         $("#frame-button").on('click', function(){
             if($("#frame-1").val().length > 0 && $("#frame-2").val().length > 0){
-                $("#frame-result").html('<img src={{ asset("bundles/catalogmitsubishi/images/loading.gif") }} height="150px" />');
+                $("#frame-result").html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogmitsubishi/images/loading.gif") }} height="150px" />');
                 $.ajax({
                     type:   'POST',
                     async:  false,
@@ -137,7 +137,7 @@
                 $("li[role=region]").on('click', function(){
                     $("li.active").toggleClass('active');
                     $(this).toggleClass('active');
-                    $("#result").html('<img src={{ asset("bundles/catalogmitsubishi/images/loading.gif") }} height="150px" />');
+                    $("#result").html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogmitsubishi/images/loading.gif") }} height="150px" />');
                     $.ajax({
                         type:   'POST',
                         async:  false,
@@ -150,7 +150,7 @@
                 });
             </script>
             <h3>Модельный ряд:</h3>
-            <div id="result"><img src="{{ asset('bundles/catalogmitsubishi/images/loading.gif') }}" height="150px" /></div>
+            <div id="result"><img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmitsubishi/images/loading.gif') }}" height="150px" /></div>
         </div>
     </div>
 <script>

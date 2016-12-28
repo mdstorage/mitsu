@@ -16,7 +16,7 @@
 {% block subgroupItem %}
     {% set loc = app.request.get('_locale')~'_'~app.request.get('_locale')|upper %}
     <div id="subgroup{{ subgroup.getCode }}">
-        <a href="{{ path('catalog_toyota_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getOption('locale_name')|trans({}, 'toyota', loc) }}</a>
+        <a href="{{ path('catalog_toyota_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname(app.request.get('_locale')) }}</a>
     </div>
 {% endblock subgroupItem %}
  {% block area %}

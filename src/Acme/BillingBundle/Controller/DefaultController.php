@@ -48,7 +48,7 @@ class DefaultController extends Controller
         $headers = $request->server->getHeaders();
         return $this->render('CatalogCommonBundle:Catalog:error.html.twig', array(
             'message' => $message,
-            'referer' => "http://vincat.ru/origin"
+            'referer' => "http://vincat.ru"
         ));
     }
 

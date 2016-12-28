@@ -18,10 +18,10 @@
 
                     <div style=" height: 250px; " class="col-lg-2 col-md-3 col-sm-6 col-xs-6">
 
-                        <a href="{{ path('catalog_bmw_schemas', parameters|merge({'groupCode': group.getCode})) }}">
+                        <a href="{{ path('catalog_bmw_schemas', parameters|merge({'groupCode': group.getCode})) }}" class="thumbnail">
 
                             <div class="row">
-                            <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~group.getOption('Id')) }}" width="60%" alt="{{ group.getRuname }}"/>
+                            <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogbmw/grafik/w_grafik/'~group.getOption('Id')) }}" width="60%" alt="{{ group.getRuname }}"/>
                             </div>
 
                             <div class="row">

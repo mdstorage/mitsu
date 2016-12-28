@@ -1,14 +1,15 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
 {% use 'CatalogSubaruBundle::subaru.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{% if  app.request.get('token') %} {{ path('catalog_subaru_token', parameters) }} {% else %} {{ path('catalog_subaru') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
-        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / Комплектация
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_subaru_token', parameters) }} {% else %} {{ path('catalog_subaru') }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getOption('locale_name')|trans({}, 'subaru', app.request.get('_locale')) }},
+        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / {{'Комплектация'|trans}}
 {% endblock breadcrumbs %}
 
 
 
 {% block body %}
-    {% block head %}<h3>Выбрать комплектацию:</h3>{% endblock head %}
+    {% block head %}<h3>{{'Выбрать комплектацию'|trans}}:</h3>{% endblock head %}
     {% block complectations %}
 
 
@@ -22,7 +23,7 @@
 
 
                             <br>
-                            <input type="submit" class="btn btn-primary" value="Далее" />
+                            <input type="submit" class="btn btn-primary" value="{{'Далее'|trans}}" />
                         </div>
                     </form>
                 </div>

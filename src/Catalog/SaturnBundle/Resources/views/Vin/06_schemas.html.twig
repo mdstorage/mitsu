@@ -24,7 +24,7 @@
 
 
                 <div class="row">
-                    <img src="{{ asset('bundles/cataloggm/Images/G/'~schema.getOption('IMAGE_NAME')~'.gif') }}" width="200" alt="{{ schema.getRuname }}"/>
+                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloggm/Images/G/'~schema.getOption('IMAGE_NAME')~'.gif') }}" width="200" alt="{{ schema.getRuname }}"/>
                 </div>
 
 

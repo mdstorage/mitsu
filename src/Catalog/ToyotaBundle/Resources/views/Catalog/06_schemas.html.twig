@@ -6,12 +6,11 @@
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
     <a href="{{ path('catalog_toyota_complectations', parameters) }}">{{'Комплектация'|trans}} ({{ oContainer.getActiveComplectation.getRuname}})</a>/
     <a href="{{ path('catalog_toyota_groups', parameters) }}">{{'Группа запчастей'|trans}} ({{ oContainer.getActiveGroup.getRuname|trans({}, 'toyota') }})</a>/
-    <a href="{{ path('catalog_toyota_subgroups', parameters) }}">{{'Подгруппа запчастей'|trans}} ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getOption('locale_name')|trans({}, 'toyota', loc) }})</a> / {{ 'Схема'|trans }}
+    <a href="{{ path('catalog_toyota_subgroups', parameters) }}">{{'Подгруппа запчастей'|trans}} ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname(app.request.get('_locale')) }})</a> / {{ 'Схема'|trans }}
 {% endblock breadcrumbs %}
 
 {% block subGroupRuname %}
-    {% set loc = app.request.get('_locale')~'_'~app.request.get('_locale')|upper %}
-    {{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getOption('locale_name')|trans({}, 'toyota', loc) }}
+    {{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }}
 {% endblock subGroupRuname %}
 {% block groupRuname %}{{ oContainer.getActiveGroup.getRuname|trans({}, 'toyota') }}{% endblock groupRuname %}
 
@@ -31,7 +30,7 @@
 
 
                     <div class="row">
-                        <img src="{{ asset('bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~schema.getOption('disk')~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getCode }}"/>
+                        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~schema.getOption('disk')~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getCode }}"/>
                     </div>
 
 

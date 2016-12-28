@@ -4,17 +4,27 @@ services:
 #        arguments: [@service_id, "plain_value", %parameter%]
 
   subaru_date_convertor.extension:
-        class: Catalog\SubaruBundle\Twig\Extension\DateConvertorExtension
-        tags:
-            - { name: twig.extension}
+    class: Catalog\SubaruBundle\Twig\Extension\DateConvertorExtension
+    tags:
+        - { name: twig.extension}
+
   subaru.catalog.model:
     class: Catalog\SubaruBundle\Models\SubaruCatalogModel
+    calls:
+        - [setRequestStack, ['@request_stack']]
+        - [setTranslation, ['@translator']]
     arguments:  ['@doctrine.dbal.subaru_connection']
 
   subaru.vin.model:
     class: Catalog\SubaruBundle\Models\SubaruVinModel
+    calls:
+        - [setRequestStack, ['@request_stack']]
+        - [setTranslation, ['@translator']]
     arguments:  ['@doctrine.dbal.subaru_connection']
 
   subaru.articul.model:
     class: Catalog\SubaruBundle\Models\SubaruArticulModel
+    calls:
+        - [setRequestStack, ['@request_stack']]
+        - [setTranslation, ['@translator']]
     arguments:  ['@doctrine.dbal.subaru_connection']

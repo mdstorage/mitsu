@@ -16,6 +16,7 @@
 Модельный ряд: Model row
 
 Выбрать комплектацию: Vehicle selection
+Далее: Next
 
 
 Выбрать группу запчастей: To select the group
@@ -39,6 +40,7 @@
 Кол-во: Count
 Период: Duration
 Доп.информация: Info
+Применение: Usage
 Запчасть не применяется в выбранной комплектации: This part is not applicable in the selected configuration
 VIN должен состоять из 17 или 7 последних символов!: VIN must consist of 17 or last 7 characters!
 

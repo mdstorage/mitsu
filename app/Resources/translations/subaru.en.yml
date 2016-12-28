@@ -1,9 +1,9 @@
 #Регионы
 
-JP_RH: Япония
-EU_LH: Европа (левый руль)
-EU_RH: Европа (правый руль)
-USA_LH: США
+JP_RH: Japan
+EU_LH: Europe (left hand drive)
+EU_RH: Europe (right hand drive)
+USA_LH: USA
 
 #Группы
 ENGINE: ДВИГАТЕЛЬ
@@ -15,4 +15,7 @@ BODY PARTS: КУЗОВНЫЕ ДЕТАЛИ
 ACCESSORIES: ДОПОЛНИТЕЛЬНЫЕ ОПЦИИ
 UPHOLSTERY: ВНЕШНЯЯ И ВНУТРЕННЯЯ ОТДЕЛКА
 
-MANUAL TRANSMISSION: МЕХАНИЧЕСКАЯ ТРАНСМИССИЯ
+VIN должен состоять из 17 или 9 (для японских автомобилей) знаков!: VIN must consist of 17 or 9 (for Japanese cars) characters!
+Код комплектации: Complectation code
+Цвет: Color
+Код отделки: Code finish

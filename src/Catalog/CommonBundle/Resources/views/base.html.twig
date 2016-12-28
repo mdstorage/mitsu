@@ -2,6 +2,6 @@
 {% block stylesheets %}
     {{ parent() }}
     {% block userStylesheets %}
-        <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/common.css') }}" media="all">
+        <link rel="stylesheet" href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/css/common.css') }}" media="all">
     {% endblock userStylesheets %}
 {% endblock %}

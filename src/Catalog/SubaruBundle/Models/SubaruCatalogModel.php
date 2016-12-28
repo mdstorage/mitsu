@@ -12,6 +12,8 @@ namespace Catalog\SubaruBundle\Models;
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Models\CatalogModel;
 use Catalog\SubaruBundle\Components\SubaruConstants;
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\Loader\YamlFileLoader;
 
 class SubaruCatalogModel extends CatalogModel{
 
@@ -31,9 +33,14 @@ class SubaruCatalogModel extends CatalogModel{
         $aData = $query->fetchAll();
 
         $regions = array();
-        foreach($aData as $item){
 
-            $regions[$item['catalog'].'_'.$item['sub_wheel']] = array(Constants::NAME=>$item['catalog'].'_'.$item['sub_wheel'], Constants::OPTIONS=>array());
+        foreach($aData as $item){
+            $val = $this->translat->trans($item['catalog'].'_'.$item['sub_wheel'], array(), 'subaru');
+            $regions[$item['catalog'].'_'.$item['sub_wheel']] =
+                array(
+                    Constants::NAME => $val,
+                    Constants::OPTIONS=>array('locale_name'=>$item['catalog'].'_'.$item['sub_wheel'])
+                );
         }
 
         return $regions;

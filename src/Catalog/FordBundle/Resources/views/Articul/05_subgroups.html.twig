@@ -19,7 +19,7 @@
             {% block subgroupImage %}
 
                 {% for schema in oContainer.getSchemas %}
-                    <img src="{{ asset('bundles/catalogford/Images/'~oContainer.getActiveModification.getOption('folder')~'/'~schema.getCode~'.png') }}" style="width: auto;" alt="{{ schema.getCode }}" usemap="#{{ schema.getCode }}" />
+                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogford/Images/'~oContainer.getActiveModification.getOption('folder')~'/'~schema.getCode~'.png') }}" style="width: auto;" alt="{{ schema.getCode }}" usemap="#{{ schema.getCode }}" />
                 {% endfor %}
 
             {% endblock subgroupImage %}

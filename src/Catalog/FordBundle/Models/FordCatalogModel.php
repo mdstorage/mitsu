@@ -45,12 +45,19 @@ class FordCatalogModel extends CatalogModel{
         foreach($aData as $item) {
 
             $mod = $item['auto_name'];
-            if (stripos($item['auto_name'], ' ') !== false && $item['auto_name'] != 'Fluids and Maintenance Products')
+            $modName = $item['auto_name'];
+            if (stripos($item['auto_name'], ' ') !== false /*&& $item['auto_name'] != 'Fluids and Maintenance Products'*/)
             {
                 $mod = strtoupper(substr($item['auto_name'], 0 ,stripos($item['auto_name'], ' ')));
+                $modName = strtoupper(substr($item['auto_name'], 0 ,stripos($item['auto_name'], ' ')));
+
+                if ($item['auto_name'] == 'Fluids and Maintenance Products')
+                {
+                    $modName = $item['auto_name'];
+                }
             }
 
-            $models[urlencode($mod)] = array(Constants::NAME => $mod,
+            $models[urlencode($mod)] = array(Constants::NAME => $modName,
                 Constants::OPTIONS => array());
 
         }
@@ -85,7 +92,7 @@ class FordCatalogModel extends CatalogModel{
         $sql  = "
         SELECT f.*, coordinates_names.num_index
         FROM feuc f
-        INNER JOIN coordinates_names ON (coordinates_names.model_id = f.model_id AND group_detail_sign LIKE '1'
+        LEFT JOIN coordinates_names ON (coordinates_names.model_id = f.model_id AND group_detail_sign LIKE '1'
         AND coordinates_names.num_model_group LIKE '0')
         WHERE SUBSTRING_INDEX(f.auto_name, ' ', 1) = :modelCode
         ORDER BY auto_name
@@ -106,6 +113,15 @@ class FordCatalogModel extends CatalogModel{
                     $item['picture'] = $aFiles[$index];
                     $item['folder'] = explode('-', $aFile)[1];
 
+                }
+                if (empty($item['picture']))
+                {
+                    if (substr($aFile,-2) == substr($item['mark_auto'], 0, 2))
+                    {
+                        $item['picture'] = $aFiles[$index];
+                        $item['folder'] = explode('-', $aFile)[1];
+
+                    }
                 }
                 unset($item);
             }

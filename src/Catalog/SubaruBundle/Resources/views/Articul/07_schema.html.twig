@@ -4,7 +4,7 @@
 {% block breadcrumbs %}
     <a href="{% if  app.request.get('token') %} {{ path('articul_subaru_find_token', parameters) }} {% else %} {{ path('articul_subaru_find') }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getRuname }},
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
-    <a href="{{ path('articul_subaru_groups', parameters) }}">{{'Группа запчастей'|trans}} ({{ oContainer.getActiveGroup.getRuname}})</a> /
+    <a href="{{ path('articul_subaru_groups', parameters) }}">{{'Группа запчастей'|trans}} ({{ oContainer.getActiveGroup.getRuname(app.request.get('_locale'))}})</a> /
     <a href="{{ path('articul_subaru_subgroups', parameters) }}">{{'Подгруппа запчастей'|trans}} ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
     <a href="{{ path('articul_subaru_schemas', parameters) }}">{{ 'Схема'|trans }}</a> / {{'Запчасти'|trans}}
 {% endblock breadcrumbs %}
@@ -18,7 +18,7 @@
                 {% block pncClick %}
                 $(("#articul_for_pnc{{ pnc.getCode }}")).toggleClass("hidden");
                 $(("#pnc_{{ pnc.getCode }}")).toggleClass("glyphicon-plus");
-                $(("#articul_for_pnc{{ pnc.getCode }}")).html('<img src={{ asset("bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                $(("#articul_for_pnc{{ pnc.getCode }}")).html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogcommon/images/loading.gif") }} height="15px" />');
                 $.ajax({
                     type:   'POST',
                     async:  false,

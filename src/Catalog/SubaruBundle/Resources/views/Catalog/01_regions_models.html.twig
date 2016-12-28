@@ -1,3 +1,4 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:01_regions_models.html.twig' %}
 {% use 'CatalogSubaruBundle::subaru.base.html.twig' %}
 {% block regionPath %}
@@ -11,6 +12,15 @@
     {% endif %}
 
 {% endblock regionPath %}
+
+{% block regions %}
+    {% block head %}<h3>{{ 'Выбрать регион'|trans }}:</h3>{% endblock head %}
+    <ul class="nav nav-pills" role="tablist">
+        {% for region in oContainer.getRegions %}
+            <li role="region" class="{% if region.getCode == oContainer.getActiveRegion.getCode %}active{% endif %}" id="{{ region.getCode }}"><a href="{{ block('regionPath') }}">{{ region.getRuname }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock regions %}
 
 {% block modificationScript %}
     <script>

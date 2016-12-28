@@ -11,7 +11,7 @@
 
 {% block image %}
  
-    <img src="{{ asset('bundles/catalogsuzuki/images/'~oContainer.getActiveSchema.getCode~'.png') }}" width="900" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
+    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogsuzuki/images/'~oContainer.getActiveSchema.getCode~'.png') }}" width="900" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
 {% endblock image %}
 
 {% block ajaxUrl %}{{ path('vin_suzuki_articuls') }}{% endblock ajaxUrl %}

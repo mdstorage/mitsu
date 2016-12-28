@@ -51,7 +51,7 @@
                 {% endfor %}
                 </div>
                 <div class="col-lg-8 col-xs-8 col-md-8 col-sm-8">
-                <img src="{{ asset('bundles/catalogbmw/grafik/w_grafik/'~oContainer.getActiveModification.getComplectations|first.getOption('grafik')) }}"
+                <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogbmw/grafik/w_grafik/'~oContainer.getActiveModification.getComplectations|first.getOption('grafik')) }}"
                      alt="{{ oContainer.getActiveModification.getComplectations|first.getOption('grafik') }}"/>
                 </div>
             </div>

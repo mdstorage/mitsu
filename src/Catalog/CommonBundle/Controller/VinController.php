@@ -84,7 +84,7 @@ abstract class VinController extends CatalogController{
 
             if (stripos($headers['REFERER'], 'domain')|| stripos($headers['REFERER'], 'modelCode'))
             {
-                if (!$call = $request->cookies->get('DOMAIN'))
+                /*if (!$call = $request->cookies->get('DOMAIN'))*/
                 {
                     if ($domain){
                         setcookie('DOMAIN', str_replace('.', '', $domain));
