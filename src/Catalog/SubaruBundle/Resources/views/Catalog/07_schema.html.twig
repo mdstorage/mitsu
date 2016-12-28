@@ -8,7 +8,7 @@
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>/
     <a href="{{ path('catalog_subaru_complectations', parameters) }}">{{ 'Комплектация'|trans }}</a> /
     <a href="{{ path('catalog_subaru_groups', parameters) }}">{{ 'Группа запчастей'|trans }} ({{ oContainer.getActiveGroup.getRuname}})</a> /
-    <a href="{{ path('catalog_subaru_subgroups', parameters) }}">{{ 'Подгруппа запчастей'|trans }} ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
+    <a href="{{ path('catalog_subaru_subgroups', parameters) }}">{{ 'Подгруппа запчастей'|trans }} ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname(app.request.get('_locale')) }})</a> /
     <a href="{{ path('catalog_subaru_schemas', parameters) }}">{{ 'Схема'|trans }}</a> / {{ 'Запчасти'|trans }}
 {% endblock breadcrumbs %}
 
