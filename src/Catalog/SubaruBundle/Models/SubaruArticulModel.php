@@ -319,23 +319,23 @@ class SubaruArticulModel extends SubaruCatalogModel{
             $part_images = 'part_images_jp';
             $labels = 'labels_jp';
             $lang = 'jp';
-
         }
         else
         {
             $part_images = 'part_images';
             $labels = 'labels';
             $lang = 'en';
-
         }
 
 
 
         $sqlArticul = "
-        SELECT $part_images.image_file, $part_images.desc_$lang
+        SELECT pi.image_file, pi.desc_$lang
         FROM part_catalog
-        INNER JOIN $part_images ON ($part_images.sec_group = part_catalog.sec_group AND $part_images.catalog = part_catalog.catalog
-        AND $part_images.model_code = part_catalog.model_code)
+        INNER JOIN labels la ON (la.part_code = part_catalog.part_code AND la.sec_group = part_catalog.sec_group
+        AND la.model_code = part_catalog.model_code AND la.sub_dir = part_catalog.sub_dir AND la.sub_wheel = part_catalog.sub_wheel AND la.catalog = part_catalog.catalog)
+        INNER JOIN part_images pi ON (pi.sec_group = part_catalog.sec_group AND pi.catalog = part_catalog.catalog
+        AND pi.model_code = part_catalog.model_code AND pi.page = la.page AND pi.sub_dir = part_catalog.sub_dir AND pi.sub_wheel = part_catalog.sub_wheel)
         WHERE part_catalog.part_number = :articulCode
         AND part_catalog.catalog = :regionCode
         AND part_catalog.model_code = :modelCode
