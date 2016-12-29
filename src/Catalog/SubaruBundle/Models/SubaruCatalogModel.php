@@ -792,6 +792,7 @@ class SubaruCatalogModel extends CatalogModel{
                     Constants::CD => $item['catalog'].'/'.$item['sub_dir'].'/'.$item['sub_wheel'].'/model'.$item['num_model'].'/part1',
                     'num_model' => $item['num_model'],
                     'page' => $item['page'],
+                    'sub_dir' => $item['sub_dir'],
                     'sdate' => $item['sdate'],
                     'edate' => $item['edate']
                     )
@@ -861,8 +862,7 @@ class SubaruCatalogModel extends CatalogModel{
 
         }
         else
-        {
-            $table = 'labels';
+        {   $table = 'labels';
             $lang = 'en';
 
         }
@@ -875,6 +875,7 @@ class SubaruCatalogModel extends CatalogModel{
           AND sec_group = :subGroupCode
           AND page = :page
           AND sub_wheel = :wheel
+          AND sub_dir = :sub_dir
         ";
 
         $query = $this->conn->prepare($sqlSchema);
@@ -883,10 +884,10 @@ class SubaruCatalogModel extends CatalogModel{
         $query->bindValue('model_code', $modelCode);
         $query->bindValue('subGroupCode', $subGroupCode);
         $query->bindValue('wheel', $wheel);
+        $query->bindValue('sub_dir', $cd['sub_dir']);
         $query->execute();
 
         $aPncs = $query->fetchAll();
-
 
         foreach ($aPncs as &$aPnc)
         {
@@ -900,6 +901,7 @@ class SubaruCatalogModel extends CatalogModel{
           AND page = :page
           AND sub_wheel = :wheel
           and part_code = :pnc
+          and sub_dir = :sub_dir
           AND f9 = :f9
            ";
 
@@ -910,6 +912,7 @@ class SubaruCatalogModel extends CatalogModel{
             $query->bindValue('subGroupCode', $subGroupCode);
             $query->bindValue('wheel', $wheel);
             $query->bindValue('pnc',  $aPnc['part_code']);
+            $query->bindValue('sub_dir',  $aPnc['sub_dir']);
             $query->bindValue('f9',  $aPnc['f9']);
 
 
@@ -1030,11 +1033,13 @@ class SubaruCatalogModel extends CatalogModel{
           AND refer_to_fig.model_code = :model_code
           AND refer_to_fig.sec_group = :subGroupCode
           AND refer_to_fig.page LIKE :cd
+          AND refer_to_fig.sub_dir LIKE :sub_dir
         ";
 
         $query = $this->conn->prepare($sqlSchema);
         $query->bindValue('regionCode', $regionCode);
         $query->bindValue('cd', $cd['page']);
+        $query->bindValue('sub_dir', $cd['sub_dir']);
         $query->bindValue('model_code', $modelCode);
         $query->bindValue('subGroupCode', $subGroupCode);
         $query->execute();
@@ -1056,6 +1061,8 @@ class SubaruCatalogModel extends CatalogModel{
           AND refer_to_fig.sec_group = :subGroupCode
           AND refer_to_fig.page LIKE :cd
           AND refer_to_fig.refer_fig LIKE :refer_fig
+          AND refer_to_fig.sub_dir LIKE :sub_dir
+
            ";
 
             $query = $this->conn->prepare($sqlSchemaLabels);
@@ -1064,6 +1071,7 @@ class SubaruCatalogModel extends CatalogModel{
             $query->bindValue('model_code', $modelCode);
             $query->bindValue('subGroupCode', $subGroupCode);
             $query->bindValue('refer_fig',  $aPnc['refer_fig']);
+            $query->bindValue('sub_dir', $cd['sub_dir']);
             $query->execute();
 
             $query->execute();
