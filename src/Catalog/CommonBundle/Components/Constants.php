@@ -27,8 +27,8 @@ class Constants {
     const VIN = 'VIN';
 
     const FIND_PATH = 'http://ruli.by/search/number/?article={article}';
-    /*const PREFIX_STATIC = 'http://static.vincat.ru';*/
-    const PREFIX_STATIC = '';
+    const PREFIX_STATIC = 'http://static.vincat.ru';
+    /*const PREFIX_STATIC = '';*/
 
     const TOKEN = 'TOKEN';
     const REFERER = 'https://icar.by';

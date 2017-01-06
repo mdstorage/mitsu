@@ -63,7 +63,7 @@ abstract class VinController extends CatalogController{
 
             $domain = trim($request->get('domain'));
 
-            $domain = substr_replace($domain, '', strpos($domain, '.'), 1);
+            $domain = str_replace('.', '', $domain);
 
 
 

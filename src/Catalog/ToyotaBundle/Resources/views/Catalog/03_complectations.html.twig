@@ -2,7 +2,8 @@
 {% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
 {% use 'CatalogToyotaBundle::toyota.base.html.twig' %}
 {% block breadcrumbs %}
-   <a href="{% if  app.request.get('token') %} {{ path('catalog_toyota_token', parameters) }} {% else %} {{ path('catalog_toyota') }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getRuname }},
+   <a href="{% if  app.request.get('token') %} {{ path('catalog_toyota_token', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTtoyota'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+    {% else %} {{ path('catalog_toyota', {'callbackhost':  app.request.cookies.get('COOKIEHOSTtoyota'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / {{'Комплектация'|trans}}
 {% endblock breadcrumbs %}
 

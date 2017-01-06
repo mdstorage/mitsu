@@ -2,8 +2,8 @@
 namespace Catalog\MercedesBundle\Components;
 
 class MercedesConstants {
-    const LOCALE    = 'ru_RU';
-    const TRANSLATION_RESOURCE = '/../../../../app/Resources/translations/mercedes.ru.yml';
+    const LOCALE    = 'ru';
+    const TRANSLATION_RESOURCE = '/../../../../app/Resources/translations/mercedes.';
     const TRANSLATION_DOMAIN = 'mercedes';
 
     const PROD_YEAR = 'prod_year';

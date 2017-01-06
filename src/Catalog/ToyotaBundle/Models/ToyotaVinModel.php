@@ -23,7 +23,7 @@ class ToyotaVinModel extends ToyotaCatalogModel {
         from johokt JAT
         INNER JOIN frames ON (frames.frame_code = JAT.frame AND frames.serial_number = RIGHT (:vin,7) AND JAT.model_code LIKE CONCAT ('%', frames.ext, '-',frames.model2, '%')
         AND frames.catalog = 'OV')
-        INNER JOIN shamei ON (shamei.catalog = JAT.catalog AND shamei.catalog_code = JAT.catalog_code)
+        INNER JOIN shamei ON (shamei.catalog = JAT.catalog AND shamei.catalog_code = JAT.catalog_code AND shamei.model_name NOT LIKE CONCAT('%', 'LEXUS', '%'))
         where JAT.vin8 = SUBSTRING(:vin,1,8)
         ";
 
