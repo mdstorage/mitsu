@@ -37,10 +37,21 @@ class MazdaCatalogModel extends CatalogModel{
 
     public function getModels($regionCode)
     {
+        if ($regionCode !== 'JP')
+        {
+            $table = 'catalog'; $lang = '1';
+        }
+        else
+        {
+            $table = 'catalog_local';
+            $lang = '2';
+        }
+
+
         $sql = "
         SELECT model_name
-        FROM catalog
-        WHERE lang = 1
+        FROM $table
+        WHERE lang = $lang
         GROUP BY model_name
         ";
 
@@ -50,7 +61,7 @@ class MazdaCatalogModel extends CatalogModel{
 
         $models = array();
         foreach($aData as $item){
-            $models[$item['model_name']] = array(Constants::NAME=>$item['model_name'], Constants::OPTIONS=>array());
+            $models[$item['model_name']] = array(Constants::NAME=> $item['model_name'], Constants::OPTIONS=>array());
         }
 
         return $models;
@@ -58,17 +69,33 @@ class MazdaCatalogModel extends CatalogModel{
 
     public function getModifications($regionCode, $modelCode)
     {
+
+        if ($regionCode !== 'JP')
+        {
+            $table = '`catalog`'; $lang = '1';
+        }
+        else
+        {
+            $table = '`catalog_local`';
+            $lang = '2';
+        }
+
         $sql = "
-        SELECT catalog_number, prod_year, prod_date, carline
-        FROM catalog
-        WHERE model_name = :modelCode AND lang = 1
+        SELECT $table.`catalog_number`/*,
+        CASE
+              WHEN $regionCode <> 'JP'
+              THEN $table.`prod_year`
+              ELSE $table.`model_date`
+        END AS pr_ye*/
+        FROM $table
+        WHERE `model_name` LIKE :modelCode
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('modelCode', $modelCode);
         $query->execute();
 
-        $aData = $query->fetchAll();
+        $aData = $query->fetchAll();var_dump($aData); die;
 
         $modifications = array();
         foreach($aData as $item){
@@ -78,7 +105,7 @@ class MazdaCatalogModel extends CatalogModel{
                     MazdaConstants::PROD_YEAR   => $item['prod_year'],
                     MazdaConstants::PROD_DATE   => $item['prod_date'],
                     MazdaConstants::CARLINE     => $item['carline']
-            ));
+                ));
         }
 
         return $modifications;
@@ -115,7 +142,13 @@ class MazdaCatalogModel extends CatalogModel{
         $sql = "
         SELECT `id`, `descr`
         FROM pgroups
-        WHERE catalog = :regionCode AND catalog_number = :modificationCode AND lang = 1
+        WHERE catalog = :regionCode AND catalog_number = :modificationCode AND
+        lang =
+            (CASE
+              WHEN :regionCode <> 'JP'
+              THEN '1'
+              ELSE '2'
+             END)
         ";
 
         $query = $this->conn->prepare($sql);
@@ -123,7 +156,7 @@ class MazdaCatalogModel extends CatalogModel{
         $query->bindValue('modificationCode', $modificationCode);
         $query->execute();
 
-        $aData = $query->fetchAll();
+        $aData = $query->fetchAll();var_dump($aData); die;
 
         $groups = array();
         foreach($aData as $item){

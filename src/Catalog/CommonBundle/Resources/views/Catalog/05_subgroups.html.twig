@@ -32,7 +32,7 @@
                                     {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y1')) }},
                                     {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X2')) }},
                                     {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y2')) }}
-                                " href="#" id="{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}" data-name="{% block dataName %}{{ subgroup.getCode }}{% endblock dataName %}"/>
+                                " href="{{ block('pathToSchemas') }}" id="{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}" data-name="{% block dataName %}{{ subgroup.getCode }}{% endblock dataName %}"/>
                             {% endblock area %}
                             {% block subgroupItem %}
                                 <div id="subgroup{{ subgroup.getCode }}">
@@ -65,7 +65,8 @@
                 fillColor: '70daf1',
                 fillOpacity: 0.3,
                 mapKey: 'data-name',
-                staticState: true
+                staticState: true,
+                clickNavigate: true
             });
         </script>
     {% endblock mapsterScript %}

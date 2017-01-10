@@ -7,7 +7,7 @@
 {% block complectation %}{% endblock complectation %}
 
 {% block imagePath %}
-    {{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmazda/images/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/image/'~oContainer.getActiveSchema.getCode|slice(0,3)~'/'~oContainer.getActiveSchema.getCode~'.png') }}
+    {{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmazda/images/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/image/'~oContainer.getActiveSchema.getCode|slice(0,3)~'/'~oContainer.getActiveSchema.getCode~'.png') }}
 {% endblock imagePath %}
 
 {% block pathToSchemas %}
