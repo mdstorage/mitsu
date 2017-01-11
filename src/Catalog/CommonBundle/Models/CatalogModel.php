@@ -11,7 +11,7 @@ namespace Catalog\CommonBundle\Models;
 
 use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\DataCollectorTranslator;
 
 abstract class CatalogModel{
     protected $conn;
@@ -48,7 +48,7 @@ abstract class CatalogModel{
 
     }
 
-    public function setTranslation(Translator $translator)
+    public function setTranslation(DataCollectorTranslator $translator)
     {
         /*var_dump($translator->trans('EU_LH', array(), 'subaru')); die;*/
         $this->translat = $translator;

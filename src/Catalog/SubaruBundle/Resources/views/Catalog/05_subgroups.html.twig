@@ -18,3 +18,56 @@
     {{ path('catalog_subaru_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}
 {% endblock pathToSchemas %}
 {% block groupRuname %}{{ oContainer.getActiveGroup.getRuname(app.request.get('_locale')) }}{% endblock groupRuname %}
+
+
+
+                    {% block subGroupsMap %}
+                        <map name="{{ oContainer.getActiveGroup.getCode }}">
+
+                            {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
+                                {% block subgroupItem %}
+                                <div id="subgroup{{ subgroup.getCode }}">
+                                    <a href="{{ block('pathToSchemas') }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
+                                </div>
+                                {% endblock subgroupItem %}
+
+                                {% for coords in subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
+                                    {% block area %}
+                            <area shape="rect" coords="
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}
+                                " href="{{ block('pathToSchemas') }}" target="_blank" id="{{ subgroup.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}" data-name="{{ subgroup.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}"/>
+                                    {% endblock area %}
+
+
+
+                                {% block cycleScript %}
+                                <script>
+                                    $("#{{ subgroup.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}").on('mouseover', function(){
+                                        $("#subgroup{{ subgroup.getCode }}").toggleClass("btn-default");
+                                    });
+                                    $("#{{ subgroup.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}").on('mouseout', function(){
+                                        $("#subgroup{{ subgroup.getCode }}").toggleClass("btn-default");
+                                    });
+                                    $("#{{ subgroup.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }}").on('click', function(){
+                                        $("#subgroup{{ subgroup.getCode }}").toggleClass("btn-info");
+                                    });
+                                </script>
+                                {% endblock cycleScript %}
+                                {% endfor %}
+                            {% endfor %}
+                        </map>
+                    {% endblock subGroupsMap %}
+{% block mapsterScript %}
+    <script>
+        $('img').mapster({
+            fillColor: '70daf1',
+            fillOpacity: 0.3,
+            mapKey: 'data-name',
+            staticState: true,
+            clickNavigate: true
+        });
+    </script>
+{% endblock mapsterScript %}

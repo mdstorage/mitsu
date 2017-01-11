@@ -709,17 +709,55 @@ class SubaruCatalogModel extends CatalogModel{
 
         $aData = $query->fetchAll();
 
+        foreach ($aData as &$aPnc)
+        {
+
+            $sqlSchemaLabels = "
+        SELECT x, y
+        FROM $table
+        WHERE catalog = :regionCode
+          AND model_code =:model_code
+          AND pri_group = :groupCode
+          AND sec_group = :subGroupCode
+           ";
+
+            $query = $this->conn->prepare($sqlSchemaLabels);
+            $query->bindValue('regionCode', $regionCode);
+            $query->bindValue('model_code', $modelCode);
+            $query->bindValue('groupCode', $groupCode);
+            $query->bindValue('subGroupCode', $aPnc['sec_group']);
+
+            $query->execute();
+
+            $aPnc['clangjap'] = $query->fetchAll();
+            unset($aPnc);
+
+        }
+
         $subgroups = array();
-        foreach($aData as $item){
-            $subgroups[$item['sec_group']] = array(
-                Constants::NAME => ($item['desc_en'])?$item['desc_en']:$item['desc_'.$lang],
-                Constants::OPTIONS => array(
-                    Constants::X1 => floor($item['x']/2),
-                    Constants::X2 => $item['x']/2+50,
-                    Constants::Y1 => $item['y']/2-5,
-                    Constants::Y2 => $item['y']/2+20
-                )
-            );
+
+        foreach ($aData as $index=>$value) {
+
+            if (!$value['clangjap'])
+            {
+                unset ($aData[$index]);
+
+            }
+
+            foreach ($value['clangjap'] as $item1)
+            {
+                $subgroups[$value['sec_group']][Constants::OPTIONS][Constants::COORDS][$item1['x']] = array(
+                    Constants::X1 => floor($item1['x']/2),
+                    Constants::X2 => $item1['x']/2+50,
+                    Constants::Y1 => floor($item1['y']/2-5),
+                    Constants::Y2 => $item1['y']/2+20
+                );
+            }
+        }
+
+        foreach ($aData as $item)
+        {
+            $subgroups[$item['sec_group']][Constants::NAME] = ($item['desc_en'])?$item['desc_en']:$item['desc_'.$lang];
         }
 
         return $subgroups;

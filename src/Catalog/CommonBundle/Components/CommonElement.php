@@ -93,7 +93,8 @@ abstract class CommonElement implements CommonInterface{
         if ($locale == null) {$locale = $constants::LOCALE;}
         $translator = new Translator($locale);
         $translator->addLoader('yaml', new YamlFileLoader());
-        $translator->addResource('yaml', __DIR__.$constants::TRANSLATION_RESOURCE.$locale.'.yml', $locale, $constants::TRANSLATION_DOMAIN);
+        $res = (file_exists(__DIR__.$constants::TRANSLATION_RESOURCE.$locale.'.yml'))?(__DIR__.$constants::TRANSLATION_RESOURCE.$locale.'.yml'):(__DIR__.$constants::TRANSLATION_RESOURCE);
+        $translator->addResource('yaml', $res, $locale, $constants::TRANSLATION_DOMAIN);
 
         return $translator->trans($name, array(), $constants::TRANSLATION_DOMAIN);
     }
