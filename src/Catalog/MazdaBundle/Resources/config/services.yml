@@ -7,6 +7,10 @@ services:
     class: Catalog\MazdaBundle\Models\MazdaCatalogModel
     arguments:  ['@doctrine.dbal.mazda_connection']
 
+  mazda.catalog.jp.model:
+    class: Catalog\MazdaBundle\Models\MazdaCatalogJPModel
+    arguments:  ['@doctrine.dbal.mazda_connection']
+
   mazda.vin.model:
     class: Catalog\MazdaBundle\Models\MazdaVinModel
     arguments:  ['@doctrine.dbal.mazda_connection']

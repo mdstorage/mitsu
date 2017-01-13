@@ -13,7 +13,7 @@ use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Models\CatalogModel;
 use Catalog\MazdaBundle\Components\MazdaConstants;
 
-class MazdaCatalogModel extends CatalogModel{
+class MazdaCatalogJPModel extends CatalogModel{
 
     public function getRegions(){
 
@@ -37,10 +37,11 @@ class MazdaCatalogModel extends CatalogModel{
 
     public function getModels($regionCode)
     {
+
         $sql = "
         SELECT model_name
-        FROM catalog
-        WHERE lang = 1
+        FROM `catalog_local`
+        WHERE lang = '2'
         GROUP BY model_name
         ";
 
@@ -50,7 +51,7 @@ class MazdaCatalogModel extends CatalogModel{
 
         $models = array();
         foreach($aData as $item){
-            $models[$item['model_name']] = array(Constants::NAME=>$item['model_name'], Constants::OPTIONS=>array());
+            $models[$item['model_name']] = array(Constants::NAME=> iconv("UTF-8", "ascii", $item['model_name']), Constants::OPTIONS=>array());
         }
 
         return $models;
@@ -59,9 +60,9 @@ class MazdaCatalogModel extends CatalogModel{
     public function getModifications($regionCode, $modelCode)
     {
         $sql = "
-        SELECT catalog_number, prod_year, prod_date, carline
-        FROM catalog
-        WHERE model_name = :modelCode AND lang = 1
+        SELECT `catalog_local`.`catalog_number`
+        FROM `catalog_local`
+        WHERE `model_name` LIKE :modelCode
         ";
 
         $query = $this->conn->prepare($sql);
@@ -129,7 +130,7 @@ class MazdaCatalogModel extends CatalogModel{
         $query->bindValue('modificationCode', $modificationCode);
         $query->execute();
 
-        $aData = $query->fetchAll();
+        $aData = $query->fetchAll();var_dump($aData); die;
 
         $groups = array();
         foreach($aData as $item){
