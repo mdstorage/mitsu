@@ -16,7 +16,12 @@ class CatalogController extends BaseController{
 
     public function model()
     {
-        return $this->get('mazda.catalog.model');
+        $regionCode = $this->get('request')->get('regionCode');
+        if ($regionCode == 'JP'){
+            return $this->get('mazda.catalog.jp.model');
+        }
+        else return $this->get('mazda.catalog.model');
+
     }
 
     public function bundleConstants()
