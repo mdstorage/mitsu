@@ -123,8 +123,8 @@ class MercedesCatalogModel extends CatalogModel{
         $complectations = array();
 
         foreach ($aData as $item) {
-            $complectations[$item['CATNUM'] . "." . $item['COMPLECTATION']][Constants::NAME] = $item['TRADEMARK'];
-            $complectations[$item['CATNUM'] . "." . $item['COMPLECTATION']][Constants::OPTIONS]['REMARKS'] = $item['REMARKS'];
+            $complectations[trim($item['CATNUM']) . "." . $item['COMPLECTATION']][Constants::NAME] = $item['TRADEMARK'];
+            $complectations[trim($item['CATNUM']) . "." . $item['COMPLECTATION']][Constants::OPTIONS]['REMARKS'] = $item['REMARKS'];
         }
         return $complectations;
     }
@@ -685,7 +685,7 @@ class MercedesCatalogModel extends CatalogModel{
     private function getPncName($complectationCode, $groupCode, $subGroupCode, $pncCode)
     {
         $sqlPncName = "
-        SELECT IFNULL(nouns_ru.NOUN, nouns_en.NOUN) TEXT
+        SELECT UPPER(IFNULL(nouns_ru.NOUN, nouns_en.NOUN)) TEXT
         FROM `alltext_bm_parts2_v` parts
         LEFT OUTER JOIN `alltext_part_nouns_v` nouns_ru
         ON nouns_ru.NOUNIDX = parts.NOUNIDX AND nouns_ru.LANG = 'R'
@@ -707,7 +707,7 @@ class MercedesCatalogModel extends CatalogModel{
 
         $sData = $query->fetchColumn();
 
-        return $sData;
+        return ($sData);
     }
 
     public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)

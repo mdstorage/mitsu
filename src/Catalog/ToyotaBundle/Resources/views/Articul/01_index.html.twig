@@ -15,8 +15,9 @@
 {% block articulScript %}
     <script>
         $("#articul-button").on('click', function(){
-            if($("#articul").val(). replace(/\s+/g, '').length < 7){
-                alert("{{ 'Артикул должен содержать не менее 8 знаков!'|trans }}");
+            $("#articul").val($("#articul").val().replace(/[\-\s+]/g, ''));
+            if($("#articul").val(). replace(/[\-\s+]/g, '').length < 7){
+                alert("{{ 'Артикул должен содержать не менее 9 знаков!'|trans }}");
                 return;
             }
         });
