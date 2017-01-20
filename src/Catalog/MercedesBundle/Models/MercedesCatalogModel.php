@@ -757,8 +757,10 @@ class MercedesCatalogModel extends CatalogModel{
 
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, $options)
     {
+        $subMod = (explode('.', $complectationCode)[2]);
         $sqlArticuls = "
-        SELECT parts.`PARTTYPE`, parts.`PARTNUM`, parts.`CODEB`, parts.`QUANTBM`, IFNULL(nouns_ru.NOUN, nouns_en.NOUN) TEXT
+        SELECT parts.`PARTTYPE`, parts.`PARTNUM`, parts.`CODEB`, parts.`SEQNUM`, parts.`SUBMODS`, parts.`QUANTBM`, IFNULL(nouns_ru.NOUN, nouns_en.NOUN) TEXT,
+        IF (parts.`REPLFLG` = 'R', concat(parts.`REPTYPE`, parts.`REPPNO`), NULL) REPL
         FROM `alltext_bm_parts2_v` parts
         LEFT OUTER JOIN `alltext_part_nouns_v` nouns_ru
         ON nouns_ru.NOUNIDX = parts.NOUNIDX AND nouns_ru.LANG = 'R'
@@ -779,15 +781,25 @@ class MercedesCatalogModel extends CatalogModel{
 
         $aData = $query->fetchAll();
 
+        foreach ($aData as $index=>$value)
+        {
+            $text = explode(' ', wordwrap($value['SUBMODS'],3,' ',true));
+            if (!in_array($subMod, $text))
+            {
+                unset ($aData[$index]);
+            }
+        }
+
         $articuls = array();
         foreach ($aData as $item) {
-            $articuls[$item['PARTTYPE'] . $item['PARTNUM']] = array(
+            $articuls[$item['PARTTYPE'] . $item['PARTNUM']]/*здесь происходит потеря запчастей из-за неверной группировки*/ = array(
                 Constants::NAME => iconv('Windows-1251', 'UTF-8', $item['TEXT']),
                 Constants::OPTIONS => array(
                     Constants::QUANTITY => substr($item['QUANTBM'], 0, 3),
                     Constants::START_DATE => '00000000',
                     Constants::END_DATE => '99999999',
-                    'CODEB' => $item['CODEB']
+                    'CODEB' => $item['CODEB'],
+                    'REPL' => $item['REPL']
                 )
             );
         }

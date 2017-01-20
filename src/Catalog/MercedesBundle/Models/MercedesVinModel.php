@@ -47,10 +47,11 @@ class MercedesVinModel extends MercedesCatalogModel
     public function getVinFinderResult($vin)
     {
         $result = array();
+        $aModel = array();
 
         $aVin = $this->getIdentDataByVin($vin);
 
-        foreach ($aVin as &$item) {
+        foreach ($aVin as $index => &$item) {
             $sqlModels = "
                 SELECT DISTINCT
                     *
@@ -68,17 +69,21 @@ class MercedesVinModel extends MercedesCatalogModel
             $query->execute();
 
             $aModel = $query->fetchAll();
+            foreach ($aModel as &$value){
+                $value = $value + $item;
+                unset($value);
+            }/*оказывается, что автомобиль может быть не один, и поэтому добавление нулевого элемента $aModel[0] ошибочно. Исправлено 17.01.17*/
 
-            $item = $item + $aModel[0];
-
+            unset($item);
         }
 
-        if ($aVin) {
-            $aData = $aVin[0];
 
-            $tableName = strtolower($aData['DB_NAME'] . "_DC_RTYPE1_V");
+        if ($aModel) {
+            foreach ($aModel as $index => $aData) {
 
-            $sqlInfo = "
+                $tableName = strtolower($aData['DB_NAME'] . "_DC_RTYPE1_V");
+
+                $sqlInfo = "
             SELECT *,
               IF (info.DELIVERY_DATE != '', info.DELIVERY_DATE, info.RELEASE_DATE) DDATE,
               IF (info.RELEASE_DATE != '', info.RELEASE_DATE, info.DELIVERY_DATE) RDATE
@@ -88,55 +93,63 @@ class MercedesVinModel extends MercedesCatalogModel
              AND info.CHASS_IDENT = :chassIdent
             ";
 
-            $query = $this->conn->prepare($sqlInfo);
-            $query->bindValue('whc', $aData['WHC']);
-            $query->bindValue('chassbm', $aData['CHASSBM']);
-            $query->bindValue('chassIdent', $aData['CHASS_IDENT']);
-            $query->execute();
+                $query = $this->conn->prepare($sqlInfo);
+                $query->bindValue('whc', $aData['WHC']);
+                $query->bindValue('chassbm', $aData['CHASSBM']);
+                $query->bindValue('chassIdent', $aData['CHASS_IDENT']);
+                $query->execute();
 
-            $aInfo = $query->fetch();
+                $aInfo = $query->fetch();
 
-                switch (trim($aVin[0]['MARKET']))
-                {
+                switch (trim($aData['MARKET'])) {
                     case '1':
-                        $region_RU = 'Европа'; break;
+                        $region_RU = 'Европа';
+                        break;
 
                     case 'F':
-                        $region_RU = 'Северная Америка'; break;
+                        $region_RU = 'Северная Америка';
+                        break;
 
                     case 'S':
-                        $region_RU = 'Япония'; break;
+                        $region_RU = 'Япония';
+                        break;
 
                     case 'W':
-                        $region_RU = 'Латинская Америка'; break;
+                        $region_RU = 'Латинская Америка';
+                        break;
 
                     case 'K':
-                        $region_RU = 'Южная Африка'; break;
+                        $region_RU = 'Южная Африка';
+                        break;
 
                     case 'M':
-                        $region_RU = 'Smart'; break;
+                        $region_RU = 'Smart';
+                        break;
 
                     case 'P':
-                        $region_RU = 'Агрегаты'; break;
+                        $region_RU = 'Агрегаты';
+                        break;
 
                 }
 
 
-            if ($aData) {
-                $result = array(
-                    'marka' => 'MERCEDES',
-                    'region' => trim($aVin[0]['MARKET']),
-                    'region_RU' => $region_RU,
-                    'model' => trim($aData['CLASS']),
-                    'saledes' => trim($aData['SALESDES']),
-                    'prod_year' => substr($aInfo['DDATE'], 0, 1) > 6 ? '19' . $aInfo['DDATE'] : '20' . $aInfo['DDATE'],
-                    'modification' => $aData['AGGTYPE'],
-    //                'country' => $aData['XC26EDST'],
-                    'complectation' => $aData['CATNUM'] . '.' . $aData['TYPE'] . '.' .  $aData['SUBBM1'],
-    //                'ext_color' => $aData['ext_color'],
-    //                'int_color' => $aData['int_color'],
-                    Constants::PROD_DATE => substr($aInfo['RDATE'], 0, 1) > 6 ? '19' . $aInfo['RDATE'] : '20' . $aInfo['RDATE']
-                );
+                if ($aData) {
+                    $result[Constants::PROD_DATE] = substr($aInfo['RDATE'], 0, 1) > 6 ? '19' . $aInfo['RDATE'] : '20' . $aInfo['RDATE'];
+                    $result[$index] = array(
+                        'marka' => 'MERCEDES',
+                        'region' => trim($aData['MARKET']),
+                        'region_RU' => $region_RU,
+                        'model' => trim($aData['CLASS']),
+                        'saledes' => trim($aData['SALESDES']),
+                        'prod_year' => substr($aInfo['DDATE'], 0, 1) > 6 ? '19' . $aInfo['DDATE'] : '20' . $aInfo['DDATE'],
+                        'modification' => $aData['AGGTYPE'],
+                        //                'country' => $aData['XC26EDST'],
+                        'complectation' => trim($aData['CATNUM']) . '.' . $aData['TYPE'] . '.' . $aData['SUBBM1'],
+                        //                'ext_color' => $aData['ext_color'],
+                        //                'int_color' => $aData['int_color'],
+                        Constants::PROD_DATE => substr($aInfo['RDATE'], 0, 1) > 6 ? '19' . $aInfo['RDATE'] : '20' . $aInfo['RDATE']
+                    );
+                }
             }
         }
 

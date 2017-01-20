@@ -10,3 +10,15 @@
 
     {% endif %}
 {% endblock formAction %}
+
+{% block articulScript %}
+    <script>
+        $("#articul-button").on('click', function(){
+            $("#articul").val($("#articul").val().replace(/[\!\?\'\\\+\.\,\:\;\/\-\s+]/g, ''));
+            if($("#articul").val(). replace(/[\-\s+]/g, '').length < 7){
+                alert("{{ 'Артикул должен содержать не менее 9 знаков!'|trans }}");
+                return;
+            }
+        });
+    </script>
+{% endblock articulScript %}

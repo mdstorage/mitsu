@@ -9,12 +9,21 @@ services:
             - { name: twig.extension}
   kia.catalog.model:
     class: Catalog\KiaBundle\Models\KiaCatalogModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.kia_connection']
 
   kia.vin.model:
     class: Catalog\KiaBundle\Models\KiaVinModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.kia_connection']
 
   kia.articul.model:
     class: Catalog\KiaBundle\Models\KiaArticulModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.kia_connection']
+
+  kia.form:
+    class: Catalog\KiaBundle\Form\ComplectationType

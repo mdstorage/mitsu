@@ -8,8 +8,9 @@
     <a href="{{ path('catalog_mercedes_schemas', parameters) }}">Выбрать схему</a> / Выбрать запчасть
 {% endblock breadcrumbs %}
 {% set schema = oContainer.getActiveSchema %}
+
 {% block image %}
-    <img src="{{ ('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png')|file_exists() ? asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png') : asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmercedes/images/BM_IMAGES_ARC/'~schema.getCode~'.png') }}" width="100%" usemap="#{{ schema.getCode }}" alt="{{ schema.getCode }}"/>
+    <img src="{{ ('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png')|file_exists() ? asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png') : asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmercedes/images/BM_IMAGES_ARC/'~schema.getCode~'.png') }}" class="img-responsive" usemap="#{{ schema.getCode }}" alt="{{ schema.getCode }}"/>
 {% endblock image %}
 
 {% block ajaxUrl %}{{ path('catalog_mercedes_articuls') }}{% endblock ajaxUrl %}
