@@ -1,3 +1,28 @@
-{% extends 'CatalogCommonBundle:Catalog:08_articuls.html.twig' %}
+{% if oContainer.getActivePnc.getArticuls %}
+    <table class="table small">
+        <thead>
+        <tr>
+            <th>Артикул</th>
+            <th>Кол-во</th>
+            <th>Период производства</th>
+            <th>Примеч.</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for articul in oContainer.getActivePnc.getArticuls %}
+            <tr>
+                <td><a href="{% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': articul.getCode }) }}{% endblock commonArticulPath %}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a>
+                    {% if articul.getOption('REPL') %}<br>Замена: {{ articul.getOption('REPL')}} {% endif %}
+                </td>
+                <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }}</td>
+                <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|date_convertor }} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|date_convertor }}</td>
+                <td>{{ articul.getRuname }}</td>
+            </tr>
 
-{% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': articul.getCode }) }}{% endblock commonArticulPath %}
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="label label-danger">Запчасти отсутствуют</div>
+{% endif %}
+

@@ -10,8 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Catalog\ToyotaBundle\Form\ComplectationType;
 use Catalog\ToyotaBundle\Components\ToyotaConstants;
-use Symfony\Component\Translation\Translator;
-use Symfony\Component\Translation\Loader\YamlFileLoader;
+
 
 class CatalogController extends BaseController{
 
@@ -84,18 +83,6 @@ class CatalogController extends BaseController{
         unset($complectations);
         $this->filter($oContainer);
 
-        $complectationsKeys = array_keys($oContainer->getActiveModification()->getComplectations());
-    /*    if (1 == count($complectationsKeys)) {
-            return $this->redirect(
-                $this->generateUrl(
-                    str_replace('complectations', 'groups', $this->get('request')->get('_route')),
-                    array_merge($parameters, array(
-                            'complectationCode' => $complectationsKeys[0]
-                        )
-                    )
-                ), 301
-            );
-        };*/
 
         return $this->render($this->bundle() . ':03_complectations.html.twig', array(
             'oContainer' => $oContainer,

@@ -10,8 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Catalog\LexusBundle\Form\ComplectationType;
 use Catalog\LexusBundle\Components\LexusConstants;
-use Symfony\Component\Translation\Translator;
-use Symfony\Component\Translation\Loader\YamlFileLoader;
 
 class CatalogController extends BaseController{
 

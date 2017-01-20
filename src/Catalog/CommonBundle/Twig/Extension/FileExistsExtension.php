@@ -18,12 +18,16 @@ class FileExistsExtension extends \Twig_Extension
 
     public function fileExists($file) {
 
-        if (file_exists($file)) {
+        $urlHeaders = @get_headers($file);
+
+        if(strpos($urlHeaders[0], '200')) {
+
             return true;
-        }
-        else
-        {
+
+        } else {
+
             return false;
+
         }
 
     }

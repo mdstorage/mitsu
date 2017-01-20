@@ -20,9 +20,9 @@
                         {{ schema.getOption('sdate')|subaru_date_convertor}} - {{ schema.getOption('edate')|subaru_date_convertor}}
                      </div>
 
-                    <div class="row">
-                        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogsubaru/Subaru_Images/'~schema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getCode }}" class="highqual">
-                    </div>
+                    {#<div class="row">#}
+                        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogsubaru/Subaru_Images/'~schema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/'~schema.getCode~'.png') }}" width="inherit" alt="{{ schema.getCode }}" class="highqual">
+            {#</div>#}
 
         </a>
             </div>

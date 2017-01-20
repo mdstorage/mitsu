@@ -1,130 +1,104 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
 {% use 'CatalogKiaBundle::kia.base.html.twig' %}
 {% block breadcrumbs %}
-   <a href="{% if  app.request.get('token') %} {{ path('catalog_kia_token', parameters) }} {% else %} {{ path('catalog_kia') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
-   {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getCode }})</a> / Комплектация                    
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_kia_token', {'token': app.request.get('token'), 'callbackhost':  app.request.cookies.get('COOKIEHOSTkia'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }}
+    {% else %} {{ path('catalog_kia', {'callbackhost':  app.request.cookies.get('COOKIEHOSTkia'~app.request.cookies.get('DOMAIN')|replace({'.': ''})), 'domain':  app.request.cookies.get('DOMAIN') }) }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getRuname }},
+        {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> / {{'Комплектация'|trans}}
 {% endblock breadcrumbs %}
 
+
+
 {% block body %}
-    {% block head %}<h3>Выбрать комплектацию:</h3>{% endblock head %}
-   
+    {% block head %}<h3>{{'Выбрать комплектацию'|trans}}:</h3>{% endblock head %}
     {% block complectations %}
-    <div class="row">
-    
-        <div class="complectations"><hr />
+
+
         <div class="row">
-        
-        
-        <div class="form-group">
-        
-        <div class="col-lg-5">
-               
-        <input name="filter-query" class="form-control" value="" id="filter-query" onclick="this.value='';"
-        type="text" placeholder="Введите любой признак для фильтрации параметров"/>
-        </div>
-                
-        <a href="#" class="btn btn-default" onclick="$('#filter-query').val(''); $('#filter-query1').val(''); $('#filter-query2').val('');
-        repeatact();return false">Показать все</a>
-        <input name="filter-query1" class="form-control" value="" id="filter-query1" type="text" style="display:none;"/>
-        <input name="filter-query2" class="form-control" value="" id="filter-query2" type="text" style="display:none;"/>
-        
-        </div>
-        
-        
-        </div>
-        
-       
-                       <div class="row">
-             {# {% if oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
-                       <div class="col-lg-4">
-                            <b>Трансмиссия:</b>
-                  {% for trans in oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
-                                          		
-                      <a href="#" class="btn btn-default" onclick="$('#filter-query').val('{{ trans }}');
-                      $('#filter-query2').val($('#filter-query').val().concat('+',$('#filter-query1').val()));
-                      repeatact();return false">{{ trans }}</a>
-                      
-                  {% endfor %}
-                      </div>
-              {% endif %}
-                      
-              {% if oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
-                      <div class="col-lg-4">
-                       <b>Положение руля:</b>
-                  {% for role in oContainer.getActiveModification.getComplectations|first.getOption('option1') %}
-                   
-                      <a href="#" class="btn btn-default" onclick="$('#filter-query1').val('{{ role }}');
-                      $('#filter-query2').val($('#filter-query').val().concat('+',$('#filter-query1').val()));
-                      repeatact();return false">{{ role }}</a>
-                      
-                  {% endfor %}
-                      </div>
-              {% endif %}#}
-                      </div><hr />
-                      <br/>
-                      
-            {% for complectation in oContainer.getActiveModification.getComplectations %}
-                {% block complectationItem %}
-            <div class="col-lg-4">
-           
-                             <a href="{{ path('catalog_kia_groups', parameters|merge({'complectationCode': complectation.getCode})) }}">
-        
-    <b>    {{ complectation.getRuname }} </b>
-      </a> <br/>
-                ({{ complectation.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|kia_date_convertor }} -
-                {{ complectation.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|kia_date_convertor }})<br/>
-                {%for opt in complectation.getOption('option1') %}
-                {{ opt }} <br/>
-                {% endfor %}
 
-      <hr />
-                           
+            <div class="complectations">
+
+                <div class="form-group control-group">
+                    <form action="{{ path('catalog_kia_groups', parameters|merge({'complectationCode': '1'})) }}">
+                        <div class="col-sm-4">
+
+                            {{ form_widget(form) }}
+
+                            <br>
+                            <input type="submit" class="btn btn-primary" value="{{ 'Далее'|trans({}, 'kia') }}" />
+                        </div>
+                    </form>
                 </div>
-                {% endblock complectationItem %}
-            {% endfor %}
+
+
+            </div>
         </div>
-        </div> 
+
+
+
+        <script>
+            $(document).ready(function() {
+                $('select.form-control').each(function(){
+                    var selector = $(this).attr('id');
+                    sel = document.getElementById(selector);
+                    if (sel.options.length == 1)
+                        sel.disabled = true;
+                });
+            });
+
+            $('select.form-control').on('change', function(){
+                filter('#'.concat($(this).attr('id')));
+            });
+
+            function filter(selector) {
+
+                selectorDied = new Object();
+                $('select.form-control').each(function(){
+                    var selec = $(this).attr('id');
+                    Selec = document.getElementById(selec);
+                    if (Selec.disabled == true)
+                    selectorDied[selec.substr(-2)] = Selec.value;
+
+                });
+
+                $(selector).each(function() {
+                    if ($(selector).val() == '1') location.reload();
+                    $.ajax({
+                        type:   'POST',
+                        async:  false,
+                        url:    "{{ path('catalog_kia_complectation_korobka') }}",
+                        data:   { select_name: selector.substr(-2) ,select_value: $(selector).val(), selectorD: selectorDied, modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                            regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                            modelCode: '{{ oContainer.getActiveModel.getCode }}'},
+                        success: function(data){
+                            objSel = new Object();
+                            optSel = new Object();
+                            selector1 = new Object();
+                            $.each(JSON.parse(data), function(key, value) {
+                                selector1[key] = selector.substr(0, selector.indexOf(selector.substr(-2))).concat(key);
+                                objSel[key] = document.getElementById(selector1[key].substr(1,selector1[key].length));
+                                optSel[key] = objSel[key].options[objSel[key].selectedIndex].value;
+                                $(selector1[key]).empty();
+                                $.each((value), function(key1, value1) {
+                                    objSel[key].options[objSel[key].options.length] = new Option(value1, key1, true);
+                                })
+                            });
+                            $.each(JSON.parse(data), function(key, value) {
+                                if (objSel[key].options.length == 1)
+                                    objSel[key].disabled = true;
+                                for (var i = objSel[key].options.length-1; i >= 0; i--)
+                                {
+                                    if (objSel[key].options[i].value == optSel[key])
+                                        objSel[key].options[i].selected = true;
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+        </script>
+
     {% endblock complectations %}
-
-
- <script>
- 
-                $(document).ready(function() {
-	$('#filter-search').show();
-	
-	$('#filter-query').keyup(function(event){
-		
-		if (event.keyCode == 27 || $(this).val() == '') {
-			$(this).val('');
-			$('.col-lg-4').removeClass('visible').show().addClass('visible');
-		}
-		else {
-			filter('.col-lg-4', $(this).val());
-		}
-	});
-	$('#filter-query2').keyup(function(event){
-		
-		if (event.keyCode == 27 || $(this).val() == '') {
-			$(this).val('');
-			$('.col-lg-4').removeClass('visible').show().addClass('visible');
-		}
-		else {
-			filter('.col-lg-4', $(this).val());
-		}
-	});
-});
-function filter(selector, query) {
-	query =	$.trim(query);
-	$(selector).each(function() {
-		(($(this).text().search(new RegExp(query.substr(0,query.indexOf("+")), "i")) < 0) || 
-		($(this).text().search(new RegExp(query.substr(query.indexOf("+")+1,query.length), "i")) < 0)) 
-		? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
-	});
-}
-function repeatact(){
-	filter('.col-lg-4', $('#filter-query2').val());
-}
-
-</script>
-  
 {% endblock body %}
+
+

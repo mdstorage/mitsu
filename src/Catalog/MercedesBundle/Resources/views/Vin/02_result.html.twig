@@ -1,59 +1,69 @@
-{% extends 'CatalogCommonBundle:Vin:02_result.html.twig' %}
-{% block specification %}
-    <div class="row">
-        <div class="col-lg-8">
-            <table class="table table-bordered">
-                <tr>
-                    <td>Марка:</td>
-                    <td>{{ result.marka }}</td>
-                </tr>
-                <tr>
-                    <td>Регион:</td>
-                    <td>{{ result.region_RU }}</td>
-                </tr>
-                {#<tr>#}
+{% trans_default_domain 'common' %}
+{% for key, results in result %}
+    {% if key is not constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE') %}
+        <div class="row">
+            <div class="col-lg-10 col-xs-10 col-sm-10 col-md-10">
+                <table class="table table-bordered">
+                    <tr>
+                        <td>Марка:</td>
+                        <td>{{ results.marka }}</td>
+                    </tr>
+                    <tr>
+                        <td>Регион:</td>
+                        <td>{{ results.region_RU }}</td>
+                    </tr>
+                    {#<tr>#}
                     {#<td>Страна:</td>#}
                     {#<td>{{ result.country }}</td>#}
-                {#</tr>#}
-                <tr>
-                    <td>Модель:</td>
-                    <td>{{ result.saledes }}</td>
-                </tr>
-                <tr>
-                    <td>Модельный год:</td>
-                    <td>{{ result.prod_year|date_convertor }}</td>
-                </tr>
-                <tr>
-                    <td>Модификация:</td>
-                    <td>{{ result.modification }}</td>
-                </tr>
-                <tr>
-                    <td>Комплектация:</td>
-                    <td>{{ result.complectation }}</td>
-                </tr>
-                {#<tr>#}
+                    {#</tr>#}
+                    <tr>
+                        <td>Модель:</td>
+                        <td>{{ results.saledes }}</td>
+                    </tr>
+                    <tr>
+                        <td>Модельный год:</td>
+                        <td>{{ results.prod_year|date_convertor }}</td>
+                    </tr>
+                    <tr>
+                        <td>Модификация:</td>
+                        <td>{{ results.modification }}</td>
+                    </tr>
+                    <tr>
+                        <td>Комплектация:</td>
+                        <td>{{ results.complectation }}</td>
+                    </tr>
+                    {#<tr>#}
                     {#<td>Цвет экстерьера:</td>#}
                     {#<td>{{ result.ext_color }}</td>#}
-                {#</tr>#}
-                {#<tr>#}
+                    {#</tr>#}
+                    {#<tr>#}
                     {#<td>Цвет интерьера:</td>#}
                     {#<td>{{ result.int_color }}</td>#}
-                {#</tr>#}
-                <tr>
-                    <td>Дата выпуска:</td>
-                    <td>{{ result[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|date_convertor }}</td>
-                </tr>
-            </table>
+                    {#</tr>#}
+                    <tr>
+                        <td>Дата выпуска:</td>
+                        <td>{{ results[constant('Catalog\\CommonBundle\\Components\\Constants::PROD_DATE')]|date_convertor }}</td>
+                    </tr>
+                </table>
+            </div>
         </div>
-    </div>
-{% endblock specification %}
-{% block catalogPath %}
-    {{ path('vin_mercedes_groups', {
-        'regionCode': result.region,
-        'modelCode': result.model,
-        'modificationCode': result.modification,
-        'complectationCode': result.complectation,
-        'token': app.request.get('token')
 
-    }) }}
-{% endblock catalogPath %}
+        {% block button %}
+            <div class="row">
+                <div class="col-lg-3 col-xs-3 col-sm-3 col-md-3">
+                    <a class="btn btn-default" id = "{{ key+1 }}"
+                       href="{{ path('vin_mercedes_groups', {
+                           'regionCode': results.region,
+                           'modelCode': results.model,
+                           'modificationCode': results.modification,
+                           'complectationCode': results.complectation,
+                           'token': app.request.get('token')
+
+                       }) }}">{{ 'Перейти в каталог'|trans }}</a>
+                </div>
+            </div>
+            <hr>
+        {% endblock button %}
+
+    {% endif %}
+{% endfor %}
