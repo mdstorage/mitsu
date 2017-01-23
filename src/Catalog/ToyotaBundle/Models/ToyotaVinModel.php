@@ -17,6 +17,127 @@ class ToyotaVinModel extends ToyotaCatalogModel {
     public function getVinFinderResult($vin)
     {
 
+        $sqlV = "SELECT johokt.*, CASE johokt.catalog
+			WHEN 'EU' THEN '1'
+			WHEN 'GR' THEN '2'
+			WHEN 'US' THEN '3'
+			WHEN 'JP' THEN '4'
+			ELSE '5'
+			END catorder,
+		'' vdate, shamei.f1 AS sh_f1, shamei.model_name,
+shamei.models_codes, shamei.opt,
+		shamei.prod_start AS sh_prod_start, shamei.prod_end AS
+sh_prod_end, shamei.rec_num
+		FROM johokt JOIN shamei
+			ON shamei.catalog = johokt.catalog
+			AND shamei.catalog_code = johokt.catalog_code
+		WHERE	vin8 LIKE CONCAT(SUBSTRING('$vin', 1, 8), '%')
+			AND vin8 = SUBSTRING('$vin', 1, LENGTH(vin8))
+		ORDER BY catorder ASC";
+
+        $query = $this->conn->prepare($sqlV);
+        $query->execute();
+
+        $preVinResult = $query->fetchAll();
+
+        foreach( $preVinResult as $prms ) {
+            $_cat = $prms['catalog'];
+            $_fr_c = $prms['frame'];
+            $_ser = substr($vin, -7);
+            $key = $_cat.'~'.$_fr_c;
+
+
+
+            $q = "SELECT CONCAT(`year`, mon) vdate
+			FROM ( 	SELECT catalog, frame_code, `year`, '01' AS
+mon, m01 AS ser, start_no
+				FROM framno fn WHERE fn.catalog = '$_cat'
+AND fn.frame_code = '$_fr_c'
+				UNION
+				SELECT catalog, frame_code, `year`, '02' AS
+mon, m02 AS ser, start_no
+				FROM framno fn WHERE fn.catalog = '$_cat'
+AND fn.frame_code = '$_fr_c'
+				UNION
+				SELECT catalog, frame_code, `year`, '03' AS
+mon, m03 AS ser, start_no
+				FROM framno fn WHERE fn.catalog = '$_cat'
+AND fn.frame_code = '$_fr_c'
+				UNION
+				SELECT catalog, frame_code, `year`, '04' AS
+mon, m04 AS ser, start_no
+				FROM framno fn WHERE fn.catalog = '$_cat'
+AND fn.frame_code = '$_fr_c'
+				UNION
+				SELECT catalog, frame_code, `year`, '05' AS
+mon, m05 AS ser, start_no
+				FROM framno fn WHERE fn.catalog = '$_cat'
+AND fn.frame_code = '$_fr_c'
+				UNION
+				SELECT catalog, frame_code, `year`, '06' AS
+mon, m06 AS ser, start_no
+				FROM framno fn WHERE fn.catalog = '$_cat'
+AND fn.frame_code = '$_fr_c'
+				UNION
+				SELECT catalog, frame_code, `year`, '07' AS
+mon, m07 AS ser, start_no
+				FROM framno fn WHERE fn.catalog = '$_cat'
+AND fn.frame_code = '$_fr_c'
+				UNION
+				SELECT catalog, frame_code, `year`, '08' AS
+mon, m08 AS ser, start_no
+				FROM framno fn WHERE fn.catalog = '$_cat'
+AND fn.frame_code = '$_fr_c'
+				UNION
+				SELECT catalog, frame_code, `year`, '09' AS
+mon, m09 AS ser, start_no
+				FROM framno fn WHERE fn.catalog = '$_cat'
+AND fn.frame_code = '$_fr_c'
+				UNION
+				SELECT catalog, frame_code, `year`, '10' AS
+mon, m10 AS ser, start_no
+				FROM framno fn WHERE fn.catalog = '$_cat'
+AND fn.frame_code = '$_fr_c'
+				UNION
+				SELECT catalog, frame_code, `year`, '11' AS
+mon, m11 AS ser, start_no
+				FROM framno fn WHERE fn.catalog = '$_cat'
+AND fn.frame_code = '$_fr_c'
+				UNION
+				SELECT catalog, frame_code, `year`, '12' AS
+mon, m12 AS ser, start_no
+				FROM framno fn WHERE fn.catalog = '$_cat'
+AND fn.frame_code = '$_fr_c'
+				ORDER BY catalog, frame_code, ser DESC )
+ser_period
+			WHERE ser_period.ser <> ''
+			AND ser_period.ser <= '$_ser'
+			AND SUBSTRING(start_no, 1, 1) = SUBSTRING('$_ser',
+1, 1) LIMIT 1";
+
+            $query = $this->conn->prepare($q);
+            $query->execute();
+
+            $preDataResult = $query->fetchAll();
+
+
+                $vdate = $preDataResult[0]['vdate'];
+                if ( $vdate == '' || ( $vdate <
+                        $prms['prod_start'] || $vdate > $prms['prod_end'] ) )
+                    continue;
+                $prms['vdate'] = $vdate;
+
+        }
+
+        var_dump($preVinResult); die;
+
+
+
+
+
+
+
+
 
         $sqlVin = "
         SELECT JAT.compl_code, JAT.catalog, JAT.catalog_code, JAT.model_code, shamei.model_name, shamei.models_codes, frames.vdate, frames.color_trim_code
@@ -31,7 +152,7 @@ class ToyotaVinModel extends ToyotaCatalogModel {
         $query->bindValue('vin', $vin);
         $query->execute();
 
-        $aData = $query->fetchAll();
+        $aData = $query->fetchAll();var_dump($aData); die;
 
         if ($aData){
             $complectations = $this->getVinComplectation($aData[0]['catalog'], $aData[0]['model_name'], $aData[0]['catalog_code']);

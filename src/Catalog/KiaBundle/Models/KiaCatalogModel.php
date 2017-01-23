@@ -281,8 +281,8 @@ class KiaCatalogModel extends CatalogModel{
     }
 
     public function getComplectationsKorobka($regionCode, $modelCode, $modificationCode, $select_name, $select_value, $selectorD)
-    {
-
+    { 
+        empty($selectorD)?$selectorD = array():$selectorD = $selectorD;
         $locale = $this->requestStack->getCurrentRequest()->getLocale();
         $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
         $selectorD = array_merge($selectorD, array($select_name => $select_value));
