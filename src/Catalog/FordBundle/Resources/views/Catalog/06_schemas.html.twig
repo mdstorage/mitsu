@@ -15,14 +15,16 @@
 {% block schema %}
     {% if schema.getCode is not empty %}
             <div class="col-xs-3">
-        <a href="{{ path('catalog_ford_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
+        <a href="{{ path('catalog_ford_schema', parameters|merge({'schemaCode': schema.getCode})) }}" class="thumbnail">
 
                     <div class="row">
                         {{ schema.getRuname }}
                     </div>
 
                     <div class="row">
-                        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogford/Images/'~oContainer.getActiveModification.getOption('folder')~'/'~schema.getCode~'.png') }}" width="200" alt="{{ schema.getRuname }}"/>
+                        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogford/Images/'~oContainer.getActiveModification.getOption('folder')~'/'~schema.getCode~'.png') }}"
+                             class="img-responsive"
+                             alt="{{ schema.getRuname }}"/>
                     </div>
         </a>
             </div>

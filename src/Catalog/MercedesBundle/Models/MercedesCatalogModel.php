@@ -757,17 +757,26 @@ class MercedesCatalogModel extends CatalogModel{
 
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, $options)
     {
+
         $subMod = (explode('.', $complectationCode)[2]);
+
+
+
         $sqlArticuls = "
-        SELECT parts.`PARTTYPE`, parts.`PARTNUM`, parts.`CODEB`, parts.`SEQNUM`, parts.`SUBMODS`, parts.`QUANTBM`, IFNULL(nouns_ru.NOUN, nouns_en.NOUN) TEXT,
-        IF (parts.`REPLFLG` = 'R', concat(parts.`REPTYPE`, parts.`REPPNO`), NULL) REPL
+        SELECT parts.`PARTTYPE`, parts.`PARTNUM`, parts.`CODEB`, parts.`SEQNUM`, parts.`SUBMODS`, parts.`QUANTBM`, UPPER(IFNULL(nouns_ru.NOUN, nouns_en.NOUN)) TEXT,
+        IFNULL(descs_ru.DESCRIPTION, descs_en.DESCRIPTION) DESCRIPTION,
+        IF (parts.`REPLFLG` = 'R', concat(parts.`REPTYPE`, parts.`REPPNO`), NULL) REPL, parts.`FOOTNOTES`, parts.`NEUTRAL`
         FROM `alltext_bm_parts2_v` parts
         LEFT OUTER JOIN `alltext_part_nouns_v` nouns_ru
         ON nouns_ru.NOUNIDX = parts.NOUNIDX AND nouns_ru.LANG = 'R'
         LEFT OUTER JOIN `alltext_part_nouns_v` nouns_en
         ON nouns_en.NOUNIDX = parts.NOUNIDX AND nouns_en.LANG = 'E'
-        WHERE `CATNUM` = :complectationCode
-        AND `GROUPNUM` = :groupCode
+        LEFT OUTER JOIN `alltext_part_descs_v` descs_ru
+        ON descs_ru.DESCIDX LIKE CONCAT('%', parts.DESCIDX, '%') AND descs_ru.LANG = 'R'
+        LEFT OUTER JOIN `alltext_part_descs_v` descs_en
+        ON descs_en.DESCIDX LIKE CONCAT('%', parts.DESCIDX, '%') AND descs_en.LANG = 'E'
+        WHERE parts.`CATNUM` = :complectationCode
+        AND parts.`GROUPNUM` = :groupCode
         AND `SUBGRP` = :subGroupCode
         AND `CALLOUT` = :pncCode
         ";
@@ -781,6 +790,31 @@ class MercedesCatalogModel extends CatalogModel{
 
         $aData = $query->fetchAll();
 
+
+        foreach ($aData as $index=>&$value)
+        {
+            if (trim($value['FOOTNOTES'])){
+
+            $sqlFOOTNOTES = "
+            SELECT a.GROUPNUM,  a.FTNTNUM,  a.REVVER,  a.LISTNUM, a.HAS_WISLINK,  (IFNULL(bb_ru.DESCIDX, bb_en.DESCIDX)) DESCIDX,  (IFNULL(bb_ru.ABBR, bb_en.ABBR)) ABBR,  (IFNULL(bb_ru.lang, bb_en.lang)) lang,   (IFNULL(bb_ru.seqnum, bb_en.seqnum)) seqnum, (IFNULL(bb_ru.TEXT, bb_en.TEXT)) TEXT
+            FROM alltext_bm_footnotes_v2 A
+            INNER JOIN alltext_bm_footnotes_dictionary_v bb_ru ON (bb_ru.LANG = 'R' AND bb_ru.DESCIDX = A.DESCIDX)
+            INNER JOIN alltext_bm_footnotes_dictionary_v bb_en ON ((bb_en.LANG = 'E' OR bb_en.LANG = 'N') AND bb_en.DESCIDX = A.DESCIDX)
+            WHERE A.CATNUM = :complectationCode AND A.GROUPNUM = :groupCode
+            AND (POSITION(A.ftntnum IN :FOOTNOTES)-1) % 3 = 0
+            ORDER BY a.FTNTNUM
+            ";
+                $query = $this->conn->prepare($sqlFOOTNOTES);
+                $query->bindValue('complectationCode', substr($complectationCode, 0, 3));
+                $query->bindValue('groupCode', $groupCode);
+                $query->bindValue('FOOTNOTES', $value['FOOTNOTES']);
+                $query->execute();
+
+                $value['FOOTNOTES'] = $query->fetchAll();
+            }
+            unset($value);
+        }
+
         foreach ($aData as $index=>$value)
         {
             $text = explode(' ', wordwrap($value['SUBMODS'],3,' ',true));
@@ -792,14 +826,17 @@ class MercedesCatalogModel extends CatalogModel{
 
         $articuls = array();
         foreach ($aData as $item) {
-            $articuls[$item['PARTTYPE'] . $item['PARTNUM']]/*здесь происходит потеря запчастей из-за неверной группировки*/ = array(
+            $articuls[$item['PARTTYPE'] . $item['PARTNUM']  /*.$item['SEQNUM']*/]/*здесь происходит потеря запчастей из-за неверной группировки*/ = array(
                 Constants::NAME => iconv('Windows-1251', 'UTF-8', $item['TEXT']),
                 Constants::OPTIONS => array(
                     Constants::QUANTITY => substr($item['QUANTBM'], 0, 3),
                     Constants::START_DATE => '00000000',
                     Constants::END_DATE => '99999999',
+                    'DESCRIPTION' => iconv('Windows-1251', 'UTF-8', $item['DESCRIPTION']),
                     'CODEB' => $item['CODEB'],
-                    'REPL' => $item['REPL']
+                    'REPL' => $item['REPL'],
+                    'FOOTNOTES' => $item['FOOTNOTES'],
+                    'NEUTRAL' => $item['NEUTRAL']
                 )
             );
         }

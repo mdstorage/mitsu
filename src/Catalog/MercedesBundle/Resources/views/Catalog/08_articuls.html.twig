@@ -1,4 +1,5 @@
 {% if oContainer.getActivePnc.getArticuls %}
+<div class="table-responsive">
     <table class="table small">
         <thead>
         <tr>
@@ -16,12 +17,22 @@
                 </td>
                 <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }}</td>
                 <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|date_convertor }} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|date_convertor }}</td>
-                <td>{{ articul.getRuname }}</td>
+                <td class="small">{{ articul.getRuname }}
+                    {% if articul.getOption('DESCRIPTION') %}<br>{{ articul.getOption('DESCRIPTION') }}{% endif %}
+                    {% if articul.getOption('NEUTRAL') %}<br>{{ articul.getOption('NEUTRAL') }}{% endif %}
+                    {% for footnote in articul.getOption('FOOTNOTES') %}
+                        {% if footnote['TEXT_FOR_TWIG'] %}
+                            <br>[{{ footnote['FTNTNUM'] }}] {{ footnote['TEXT_FOR_TWIG'] }}
+                        {% endif %}
+                    {% endfor %}
+
+                </td>
             </tr>
 
         {% endfor %}
         </tbody>
     </table>
+</div>
 {% else %}
     <div class="label label-danger">Запчасти отсутствуют</div>
 {% endif %}

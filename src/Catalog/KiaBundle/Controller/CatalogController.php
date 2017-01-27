@@ -42,7 +42,7 @@ class CatalogController extends BaseController{
         $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
         $modifications = $this->model()->getModifications($regionCode, $modelCode);
         $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
-        $complectations = $this->model()->getComplectations1($regionCode, $modelCode, $modificationCode);
+        $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
 
         $complectationsForForm = $this->model()->getComplectationsForForm($complectations);
 
@@ -68,12 +68,11 @@ class CatalogController extends BaseController{
         ));
     }
 
-    public function complectation_korobkaAction(Request $request)
+    public function complectationFormValidValueAction(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
+            $priznakAllSelect = $request->get('priznakAllSelect');
             $selectorD = $request->get('selectorD');
-            $select_name = $request->get('select_name');
-            $select_value = $request->get('select_value');
             $modificationCode = $request->get('modificationCode');
             $regionCode = $request->get('regionCode');
             $modelCode = urldecode($request->get('modelCode'));
@@ -83,8 +82,6 @@ class CatalogController extends BaseController{
                 'regionCode' => $regionCode,
                 'modelCode' => $modelCode,
                 'modificationCode' => $modificationCode,
-                'priznak' => $select_name,
-                'engine' => $select_value,
                 'token' => $token
             );
             $regions = $this->model()->getRegions();
@@ -93,11 +90,73 @@ class CatalogController extends BaseController{
             $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
             $modifications = $this->model()->getModifications($regionCode, $modelCode);
             $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
-            $complectations = $this->model()->getComplectationsKorobka($regionCode, $modelCode, $modificationCode, $select_name, $select_value, $selectorD);
+            $complectations = $this->model()->getComplectationsFormValidValue($regionCode, $modelCode, $modificationCode, $selectorD, $priznakAllSelect);
 
             return new Response(json_encode($complectations));
         }
     }
+    public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $articul = null, $token = null)
+    {
+        $data = $this->get('my_token_info')->getStatus($token);
+
+        if(empty($data) & !empty($token)){
+            return $this->errorBilling('Сервис не оплачен');
+        }
+
+        $parameters = $this->getActionParams(__CLASS__, __FUNCTION__, func_get_args());
+        $oContainer = Factory::createContainer();
+        $regions = $this->model()->getRegions();
+        $regionsCollection = Factory::createCollection($regions, Factory::createRegion())->getCollection();
+        $models = $this->model()->getModels($regionCode);
+        $modelsCollection = Factory::createCollection($models, Factory::createModel())->getCollection();
+        $modifications = $this->model()->getModifications($regionCode, $modelCode);
+        $modificationsCollection = Factory::createCollection($modifications, Factory::createModification())->getCollection();
+        if ($complectationCode) {
+            $complectations = $this->model()->getComplectations($regionCode, $modelCode, $modificationCode);
+            $complectationsCollection = Factory::createCollection($complectations, Factory::createComplectation())->getCollection();
+            $oContainer->setActiveComplectation($complectationsCollection[$complectationCode]);
+        }
+        $groupSchemas = $this->model()->getGroupSchemas($regionCode, $modelCode, $modificationCode, $groupCode);
+        $groups = $this->model()->getGroups($regionCode, $modelCode, $modificationCode, $complectationCode);
+        $groupsCollection = Factory::createCollection($groups, Factory::createGroup())->getCollection();
+        $subgroups = $this->model()->getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode);
+
+
+        if(empty($subgroups))
+            return $this->error($request, 'Подгруппы не найдены.');
+
+        $oContainer
+            ->setActiveRegion($regionsCollection[$regionCode])
+            ->setActiveModel($modelsCollection[$modelCode])
+            ->setActiveModification($modificationsCollection[$modificationCode])
+            ->setSchemas(Factory::createCollection($groupSchemas, Factory::createSchema()))
+            ->setActiveGroup($groupsCollection[$groupCode]
+                ->setSubGroups(Factory::createCollection($subgroups, Factory::createGroup()))
+            );
+
+        if (($filterResult = $this->filter($oContainer)) instanceof RedirectResponse) {
+            return $filterResult;
+        };
+
+        $subgroupsKeys = array_keys($oContainer->getActiveGroup()->getSubgroups());
+        if (1 == count($subgroupsKeys)) {
+            return $this->redirect(
+                $this->generateUrl(
+                    str_replace('subgroups', 'schemas', $this->get('request')->get('_route')),
+                    array_merge($parameters, array(
+                            'subGroupCode' => $subgroupsKeys[0]
+                        )
+                    )
+                ), 301
+            );
+        };
+
+        return $this->render($this->bundle() . ':05_subgroups.html.twig', array(
+            'oContainer' => $oContainer,
+            'parameters' => $parameters
+        ));
+    }
+
 
     public function getGroupBySubgroupAction(Request $request, $regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode, $token = null)
     {

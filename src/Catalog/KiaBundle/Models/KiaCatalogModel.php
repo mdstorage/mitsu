@@ -54,6 +54,7 @@ class KiaCatalogModel extends CatalogModel{
         SELECT *
         FROM catalog
         WHERE data_regions LIKE :regionCode
+        ORDER BY family
         ";
 
         $query = $this->conn->prepare($sql);
@@ -61,27 +62,6 @@ class KiaCatalogModel extends CatalogModel{
         $query->execute();
 
         $aData = $query->fetchAll();
-
-        /*$aDataRegions = array('AMANTI', 'AVELLA', 'CADENZA', 'CEED', 'CERATO', 'CERATO/FORTE', 'CERATO/SPECTRA', 'CLARUS', 'GEN ED', 'FORTE', 'IH 12', 'MAGENTIS', 'MENTOR', 'MORNING/PICANTO', 'OPIRUS', 'OPTIMA',
-            'OPTIMA/MAGENTIS', 'PICANTO', 'PRIDE', 'PRIDE/FESTIVA', 'QUORIS', 'RIO', 'SEPHIA', 'SEPHIA/SHUMA/MENTOR', 'SMA GEN (1998-2004)', 'SMA MES (19981101-20040228)', 'SPECTRA', 'SPECTRA/SEPHIA II/SHUMA II/MENTOR II', 'TFE 11', 'VENGA',
-            'BORREGO', 'CARENS', 'CARNIVAL', 'CARNIVAL/SEDONA', 'JOICE DS', 'MOHAVE', 'RETONA', 'RONDO', 'RONDO/CARENS', 'SEDONA', 'SORENTO', 'SOUL', 'SPORTAGE', 'AM928 (1998-)', 'BESTA', 'BONGO-3 1TON,1.4TON',
-            'COSMOS', 'GRANBIRD', 'K2500/K2700/K2900/K3000/K3600', 'MIGHTY', 'POWER COMBI', 'PREGIO', 'PREGIO/BESTA', 'RHINO', 'TOWNER', 'SPTR');
-
-
-        foreach($aData as $item)
-        {
-            foreach($aDataRegions as $itemReg)
-            {
-                if (strpos($item['catalog_name'], $itemReg) !== false)
-                {
-                    $modelsReg[] = $itemReg;
-                }
-
-
-            }
-
-        }*/
-
 
         $models = array();
         foreach($aData as $item){
@@ -114,14 +94,14 @@ class KiaCatalogModel extends CatalogModel{
         foreach($aData as $item){
             $modifications[$item['catalogue_code'].'_'.$item['cat_folder']] = array(
                 Constants::NAME     => $item['cat_name'],
-                Constants::OPTIONS  => array('option1'=>strtolower($item['catalogue_code'])));
+                Constants::OPTIONS  => array('option1'=>strtoupper($item['cat_folder'])));
 
         }
 
         return $modifications;
     }
 
-    public function getComplectations1($regionCode, $modelCode, $modificationCode)
+    public function getComplectations($regionCode, $modelCode, $modificationCode)
     {
         $locale = $this->requestStack->getCurrentRequest()->getLocale();
         $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
@@ -280,12 +260,11 @@ class KiaCatalogModel extends CatalogModel{
 
     }
 
-    public function getComplectationsKorobka($regionCode, $modelCode, $modificationCode, $select_name, $select_value, $selectorD)
-    { 
+    public function getComplectationsFormValidValue($regionCode, $modelCode, $modificationCode, $selectorD, $priznakAllSelect)
+    {
         empty($selectorD)?$selectorD = array():$selectorD = $selectorD;
         $locale = $this->requestStack->getCurrentRequest()->getLocale();
         $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
-        $selectorD = array_merge($selectorD, array($select_name => $select_value));
 
         $pole = array();
         $pole1 = '';
@@ -386,14 +365,11 @@ class KiaCatalogModel extends CatalogModel{
         $query->bindValue('modificationCode',  $modificationCode);
         $query->bindValue('locale',  $locale);
         $query->execute();
-
         $aData = $query->fetchAll();
 
         $complectations = array();
         $result = array();
-
         $af = array();
-
         foreach($aData as $item) {
             for ($i = 1; $i < 11; $i++) {
                 if ($item['f' . $i]) {
@@ -402,16 +378,17 @@ class KiaCatalogModel extends CatalogModel{
                 }
             }
         }
-
-
         foreach ($result as $index => $value) {
-
             $complectations[($index)] = $value;
         }
-
-        return $complectations;
+        if ($priznakAllSelect == 1){
+            return ($aData[0]['model']);
+        }
+        else {
+            return $complectations;
+        }
     }
-    public function getComplectations($regionCode, $modelCode, $modificationCode)
+    /*public function getComplectations($regionCode, $modelCode, $modificationCode)
     {
 
         $sql = "
@@ -440,34 +417,32 @@ class KiaCatalogModel extends CatalogModel{
 
         return $complectations;
 
-    }
+    }*/
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
+
         $locale = $this->requestStack->getCurrentRequest()->getLocale();
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
         $sql = "
-        SELECT *
-        FROM cats_maj
-        WHERE CATALOG_NAME = :catCode
+        SELECT cm.major_sect, cm.major_sect_lex_code, UPPER(ll.lex_desc) TEXT
+        FROM cats_map cm
+        INNER JOIN lex_lex ll ON (ll.lex_code = cm.major_sect_lex_code AND ll.lang_code = :locale)
+        WHERE cm.cat_folder = :catCode
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('catCode', $catCode);
+        $query->bindValue('locale',  $locale);
         $query->execute();
         $aData = $query->fetchAll();
 
         $groups = array();
 
-        foreach ($aData as &$item2)
-        {
-            $item2['part_index'] = $this->getDesc($item2['part_index'], 'RU');
-        }
-
         foreach($aData as $item){
-            $groups[$item['part']] = array(
-                Constants::NAME     => $item ['part_index'],
+            $groups[$item['major_sect']] = array(
+                Constants::NAME     => iconv('Windows-1251', 'UTF-8', $item['TEXT']),
                 Constants::OPTIONS  => array()
             );
         }
@@ -477,132 +452,121 @@ class KiaCatalogModel extends CatalogModel{
 
     public function getGroupSchemas($regionCode, $modelCode, $modificationCode, $groupCode)
     {
-  /*      $sqlNumPrigroup = "
-        SELECT *
-        FROM pri_groups_full
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-            AND pri_group = :groupCode
+        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+        $sqlNumPrigroup = "
+        SELECT cdr.img_name
+        FROM cats_dat_ref cdr
+        INNER JOIN cats_map cm ON (cm.cat_folder = cdr.cat_folder AND cm.major_sect = :groupCode AND cm.sector = cdr.ref)
+        WHERE cdr.cat_folder = :catCode
+        AND cdr.ref_type = '3'
         ";
-    	$query = $this->conn->prepare($sqlNumPrigroup);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('model_code', $modelCode);
+        $query = $this->conn->prepare($sqlNumPrigroup);
+        $query->bindValue('catCode', $catCode);
         $query->bindValue('groupCode', $groupCode);
         $query->execute();
-
-        $aData = $query->fetch();  
-       
-        $sqlNumModel = "
-        SELECT num_model
-        FROM part_images
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-        GROUP BY num_model
-        ";
-    	$query = $this->conn->prepare($sqlNumModel);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('model_code', $modelCode);
-        $query->execute();
-
-        $aNumModel = $query->fetch();
+        $aData = $query->fetchAll();
 
         $groupSchemas = array();
-    /*    foreach ($aData as $item)*//* {
-            $groupSchemas[$aData['num_image']] = array(Constants::NAME => $aData['num_image'], Constants::OPTIONS => array(
-              Constants::CD => $aData['catalog'].$aData['sub_dir'].$aData['sub_wheel'],
-                    	'num_model' => $aNumModel['num_model'],
-                        'num_image' => $aData['num_image']
-                ));
-        }*/
-		$groupSchemas = array();
+        foreach ($aData as $item) {
+            $groupSchemas[$item['img_name']] = array(Constants::NAME => $item['img_name'], Constants::OPTIONS => array());
+        }
         return $groupSchemas;
     }
 
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-        $ghg = $this->getComplectations($regionCode, $modelCode, $modificationCode);/*print_r($ghg[$complectationCode]['options']['option2']); die;*/
-        $complectationOptions = $ghg[$complectationCode]['options']['option2'];
-
+        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
 
         $sql = "
-        SELECT sector_name, sector_lex_code, sector_id, sector_id_code, params
-        FROM cats_map
-        WHERE catalog_name =:catCode
-        AND part = :groupCode
+        SELECT cm.minor_sect, cm.sector_format, cm.compatibility, cm.sector_part, UPPER(IFNULL(ll_locale.lex_desc, ll_en.lex_desc)) TEXT, ll_note.lex_desc note,
+        cdr.x1, cdr.x2, cdr.y1, cdr.y2, cdr.img_name
+        FROM cats_map cm
+        LEFT JOIN lex_lex ll_locale ON (ll_locale.lex_code = cm.minor_sect_lex_code AND ll_locale.lang_code = :locale)
+        LEFT JOIN lex_lex ll_en ON (ll_en.lex_code = cm.minor_sect_lex_code AND ll_en.lang_code = 'EN')
+        LEFT JOIN lex_lex ll_note ON (ll_note.lex_code = cm.note_lex_code AND ll_note.lang_code = 'EN')
+        INNER JOIN cats_dat_ref cdr ON (cdr.cat_folder = :catCode AND cdr.ref_type = '3' AND cdr.ref = cm.sector)
+        WHERE cm.cat_folder = :catCode
+        AND cm.major_sect = :groupCode
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('catCode',  $catCode);
+        $query->bindValue('catCode', $catCode);
         $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('locale',  $locale);
         $query->execute();
-
         $aData = $query->fetchAll();
 
-        foreach ($aData as $index => $value) {
 
-            $value2 = str_replace(substr($value['params'], 0, strpos($value['params'], '|')), '', $value['params']);
-            $articulOptions = explode('|', str_replace(';', '', $value2));
+        /*Фильтр совместимости с выбранной комплектацией*/
+        $sqlComlectation = "
+        SELECT DISTINCT ucc
+        FROM vin_model vm
+        WHERE vm.catalogue_code = :modificationCode
+        AND vm.model = :complectationCode
+        ";
+        $query = $this->conn->prepare($sqlComlectation);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('complectationCode',  $complectationCode);
+        $query->execute();
+        $aComplectation = $query->fetch();
 
-            if ($articulOptions)
+        $aExplodeComplectation = explode('|', $aComplectation['ucc']);
+        foreach($aData as $index => $value){
+            if ($value['compatibility'])
             {
-            foreach ($articulOptions as $index1 => $value1) {
-                if (($value1 == '') || ($index1 > (count($complectationOptions)-1))) {
-                    unset ($articulOptions[$index1]);
+                $aNull = array('', ';', ';;');
+                $aExplodeCompatibility = explode('|', str_replace(';', '', $value['compatibility']));
+                $aExplodeCompatibility = array_slice($aExplodeCompatibility, 0 , count($aExplodeComplectation)-1);
+                $aExplodeCompatibilityWithoutNull = array_diff($aExplodeCompatibility, $aNull);
+                $aIntersect = array_intersect_assoc($aExplodeComplectation, $aExplodeCompatibilityWithoutNull);
+                if (count($aIntersect) != count($aExplodeCompatibilityWithoutNull))
+                {
+                    unset ($aData[$index]);
                 }
-            }
-
-
-            if (count($articulOptions) != count(array_intersect_assoc($articulOptions, $complectationOptions)))
-            {
-                unset ($aData[$index]);
-            }
+                unset ($value);
             }
         }
+        /*конец фильтра*/
+
+        /*для того, чтобы координаты подгрупп не дублировались и не мешали правильно отображать картинку (области не накладывались друг на друга)*/
+        $aSectorFormat = array();
+        $aCountValuesSectorFormat = array();
+        foreach($aData as $index => $value)
+        {
+            $aSectorFormat[] = $value['sector_format'];
+        }
+
+        $aCountValuesSectorFormat = array_count_values($aSectorFormat);var_dump($aCountValuesSectorFormat); die;
 
         $subgroups = array();
-        foreach($aData as $item){
-
-            $subgroups[$item['sector_name']] = array(
-
-                Constants::NAME => '('.$item['sector_name'].') '.$this->getDesc($item['sector_lex_code'], 'RU'),
-                Constants::OPTIONS => array()
-            );
-
-        }
-
+            foreach($aData as $item){
+                    $subgroups[$item['minor_sect']] = array(
+                        Constants::NAME     => iconv('Windows-1251', 'UTF-8', $item['TEXT']),
+                        Constants::OPTIONS  => array(
+                            'picture' => $item['img_name'],
+                            'sector_format' => $item['sector_format'],
+                            'sector_part' => $item['sector_part'],
+                            'note' => $item['note'],
+                            Constants::X1 => $aCountValuesSectorFormat[$item['sector_format']]<= 1?floor($item['x1']):null,
+                            Constants::X2 => $aCountValuesSectorFormat[$item['sector_format']]<= 1?floor($item['x2']):null,
+                            Constants::Y1 => $aCountValuesSectorFormat[$item['sector_format']]<= 1?floor($item['y1']):null,
+                            Constants::Y2 => $aCountValuesSectorFormat[$item['sector_format']]<= 1?floor($item['y2']):null
+                        )
+                    );
+            }
         return $subgroups;
     }
 
     public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-
-        $sql = "
-        SELECT sector_id
-        FROM cats_map
-        WHERE cats_map.catalog_name = :catCode
-        AND sector_name = :subGroupCode
-        AND part = :groupCode
-        ";
-
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('catCode',  $catCode);
-        $query->bindValue('subGroupCode',  (substr_count($subGroupCode, '-') > 1) ? substr($subGroupCode, 0, strripos($subGroupCode, '-')+1) : $subGroupCode);
-        $query->bindValue('groupCode',  $groupCode);
-        $query->execute();
-
-        $aData = $query->fetchAll();
-
         $schemas = array();
-        foreach($aData as $item)
-        {
-		            $schemas[$item['sector_id']] = array(
+		            $schemas[$subGroupCode] = array(
                     Constants::NAME => $catCode,
-                    Constants::OPTIONS => array(Constants::CD => $item['sector_id'])
+                    Constants::OPTIONS => array()
                 );
-        }
-
         return $schemas;
     }
 
@@ -626,59 +590,41 @@ class KiaCatalogModel extends CatalogModel{
 
     public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
     {
-
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
         $sqlPnc = "
-        SELECT *
-        FROM cats_table
-        WHERE catalog_code =:catCode
-        	AND compl_name LIKE :schemaCode
+        SELECT cdp.*, UPPER(IFNULL(ll_locale.lex_desc, ll_en.lex_desc)) TEXT, ll_desc.lex_desc descript
+        FROM cats_dat_parts cdp
+        LEFT JOIN lex_lex ll_locale ON (ll_locale.lex_code = cdp.name_lex_code AND ll_locale.lang_code = :locale)
+        LEFT JOIN lex_lex ll_en ON (ll_en.lex_code = cdp.name_lex_code AND ll_en.lang_code = 'EN')
+        LEFT JOIN lex_lex ll_desc ON (ll_desc.lex_code = cdp.desc_lex_code AND ll_desc.lang_code = 'EN')
+        WHERE cdp.cat_folder = :catCode
+        AND cdp.minor_sect LIKE :schemaCode
         ";
-
     	$query = $this->conn->prepare($sqlPnc);
         $query->bindValue('catCode', $catCode);
-        $query->bindValue('schemaCode', '%'.$schemaCode.'%');
+        $query->bindValue('schemaCode', $schemaCode);
+        $query->bindValue('locale',  $locale);
         $query->execute();
-
         $aPncs = $query->fetchAll();
     	
     	foreach ($aPncs as &$aPnc){
-
             $sqlSchemaLabels = "
             SELECT x1, y1, x2, y2
-            FROM cats_coord
-            WHERE catalog_code = :catCode
-            AND compl_name LIKE :schemaCode
-            AND cats_coord.name = :scheme_num
+            FROM cats_dat_ref
+            WHERE cat_folder = :catCode
+            AND img_name = :schemaCode
+            AND ref = :ref
             ";
-
-
             $query = $this->conn->prepare($sqlSchemaLabels);
             $query->bindValue('catCode', $catCode);
-            $query->bindValue('schemaCode', '%'.$schemaCode.'%');
-            $query->bindValue('scheme_num', $aPnc['scheme_num']);
+            $query->bindValue('schemaCode', $schemaCode);
+            $query->bindValue('ref', $aPnc['ref']);
             $query->execute();
             $aPnc['clangjap'] = $query->fetchAll();
-
-            $sqlPncName = "
-            SELECT lex_code
-            FROM pnclex
-            WHERE pnc_code =:pnc_code
-            ";
-
-            $query = $this->conn->prepare($sqlPncName);
-            $query->bindValue('pnc_code', $aPnc['detail_pnc']);
-            $query->execute();
-            $aData = $query->fetch();
-
-            $aPnc['name'] = $aData['lex_code'];
-
-
 		}
-
         $pncs = array();
-
         foreach ($aPncs as $index=>$value) {
             {
                 if (!$value['clangjap'])
@@ -687,23 +633,17 @@ class KiaCatalogModel extends CatalogModel{
                 }
             	foreach ($value['clangjap'] as $item1)
             	{
-
-                    $pncs[$value['scheme_num']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
+                    $pncs[$value['ref']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
                     Constants::X1 => floor(($item1['x1'])),
                     Constants::Y1 => $item1['y1'],
                     Constants::X2 => $item1['x2'],
                     Constants::Y2 => $item1['y2']);
-            	
             	}
             }
         }
-
         foreach ($aPncs as $item) {
-
-            $pncs[$item['scheme_num']][Constants::NAME] = $this->getDesc($item['name'], 'RU');
-
+            $pncs[$item['ref']][Constants::NAME] = iconv('Windows-1251', 'UTF-8', $item['TEXT']);
         }
-
          return $pncs;
     }
 
@@ -743,7 +683,7 @@ $articuls = array();
 
     public function getReferGroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+        /*$catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
 
         $sqlSchemaLabels = "
@@ -770,8 +710,9 @@ $articuls = array();
                 Constants::Y1 => $item['y1'],
                 Constants::X2 => $item['x2'],
                 Constants::Y2 => $item['y2']);
-        }
+        }*/
 
+        $groups = array();
         return $groups;
     }
 

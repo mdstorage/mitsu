@@ -15,9 +15,9 @@ catalog_kia_complectations:
   path:         /kia/{_locale}/catalog/2/{regionCode}/{modelCode}/{modificationCode}/{token}
   defaults:     {_controller: CatalogKiaBundle:Catalog:complectations, token: null}
 
-catalog_kia_complectation_korobka:
+catalog_kia_complectation_form_valid_value:
   path:         /kia/{_locale}/catalog/12
-  defaults:     {_controller: CatalogKiaBundle:Catalog:complectation_korobka}
+  defaults:     {_controller: CatalogKiaBundle:Catalog:complectationFormValidValue}
   requirements: {_method: POST}
 
 catalog_kia_groups:
