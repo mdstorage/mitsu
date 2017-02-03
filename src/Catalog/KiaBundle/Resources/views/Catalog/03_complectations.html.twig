@@ -12,30 +12,19 @@
 {% block body %}
     {% block head %}<h3>{{'Выбрать комплектацию'|trans}}:</h3>{% endblock head %}
     {% block complectations %}
-
-
         <div class="row">
-
             <div class="complectations">
-
                 <div class="form-group control-group">
-                    <form action="{{ path('catalog_kia_groups', parameters|merge({'complectationCode': '1'})) }}">
-                        <div class="col-sm-4">
-
+                    <form action="{{ path('catalog_kia_groups', parameters|merge({'complectationCode': 'data'})) }}">
+                    <div class="col-sm-4">
                             {{ form_widget(form) }}
-
                             <br>
-                            <input type="submit" class="btn btn-primary" value="{{ 'Далее'|trans({}, 'kia') }}" />
+                            <input type="submit" class="btn btn-primary" value="{{ 'Далее'|trans({}, 'kia') }}" id="submit-button"/>
                         </div>
                     </form>
                 </div>
-
-
             </div>
         </div>
-
-
-
         <script>
             $(document).ready(function() {
                 $('select.form-control').each(function(){
@@ -45,29 +34,52 @@
                         sel.disabled = true;
                 });
             });
-
+            $('form').on('submit', function(){
+                selectorAll = new Object();
+                /*selectorSerialize = $(this).serializeArray();*/
+                var inputs = $(this).find('select');
+                $.each((inputs), function(key, value) {
+                    selectorAll[value.id.substr(-2)] = value.value;
+                });
+                $.ajax({
+                    type:   'POST',
+                    async:  false,
+                    url:    "{{ path('catalog_kia_complectation_form_valid_value') }}",
+                    data:   { selectorD: selectorAll, priznakAllSelect: 1,
+                        modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                        regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                        modelCode: '{{ oContainer.getActiveModel.getCode }}'},
+                    success: function(submit_data){
+                        submit_data = submit_data.replace(new RegExp('"','g'), '');
+                        var action = $('form').attr('action');
+                        $('form').attr('action', action.replace('data', submit_data));
+                        /*console.log($('form').attr('action'));*/
+                    }
+                });
+            });
             $('select.form-control').on('change', function(){
+
                 filter('#'.concat($(this).attr('id')));
             });
-
             function filter(selector) {
-
                 selectorDied = new Object();
                 $('select.form-control').each(function(){
                     var selec = $(this).attr('id');
                     Selec = document.getElementById(selec);
                     if (Selec.disabled == true)
                     selectorDied[selec.substr(-2)] = Selec.value;
-
                 });
-
                 $(selector).each(function() {
                     if ($(selector).val() == '1') location.reload();
+                    var select_name = selector.substr(-2);
+                    var select_value = $(selector).val();
+                    selectorDied[select_name] = select_value;
                     $.ajax({
                         type:   'POST',
                         async:  false,
-                        url:    "{{ path('catalog_kia_complectation_korobka') }}",
-                        data:   { select_name: selector.substr(-2) ,select_value: $(selector).val(), selectorD: selectorDied, modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                        url:    "{{ path('catalog_kia_complectation_form_valid_value') }}",
+                        data:   { selectorD: selectorDied, priznakAllSelect: 0,
+                            modificationCode: '{{ oContainer.getActiveModification.getCode }}',
                             regionCode: '{{ oContainer.getActiveRegion.getCode }}',
                             modelCode: '{{ oContainer.getActiveModel.getCode }}'},
                         success: function(data){

@@ -15,7 +15,10 @@
     <div class="row">
         {% block groupImage %}
             <div class="col-lg-8 col-xs-8 col-md-8 col-sm-8">
-                <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogford/Images/'~oContainer.getActiveModification.getOption('folder')~'/'~oContainer.getActiveModification.getOption('group_picture')~'.png') }}" alt="{{ oContainer.getActiveModification.getCode }}" usemap="#{{ oContainer.getActiveModification.getCode }}" />
+                <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogford/Images/'~oContainer.getActiveModification.getOption('folder')~'/'~oContainer.getActiveModification.getOption('group_picture')~'.png') }}"
+                     class="img-responsive"
+                     alt="{{ oContainer.getActiveModification.getCode }}"
+                     usemap="#{{ oContainer.getActiveModification.getCode }}" />
             </div>
         {% endblock groupImage %}
         <div class="col-lg-4 col-xs-4 col-md-4 col-sm-4">
@@ -30,11 +33,13 @@
                                     {{ group.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y1')) }},
                                     {{ group.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X2')) }},
                                     {{ group.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y2')) }}
-                                " href="#" id="{{ group.getCode~group.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}" data-name="{% block dataName %}{{ group.getCode }}{% endblock dataName %}"/>
+                                " href="{{ block('pathToSubgroups') }}" id="{{ group.getCode~group.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}" data-name="{% block dataName %}{{ group.getCode }}{% endblock dataName %}"/>
                                 {% endblock area %}
                                 {% block groupItem %}
                                 <div id="group{{ group.getCode }}">
-                                    <a href="{{ path('catalog_ford_subgroups', parameters|merge({'groupCode': group.getCode})) }}">({{ group.getCode }}) {{ group.getRuname|upper }}</a>
+                                    <a href="{% block pathToSubgroups %}{{ path('catalog_ford_subgroups', parameters|merge({'groupCode': group.getCode})) }}{% endblock pathToSubgroups %}">
+                                        ({{ group.getCode }}) {{ group.getRuname|upper }}
+                                    </a>
                                 </div>
                                 {% endblock groupItem %}
                                 {% block cycleScript %}
@@ -63,7 +68,8 @@
                 fillColor: '70daf1',
                 fillOpacity: 0.3,
                 mapKey: 'data-name',
-                staticState: true
+                staticState: true,
+                clickNavigate: true
             });
         </script>
     {% endblock mapsterScript %}

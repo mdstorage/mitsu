@@ -19,7 +19,11 @@
         {% block subgroupImage %}
 
         {% for schema in oContainer.getSchemas %}
-            <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogford/Images/'~oContainer.getActiveModification.getOption('folder')~'/'~schema.getCode~'.png') }}" style="width: auto;" alt="{{ schema.getCode }}" usemap="#{{ schema.getCode }}" />
+            <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogford/Images/'~oContainer.getActiveModification.getOption('folder')~'/'~schema.getCode~'.png') }}"
+                 style="width: auto;"
+                 class="img-responsive"
+                 alt="{{ schema.getCode }}"
+                 usemap="#{{ schema.getCode }}" />
         {% endfor %}
 
         {% endblock subgroupImage %}
@@ -39,12 +43,14 @@
                                     {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y1')) }},
                                     {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X2')) }},
                                     {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y2')) }}
-                                " href="#" id="{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}" data-name="{% block dataName %}{{ subgroup.getCode }}{% endblock dataName %}"/>
+                                " href="{{ block ('pathToSchemas') }}" id="{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}" data-name="{% block dataName %}{{ subgroup.getCode }}{% endblock dataName %}"/>
                                 {% endblock area %}
 
                                 {% block subgroupItem %}
                                 <div id="subgroup{{ subgroup.getCode }}">
-                                    <a href="{{ path('catalog_ford_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname }}</a>
+                                    <a href="{% block pathToSchemas %}{{ path('catalog_ford_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}{% endblock pathToSchemas %}">
+                                        ({{ subgroup.getCode }}) {{ subgroup.getRuname }}
+                                    </a>
                                 </div>
                                 {% endblock subgroupItem %}
                                 {% block cycleScript %}
@@ -75,7 +81,8 @@
                 fillColor: '70daf1',
                 fillOpacity: 0.3,
                 mapKey: 'data-name',
-                staticState: true
+                staticState: true,
+                clickNavigate: true
             });
         </script>
     {% endblock mapsterScript %}

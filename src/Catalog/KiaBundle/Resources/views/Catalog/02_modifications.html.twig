@@ -1,17 +1,29 @@
 <div class="modifications">
 <div class="row">
     {% for modification in oContainer.getActiveModel.getModifications %}
-         <div>
+
             {% block modification %}
 
-                <a href="{{ path('catalog_kia_complectations', parameters|merge({'modificationCode': modification.getCode})) }}">
-                <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Images/titles/'~modification.getOption('option1')~'.png') }}" alt="{{ modification.getCode }}">
+                <a href="{{ path('catalog_kia_complectations', parameters|merge({'modificationCode': modification.getCode})) }} " class="thumbnail">
+                    <div {#class="row"#} style="display: flex; align-items: center;">
 
-                    {{ modification.getRuname }}
+                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                        <img src="{{ (constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Imgs/Cutups/'~modification.getOption('option1')~'.rle')|file_exists() ?
+                        asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Imgs/Cutups/'~modification.getOption('option1')~'.rle'):
+                        asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Imgs/Cutups/0.rle')
+                        }}"
+                             class="img-responsive"
+                             alt="{{ modification.getCode }}">
+                        </div>
+                    <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                        {{ modification.getRuname }}
+                    </div>
+                    </div>
                 </a>
 
+
             {% endblock modification %}
-        </div>
+
     {% endfor %}
 </div>
 </div>

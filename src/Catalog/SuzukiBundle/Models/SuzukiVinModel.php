@@ -100,8 +100,8 @@ class SuzukiVinModel extends SuzukiCatalogModel {
             if ($aDataModelAndType[$a]['MODEL'] != Null) {
                 $sqlModel = "
         SELECT MODEL
-        FROM model_cat_name
-        WHERE CATNAME = :CATNAME
+        FROM model_cat_name mcn
+        WHERE :CATNAME LIKE CONCAT('%',mcn.CATNAME,'%')
         ";
 
                 $query = $this->conn->prepare($sqlModel);
@@ -115,7 +115,7 @@ class SuzukiVinModel extends SuzukiCatalogModel {
                 $sqlModif = "
         SELECT *
         FROM model_series
-        WHERE CATNAME = :CATNAME
+        WHERE :CATNAME LIKE CONCAT('%',model_series.CATNAME,'%')
         AND CATCODE = :CATCODE
         AND E_CODES LIKE :E_CODES
         AND ABBREV <> 'AR'

@@ -1,20 +1,35 @@
+{% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:04_groups.html.twig' %}
 {% use 'CatalogKiaBundle::kia.base.html.twig' %}
 {% block breadcrumbs %}
-   <a href="{% if  app.request.get('token') %} {{ path('catalog_kia_token', parameters) }} {% else %} {{ path('catalog_kia') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+   <a href="{% if  app.request.get('token') %} {{ path('catalog_kia_token', parameters) }} {% else %} {{ path('catalog_kia') }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a>
-    / <a href="{{ path('catalog_kia_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> / Группа запчастей
+    / <a href="{{ path('catalog_kia_complectations', parameters) }}">{{'Комплектация'|trans}} ({{ oContainer.getActiveComplectation.getCode}})</a> / {{'Группа запчастей'|trans}}
 {% endblock breadcrumbs %}
 
+{% block complectationRuname %}{{ oContainer.getActiveComplectation.getCode }}{% endblock complectationRuname %}
 {% block body %}
-    {% block head %}<h3>Выбрать группу запчастей:</h3>{% endblock head %}
+    {% block head %}<h3>{{'Выбрать группу запчастей'|trans}}:</h3>{% endblock head %}
     <div class="row">
-    <div class="col-lg-12">
+    <div>
         {% block groups %}
             <div class="groups">
                 {% for group in oContainer.getGroups %}
-                    <div>
-                        <a href="{{ path('catalog_kia_subgroups', parameters|merge({'groupCode': group.getCode})) }}">({{ group.getCode }}) {{ group.getRuname }}</a>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <a href="{{ path('catalog_kia_subgroups', parameters|merge({'groupCode': group.getCode})) }}" class="thumbnail">
+                            <div style="display: flex; align-items: center;">
+                                <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                    <img src="{{
+                                    asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Imgs/Maj/'~group.getCode~'.png')
+                                    }}"
+                                         class="img-responsive"
+                                         alt="{{ group.getCode }}">
+                                </div>
+                                <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+                                    ({{ group.getCode }}) {{ group.getRuname }}
+                                </div>
+                            </div>
+                        </a>
                     </div>
                 {% endfor %}
             </div>

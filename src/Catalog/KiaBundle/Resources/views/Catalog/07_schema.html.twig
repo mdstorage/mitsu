@@ -2,15 +2,15 @@
 {% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
 {% use 'CatalogKiaBundle::kia.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{% if  app.request.get('token') %} {{ path('catalog_kia_token', parameters) }} {% else %} {{ path('catalog_kia') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_kia_token', parameters) }} {% else %} {{ path('catalog_kia') }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getRuname }},
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
-    <a href="{{ path('catalog_kia_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> /
-    <a href="{{ path('catalog_kia_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
-    <a href="{{ path('catalog_kia_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
-    <a href="{{ path('catalog_kia_schemas', parameters) }}">Схема</a> / Запчасти
+    <a href="{{ path('catalog_kia_complectations', parameters) }}">{{'Комплектация'|trans}} ({{ oContainer.getActiveComplectation.getCode}})</a> /
+    <a href="{{ path('catalog_kia_groups', parameters) }}">{{'Группа запчастей'|trans}} ({{ oContainer.getActiveGroup.getRuname}})</a>/
+    <a href="{{ path('catalog_kia_subgroups', parameters) }}">{{'Подгруппа запчастей'|trans}} ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> /
+    <a href="{{ path('catalog_kia_schemas', parameters) }}">{{'Схема'|trans}}</a> / {{'Запчасти'|trans}}
 {% endblock breadcrumbs %}
-
-{% block refGroupsHead %}<h4>{{ 'Связанные изображения'|trans }}</h4>{% endblock refGroupsHead %}
+{% block complectationRuname %}{{ oContainer.getActiveComplectation.getCode }}{% endblock complectationRuname %}
+{% block refGroupsHead %}<h4>{{ 'Связанные подгруппы'|trans }}</h4>{% endblock refGroupsHead %}
 
 							{% block pncScript %}
                                 <script>
@@ -59,7 +59,7 @@
     {% for refGroup in oContainer.getActiveSchema.getRefGroups %}
         {% block refGroup %}
             <div>
-                <a href="{{ path('catalog_kia_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}">{% block refGroupName %}{{ refGroup.getCode }}{% endblock refGroupName %}</a>
+                <a href="{{ path('catalog_kia_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}">{% block refGroupName %}({{ refGroup.getCode }}) {{ refGroup.getRuname }}{% endblock refGroupName %}</a>
             </div>
         {% endblock refGroup %}
     {% endfor %}
@@ -69,9 +69,9 @@
     <div class="row">
         <div class="row" style="height: 600px;">
             <div class="guayaquil_unit_icons">
-                <div class="guayaquil_zoom cboxElement" title="Схема: {{ oContainer.getActiveSchema.getCode }}" full="{{ (constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?
-                asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png') :
-                asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'1.png') }}">
+                <div class="guayaquil_zoom cboxElement" title="Схема: {{ oContainer.getActiveSchema.getCode }}" full="{{ (constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Imgs/Cats/'~oContainer.getActiveModification.getOption('option1')~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?
+                asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Imgs/Cats/'~oContainer.getActiveModification.getOption('option1')~'/'~oContainer.getActiveSchema.getCode~'.png') :
+                asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Imgs/Cats/'~oContainer.getActiveModification.getOption('option1')~'/'~oContainer.getActiveSchema.getCode~'1.png') }}">
                     <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/images/zoom.png') }}"/>
                 </div>
             </div>
@@ -86,7 +86,7 @@
                     <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/images/mouse_wheel.png') }}"/>
                 </div>
                 <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                    - масштабирование изображения
+                    - {{'масштабирование изображения'|trans}}
                 </div>
             </div>
             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
@@ -95,7 +95,7 @@
                     <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/images/move.png') }}"/>
                 </div>
                 <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                    - прокрутка
+                    - {{'прокрутка'|trans}}
                 </div>
             </div>
         </div>
@@ -134,9 +134,9 @@
             </a>
         {% endfor %}
     {% endfor %}
-    <img class="dragger" onload="rescaleImage(-100);" src="{{ (constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?
-    asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'.png') :
-    asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Images/Images/'~oContainer.getActiveSchema.getRuname~'/'~oContainer.getActiveSchema.getCode~'1.png') }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+    <img class="dragger" onload="rescaleImage(-100);" src="{{ (constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Imgs/Cats/'~oContainer.getActiveModification.getOption('option1')~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?
+    asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Imgs/Cats/'~oContainer.getActiveModification.getOption('option1')~'/'~oContainer.getActiveSchema.getCode~'.png') :
+    asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Imgs/Cats/'~oContainer.getActiveModification.getOption('option1')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
 {% endblock image1 %}
 
 {% block subGroupPath %}{{ path('catalog_kia_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}

@@ -16,35 +16,18 @@ class KiaVinModel extends KiaCatalogModel {
 
     public function getVinFinderResult($vin)
     {
-
         $sql = "
         SELECT DISTINCT
-        vin.model_index,
-        kiac.catalog_code,
-        kiac.catalog_folder,
-        kiac.previous_region,
-        kiac.data_regions,
-        kiac.catalog_name,
-        kiac.family,
-        vin_description.region,
-        vin_description.country,
-        vin_description.ext_color,
-        vin_description.int_color,
-        vin_description.date_output,
-        cats_0_extcolor.lex_code_1,
-        cats_0_intcolor.lex_code,
-        cats_0_nation.wheel_location,
-        cats_0_nation.region_name,
-        cats_0_nation.country_name
-        FROM vin
-        INNER JOIN vin_model ON (vin_model.model_index = vin.model_index)
-        INNER JOIN kiac ON (kiac.catalog_code = vin_model.model)
-        INNER JOIN vin_description ON (vin_description.vin = :vin)
-        INNER JOIN cats_0_extcolor ON (cats_0_extcolor.ext_color_1 = vin_description.ext_color)
-        INNER JOIN cats_0_intcolor ON (cats_0_intcolor.int_color = vin_description.int_color)
-        INNER JOIN cats_0_nation ON (cats_0_nation.country = vin_description.country AND cats_0_nation.region = vin_description.region)
-        WHERE vin.vin = :vin
-        ORDER BY kiac.family
+        vo.*, vm.model, ctlg.cat_name, ctlg.catalogue_code, ctlg.cat_folder, ctlg.family, ctlg.data_regions, llextcolor.lex_desc Extcolor, llintcolor.lex_desc Intcolor, c0nation.nation Country, c0nation.region Region
+        FROM vin_options vo
+        INNER JOIN vin_model vm ON (vm.vin_model_id = vo.vin_model_id)
+        INNER JOIN catalog ctlg ON (ctlg.catalogue_code = vm.catalogue_code)
+        INNER JOIN cats0_extcolor c0ext ON (c0ext.color_main_code = vo.exterior_color)
+        LEFT JOIN lex_lex llextcolor ON (llextcolor.lex_code = c0ext.up_lex_code)
+        INNER JOIN cats0_intcolor c0int ON (c0int.color_code = vo.interior_color)
+        LEFT JOIN lex_lex llintcolor ON (llintcolor.lex_code = c0int.lex_code)
+        INNER JOIN cats0_nation c0nation ON (c0nation.nation_code = CONCAT(vo.country, vo.region))
+        WHERE vo.vin = :vin
         ";
 
         $query = $this->conn->prepare($sql);
@@ -52,65 +35,67 @@ class KiaVinModel extends KiaCatalogModel {
         $query->execute();
 
         $aData = $query->fetch();
+        $aNull = array('');
+        $apieces = array_diff(explode("|", $aData['data_regions']), $aNull);
 
-
-        $modelsReg = array();
-
-
-        $aDataRegions = array('AMANTI', 'AVELLA', 'CADENZA', 'CEED', 'CERATO', 'CERATO/FORTE', 'CERATO/SPECTRA', 'CLARUS', 'ED', 'FORTE', 'IH 12', 'MAGENTIS', 'MENTOR', 'MORNING/PICANTO', 'OPIRUS', 'OPTIMA',
-            'OPTIMA/MAGENTIS', 'PICANTO', 'PRIDE', 'PRIDE/FESTIVA', 'QUORIS', 'RIO', 'SEPHIA', 'SEPHIA/SHUMA/MENTOR', 'SMA GEN (1998-2004)', 'SMA MES (19981101-20040228)', 'SPECTRA', 'SPECTRA/SEPHIA II/SHUMA II/MENTOR II', 'TFE 11', 'VENGA',
-            'BORREGO', 'CARENS', 'CARNIVAL', 'CARNIVAL/SEDONA', 'JOICE DS', 'MOHAVE', 'RETONA', 'RONDO', 'RONDO/CARENS', 'SEDONA', 'SORENTO', 'SOUL', 'SPORTAGE', 'AM928 (1998-)', 'BESTA', 'BONGO-3 1TON,1.4TON',
-            'COSMOS', 'GRANBIRD', 'K2500/K2700/K2900/K3000/K3600', 'MIGHTY', 'POWER COMBI', 'PREGIO', 'PREGIO/BESTA', 'RHINO', 'TOWNER', 'SPTR');
-
-        foreach($aDataRegions as $itemReg)
-        {
-            if (strpos($aData['catalog_name'], $itemReg) !== false)
+        if (count($apieces) == 1){
+            $aData['data_regions'] = $apieces[0];
+        }
+        else{
+            switch($aData['Country'])
             {
-                $modelsReg[] = $itemReg;
-
+                case ('PUERTO RICO'): $reg = 'PUT';break;
+                case ('U.S.A'): $reg = 'USA';break;
             }
 
-
+            switch($aData['Region'])
+            {
+                case ('AUSTRALIA'): $reg = 'AUS';break;
+                case ('CANADA'): $reg = 'CAN';break;
+                case ('CENTRAL ASIA'): $reg = 'CIS';break;
+                case ('EUROPE'): $reg = 'EUR';break;
+                case ('GENERAL'): $reg = 'GEN';break;
+                case ('GENERAL(LHD)'): $reg = 'GEN';break;
+                case ('GENERAL(RHD)'): $reg = 'GEN';break;
+                case ('MIDDLE EAST'): $reg = 'MES';break;
+                case ('KOREA'): $reg = 'MES';break;
+            }
+            if (in_array($reg, $apieces))
+            {
+                $aData['data_regions'] = $reg;
+            }
         }
-
-
-        $complectations = $this->getComplectations('','',$aData['catalog_code'].'_'.$aData['catalog_folder']);
-
-
-        if ($aData['previous_region']) {
-
-            $region_for_groups = str_replace('|', '', $aData['previous_region']);
-        }
-        else {
-
-            $region_for_groups = substr($aData['data_regions'], 0, 3);
-        }
-
-
+        $complectations = $this->getComplectations($aData['data_regions'], $aData['family'], $aData['catalogue_code'].'_'.$aData['cat_folder'], $aData['model']);
+        $complectationRes = array();
+            for ($i = 1; $i < 11; $i++) {
+                $ten['f'.$i] = iconv("Windows-1251", "UTF-8", $complectations['ten' . $i]);
+                if ($complectations['ken' . $i]){
+                    $complectationRes['f'.$i] = $ten['f'.$i].': (' . $complectations['f' . $i] . ') ' . $complectations['ken' . $i];
+                }
+            }
         $result = array();
-
         if ($aData) {
             $result = array(
-                'model_for_groups' => $modelsReg[0],
-                'model' => $aData['catalog_name'],
-                'modif' => $aData['catalog_code'].'_'.$aData['catalog_folder'],
-                'compl' => $complectations[$aData['model_index']]['options']['option1'],
-                Constants::PROD_DATE => $aData['date_output'] ,
-                'region' => '('.$aData['region'].') '.$aData['region_name'],
-                'country' => '('.$aData['country'].') '.$aData['country_name'],
-                'wheel' => $aData['wheel_location'],
-                'ext_color' => '('.$aData['ext_color'].') '.$this->getDesc($aData['lex_code_1'], 'RU'),
-                'int_color' => '('.$aData['int_color'].') '.$this->getDesc($aData['lex_code'], 'RU'),
-                'compl_for_groups' => $aData['model_index'],
-                'region_for_groups' => $region_for_groups,
+                'marka' => 'KIA',
+                'model_for_groups' => $aData['family'],
+                'model' => $aData['cat_name'],
+                'modif' => $aData['catalogue_code'].'_'.$aData['cat_folder'],
+                'compl' => $complectationRes,
+                Constants::PROD_DATE => $aData['build_date'] ,
+                'region' => '('.$aData['region'].') '.$aData['Region'],
+                'country' => '('.$aData['country'].') '.$aData['Country'],
+                'wheel' => $aData['drive_type'],
+                'ext_color' => '('.$aData['exterior_color'].') '.$aData['Extcolor'],
+                'int_color' => '('.$aData['interior_color'].') '.$aData['Intcolor'],
+                'compl_for_groups' => $aData['model'],
+                'region_for_groups' => $aData['data_regions']
             );
         }
-
         return $result;
     }
     
     
-    public function getVinSubGroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $prodDate)
+    /*public function getVinSubGroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $prodDate)
     {
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
@@ -198,7 +183,7 @@ class KiaVinModel extends KiaCatalogModel {
 
 
         return $aDataSubGroup;
-    }
+    }*/
    
    
         
