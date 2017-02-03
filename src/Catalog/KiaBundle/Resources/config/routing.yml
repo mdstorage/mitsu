@@ -62,7 +62,7 @@ vin_kia_groups:
 
 vin_kia_subgroups:
   path:         /kia/{_locale}/vin/4/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{token}
-  defaults:     {_controller: CatalogKiaBundle:Vin:vinSubgroups, token: null}
+  defaults:     {_controller: CatalogKiaBundle:Vin:subgroups, token: null}
 
 vin_kia_schemas:
   path:         /kia/{_locale}/vin/5/{regionCode}/{modelCode}/{modificationCode}/{complectationCode}/{groupCode}/{subGroupCode}/{token}

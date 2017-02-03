@@ -23,7 +23,9 @@
                          style="width: auto;"
                          class="img-responsive"
                          alt="{{ schema.getCode }}"
-                         usemap="#{{ schema.getCode }}" />
+                         usemap="#{{ schema.getCode }}"
+                         id = "img{{ schema.getCode }}"
+                            />
                     </div>
                 {% endfor %}
 
@@ -39,7 +41,7 @@
                                 {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
                                     {% if schema.getCode ==  subgroup.getOption('picture') or subgroup.getOption('picture') == NULL %}
                                         {% block area %}
-                                    <area shape="rect" coords="
+                                    <area shape="rect" name = "{{ block('name') }}" coords="
                                     {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }},
                                     {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::Y1')) }},
                                     {{ subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X2')) }},
@@ -50,9 +52,11 @@
                                         {% block subgroupItem %}
                                         <div id="subgroup{{ subgroup.getCode }}">
                                             <a href="{% block pathToSchemas %}{{ path('catalog_kia_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }} {% endblock pathToSchemas %}">
+                                                {% block name %}
                                                 ({{ subgroup.getOption('sector_format') }}) {{ subgroup.getRuname }}
                                                 {% if subgroup.getOption('sector_part') %}({{ subgroup.getOption('sector_part') }}){% endif %}
                                                 {% if subgroup.getOption('note') %}({{ subgroup.getOption('note') }}){% endif %}
+                                                {% endblock name %}
                                             </a>
                                         </div>
                                         {% endblock subgroupItem %}
@@ -67,6 +71,23 @@
                                             $("#{{ subgroup.getCode~subgroup.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::X1')) }}").on('click', function(){
                                                 $("#subgroup{{ subgroup.getCode }}").toggleClass("btn-info");
                                             });
+
+                                            $("#subgroup{{ subgroup.getCode }}").on('mouseover', function() {
+                                                $('#img{{ schema.getCode }}').mapster('set_options', {
+                                                    areas: [{
+                                                        key: '{{ subgroup.getCode }}',
+                                                        fillOpacity: 0.3,
+                                                        stroke: true
+                                                    }]
+                                                });
+                                                $("#img{{ schema.getCode }}").mapster('highlight', '{{ subgroup.getCode }}');
+                                            });
+
+                                            $("#subgroup{{ subgroup.getCode }}").on('mouseout', function() {
+                                                $("#img{{ schema.getCode }}").mapster('highlight', false);
+                                            });
+
+
                                         </script>
                                         {% endblock cycleScript %}
                                     {% endif %}
@@ -81,11 +102,24 @@
     {% block mapsterScript %}
         <script>
             $('img').mapster({
-                fillColor: '70daf1',
+            {#fillColor: '70daf1',#}
                 fillOpacity: 0.3,
+                showToolTip: true,
                 mapKey: 'data-name',
                 staticState: true,
-                clickNavigate: true
+                clickNavigate: true,
+
+                onMouseover: function(e) {
+                    var data_name = $(this).attr('data-name');
+                    var name = $(this).attr('name');
+                    $('img').mapster('set_options', {
+                        areas: [{
+                            key: data_name,
+                            toolTip: name,
+                            stroke: true
+                        }]
+                    });
+                }
             });
         </script>
     {% endblock mapsterScript %}

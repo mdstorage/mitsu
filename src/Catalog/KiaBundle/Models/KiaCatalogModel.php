@@ -24,28 +24,21 @@ class KiaCatalogModel extends CatalogModel{
         ";
 
         $query = $this->conn->query($sql);
-
         $aData = $query->fetchAll();
-
         foreach($aData as $item)
         {
-
             $pieces = explode("|", $item['data_regions']);
             foreach($pieces as $item1)
             {
                 if($item1 != ''){$reg[] = $item1;}
             }
-
         }
-
         $regions = array();
         foreach(array_unique($reg) as $item)
         {
             $regions[trim($item)] = array(Constants::NAME=>$item, Constants::OPTIONS=>array());
         }
-
         return $regions;
-
     }
 
     public function getModels($regionCode)
@@ -101,7 +94,7 @@ class KiaCatalogModel extends CatalogModel{
         return $modifications;
     }
 
-    public function getComplectations($regionCode, $modelCode, $modificationCode)
+    public function getComplectations($regionCode, $modelCode, $modificationCode, $complectationCode_vin = null)
     {
         $locale = $this->requestStack->getCurrentRequest()->getLocale();
         $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
@@ -191,34 +184,28 @@ class KiaCatalogModel extends CatalogModel{
 
         WHERE vm.catalogue_code = :modificationCode
         ";
-
-
         $query = $this->conn->prepare($sql);
         $query->bindValue('modificationCode',  $modificationCode);
         $query->bindValue('locale',  $locale);
         $query->execute();
-
         $aData = $query->fetchAll();
 
         $com = array();
-
-
         $result = array();
         $psevd = array();
-
         $af = array();
-
         foreach($aData as $item) {
+            if ($complectationCode_vin && $item['model'] == $complectationCode_vin)
+            {
+                return $item;
+            }
             for ($i = 1; $i < 11; $i++) {
                 if ($item['f' . $i]) {
                     $af[$i][$item['f' . $i]] = '(' . $item['f' . $i] . ') ' . $item['ken' . $i];
                     $result['f'.$i] = $af[$i];
                     $psevd['f'.$i] = iconv('Windows-1251', 'UTF-8', $item['ten' . $i]);
-
                 }
             }
-
-
             $com[$item['model']] = array(
                 Constants::NAME => $result,
                 Constants::OPTIONS => array('option1'=>$psevd)
@@ -498,48 +485,21 @@ class KiaCatalogModel extends CatalogModel{
         $query->execute();
         $aData = $query->fetchAll();
 
+        /*применяем фильтр совместимости с выбранной комплектацией*/
+        $aData = $this->filterComplectations($modificationCode, $complectationCode, $aData);
 
-        /*Фильтр совместимости с выбранной комплектацией*/
-        $sqlComlectation = "
-        SELECT DISTINCT ucc
-        FROM vin_model vm
-        WHERE vm.catalogue_code = :modificationCode
-        AND vm.model = :complectationCode
-        ";
-        $query = $this->conn->prepare($sqlComlectation);
-        $query->bindValue('modificationCode', $modificationCode);
-        $query->bindValue('complectationCode',  $complectationCode);
-        $query->execute();
-        $aComplectation = $query->fetch();
+        /*координаты мини областей формируются, исходя из количества подргупп, приходящихся на одну область (координаты этой одной области заданы в исходной таблице cats_dat_ref)).
+        если количество подгрупп более 1, нужно разбивать исходную область*/
+        $aSecFor = array();
 
-        $aExplodeComplectation = explode('|', $aComplectation['ucc']);
-        foreach($aData as $index => $value){
-            if ($value['compatibility'])
-            {
-                $aNull = array('', ';', ';;');
-                $aExplodeCompatibility = explode('|', str_replace(';', '', $value['compatibility']));
-                $aExplodeCompatibility = array_slice($aExplodeCompatibility, 0 , count($aExplodeComplectation)-1);
-                $aExplodeCompatibilityWithoutNull = array_diff($aExplodeCompatibility, $aNull);
-                $aIntersect = array_intersect_assoc($aExplodeComplectation, $aExplodeCompatibilityWithoutNull);
-                if (count($aIntersect) != count($aExplodeCompatibilityWithoutNull))
-                {
-                    unset ($aData[$index]);
-                }
-                unset ($value);
-            }
-        }
-        /*конец фильтра*/
-
-        /*для того, чтобы координаты подгрупп не дублировались и не мешали правильно отображать картинку (области не накладывались друг на друга)*/
-        $aSectorFormat = array();
-        $aCountValuesSectorFormat = array();
-        foreach($aData as $index => $value)
+        foreach($aData as $index => &$value)
         {
-            $aSectorFormat[] = $value['sector_format'];
+            $aSecFor[] = $value['sector_format'];
+            $aSectorFormat[$value['sector_format']][] = $value['sector_format'];
+            $value['count_sector_format'] = ($aSectorFormat[$value['sector_format']]);
+            unset($value);
         }
-
-        $aCountValuesSectorFormat = array_count_values($aSectorFormat);var_dump($aCountValuesSectorFormat); die;
-
+        $aCountValuesSectorFormat = array_count_values($aSecFor);
         $subgroups = array();
             foreach($aData as $item){
                     $subgroups[$item['minor_sect']] = array(
@@ -549,10 +509,10 @@ class KiaCatalogModel extends CatalogModel{
                             'sector_format' => $item['sector_format'],
                             'sector_part' => $item['sector_part'],
                             'note' => $item['note'],
-                            Constants::X1 => $aCountValuesSectorFormat[$item['sector_format']]<= 1?floor($item['x1']):null,
-                            Constants::X2 => $aCountValuesSectorFormat[$item['sector_format']]<= 1?floor($item['x2']):null,
-                            Constants::Y1 => $aCountValuesSectorFormat[$item['sector_format']]<= 1?floor($item['y1']):null,
-                            Constants::Y2 => $aCountValuesSectorFormat[$item['sector_format']]<= 1?floor($item['y2']):null
+                            Constants::X1 => floor($this->getCoordinates($item['x1'], $item['x2'], $aCountValuesSectorFormat[$item['sector_format']], $item['count_sector_format'])[0]),
+                            Constants::X2 => floor($this->getCoordinates($item['x1'], $item['x2'], $aCountValuesSectorFormat[$item['sector_format']], $item['count_sector_format'])[1]),
+                            Constants::Y1 => floor($item['y1']),
+                            Constants::Y2 => floor($item['y2'])
                         )
                     );
             }
@@ -572,19 +532,13 @@ class KiaCatalogModel extends CatalogModel{
 
     public function getSchema($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
-
         $schema = array();
-
-			
 		            $schema[$schemaCode] = array(
                     Constants::NAME => $schemaCode,
                         Constants::OPTIONS => array(
                             Constants::CD => $schemaCode
                         )
                 );
-
-
-
         return $schema;
     }
 
@@ -627,10 +581,10 @@ class KiaCatalogModel extends CatalogModel{
         $pncs = array();
         foreach ($aPncs as $index=>$value) {
             {
-                if (!$value['clangjap'])
+                /*if (!$value['clangjap'])
                 {
                     unset ($aPncs[$index]);
-                }
+                }*/
             	foreach ($value['clangjap'] as $item1)
             	{
                     $pncs[$value['ref']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
@@ -649,52 +603,29 @@ class KiaCatalogModel extends CatalogModel{
 
     public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
-     /*   $sqlSchemaLabels = "
-        SELECT p.part_code, p.xs, p.ys, p.xe, p.ye
-        FROM pictures p
-        WHERE p.catalog = :regionCode
-          AND p.cd = :cd
-          AND p.pic_name = :schemaCode
-          AND p.XC26ECHK = 2
-        ";
-
-        $query = $this->conn->prepare($sqlSchemaLabels);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('cd', $cd);
-        $query->bindValue('schemaCode', $schemaCode);
-        $query->execute();
-
-        $aDataLabels = $query->fetchAll();
 
         $articuls = array();
-        foreach ($aDataLabels as $item) {
-            $articuls[$item['part_code']][Constants::NAME] = $item['part_code'];
-
-            $articuls[$item['part_code']][Constants::OPTIONS][Constants::COORDS][] = array(
-                Constants::X1 => $item['xs'],
-                Constants::Y1 => $item['ys'],
-                Constants::X2 => $item['xe'],
-                Constants::Y2 => $item['ye'],
-            );
-        }*/
-$articuls = array();
         return $articuls;
     }
 
     public function getReferGroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $cd)
     {
-        /*$catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-
+        $locale = $this->requestStack->getCurrentRequest()->getLocale();
+        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
 
         $sqlSchemaLabels = "
-        SELECT name, x1, y1, x2, y2
-        FROM cats_coord
-        WHERE catalog_code = :catCode
-          AND compl_name LIKE :schemaCode
-          AND quantity = 5
+        SELECT cdr.ref, cdr.x1, cdr.y1, cdr.x2, cdr.y2, UPPER(IFNULL(ll_locale.lex_desc, ll_en.lex_desc)) TEXT
+        FROM cats_dat_ref cdr
+        INNER JOIN cats_map cm ON (cm.cat_folder = cdr.cat_folder AND cm.sector_format = cdr.ref)
+        LEFT JOIN lex_lex ll_locale ON (ll_locale.lex_code = cm.minor_sect_lex_code AND ll_locale.lang_code = :locale)
+        LEFT JOIN lex_lex ll_en ON (ll_en.lex_code = cm.minor_sect_lex_code AND ll_en.lang_code = 'EN')
+        WHERE cdr.cat_folder = :catCode
+        AND cdr.img_name LIKE :schemaCode
+        AND cdr.ref_type = 5
           ";
 
         $query = $this->conn->prepare($sqlSchemaLabels);
+        $query->bindValue('locale', $locale);
         $query->bindValue('catCode', $catCode);
         $query->bindValue('schemaCode', '%'.$schemaCode.'%');
         $query->execute();
@@ -704,154 +635,156 @@ $articuls = array();
         $groups = array();
         foreach ($aData as $item)
         {
-            $groups[$item['name']][Constants::NAME] = $item['name'];
-            $groups[$item['name']][Constants::OPTIONS][Constants::COORDS][] = array(
-                Constants::X1 => ($item['x1']),
+            $groups[$item['ref']][Constants::NAME] = iconv('Windows-1251', 'UTF-8', $item['TEXT']);
+            $groups[$item['ref']][Constants::OPTIONS][Constants::COORDS][] = array(
+                Constants::X1 => $item['x1'],
                 Constants::Y1 => $item['y1'],
                 Constants::X2 => $item['x2'],
                 Constants::Y2 => $item['y2']);
-        }*/
-
-        $groups = array();
+        }
         return $groups;
     }
 
     public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, $options)
     {
-
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
 
-        $ghg = $this->getComplectations($regionCode, $modelCode, $modificationCode);/*print_r($ghg[$complectationCode]['options']['option2']); die;*/
-        $complectationOptions = $ghg[$complectationCode]['options']['option2'];
-
-        $sqlPnc = "
-        SELECT *
-        FROM cats_table
-        WHERE catalog_code =:catCode
-            AND scheme_num = :pncCode
-        	AND compl_name LIKE :schemaCode
+        $sqlArticuls = "
+        SELECT cdp.number, cdp.id, cdp.pnc, cdp.quantity, cdp.production_from, cdp.production_to, cdp.compatibility, ll_desc.lex_desc descript
+        FROM cats_dat_parts cdp
+        LEFT JOIN lex_lex ll_desc ON (ll_desc.lex_code = cdp.desc_lex_code AND ll_desc.lang_code = 'EN')
+        WHERE cdp.cat_folder = :catCode
+        AND cdp.minor_sect LIKE :subGroupCode
+        AND cdp.ref = :pncCode
         ";
-
-        $query = $this->conn->prepare($sqlPnc);
+        $query = $this->conn->prepare($sqlArticuls);
         $query->bindValue('catCode', $catCode);
-        $query->bindValue('pncCode', $pncCode);
-        $query->bindValue('schemaCode', '%'.$options['cd'].'%');
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('pncCode',  $pncCode);
         $query->execute();
-
         $aArticuls = $query->fetchAll();
 
-        foreach ($aArticuls as $index => $value) {
 
-            $value2 = str_replace(substr($value['model_options'], 0, strpos($value['model_options'], '|')), '', $value['model_options']);
-            $articulOptions = explode('|', str_replace(';', '', $value2));
-
-            foreach ($articulOptions as $index1 => $value1) {
-                if (($value1 == '') || ($index1 > (count($complectationOptions)-1))) {
-                    unset ($articulOptions[$index1]);
+        $aExplodeCompatibility = array();
+        $aOptions = array();
+        foreach($aArticuls as $index => $value) {
+            if ($value['compatibility']) {
+                $strBegin = strstr($value['compatibility'], '|;');
+                $strBegin = substr_replace($strBegin, '',strpos($strBegin,'|;'), 2);
+                $strEnd = strstr($strBegin, ';;', true);
+                if ($strEnd) {
+                    $aExplodeCompatibility[$value['id']] = array_diff(explode('|', $strEnd), array(''));
+                }
+                else {
+                    $aExplodeCompatibility[$value['id']] = array('');
                 }
             }
-
-
-            if (count($articulOptions) !== count(array_intersect_assoc($articulOptions, $complectationOptions)))
-            {
-                unset ($aArticuls[$index]);
+            if ($aExplodeCompatibility[$value['id']] != array('')){
+                foreach ($aExplodeCompatibility[$value['id']] as $ind => $val) {
+                    $sqlComlectation = "
+                    SELECT DISTINCT ld1.lex_desc ll1
+                    FROM cats0_options c0o1
+                    INNER JOIN lex_lex ld1 ON (ld1.lex_code = c0o1.lex_code1 AND ld1.lang_code = 'EN')
+                    WHERE c0o1.catalogue_code = :modificationCode AND c0o1.option = :valued
+                    ";
+                    $query = $this->conn->prepare($sqlComlectation);
+                    $query->bindValue('modificationCode', $modificationCode);
+                    $query->bindValue('valued', $val);
+                    $query->execute();
+                    $aOptions[$value['id']][$val] = $query->fetchColumn(0);
+                }
+            }
+            else {
+                $aOptions[$value['id']] = array('');
             }
         }
-
-
+        /*применяем фильтр совместимости с выбранной комплектацией*/
+        $aArticuls = $this->filterComplectations($modificationCode, $complectationCode, $aArticuls);
 
         $articuls = array();
-      
         foreach ($aArticuls as $item) {
-        	 
-            
-            
-				$articuls[$item['detail_code']] = array(
-                Constants::NAME => $this->getDesc($item['detail_lex_code'], 'RU'),
+            	$articuls[$item['id']] = array(
+                Constants::NAME => $item['number'],
                 Constants::OPTIONS => array(
-                    Constants::QUANTITY => $item['quantity_details'],
-                    Constants::START_DATE => $item['start_data'],
-                    Constants::END_DATE => ($item['end_data'])?$item['end_data']:99999999,
-                    'option3' => $item['replace_code'],
+                    Constants::QUANTITY => $item['quantity'],
+                    Constants::START_DATE => $item['production_from'],
+                    Constants::END_DATE => $item['production_to'],
+                    'pnc' => $item['pnc'],
+                    'descript' => $item['descript'],
+                    'aOptions' => ($aOptions[$item['id']] != array(''))?$aOptions[$item['id']]:null
                 )
             );
-            
         }
-
         return $articuls;
-    }
-
-    public function getDesc($itemCode, $language)
-    {
-
-                $sqlRu = "
-                    SELECT lex_name
-                    FROM kialex
-                    WHERE lex_code = :itemCode
-                    AND lang = :language
-                    ";
-
-                $query = $this->conn->prepare($sqlRu);
-                $query->bindValue('itemCode', $itemCode);
-                $query->bindValue('language', $language);
-                $query->execute();
-                $sData = $query->fetch();
-
-        $sDesc = $itemCode;
-                if ($sData)
-                {
-                    $sDesc = $sData['lex_name'];
-                }
-        else
-        {
-            $sqlEn = "
-                    SELECT lex_name
-                    FROM kialex
-                    WHERE lex_code = :itemCode
-                    AND lang = :language
-                    ";
-
-            $query = $this->conn->prepare($sqlEn);
-            $query->bindValue('itemCode', $sDesc);
-            $query->bindValue('language', 'EN');
-            $query->execute();
-            $sData1 = $query->fetch();
-
-            if ($sData1)
-            {
-                $sDesc = $sData1['lex_name'];
-            }
-
-        }
-
-
-        return mb_strtoupper(iconv('cp1251', 'utf8', $sDesc), 'utf8');
-
     }
 
     public function getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
-
-
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-
         $sqlGroup = "
-        SELECT part
+        SELECT major_sect, minor_sect
         FROM cats_map
-        WHERE sector_name = :subGroupCode
-          AND catalog_name = :catCode
+        WHERE sector_format = :subGroupCode
+        AND cat_folder = :catCode
         ";
-
         $query = $this->conn->prepare($sqlGroup);
-        $query->bindValue('subGroupCode', (substr_count($subGroupCode, '-') > 1) ? substr($subGroupCode, 0, strripos($subGroupCode, '-')+1): $subGroupCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
         $query->bindValue('catCode', $catCode);
         $query->execute();
+        $groupSubGroupCode = $query->fetch();
 
-        $groupCode = $query->fetchColumn(0);
+        return $groupSubGroupCode;
+    }
 
-        return $groupCode;
+    public function getCoordinates($x1, $x2, $m , $aCount_sector_format)
+    {
+        $n = count($aCount_sector_format);
+
+        $X1 = (($n -1)*$x2 + ($m - $n + 1)*$x1)/$m + 1;
+        $X2 = ($n * $x2 + ($m - $n) * $x1)/$m - 1;
+
+        return array($X1 , $X2);
 
     }
+
+    public function filterComplectations($modificationCode, $complectationCode, $aData)
+    {
+        /*Фильтр совместимости с выбранной комплектацией*/
+        $sqlComlectation = "
+        SELECT DISTINCT ucc
+        FROM vin_model vm
+        WHERE vm.catalogue_code = :modificationCode
+        AND vm.model = :complectationCode
+        ";
+        $query = $this->conn->prepare($sqlComlectation);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('complectationCode',  $complectationCode);
+        $query->execute();
+        $aComplectation = $query->fetch();
+
+        $aExplodeComplectation = explode('|', $aComplectation['ucc']);
+        foreach($aData as $index => $value){
+            if ($value['compatibility'])
+            {
+                $strBegin = ltrim(strstr($value['compatibility'], '|;', true), ';;');
+                $aNull = array('');
+                $aExplodeCompatibility = explode('|', $strBegin);
+                $aExplodeCompatibility = array_slice($aExplodeCompatibility, 0 , count($aExplodeComplectation)-1);
+                $aExplodeCompatibilityWithoutNull = array_diff($aExplodeCompatibility, $aNull);
+                $aIntersect = array_intersect_assoc($aExplodeComplectation, $aExplodeCompatibilityWithoutNull);
+                if (count($aIntersect) != count($aExplodeCompatibilityWithoutNull))
+                {
+                    unset ($aData[$index]);
+                }
+                unset ($value);
+            }
+        }
+        return $aData;
+        /*конец фильтра*/
+
+    }
+
 
     
 } 

@@ -25,7 +25,7 @@
 
                     {% for pnc in oContainer.getActiveSchema.getPncs %}
                         {% block pnc %}
-                            <div class="pnc glyphicon-plus small" id="pnc_{{ pnc.getCode }}">
+                            <div class="pnc glyphicon-plus small" id="pnc_{{ pnc.getCode }}" name="{{ pnc.getCode }}">
                                 ({{ pnc.getCode }}) {{ pnc.getRuname }}
                             </div>
                             {% block pncScript %}

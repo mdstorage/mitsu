@@ -7,7 +7,7 @@
  */
 namespace Catalog\KiaBundle\Components;
 class KiaConstants {
-    const LOCALE    = 'ru';
+    const LOCALE    = 'ru_RU';
     const TRANSLATION_RESOURCE = '/../../../../app/Resources/translations/kia.';
     const TRANSLATION_DOMAIN = 'kia';
     const PROD_YEAR = 'prod_year';
