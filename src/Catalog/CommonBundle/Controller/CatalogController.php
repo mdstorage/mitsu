@@ -16,10 +16,9 @@ abstract class CatalogController extends BaseController{
      * @param string $regionCode Код региона (нужен для поиска модели)
      *
      */
+
     public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
     {
-
-
         $headers = $request->server->getHeaders();
 
         foreach($request->cookies->keys() as $index => $value)
@@ -536,6 +535,20 @@ abstract class CatalogController extends BaseController{
                 'oContainer' => $oContainer,
                 'parameters' => $parameters
             ));
+        }
+    }
+    public function formAction(Request $request)
+    {
+        if ($request->getMethod() == 'POST') {
+            $name = $request->get('name');
+            $email = $request->get('email');
+            $message = $request->get('message');
+            $url = $request->get('url');
+
+            $mail = $this->get('my_mailer');
+            if ($mail->send($name, $email, $message, $url) == true) {
+                return $this->render('CatalogCommonBundle:Catalog:_success_form.common.base.html.twig', array());
+            }
         }
     }
 } 

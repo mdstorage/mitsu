@@ -6,8 +6,8 @@
     <title>{% block title %}{{ 'Каталог'|trans }} {% block brand %}{% endblock brand %}{% endblock title%}</title>
     {% block stylesheets %}
 
-        <link rel="stylesheet" href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/css/bootstrap.min.css') }}" media="all">
-        <link rel="stylesheet" href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/css/bootstrap-theme.min.css') }}" media="all">
+        <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap.min.css') }}" media="all">
+        <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap-theme.min.css') }}" media="all">
         <link rel="stylesheet" href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/css/jquery.zoomscroll-2.0.1.css') }}" media="all">
         <link rel="stylesheet" href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/css/guayaquil.css') }}" media="all">
         <link rel="stylesheet" href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/css/colorbox.css') }}" media="all">
@@ -38,6 +38,7 @@
     <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/mootools-more.js') }}"></script>
     
 {% endblock %}
+
 {% block source %}{% endblock source %}
 <div class="main" id="dynamic-content">
     <nav class="navbar navbar-default" role="navigation">
@@ -76,6 +77,7 @@
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
+
 
 
     <div class="container-fluid">
@@ -137,11 +139,19 @@
                             </div>
                         </div>
 
-                        <div style = "position: relative; text-align: right; cursor: pointer">
+                        {#<div style = "position: relative; text-align: right; cursor: pointer">
                             <div class="jivo-btn jivo-offline-btn jivo-btn-dark jivo-btn-gradient" onclick="jivo_api.open();" style="font-family: Helvetica, Arial;font-size: 15px;background-color: #FFEB3B;border-radius: 3px;-moz-border-radius: 3px;-webkit-border-radius: 3px;height: 30px;line-height: 30px;padding: 0 15px 0 15px;display: none;font-weight: normal;font-style: normal">
                                 {{ 'Сообщить об ошибке'|trans }}
                             </div>
-                        </div>
+                        </div>#}
+                        <!-- Button trigger modal -->
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                            Сообщить об ошибке
+                        </button>
+                        {{ include('_form.common.base.html.twig') }}
+
+                        <!-- Modal -->
+
 
                     {% endblock summary%}
                 </div>
@@ -152,7 +162,7 @@
 </div>
 
 
-{% if app.request.get('_locale') == 'ru' %}
+{#{% if app.request.get('_locale') == 'ru' %}
 
 <script type='text/javascript'>
     (function(){ var widget_id = 'cmEqz9a23Q';var d=document;var w=window;function l(){
@@ -167,7 +177,7 @@
         var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = '//code.jivosite.com/script/widget/'+widget_id; var ss = document.getElementsByTagName('script')[0]; ss.parentNode.insertBefore(s, ss);}if(d.readyState=='complete'){l();}else{if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
 </script>
 <!-- {/literal} END JIVOSITE_EN CODE -->
-{% endif %}
+{% endif %}#}
 
 
 <script type="text/javascript">

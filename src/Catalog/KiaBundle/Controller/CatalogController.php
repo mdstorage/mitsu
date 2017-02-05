@@ -26,6 +26,8 @@ class CatalogController extends BaseController{
         return 'Catalog\KiaBundle\Components\KiaConstants';
     }
 
+
+
     public function complectationsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $articul = null, $token = null)
     {
         $data = $this->get('my_token_info')->getStatus($token);

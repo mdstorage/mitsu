@@ -19,6 +19,7 @@
                     <div class="col-sm-4">
                             {{ form_widget(form) }}
                             <br>
+                            <input type="button" class="btn btn-default" value="Сбросить" id="reset-button">
                             <input type="submit" class="btn btn-primary" value="{{ 'Далее'|trans({}, 'kia') }}" id="submit-button"/>
                         </div>
                     </form>
@@ -26,6 +27,9 @@
             </div>
         </div>
         <script>
+            $('#reset-button').on('click', function() {
+                window.location.href = "{{ path(app.request.get('_route'), parameters) }}";
+            });
             $(document).ready(function() {
                 $('select.form-control').each(function(){
                     var selector = $(this).attr('id');
