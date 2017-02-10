@@ -139,20 +139,13 @@
                             </div>
                         </div>
 
-                        {#<div style = "position: relative; text-align: right; cursor: pointer">
-                            <div class="jivo-btn jivo-offline-btn jivo-btn-dark jivo-btn-gradient" onclick="jivo_api.open();" style="font-family: Helvetica, Arial;font-size: 15px;background-color: #FFEB3B;border-radius: 3px;-moz-border-radius: 3px;-webkit-border-radius: 3px;height: 30px;line-height: 30px;padding: 0 15px 0 15px;display: none;font-weight: normal;font-style: normal">
-                                {{ 'Сообщить об ошибке'|trans }}
-                            </div>
-                        </div>#}
                         <!-- Button trigger modal -->
-                        <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                            Сообщить об ошибке
+                        <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#myModal">
+                        {{ 'Сообщить об ошибке'|trans }}
                         </button>
-                        {{ include('_form.common.base.html.twig') }}
+                        {{ include('feedbackform/_form.common.base.html.twig') }}
 
                         <!-- Modal -->
-
-
                     {% endblock summary%}
                 </div>
             </div>
@@ -161,44 +154,19 @@
     </div>
 </div>
 
-
-{#{% if app.request.get('_locale') == 'ru' %}
-
-<script type='text/javascript'>
-    (function(){ var widget_id = 'cmEqz9a23Q';var d=document;var w=window;function l(){
-        var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = '//code.jivosite.com/script/widget/'+widget_id; var ss = document.getElementsByTagName('script')[0]; ss.parentNode.insertBefore(s, ss);}if(d.readyState=='complete'){l();}else{if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
-</script>
-
-{% else %}
-
-<!-- BEGIN JIVOSITE_EN CODE {literal} -->
-<script type='text/javascript'>
-    (function(){ var widget_id = 'DUfhDygEeA';var d=document;var w=window;function l(){
-        var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = '//code.jivosite.com/script/widget/'+widget_id; var ss = document.getElementsByTagName('script')[0]; ss.parentNode.insertBefore(s, ss);}if(d.readyState=='complete'){l();}else{if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
-</script>
-<!-- {/literal} END JIVOSITE_EN CODE -->
-{% endif %}#}
-
-
 <script type="text/javascript">
-
     $(document).ready(function(){
         {
             setInterval(publishHeight, 300);
         }
     });
 </script>
-
 <script>
       var host = '{{ app.request.get('callbackhost') }}';
       var ddomain = get_cookie('DOMAIN');
-
       if (!host){
-
           host = get_cookie('COOKIEHOST'.concat($("#span1").text().trim().toLowerCase(), ddomain));
       }
-
-
  function publishHeight() {
 
   var actualHeight = $('#dynamic-content').height();
@@ -222,7 +190,6 @@
           }
       }
   }
-
   if (Math.abs(actualHeight - currentHeight) > 5) {
       if (host){
           var hostUrl = host;
@@ -231,44 +198,29 @@
       }
   }
 }
-function get_cookie (cookie_name)
-
-{
+function get_cookie (cookie_name){
   var results = document.cookie.match ( '(^|;) ?' + cookie_name + '=([^;]*)(;|$)' );
 
   if ( results )
       return ( unescape ( results[2] ) );
   else
       return null;
-
 }
-
 function set_cookie ( name, value, exp_y, exp_m, exp_d, path, domain, secure )
 {
   var cookie_string = name + "=" + escape ( value );
-
-  if ( exp_y )
-  {
+  if ( exp_y ){
       var expires = new Date ( exp_y, exp_m, exp_d );
       cookie_string += "; expires=" + expires.toGMTString();
   }
-
   if ( path )
       cookie_string += "; path=" + escape ( path );
-
   if ( domain )
       cookie_string += "; domain=" + escape ( domain );
-
   if ( secure )
       cookie_string += "; secure";
-
   document.cookie = cookie_string;
 }
-
 </script>
-
-
-
-
 </body>
 </html>

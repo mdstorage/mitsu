@@ -125,18 +125,3 @@
     {% endblock mapsterScript %}
     {% block pageScript %}{% endblock pageScript %}
 {% endblock body %}
-
-
-
-
-{#{% block subgroups %}
-    <div class="subgroups">
-        {% block subGroupsMap %}
-            <map name="{{ oContainer.getActiveGroup.getCode }}">
-                {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
-                    {{ block('subgroupItem') }}
-                {% endfor %}
-            </map>
-        {% endblock subGroupsMap %}
-    </div>
-{% endblock subgroups %}#}

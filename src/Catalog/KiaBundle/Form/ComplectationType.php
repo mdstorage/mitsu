@@ -5,6 +5,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Catalog\CommonBundle\Components\Constants;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 
 
 class ComplectationType extends AbstractType{
@@ -24,9 +25,17 @@ class ComplectationType extends AbstractType{
 
                         'attr' => array(
                             'class' => 'form-control',
+                            'id' => $index
 
                         )
-                    ));
+                    ))
+                    /*->add('save', 'button', array(
+                        'attr' => array('class' => 'save'),
+                    ))*/;
+
+
+
+
 
             }
 

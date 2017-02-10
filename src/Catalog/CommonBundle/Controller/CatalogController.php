@@ -496,22 +496,15 @@ abstract class CatalogController extends BaseController{
             $articul = $request->get('articul');
             $options = $request->get('options');
             $token = $request->get('token');
-
-
-            if (!empty($token))
-            {
+            if (!empty($token)) {
                 $aDataToken = array();
                 $aDataToken = $this->get('my_token_info')->getDataToken($token);
 
                 $redirectAdress = $aDataToken['url'];
             }
-            else
-            {
+            else {
                 $redirectAdress = Constants::FIND_PATH;
             }
-
-
-
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modificationCode' => $modificationCode,
@@ -521,9 +514,7 @@ abstract class CatalogController extends BaseController{
                 'articul' => $articul,
                 'redirectAdress' => $redirectAdress
             );
-
             $articuls = $this->model()->getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, json_decode($options, true));
-
             $oContainer = Factory::createContainer()
                 ->setActivePnc(Factory::createPnc($pncCode, $pncCode)
                     ->setArticuls(Factory::createCollection($articuls, Factory::createArticul()))
@@ -547,7 +538,7 @@ abstract class CatalogController extends BaseController{
 
             $mail = $this->get('my_mailer');
             if ($mail->send($name, $email, $message, $url) == true) {
-                return $this->render('CatalogCommonBundle:Catalog:_success_form.common.base.html.twig', array());
+                return $this->render('feedbackform/_success_form.common.base.html.twig', array());
             }
         }
     }

@@ -1,3 +1,4 @@
+{% trans_default_domain "common" %}
 <!-- Модальное окно -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
     <div class="modal-dialog">
@@ -5,7 +6,7 @@
             <!-- Заголовок модального окна -->
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">×</button>
-                <h4 class="modal-title" id="myModalLabel">Заполните поля формы</h4>
+                <h4 class="modal-title" id="myModalLabel">{{ 'Заполните поля формы'|trans }}</h4>
             </div>
             <!-- Основная часть модального окна, содержащая форму для регистрации -->
             <div class="modal-body">
@@ -13,7 +14,7 @@
                 <form role="form">
                     <!-- Блок для ввода логина -->
                     <div class="form-group has-feedback">
-                        <label for="name" class="control-label">Имя:</label>
+                        <label for="name" class="control-label">{{ 'Имя'|trans }}:</label>
                         <div>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="glyphicon glyphicon-user" ></i></span>
@@ -34,11 +35,11 @@
                     <!-- Конец блока для ввода email-->
                     <!-- Блок для ввода сообщения -->
                     <div class="form-group has-feedback">
-                        <label for="message" class="control-label">Текст сообщения:</label>
+                        <label for="message" class="control-label">{{ 'Текст сообщения'|trans }}:</label>
                         <div>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
-                                <textarea class="form-control" rows="3" required="required"  id="message" placeholder="Коротко о проблеме"></textarea>
+                                <textarea class="form-control" rows="3" required="required"  id="message" placeholder="{{ 'Коротко о проблеме'|trans }}"></textarea>
                             </div>
                         </div>
                     </div>
@@ -55,24 +56,20 @@
             </div>
             <!-- Нижняя часть модального окна -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
-                <button id="save" type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">Отправить</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'Отмена'|trans }}</button>
+                <button id="save" type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">{{ 'Отправить'|trans }}</button>
             </div>
         </div>
     </div>
 </div>
-
-
     <div id="success-alert"></div>
-
-
 <script>
     $(function() {
         //при нажатии на кнопку с id="save"
         $('#save').click(function() {
             //переменная formValid
             var formValid = true;
-            //перебрать все элементы управления input
+            //перебрать все элементы управления с классом .form-control
             $('.form-control').each(function() {
                 //найти предков, которые имеют класс .form-group, для установления success/error
                 var formGroup = $(this).parents('.form-group');
@@ -93,7 +90,6 @@
                     formValid = false;
                 }
             });
-
             //если форма валидна, то
             if (formValid) {
                 $.ajax({
@@ -105,7 +101,7 @@
                         $('#success-alert').html(data);
                     }
                 });
-                //сркыть модальное окно
+                //скрыть модальное окно
                 $('#myModal').modal('hide');
             }
         });

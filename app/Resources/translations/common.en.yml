@@ -7,10 +7,22 @@
 Группа запчастей: Group
 Подгруппа запчастей: Section
 РЕЗУЛЬТАТЫ ПОИСКА ДЛЯ VIN: SEARCH RESULTS FOR VIN
-Сообщить об ошибке: Report a bug
 Поиск по VIN: Search a car by VIN
 Поиск запчасти по артикулу: Search a part by part number
 Каталог: Catalogue
+
+#Форма обратной связи
+Сообщить об ошибке: Report a bug
+Заполните поля формы: Fill out the form
+Имя: Name
+Текст сообщения: Text message
+Коротко о проблеме: About the problem
+Отправить: Send
+Отмена: Cancel
+Спасибо: Thank you
+Ваше сообщение успешно отправлено: Your message has been successfully sent
+
+
 Регион, модель, модификация: Market, model, modification
 Выбрать регион: Market selection
 Модельный ряд: Model row

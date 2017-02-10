@@ -1,3 +1,4 @@
+{% form_theme form 'form/fields.html.twig' %}
 {% trans_default_domain 'common' %}
 {% extends 'CatalogCommonBundle:Catalog:03_complectations.html.twig' %}
 {% use 'CatalogKiaBundle::kia.base.html.twig' %}
@@ -14,13 +15,14 @@
     {% block complectations %}
         <div class="row">
             <div class="complectations">
-                <div class="form-group control-group">
-                    <form action="{{ path('catalog_kia_groups', parameters|merge({'complectationCode': 'data'})) }}">
-                    <div class="col-sm-4">
+                <div class="control-group">
+                    <form role="form" action="{{ path('catalog_kia_groups', parameters|merge({'complectationCode': 'data'})) }}" id="ComplectationForm">
+                        <div class="col-md-4 col-lg-4 col-sm-6 col-xs-6">
                             {{ form_widget(form) }}
-                            <br>
-                            <input type="button" class="btn btn-default" value="Сбросить" id="reset-button">
-                            <input type="submit" class="btn btn-primary" value="{{ 'Далее'|trans({}, 'kia') }}" id="submit-button"/>
+
+                                <br><button type="submit" class="btn btn-primary" id="submit-button">{{ 'Далее'|trans({}, 'kia') }}</button>
+                                <button type="button" class="btn btn-default" id="reset-button">{{ 'Сбросить'|trans({}, 'kia') }}</button>
+
                         </div>
                     </form>
                 </div>
@@ -34,13 +36,15 @@
                 $('select.form-control').each(function(){
                     var selector = $(this).attr('id');
                     sel = document.getElementById(selector);
-                    if (sel.options.length == 1)
+                    if (sel.options.length == 1){
                         sel.disabled = true;
+                        jQuery('#'+selector+'_reset').css('display', 'none !important');
+                    }
+
                 });
             });
             $('form').on('submit', function(){
                 selectorAll = new Object();
-                /*selectorSerialize = $(this).serializeArray();*/
                 var inputs = $(this).find('select');
                 $.each((inputs), function(key, value) {
                     selectorAll[value.id.substr(-2)] = value.value;
@@ -55,29 +59,57 @@
                         modelCode: '{{ oContainer.getActiveModel.getCode }}'},
                     success: function(submit_data){
                         submit_data = submit_data.replace(new RegExp('"','g'), '');
-                        var action = $('form').attr('action');
-                        $('form').attr('action', action.replace('data', submit_data));
+                        var action = $('#ComplectationForm').attr('action');
+                        $('#ComplectationForm').attr('action', action.replace('data', submit_data));
                         /*console.log($('form').attr('action'));*/
                     }
                 });
             });
             $('select.form-control').on('change', function(){
-
-                filter('#'.concat($(this).attr('id')));
+                var reset = 0;
+                filter('#'.concat($(this).attr('id')), reset);
             });
-            function filter(selector) {
+            $('i.glyphicon').on('click', function(){
+                var selector = $(this).attr('id');
+                var reset = 1;
+                $('#'+selector).css("display","none");
+                filter('#'+selector.replace('_reset', ''), reset);
+            });
+
+            /*reset - признак того, что функция вызвана нажатием на кнопку сброса значения селекта $('i.glyphicon')*/
+            function filter(selector, reset) {
                 selectorDied = new Object();
                 $('select.form-control').each(function(){
                     var selec = $(this).attr('id');
                     Selec = document.getElementById(selec);
-                    if (Selec.disabled == true)
-                    selectorDied[selec.substr(-2)] = Selec.value;
+                    if (Selec.disabled == true) {
+                        selectorDied[selec.substr(-2)] = Selec.value;
+                    }
                 });
+                /**/
+                $(selector+'_reset').css("display", function(i,val){
+                    if(reset == 0){
+                        return 'inline';
+                    }
+                });
+                $.each(selectorDied, function(key, value) {
+                    if ($('#ComplectationType_title'+key+'_reset').css('display') == 'none')
+                    {
+                        delete selectorDied[key];
+                        $('#ComplectationType_title'+key).attr('disabled', false);
+                    }
+                });
+
+                $.each(selectorDied, function(key, value) {
+                });
+
                 $(selector).each(function() {
                     if ($(selector).val() == '1') location.reload();
-                    var select_name = selector.substr(-2);
-                    var select_value = $(selector).val();
-                    selectorDied[select_name] = select_value;
+                    if(reset == 0){
+                        var select_name = selector.substr(-2);
+                        var select_value = $(selector).val();
+                        selectorDied[select_name] = select_value;
+                    }
                     $.ajax({
                         type:   'POST',
                         async:  false,
@@ -101,7 +133,10 @@
                             });
                             $.each(JSON.parse(data), function(key, value) {
                                 if (objSel[key].options.length == 1)
+                                {
                                     objSel[key].disabled = true;
+                                    /*jQuery('#ComplectationType_title'+key+'_reset').css('display', 'inline');*/
+                                }
                                 for (var i = objSel[key].options.length-1; i >= 0; i--)
                                 {
                                     if (objSel[key].options[i].value == optSel[key])
