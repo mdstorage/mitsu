@@ -102,7 +102,7 @@
     {% block mapsterScript %}
         <script>
             $('img').mapster({
-            {#fillColor: '70daf1',#}
+                fillColor: '70daf1',
                 fillOpacity: 0.3,
                 showToolTip: true,
                 mapKey: 'data-name',
@@ -125,18 +125,3 @@
     {% endblock mapsterScript %}
     {% block pageScript %}{% endblock pageScript %}
 {% endblock body %}
-
-
-
-
-{#{% block subgroups %}
-    <div class="subgroups">
-        {% block subGroupsMap %}
-            <map name="{{ oContainer.getActiveGroup.getCode }}">
-                {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
-                    {{ block('subgroupItem') }}
-                {% endfor %}
-            </map>
-        {% endblock subGroupsMap %}
-    </div>
-{% endblock subgroups %}#}

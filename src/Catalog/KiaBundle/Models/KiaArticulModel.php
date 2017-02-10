@@ -13,421 +13,193 @@ use Catalog\KiaBundle\Components\KiaConstants;
 
 class KiaArticulModel extends KiaCatalogModel{
 
-    public function getArticulRegions($articulCode){
-
-        
+    public function getArticulRegions($articulCode)
+    {
         $sql = "
-        select * from cats_table
-        where detail_code = :articulCode
-
+        SELECT ctlg.data_regions
+        FROM catalog ctlg
+        INNER JOIN cats_dat_parts cdp ON (cdp.cat_folder = ctlg.cat_folder AND cdp.number = :articulCode)
+        GROUP BY data_regions
         ";
-
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articulCode);
         $query->execute();
-
         $aData = $query->fetchAll();
+
         $regions = array();
-        $aDataCatalog = array();
-        
-        if ($aData)
-        {
-                  
-        foreach($aData as $item)
-        {
-		$sqlCatalog = "
-        SELECT data_regions
-        FROM kiac
-        WHERE cutup_code = :cutup_code
-        ";
-
-        $query = $this->conn->prepare($sqlCatalog);
-        $query->bindValue('cutup_code', $item['catalog_code']);
-        $query->execute();
-
-        $aDataCatalog[] = $query->fetchAll();
-		}
-
-
-		foreach($aDataCatalog as $item)
-        {
-        	foreach($item as $item1)
-        	{
-				$regions = explode("|", $item1['data_regions']);
-                foreach($regions as $index => $value)
-                {
-                    if ($value == '')
-                    {
-                        unset($regions[$index]);
-                    }
-                    $reg[] = $value;
+        foreach($aData as $item){
+            $pieces = explode("|", $item['data_regions']);
+            foreach($pieces as $value){
+                if($value != ''){
+                    $regions[] = trim($value);
                 }
-
-			}
-        		
-        		
-		}
-		}
-
-        return array_unique($reg);
-
+            }
+        }
+        return array_unique($regions);
     }
 
     public function getArticulModels($articul, $regionCode)
     {
-
         $sql = "
-        select * from cats_table
-        where detail_code = :articulCode
-
+        SELECT ctlg.family
+        FROM catalog ctlg
+        INNER JOIN cats_dat_parts cdp ON (cdp.cat_folder = ctlg.cat_folder AND cdp.number = :articulCode)
+        WHERE ctlg.data_regions LIKE :regionCode
+        GROUP BY data_regions
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
+        $query->bindValue('regionCode', '%'.$regionCode.'%');
         $query->execute();
 
         $aData = $query->fetchAll();
 
-        $aDataCatalog = array();
-        $modelsReg = array();
+        $models = array();
 
-        if ($aData)
-        {
-
-            foreach($aData as $item)
-            {
-                $sqlCatalog = "
-        SELECT catalog_name
-        FROM kiac
-        WHERE cutup_code = :cutup_code
-        ";
-
-                $query = $this->conn->prepare($sqlCatalog);
-                $query->bindValue('cutup_code', $item['catalog_code']);
-                $query->execute();
-
-                $aDataCatalog[] = $query->fetch();
+        if ($aData){
+            foreach($aData as $item) {
+                $models[] = urlencode($item['family']);
             }
-
-            $aDataRegions = array('AMANTI', 'AVELLA', 'CADENZA', 'CEED', 'CERATO', 'CERATO/FORTE', 'CERATO/SPECTRA', 'CLARUS', 'ED', 'FORTE', 'IH 12', 'MAGENTIS', 'MENTOR', 'MORNING/PICANTO', 'OPIRUS', 'OPTIMA',
-                'OPTIMA/MAGENTIS', 'PICANTO', 'PRIDE', 'PRIDE/FESTIVA', 'QUORIS', 'RIO', 'SEPHIA', 'SEPHIA/SHUMA/MENTOR', 'SMA GEN (1998-2004)', 'SMA MES (19981101-20040228)', 'SPECTRA', 'SPECTRA/SEPHIA II/SHUMA II/MENTOR II', 'TFE 11', 'VENGA',
-                'BORREGO', 'CARENS', 'CARNIVAL', 'CARNIVAL/SEDONA', 'JOICE DS', 'MOHAVE', 'RETONA', 'RONDO', 'RONDO/CARENS', 'SEDONA', 'SORENTO', 'SOUL', 'SPORTAGE', 'AM928 (1998-)', 'BESTA', 'BONGO-3 1TON,1.4TON',
-                'COSMOS', 'GRANBIRD', 'K2500/K2700/K2900/K3000/K3600', 'MIGHTY', 'POWER COMBI', 'PREGIO', 'PREGIO/BESTA', 'RHINO', 'TOWNER', 'SPTR');
-
-            foreach($aDataCatalog as $item) {
-                foreach ($aDataRegions as $itemReg) {
-                    if (strpos($item['catalog_name'], $itemReg) !== false) {
-                        $modelsReg[] = $itemReg;
-
-                    }
-
-
-                }
-            }
-
-
-	    }
- 
-        return array_unique($modelsReg);
+        }
+        return array_unique($models);
     }
     
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
         $sql = "
-        select * from cats_table
-        where detail_code = :articulCode
-
+        SELECT ctlg.cat_folder, ctlg.catalogue_code, ctlg.cat_number
+        FROM catalog ctlg
+        INNER JOIN cats_dat_parts cdp ON (cdp.cat_folder = ctlg.cat_folder AND cdp.number = :articulCode)
+        WHERE ctlg.data_regions LIKE :regionCode AND ctlg.family = :modelCode
+        GROUP BY ctlg.cat_number
         ";
-
         $query = $this->conn->prepare($sql);
         $query->bindValue('articulCode', $articul);
+        $query->bindValue('regionCode', '%'.$regionCode.'%');
+        $query->bindValue('modelCode', $modelCode);
         $query->execute();
-
         $aData = $query->fetchAll();
-
-        $aDataCatalog = array();
-
-        if ($aData)
-        {
-
+        $modifications = array();
+        if ($aData) {
             foreach ($aData as $item) {
-                $sqlCatalog = "
-        SELECT catalog_code, catalog_folder
-        FROM kiac
-        WHERE cutup_code = :cutup_code
-        ";
-
-                $query = $this->conn->prepare($sqlCatalog);
-                $query->bindValue('cutup_code', $item['catalog_code']);
-                $query->execute();
-
-                $aDataCatalog[] = $query->fetchAll();
-            }
-
-            $modifications = array();
-            foreach ($aDataCatalog as $item) {
-                foreach ($item as $item1) {
-                    $modifications[] = $item1['catalog_code'].'_'.$item1['catalog_folder'];
-                }
-
+                    $modifications[] = $item['catalogue_code'].'_'.$item['cat_folder'];
             }
         }
-
         return array_unique($modifications);
     }
     
     public function getArticulComplectations($articul, $regionCode, $modelCode, $modificationCode)
     {
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-        $ghg = $this->getComplectations($regionCode, $modelCode, $modificationCode);
-        $test = array();
-
-
         $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
 
         $sql = "
-        select * from cats_table
-        where detail_code = :articulCode
-        AND catalog_code = :catCode
-
+        SELECT vm.model, cdp.compatibility
+        FROM vin_model vm
+        INNER JOIN cats_dat_parts cdp ON (cdp.cat_folder = :catCode AND cdp.number = :articulCode)
+        WHERE vm.catalogue_code LIKE :modificationCode
         ";
-
         $query = $this->conn->prepare($sql);
+        $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('articulCode', $articul);
         $query->bindValue('catCode', $catCode);
         $query->execute();
-
         $aData = $query->fetchAll();
 
-        $aDataCatalog = array();
+        $aModel = array();
+        $aCompatibility = array();
+        $complectations = array();
 
-        if ($aData)
-        {
-
-            foreach ($aData as $item) {
-                $sqlCatalog = "
-        SELECT model_index
-        FROM vin_model
-        WHERE model =:modificationCode
-        ";
-
-                $query = $this->conn->prepare($sqlCatalog);
-                $query->bindValue('modificationCode', $modificationCode);
-                $query->execute();
-
-                $aDataCatalog[] = $query->fetchAll();
-            }
-
-
-            $complectations = array();
-
-            foreach ($aDataCatalog as $item2) {
-                foreach ($item2 as $item1) {
-                    $complectations[] = $item1['model_index'];
-                }
-
-            }
+        /*Отфильтруем коды комплектаций по колонке cats_dat_parts.compatibility в фильтре filterComplectations() из KiaCatalogModel*/
+        foreach ($aData as $item){
+            $aModel[$item['model']] = $item['model'];
+            $aCompatibility[$item['compatibility']]['compatibility'] = $item['compatibility'];
         }
-
-        foreach ($ghg as $indexCompl => $valueCompl)
-        {
-            foreach ($aData as $index => $value)
-            {
-                $value2 = str_replace(substr($value['model_options'], 0, strpos($value['model_options'], '|')), '', $value['model_options']);
-                $articulOptions = explode('|', str_replace(';', '', $value2));
-            /*  $complectationOptions = $ghg['37454']['options']['option2'];*/
-                $complectationOptions = $valueCompl['options']['option2'];
-
-                foreach ($articulOptions as $index1 => $value1) {
-                    if (($value1 == '') || ($index1 > (count($complectationOptions)-1))) {
-                        unset ($articulOptions[$index1]);
-                    }
-                }
-                $cd = count($articulOptions);
-                $cdc = count(array_intersect_assoc($articulOptions, $complectationOptions));
-
-                if ($cd == $cdc)
-                {
-                  $test[] = $indexCompl;
-                }
-
-            }
-
+        foreach ($aModel as $item){
+            $k[$item] = $this->filterComplectations($modificationCode, $item, $aCompatibility);
+            if (count($k[$item]) > 0)
+            $complectations[$item] = $k[$item];
         }
+        /*---------------*/
 
-        return (array_intersect(array_unique($complectations), array_unique($test)));
+        return $complectations;
     }
     
     public function getArticulGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode)
     {
-
+        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
         $sql = "
-        SELECT main_part
-        FROM cats_table
-        WHERE detail_code = :articul
-
+        SELECT cdp.major_sect
+        FROM cats_dat_parts cdp
+        WHERE cdp.cat_folder = :catCode AND cdp.number = :articulCode
         ";
-
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', $articul);
+        $query->bindValue('articulCode', $articul);
+        $query->bindValue('catCode', $catCode);
         $query->execute();
-
         $aData = $query->fetchAll();
-
     	$groups = array();
 
-        foreach($aData as $item)
-		{
-			foreach($item as $item1)
-			{
-			$groups[]=$item1;
+        foreach($aData as $item){
+			$groups[] = $item['major_sect'];
 			}
-			
-		}
         return array_unique($groups);
     }
     public function getArticulSubGroups($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
-        $ghg = $this->getComplectations($regionCode, $modelCode, $modificationCode);
-        $complectationOptions = $ghg[$complectationCode]['options']['option2'];
-        
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
         $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
 
-
-
         $sql = "
-        SELECT *
-        FROM cats_table
-        WHERE detail_code = :articul
-        AND catalog_code = :catCode
+        SELECT cdp.minor_sect, cdp.compatibility
+        FROM cats_dat_parts cdp
+        WHERE cdp.cat_folder = :catCode AND cdp.number = :articulCode AND cdp.major_sect = :groupCode
         ";
-
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', $articul);
+        $query->bindValue('articulCode', $articul);
         $query->bindValue('catCode', $catCode);
+        $query->bindValue('groupCode', $groupCode);
         $query->execute();
-
         $aData = $query->fetchAll();
-
-
-        foreach ($aData as $index => $value)
-        {
-            $value2 = str_replace(substr($value['model_options'], 0, strpos($value['model_options'], '|')), '', $value['model_options']);
-            $articulOptions = explode('|', str_replace(';', '', $value2));
-
-
-            foreach ($articulOptions as $index1 => $value1) {
-                if (($value1 == '') || ($index1 > (count($complectationOptions)-1))) {
-                    unset ($articulOptions[$index1]);
-                }
-            }
-            $cd = count($articulOptions);
-            $cdc = count(array_intersect_assoc($articulOptions, $complectationOptions));
-
-            if ($cd != $cdc)
-            {
-                unset ($aData[$index]);
-            }
-
-        }
-
-
-
-        foreach ($aData as $item) {
-            $sqlCatalog = "
-        SELECT sector_name, sector_id
-        FROM cats_map
-        WHERE catalog_name = :catalog_code
-        AND sector_id =:compl_name
-        ";
-
-            $query = $this->conn->prepare($sqlCatalog);
-            $query->bindValue('catalog_code', $catCode);
-            $query->bindValue('compl_name', $item['compl_name']);
-            $query->execute();
-
-            $aDataCatalog[] = $query->fetchAll();
-        }
-
-
         $subgroups = array();
-        foreach($aDataCatalog as $item) {
-            foreach ($item as $item1) {
-                $subgroups[$item1['sector_id']] = $item1['sector_name'];
-
-            }
-
+        /*применяем фильтр совместимости с выбранной комплектацией*/
+        $aData = $this->filterComplectations($modificationCode, $complectationCode, $aData);
+        /*-------------*/
+        foreach($aData as $item){
+            $subgroups[] = $item['minor_sect'];
         }
-
-
-
-
-
-
-      /*  return (array_intersect($subgroups, $test));*/
-        return ($subgroups);
+        return array_unique($subgroups);
     }
     
     public function getArticulSchemas($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
-        $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-
-        $sql = "
-        SELECT compl_name
-        FROM cats_table
-        WHERE detail_code = :articul
-        AND catalog_code = :catCode
-
-        ";
-
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', $articul);
-        $query->bindValue('catCode', $catCode);
-        $query->execute();
-
-        $aData = $query->fetchAll();
-	   
-	   $schemas = array();
-        foreach($aData as $item) {
-            foreach ($item as $item1) {
-                $schemas[] = $item1;
-
-            }
-
-        }
-		   
-        return array_unique($schemas);
+        $schemas = array();
+                $schemas[] = $subGroupCode;
+        return $schemas;
     }
          
-     public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
+    public function getArticulPncs($articul, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
     {
         $catCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+        $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
 
         $sql = "
-        SELECT scheme_num
-        FROM cats_table
-        WHERE detail_code = :articul
-        AND catalog_code = :catCode
-
+        SELECT cdp.ref
+        FROM cats_dat_parts cdp
+        WHERE cdp.cat_folder = :catCode AND cdp.number = :articulCode AND cdp.major_sect = :groupCode AND cdp.minor_sect = :subGroupCode
         ";
-
         $query = $this->conn->prepare($sql);
-        $query->bindValue('articul', $articul);
+        $query->bindValue('articulCode', $articul);
         $query->bindValue('catCode', $catCode);
+        $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
         $query->execute();
-
         $aData = $query->fetchAll();
-
         $pncs = array();
         foreach($aData as $item) {
-            foreach ($item as $item1) {
-                $pncs[] = $item1;
-
-            }
-
+            $pncs[] = $item['ref'];
         }
-        
         return array_unique($pncs);
     }
 } 

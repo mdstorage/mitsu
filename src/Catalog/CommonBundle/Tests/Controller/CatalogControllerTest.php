@@ -13,5 +13,7 @@ class DefaultControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/mazda/catalog/0');
 
         $this->assertTrue($crawler->filter('html:contains("Выбрать регион")')->count() > 0);
+
+        var_dump('1'); die;
     }
 }

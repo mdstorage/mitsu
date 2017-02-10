@@ -1,0 +1,20 @@
+{# app/Resources/views/form/fields.html.twig #}
+{% block form_row %}
+    {% spaceless %}
+        <div class="form_row">
+            {{ form_label(form) }}
+            <div class = "row" style="display: flex; align-items: center;">
+                <div class="col-md-10 col-lg-10 col-sm-10 col-xs-10">
+                    {{ form_widget(form) }}
+                </div>
+                <div class="col-md-2 col-lg-2 col-sm-2 col-xs-2">
+                    {% if form.vars.choices|length > 1 %}
+                    <i class="glyphicon glyphicon-remove-sign" id = "{{ form.vars.id }}_reset" style="cursor: pointer; display: none"></i>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endspaceless %}
+{% endblock form_row %}
+
+

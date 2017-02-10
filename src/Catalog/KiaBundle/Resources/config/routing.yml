@@ -1,3 +1,8 @@
+catalog_kia_form:
+  path:         /kia/catalog/form
+  defaults:     {_controller: CatalogKiaBundle:Catalog:form}
+  requirements: {_method: POST}
+
 catalog_kia_token:
   path:         /kia/catalog/0/{token}/{_locale}/{regionCode}
   defaults:     {_controller: CatalogKiaBundle:Catalog:regionsModels, _locale: ru, token: null, regionCode: null}

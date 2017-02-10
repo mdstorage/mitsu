@@ -16,3 +16,10 @@ services:
         class: Catalog\CommonBundle\Twig\Extension\FileExistsExtension
         tags:
             - { name: twig.extension}
+
+  support.form:
+       class: Catalog\CommonBundle\Form\FormSupport
+
+  my_mailer:
+       class: Catalog\CommonBundle\Services\Mailer
+       arguments: ['@mailer']

@@ -1,0 +1,111 @@
+{% trans_default_domain "common" %}
+<!-- Модальное окно -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Заголовок модального окна -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">{{ 'Заполните поля формы'|trans }}</h4>
+            </div>
+            <!-- Основная часть модального окна, содержащая форму для регистрации -->
+            <div class="modal-body">
+                <!-- Форма для регистрации -->
+                <form role="form">
+                    <!-- Блок для ввода логина -->
+                    <div class="form-group has-feedback">
+                        <label for="name" class="control-label">{{ 'Имя'|trans }}:</label>
+                        <div>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-user" ></i></span>
+                                <input type="text" class="form-control" required="required" id="name">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Блок для ввода email -->
+                    <div class="form-group has-feedback">
+                        <label for="email" class="control-label">Email:</label>
+                        <div>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                                <input type="email" class="form-control" required="required" id="email">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Конец блока для ввода email-->
+                    <!-- Блок для ввода сообщения -->
+                    <div class="form-group has-feedback">
+                        <label for="message" class="control-label">{{ 'Текст сообщения'|trans }}:</label>
+                        <div>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
+                                <textarea class="form-control" rows="3" required="required"  id="message" placeholder="{{ 'Коротко о проблеме'|trans }}"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Конец блока для ввода сообщения-->
+                    <div class="form-group has-feedback">
+                        <label for="url" class="control-label"></label>
+                        <div>
+                            <div class="input-group">
+                                <input type="text" required="required" id="url" value ="{{ app.request.getUri }}" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- Нижняя часть модального окна -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'Отмена'|trans }}</button>
+                <button id="save" type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">{{ 'Отправить'|trans }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="success-alert"></div>
+<script>
+    $(function() {
+        //при нажатии на кнопку с id="save"
+        $('#save').click(function() {
+            //переменная formValid
+            var formValid = true;
+            //перебрать все элементы управления с классом .form-control
+            $('.form-control').each(function() {
+                //найти предков, которые имеют класс .form-group, для установления success/error
+                var formGroup = $(this).parents('.form-group');
+                //найти glyphicon, который предназначен для показа иконки успеха или ошибки
+                var glyphicon = formGroup.find('.form-control-feedback');
+                //для валидации данных используем HTML5 функцию checkValidity
+                if (this.checkValidity()) {
+                    //добавить к formGroup класс .has-success, удалить has-error
+                    formGroup.addClass('has-success').removeClass('has-error');
+                    //добавить к glyphicon класс glyphicon-ok, удалить glyphicon-remove
+                    glyphicon.addClass('glyphicon-ok').removeClass('glyphicon-remove');
+                } else {
+                    //добавить к formGroup класс .has-error, удалить .has-success
+                    formGroup.addClass('has-error').removeClass('has-success');
+                    //добавить к glyphicon класс glyphicon-remove, удалить glyphicon-ok
+                    glyphicon.addClass('glyphicon-remove').removeClass('glyphicon-ok');
+                    //отметить форму как невалидную
+                    formValid = false;
+                }
+            });
+            //если форма валидна, то
+            if (formValid) {
+                $.ajax({
+                    type:   'POST',
+                    async:  false,
+                    url:    "{{ path('catalog_kia_form') }}",
+                    data:   { name: $("#name").val(), email: $("#email").val(), message: $("#message").val(), url: $("#url").val() },
+                    success: function(data) {
+                        $('#success-alert').html(data);
+                    }
+                });
+                //скрыть модальное окно
+                $('#myModal').modal('hide');
+            }
+        });
+    });
+</script>
+<!--...-->
+

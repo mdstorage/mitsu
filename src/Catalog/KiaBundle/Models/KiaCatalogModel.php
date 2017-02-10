@@ -94,7 +94,7 @@ class KiaCatalogModel extends CatalogModel{
         return $modifications;
     }
 
-    public function getComplectations($regionCode, $modelCode, $modificationCode, $complectationCode_vin = null)
+    public function getComplectations($regionCode, $modelCode, $modificationCode, $complectationCode_vin = null, $aArticulComplectationCodes = null)
     {
         $locale = $this->requestStack->getCurrentRequest()->getLocale();
         $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
@@ -190,15 +190,31 @@ class KiaCatalogModel extends CatalogModel{
         $query->execute();
         $aData = $query->fetchAll();
 
+
         $com = array();
         $result = array();
         $psevd = array();
         $af = array();
+
+        /*Массив $aArticulComplectationCodes приходит только из ArticulController и содержит коды комплектаций, которые будут участвовать в сборке формы для отображения*/
+
+        foreach($aData as $index => $value){
+            if (!empty($aArticulComplectationCodes)){
+                if (!in_array($value['model'], $aArticulComplectationCodes)){
+                    unset($aData[$index]);
+                }
+            }
+        }
+        /*------------------*/
         foreach($aData as $item) {
-            if ($complectationCode_vin && $item['model'] == $complectationCode_vin)
-            {
+
+            /* для выдачи описания комплектации ее по коду $complectationCode_vin в KiaVinModel */
+            if ($complectationCode_vin && $item['model'] == $complectationCode_vin){
                 return $item;
             }
+            /*------------------*/
+
+
             for ($i = 1; $i < 11; $i++) {
                 if ($item['f' . $i]) {
                     $af[$i][$item['f' . $i]] = '(' . $item['f' . $i] . ') ' . $item['ken' . $i];
@@ -211,7 +227,6 @@ class KiaCatalogModel extends CatalogModel{
                 Constants::OPTIONS => array('option1'=>$psevd)
             );
         }
-
         return $com;
      
     }
@@ -375,36 +390,6 @@ class KiaCatalogModel extends CatalogModel{
             return $complectations;
         }
     }
-    /*public function getComplectations($regionCode, $modelCode, $modificationCode)
-    {
-
-        $sql = "
-        SELECT model
-        FROM vin_model
-        WHERE vin_model.catalogue_code = :modificationCode
-        ";
-
-
-        $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode',  $modificationCode);
-        $query->execute();
-
-        $aData = $query->fetchAll();
-
-        $complectations = array();
-
-        foreach($aData as $item){
-
-
-            $complectations[$item['model']] = array(
-                Constants::NAME => $item['model'],
-                Constants::OPTIONS => array());
-
-        }
-
-        return $complectations;
-
-    }*/
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
@@ -751,6 +736,7 @@ class KiaCatalogModel extends CatalogModel{
     public function filterComplectations($modificationCode, $complectationCode, $aData)
     {
         /*Фильтр совместимости с выбранной комплектацией*/
+
         $sqlComlectation = "
         SELECT DISTINCT ucc
         FROM vin_model vm

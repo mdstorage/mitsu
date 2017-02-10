@@ -137,9 +137,6 @@ class ToyotaArticulModel extends ToyotaCatalogModel{
 
         $aData = $query->fetchAll();
 
-
-
-
             $complectations = array();
 
             foreach ($aData as $item) {

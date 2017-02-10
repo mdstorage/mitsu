@@ -16,10 +16,9 @@ abstract class CatalogController extends BaseController{
      * @param string $regionCode Код региона (нужен для поиска модели)
      *
      */
+
     public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
     {
-
-
         $headers = $request->server->getHeaders();
 
         foreach($request->cookies->keys() as $index => $value)
@@ -497,22 +496,15 @@ abstract class CatalogController extends BaseController{
             $articul = $request->get('articul');
             $options = $request->get('options');
             $token = $request->get('token');
-
-
-            if (!empty($token))
-            {
+            if (!empty($token)) {
                 $aDataToken = array();
                 $aDataToken = $this->get('my_token_info')->getDataToken($token);
 
                 $redirectAdress = $aDataToken['url'];
             }
-            else
-            {
+            else {
                 $redirectAdress = Constants::FIND_PATH;
             }
-
-
-
             $parameters = array(
                 'regionCode' => $regionCode,
                 'modificationCode' => $modificationCode,
@@ -522,9 +514,7 @@ abstract class CatalogController extends BaseController{
                 'articul' => $articul,
                 'redirectAdress' => $redirectAdress
             );
-
             $articuls = $this->model()->getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, json_decode($options, true));
-
             $oContainer = Factory::createContainer()
                 ->setActivePnc(Factory::createPnc($pncCode, $pncCode)
                     ->setArticuls(Factory::createCollection($articuls, Factory::createArticul()))
@@ -536,6 +526,20 @@ abstract class CatalogController extends BaseController{
                 'oContainer' => $oContainer,
                 'parameters' => $parameters
             ));
+        }
+    }
+    public function formAction(Request $request)
+    {
+        if ($request->getMethod() == 'POST') {
+            $name = $request->get('name');
+            $email = $request->get('email');
+            $message = $request->get('message');
+            $url = $request->get('url');
+
+            $mail = $this->get('my_mailer');
+            if ($mail->send($name, $email, $message, $url) == true) {
+                return $this->render('feedbackform/_success_form.common.base.html.twig', array());
+            }
         }
     }
 } 
