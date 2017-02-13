@@ -33,9 +33,9 @@ class KiaCatalogModel extends CatalogModel{
                 if($item1 != ''){$reg[] = $item1;}
             }
         }
+        array_unshift($reg, "EUR");
         $regions = array();
-        foreach(array_unique($reg) as $item)
-        {
+        foreach(array_unique($reg) as $item) {
             $regions[trim($item)] = array(Constants::NAME=>$item, Constants::OPTIONS=>array());
         }
         return $regions;
@@ -126,17 +126,16 @@ class KiaCatalogModel extends CatalogModel{
         kig9.lex_desc ken9,
         kig10.lex_desc ken10,
 
-        tkm1.lex_desc ten1,
-        tkm2.lex_desc ten2,
-        tkm3.lex_desc ten3,
-        tkm4.lex_desc ten4,
-        tkm5.lex_desc ten5,
-        tkm6.lex_desc ten6,
-        tkm7.lex_desc ten7,
-        tkm8.lex_desc ten8,
-        tkm9.lex_desc ten9,
-        tkm10.lex_desc ten10
-
+        (IFNULL(tkm1.lex_desc, tkm1_en.lex_desc)) ten1,
+        (IFNULL(tkm2.lex_desc, tkm2_en.lex_desc)) ten2,
+        (IFNULL(tkm3.lex_desc, tkm3_en.lex_desc)) ten3,
+        (IFNULL(tkm4.lex_desc, tkm4_en.lex_desc)) ten4,
+        (IFNULL(tkm5.lex_desc, tkm5_en.lex_desc)) ten5,
+        (IFNULL(tkm6.lex_desc, tkm6_en.lex_desc)) ten6,
+        (IFNULL(tkm7.lex_desc, tkm7_en.lex_desc)) ten7,
+        (IFNULL(tkm8.lex_desc, tkm8_en.lex_desc)) ten8,
+        (IFNULL(tkm9.lex_desc, tkm9_en.lex_desc)) ten9,
+        (IFNULL(tkm10.lex_desc, tkm10_en.lex_desc)) ten10
 
         FROM vin_model vm
         LEFT JOIN cats0_ucc cuc1 ON (cuc1.catalogue_code = vm.catalogue_code AND cuc1.ucc = SUBSTRING_INDEX(SUBSTRING_INDEX(vm.ucc, '|', 1), '|', -1) AND cuc1.ucc_type = '01')
@@ -163,24 +162,34 @@ class KiaCatalogModel extends CatalogModel{
 
         LEFT JOIN cats0_ucctype cut1 ON (cut1.catalogue_code = vm.catalogue_code AND cut1.ucc_type = '01')
         LEFT JOIN lex_lex tkm1 ON (tkm1.lex_code = cut1.lex_code AND tkm1.lang_code = :locale)
+        LEFT JOIN lex_lex tkm1_en ON (tkm1_en.lex_code = cut1.lex_code AND tkm1_en.lang_code = 'EN')
         LEFT JOIN cats0_ucctype cut2 ON (cut2.catalogue_code = vm.catalogue_code AND cut2.ucc_type = '02')
         LEFT JOIN lex_lex tkm2 ON (tkm2.lex_code = cut2.lex_code AND tkm2.lang_code = :locale)
+        LEFT JOIN lex_lex tkm2_en ON (tkm2_en.lex_code = cut1.lex_code AND tkm2_en.lang_code = 'EN')
         LEFT JOIN cats0_ucctype cut3 ON (cut3.catalogue_code = vm.catalogue_code AND cut3.ucc_type = '03')
         LEFT JOIN lex_lex tkm3 ON (tkm3.lex_code = cut3.lex_code AND tkm3.lang_code = :locale)
+        LEFT JOIN lex_lex tkm3_en ON (tkm3_en.lex_code = cut1.lex_code AND tkm3_en.lang_code = 'EN')
         LEFT JOIN cats0_ucctype cut4 ON (cut4.catalogue_code = vm.catalogue_code AND cut4.ucc_type = '04')
         LEFT JOIN lex_lex tkm4 ON (tkm4.lex_code = cut4.lex_code AND tkm4.lang_code = :locale)
+        LEFT JOIN lex_lex tkm4_en ON (tkm4_en.lex_code = cut1.lex_code AND tkm4_en.lang_code = 'EN')
         LEFT JOIN cats0_ucctype cut5 ON (cut5.catalogue_code = vm.catalogue_code AND cut5.ucc_type = '05')
         LEFT JOIN lex_lex tkm5 ON (tkm5.lex_code = cut5.lex_code AND tkm5.lang_code = :locale)
+        LEFT JOIN lex_lex tkm5_en ON (tkm5_en.lex_code = cut1.lex_code AND tkm5_en.lang_code = 'EN')
         LEFT JOIN cats0_ucctype cut6 ON (cut6.catalogue_code = vm.catalogue_code AND cut6.ucc_type = '06')
         LEFT JOIN lex_lex tkm6 ON (tkm6.lex_code = cut6.lex_code AND tkm6.lang_code = :locale)
+        LEFT JOIN lex_lex tkm6_en ON (tkm6_en.lex_code = cut1.lex_code AND tkm6_en.lang_code = 'EN')
         LEFT JOIN cats0_ucctype cut7 ON (cut7.catalogue_code = vm.catalogue_code AND cut7.ucc_type = '07')
         LEFT JOIN lex_lex tkm7 ON (tkm7.lex_code = cut7.lex_code AND tkm7.lang_code = :locale)
+        LEFT JOIN lex_lex tkm7_en ON (tkm7_en.lex_code = cut1.lex_code AND tkm7_en.lang_code = 'EN')
         LEFT JOIN cats0_ucctype cut8 ON (cut8.catalogue_code = vm.catalogue_code AND cut8.ucc_type = '08')
         LEFT JOIN lex_lex tkm8 ON (tkm8.lex_code = cut8.lex_code AND tkm8.lang_code = :locale)
+        LEFT JOIN lex_lex tkm8_en ON (tkm8_en.lex_code = cut1.lex_code AND tkm8_en.lang_code = 'EN')
         LEFT JOIN cats0_ucctype cut9 ON (cut9.catalogue_code = vm.catalogue_code AND cut9.ucc_type = '09')
         LEFT JOIN lex_lex tkm9 ON (tkm9.lex_code = cut9.lex_code AND tkm9.lang_code = :locale)
+        LEFT JOIN lex_lex tkm9_en ON (tkm9_en.lex_code = cut1.lex_code AND tkm9_en.lang_code = 'EN')
         LEFT JOIN cats0_ucctype cut10 ON (cut10.catalogue_code = vm.catalogue_code AND cut10.ucc_type = '10')
         LEFT JOIN lex_lex tkm10 ON (tkm10.lex_code = cut10.lex_code AND tkm10.lang_code = :locale)
+        LEFT JOIN lex_lex tkm10_en ON (tkm10_en.lex_code = cut1.lex_code AND tkm10_en.lang_code = 'EN')
 
         WHERE vm.catalogue_code = :modificationCode
         ";
@@ -189,7 +198,6 @@ class KiaCatalogModel extends CatalogModel{
         $query->bindValue('locale',  $locale);
         $query->execute();
         $aData = $query->fetchAll();
-
 
         $com = array();
         $result = array();
@@ -227,6 +235,7 @@ class KiaCatalogModel extends CatalogModel{
                 Constants::OPTIONS => array('option1'=>$psevd)
             );
         }
+
         return $com;
      
     }
@@ -234,8 +243,6 @@ class KiaCatalogModel extends CatalogModel{
     public function getComplectationsForForm($complectations)
     {
         $result = array();
-
-
         foreach ($complectations as $index => $value) {
 
             for ($i = 1; $i < 11; $i++) {
@@ -245,19 +252,13 @@ class KiaCatalogModel extends CatalogModel{
                         $result['f' . $i]['name'][urlencode($ind)] = $val;
                     }
                 }
-
-
                 if (!empty($value['options']['option1']['f' . $i])) {
                     foreach ($value['options']['option1'] as $ind => $val) {
                         $result['f' . $i]['options']['option1'][urlencode($ind)] = $val;
                     }
                 }
-
-
             }
-
         }
-
         return ($result);
 
     }
@@ -547,7 +548,11 @@ class KiaCatalogModel extends CatalogModel{
         $query->bindValue('locale',  $locale);
         $query->execute();
         $aPncs = $query->fetchAll();
-    	
+        $as = array();
+        $count = array();
+        foreach ($aPncs as $index=>$value){
+            $as[$value['ref']] = ($this->getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $value['ref'], $options));
+        }
     	foreach ($aPncs as &$aPnc){
             $sqlSchemaLabels = "
             SELECT x1, y1, x2, y2
@@ -566,17 +571,15 @@ class KiaCatalogModel extends CatalogModel{
         $pncs = array();
         foreach ($aPncs as $index=>$value) {
             {
-                /*if (!$value['clangjap'])
-                {
-                    unset ($aPncs[$index]);
-                }*/
             	foreach ($value['clangjap'] as $item1)
             	{
                     $pncs[$value['ref']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
                     Constants::X1 => floor(($item1['x1'])),
                     Constants::Y1 => $item1['y1'],
                     Constants::X2 => $item1['x2'],
-                    Constants::Y2 => $item1['y2']);
+                    Constants::Y2 => $item1['y2'],
+                        );
+                    $pncs[$value['ref']][Constants::OPTIONS]['cnt'] = $as[$value['ref']];
             	}
             }
         }
@@ -753,7 +756,8 @@ class KiaCatalogModel extends CatalogModel{
         foreach($aData as $index => $value){
             if ($value['compatibility'])
             {
-                $strBegin = ltrim(strstr($value['compatibility'], '|;', true), ';;');
+                $strBeg = strstr($value['compatibility'], '|;', true);
+                $strBegin = substr($strBeg, strrpos($strBeg, ';')+1);
                 $aNull = array('');
                 $aExplodeCompatibility = explode('|', $strBegin);
                 $aExplodeCompatibility = array_slice($aExplodeCompatibility, 0 , count($aExplodeComplectation)-1);

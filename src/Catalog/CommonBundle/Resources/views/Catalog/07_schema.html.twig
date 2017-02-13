@@ -22,7 +22,6 @@
                 {% if oContainer.getActiveSchema.getPncs %}
                 <h4>{{ 'Семейства запчастей'|trans }}</h4>
                 {% block pncs %}
-
                     {% for pnc in oContainer.getActiveSchema.getPncs %}
                         {% block pnc %}
                             <div class="pnc glyphicon-plus small" id="pnc_{{ pnc.getCode }}" name="{{ pnc.getCode }}">
@@ -60,32 +59,27 @@
                                     });
                                 </script>
                             {% endblock pncScript %}
-
-
-                    {% block pncArea %}
-                    {% for coords in pnc.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
-                                <area shape="rect" coords="
-                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }},
-                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }},
-                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }},
-                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}
-                                    " href="#" id="{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" data-name="{% block dataName %}{{ pnc.getCode }}{% endblock dataName %}"/>
-
-                    {% block pncAreaScript %}
-                    <script>
-                        $("area#{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}").on("click", function(){
-                            {{ block('pncClick') }}
-                        })
-                    </script>
-                    {% endblock pncAreaScript %}
-                            {% endfor %}
-
-                    {% endblock pncArea %}
-
+                            {% block pncArea %}
+                                    {% for coords in pnc.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
+                                        <area shape="rect" coords="
+                                            {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }},
+                                            {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }},
+                                            {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }},
+                                            {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}
+                                            " href="#" id="{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" data-name="{% block dataName %}{{ pnc.getCode }}{% endblock dataName %}"/>
+                                        {% block pncAreaScript %}
+                                            <script>
+                                            $("area#{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}").on("click", function(){
+                                                {{ block('pncClick') }}
+                                            })
+                                            </script>
+                                        {% endblock pncAreaScript %}
+                                    {% endfor %}
+                            {% endblock pncArea %}
                         {% endblock pnc %}
-                        {% block articulForPnc %}
-                            <div class="hidden" id="articul_for_pnc{{ pnc.getCode }}"></div>
-                        {% endblock articulForPnc %}
+                            {% block articulForPnc %}
+                                <div class="hidden" id="articul_for_pnc{{ pnc.getCode }}"></div>
+                            {% endblock articulForPnc %}
                     {% endfor %}
                 {% endblock pncs %}
                 {% endif %}

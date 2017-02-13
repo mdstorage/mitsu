@@ -67,6 +67,7 @@ class KiaArticulModel extends KiaCatalogModel{
     
     public function getArticulModifications($articul, $regionCode, $modelCode)
     {
+        $modelCode = urldecode($modelCode);
         $sql = "
         SELECT ctlg.cat_folder, ctlg.catalogue_code, ctlg.cat_number
         FROM catalog ctlg
@@ -163,9 +164,11 @@ class KiaArticulModel extends KiaCatalogModel{
         $query->execute();
         $aData = $query->fetchAll();
         $subgroups = array();
+
         /*применяем фильтр совместимости с выбранной комплектацией*/
         $aData = $this->filterComplectations($modificationCode, $complectationCode, $aData);
         /*-------------*/
+
         foreach($aData as $item){
             $subgroups[] = $item['minor_sect'];
         }
