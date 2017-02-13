@@ -4,14 +4,21 @@
 {% block regionPath %}
     {% if app.request.get('token') %}
         {{ path('catalog_kia_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost'), 'domain':  app.request.get('domain')}) }}
-
     {% else %}
-
         {{ path('catalog_kia', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost'), 'domain':  app.request.get('domain')}) }}
-
     {% endif %}
 
 {% endblock regionPath %}
+
+
+{% block regions %}
+    {% block head %}<h3>{{ 'Выбрать регион'|trans }}:</h3>{% endblock head %}
+    <ul class="nav nav-pills" role="tablist">
+        {% for region in oContainer.getRegions %}
+            <li role="region" class="{% if region.getCode == oContainer.getActiveRegion.getCode %}active{% endif %}" id="{{ region.getCode }}"><a href="{{ block('regionPath') }}">{{ region.getRuname|trans({}, 'kia') }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock regions %}
 
 {% block modificationScript %}
     <script>

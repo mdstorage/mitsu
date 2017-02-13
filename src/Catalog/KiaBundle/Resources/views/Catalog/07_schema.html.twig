@@ -12,7 +12,23 @@
 {% block complectationRuname %}{{ oContainer.getActiveComplectation.getCode }}{% endblock complectationRuname %}
 {% block refGroupsHead %}<h4>{{ 'Связанные подгруппы'|trans }}</h4>{% endblock refGroupsHead %}
 
+{% block pnc %}
+        {% if pnc.getOption('cnt')|length > 0 %}
+        <div class="pnc glyphicon-plus small" id="pnc_{{ pnc.getCode }}" name="{{ pnc.getCode }}">
+            ({{ pnc.getCode }}) {{ pnc.getRuname }}
+        </div>
+        {% else %}
+        <div class="pnc small" id="pnc_{{ pnc.getCode }}" name="{{ pnc.getCode }}">
+            <span style=" color: darkgrey; ">({{ pnc.getCode }}) {{ pnc.getRuname }}</span>
+        </div>
+        {% endif %}
+
+    {{ block('pncScript') }}
+    {% block pncArea %}{% endblock pncArea %}
+{% endblock pnc %}
+
 							{% block pncScript %}
+                                {% if pnc.getOption('cnt') > 0 %}
                                 <script>
                                     $("#pnc_{{ pnc.getCode }}").on("click", function(){
                                         {% block pncClick %}
@@ -49,11 +65,10 @@
                                     $("#pnc_{{ pnc.getCode }}").on("mouseout", function(){
                                         $(this).removeClass("btn-info");
                                     });
-
                                 </script>
+                                {% endif %}
                             {% endblock pncScript %}
 
-{% block pncArea %}{% endblock pncArea %}
 
 {% block refGroups %}
     {% for refGroup in oContainer.getActiveSchema.getRefGroups %}
@@ -114,9 +129,11 @@
                 <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/images/spacer.gif') }}" title="{{ pnc.getCode }}" />
             </div>
             <script>
+                {% if pnc.getOption('cnt')|length > 0 %}
                 $("#{{ pnc.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}").on("click", function(){
                     {{ block('pncClick') }}
                 });
+                {% endif %}
             </script>
         {% endfor %}
     {% endfor %}
