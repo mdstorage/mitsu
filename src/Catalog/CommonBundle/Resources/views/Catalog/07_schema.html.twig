@@ -17,6 +17,14 @@
     {% block schema %}
         <div class="row" id = "g_container">
 
+            <div id = "idrow" class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
+                {% block imageviewport %}
+
+                    {% block image %}
+                    {% endblock image %}
+
+                {% endblock imageviewport %}
+            </div>
             <map name="{{ oContainer.getActiveSchema.getCode }}">
             <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
                 {% if oContainer.getActiveSchema.getPncs %}
@@ -129,14 +137,7 @@
 
             </div>
             </map>
-            <div id = "idrow" class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
-                {% block imageviewport %}
 
-                    {% block image %}
-                    {% endblock image %}
-
-                {% endblock imageviewport %}
-            </div>
 
         </div>
     {% endblock schema %}

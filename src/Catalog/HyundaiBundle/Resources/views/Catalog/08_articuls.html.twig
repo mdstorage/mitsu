@@ -1,23 +1,34 @@
-<table class="table small">
+{% trans_default_domain 'common' %}
+<div class="table-responsive">
+    <table class="table small">
     {% if oContainer.getActivePnc.getArticuls %}
-    <thead>
+    <thead class="initialism">
         <tr>
-            <th>Артикул</th>
-            <th>Наименование</th>
-            <th>Кол-во</th>
-            <th>Период</th>
-            <th>Доп.информация</th>
+            <th>{{ 'Артикул'|trans }}</th>
+            <th>PNC</th>
+            <th>{{ 'Кол-во'|trans }}</th>
+            <th>{{ 'Период'|trans }}</th>
+            <th>{{ 'Доп. информация'|trans({}, 'hyundai') }}</th>
         </tr>
     </thead>
 
-    <tbody>
+    <tbody class="initialism">
     {% for articul in oContainer.getActivePnc.getArticuls %}
         <tr>
-            <td><a href="{{ parameters.redirectAdress|replace({ '{article}': articul.getCode }) }}" target="_blank">{% block articulItem %}{{ articul.getCode }}{% endblock articulItem %}</a></td>
-            <td>{{ articul.getRuname }}</td>
+            <td><a href="{{ parameters.redirectAdress|replace({ '{article}': articul.getRuname }) }}" target="_blank">{% block articulItem %}{{ articul.getRuname }}{% endblock articulItem %}</a></td>
+            <td>{{ articul.getOption('pnc') }}</td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }}</td>
             <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|hyundai_date_convertor}} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|hyundai_date_convertor}}</td>
-            <td>{% if articul.getOption('option3') %} Код замены: </br> {{ articul.getOption('option3')}} {% endif %}</td>
+            <td>{% if articul.getOption('descript') %}
+                    {{ articul.getOption('descript') }}
+                {% endif %}
+                {% if articul.getOption('aOptions') %}
+            <b>{{ 'Опции'|trans({}, 'hyundai') }}</b>:
+                {% for key, option in articul.getOption('aOptions') %}
+              </br>[{{ key }}] {{ option }}
+                {% endfor %}
+                {% endif %}
+            </td>
             
         </tr>
     {% endfor %}
@@ -25,8 +36,8 @@
     {% endif %}
     {% if not oContainer.getActivePnc.getArticuls %}
         <tbody>
-    Запчасть не применяется в выбранной комплектации
+        {{ 'Запчасть не применяется в выбранной комплектации'|trans }}
     </tbody>
     {% endif %}
-
-</table>
+    </table>
+</div>

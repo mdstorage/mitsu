@@ -9,12 +9,21 @@ services:
             - { name: twig.extension}
   hyundai.catalog.model:
     class: Catalog\HyundaiBundle\Models\HyundaiCatalogModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.hyundai_connection']
 
   hyundai.vin.model:
     class: Catalog\HyundaiBundle\Models\HyundaiVinModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.hyundai_connection']
 
   hyundai.articul.model:
     class: Catalog\HyundaiBundle\Models\HyundaiArticulModel
+    calls:
+       - [setRequestStack, ['@request_stack']]
     arguments:  ['@doctrine.dbal.hyundai_connection']
+
+  hyundai.form:
+    class: Catalog\HyundaiBundle\Form\ComplectationType

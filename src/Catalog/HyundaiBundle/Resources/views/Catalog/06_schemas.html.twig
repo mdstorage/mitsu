@@ -1,30 +1,29 @@
 {% extends 'CatalogCommonBundle:Catalog:06_schemas.html.twig' %}
 {% use 'CatalogHyundaiBundle::hyundai.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{% if  app.request.get('token') %} {{ path('catalog_hyundai_token', parameters) }} {% else %} {{ path('catalog_hyundai') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_hyundai_token', parameters) }} {% else %} {{ path('catalog_hyundai') }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getRuname }},
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
-    <a href="{{ path('catalog_hyundai_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> /
-    <a href="{{ path('catalog_hyundai_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a>/
-    <a href="{{ path('catalog_hyundai_subgroups', parameters) }}">Подгруппа запчастей ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / Выбрать схему
+    <a href="{{ path('catalog_hyundai_complectations', parameters) }}">{{'Комплектация'|trans}} ({{ oContainer.getActiveComplectation.getCode}})</a> /
+    <a href="{{ path('catalog_hyundai_groups', parameters) }}">{{'Группа запчастей'|trans}} ({{ oContainer.getActiveGroup.getRuname}})</a>/
+    <a href="{{ path('catalog_hyundai_subgroups', parameters) }}">{{'Подгруппа запчастей'|trans}} ({{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }})</a> / {{'Выбрать схему'|trans}}
 {% endblock breadcrumbs %}
 
 {% block subGroupRuname %}{{ oContainer.getActiveGroup.getSubGroup(parameters['subGroupCode']).getRuname }}{% endblock subGroupRuname %}
+{% block complectationRuname %}{{ oContainer.getActiveComplectation.getCode }}{% endblock complectationRuname %}
 
 {% block schema %}
     {% if schema.getCode is not empty %}
-            <div class="col-xs-3">
-        <a href="{{ path('catalog_hyundai_schema', parameters|merge({'schemaCode': schema.getCode})) }}">
-
+        <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
+                <a href="{{ path('catalog_hyundai_schema', parameters|merge({'schemaCode': schema.getCode})) }}" class="thumbnail">
                     <div class="row">
                         {{ schema.getCode }}
                     </div>
-
                     <div class="row">
-                        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghyundai/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png') }}" width="300" alt="{{ schema.getRuname }}"/>
+                        <img src="{{ (constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghyundai/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png')|file_exists() ?
+                        asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghyundai/Images/Images/'~schema.getRuname~'/'~schema.getCode~'.png') :
+                        asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghyundai/Images/Images/'~schema.getRuname~'/'~schema.getCode~'1.png') }}" width="300" alt="{{ schema.getRuname }}"/>
                     </div>
-
-
-        </a>
+                </a>
             </div>
-    {% endif %}
+{% endif %}
 {% endblock schema %}

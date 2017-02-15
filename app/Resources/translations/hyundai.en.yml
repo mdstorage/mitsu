@@ -1,10 +1,21 @@
 #Регионы
+EUR: EUROPE
+AUS: AUSTRALIA
+HAC: CANADA
+CIS: CIS
+GEN: GENERAL
+MES: MIDDLE EAST
+HMA: USA
+HMI: INDIA
 
 #Группы
-ENGINE: ДВИГАТЕЛЬ
+ЭЛЕКТРООБОРУДОВАНИЕ ДВИГАТЕЛЯ: ЭЛЕКТРИЧЕСКОЕ ОБОРУДОВАНИЕ ДВИГАТЕЛЯ
+ЗАПЧАСТИ+ПРИНАДЛЕЖНОСТИ (КУЗОВ): ЗАПЧАСТИ И ПРИНАДЛЕЖНОСТИ (КУЗОВ)
 TRANSMISSION: ТРАНСМИССИЯ
 ELECTRICAL EQUIPMENTS,EXHAUST,HEATER: ЭЛЕКТРИКА, ВПУСКНАЯ И ВЫПУСКНАЯ СИСТЕМА, СИСТЕМА ОХЛАЖДЕНИЯ И ОТОПЛЕНИЯ
 STEERING,BRAKE,SUSPENSION: РУЛЕВОЕ УПРАВЛЕНИЕ, ТОРМОЗНАЯ СИСТЕМА, ПОДВЕСКА
 BODY PARTS: КУЗОВНЫЕ ДЕТАЛИ
 ACCESSORIES: ДОПОЛНИТЕЛЬНЫЕ ОПЦИИ
 UPHOLSTERY: ВНЕШНЯЯ И ВНУТРЕННЯЯ ОТДЕЛКА
+
+

@@ -17,7 +17,7 @@ trait HyundaiVinFilters {
     {
         $prodDate = $parameters[Constants::PROD_DATE];
         foreach ($oContainer->getActivePnc()->getArticuls() as $key => $articul) {
-            if ($articul->getOption(Constants::START_DATE) > $prodDate || $articul->getOption(Constants::END_DATE) <= $prodDate + 1) {
+            if ($articul->getOption(Constants::START_DATE) > $prodDate || $articul->getOption(Constants::END_DATE) < $prodDate) {
                 $oContainer->getActivePnc()->removeArticul($key);
             }
         }
@@ -40,7 +40,15 @@ trait HyundaiVinFilters {
 
     public function vinSubgroupFilter($oContainer, $parameters)
     {
-        
+        $prodDate = $parameters[Constants::PROD_DATE];
+
+        $subgroups = $this->model()->getVinSubGroups($parameters['regionCode'], $parameters['modelCode'], $parameters['modificationCode'], $parameters['complectationCode'], $parameters['groupCode'], $prodDate);
+
+ /*       foreach ($oContainer->getActiveGroup()->getSubGroups() as $subGroup) {
+            if (!in_array($subGroup->getCode(), $subgroups, true)) {
+                $oContainer->getActiveGroup()->removeSubgroup($subGroup->getCode());
+            }
+        }*/
 
         return $oContainer;
     }
