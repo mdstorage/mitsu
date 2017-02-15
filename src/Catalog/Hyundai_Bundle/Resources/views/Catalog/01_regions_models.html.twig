@@ -1,0 +1,45 @@
+{% extends 'CatalogCommonBundle:Catalog:01_regions_models.html.twig' %}
+{% use 'CatalogHyundaiBundle::hyundai.base.html.twig' %}
+{% block regionPath %}
+    {% if app.request.get('token') %}
+        {{ path('catalog_hyundai_token', {'token': app.request.get('token'), 'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost'), 'domain':  app.request.get('domain')}) }}
+
+    {% else %}
+
+        {{ path('catalog_hyundai', {'regionCode': region.getCode, 'callbackhost': app.request.get('callbackhost'), 'domain':  app.request.get('domain')}) }}
+
+    {% endif %}
+
+{% endblock regionPath %}
+
+{% block modificationScript %}
+    <script>
+        $("#{{ modelCode }}").on("click", function(){
+            $("#modifications_for_model{{ modelCode }}").toggleClass("hidden");
+            $(this).toggleClass("glyphicon-plus");
+            $.ajax({
+                type:   'POST',
+                async:  false,
+                url:    "{% block ajaxUrl %}{{ path('catalog_hyundai_modifications') }}{% endblock ajaxUrl %}",
+                data:   {
+                    regionCode: $(this).attr('regionCode'),
+                    modelCode: "{{ model.getCode }}",
+                    token: "{{ app.request.get('token') }}",
+                    callbackhost: "{{ app.request.get('callbackhost') }}",
+                    domain: "{{ app.request.get('domain') }}"
+                },
+                success: function(data) {
+                    $("#modifications_for_model{{ modelCode }}").html(data);
+                }
+            });
+            $(this).toggleClass("glyphicon-minus");
+        });
+        $("#{{ modelCode }}").on("mouseover", function(){
+            $(this).css("cursor", "pointer");
+            $(this).addClass("btn-info");
+        });
+        $("#{{ modelCode }}").on("mouseout", function(){
+            $(this).removeClass("btn-info");
+        });
+    </script>
+{% endblock modificationScript %}

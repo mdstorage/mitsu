@@ -8,7 +8,7 @@
 namespace Catalog\HyundaiBundle\Components;
 class HyundaiConstants {
     const LOCALE    = 'ru_RU';
-    const TRANSLATION_RESOURCE = '/../../../../app/Resources/translations/hyundai.ru.yml';
+    const TRANSLATION_RESOURCE = '/../../../../app/Resources/translations/hyundai.';
     const TRANSLATION_DOMAIN = 'hyundai';
     const PROD_YEAR = 'prod_year';
     const PROD_DATE = 'prod_date';

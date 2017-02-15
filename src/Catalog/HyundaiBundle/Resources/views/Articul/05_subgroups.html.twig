@@ -1,19 +1,12 @@
-{% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
+{% trans_default_domain 'common' %}
+{% extends 'CatalogHyundaiBundle:Catalog:05_subgroups.html.twig' %}
 {% use 'CatalogHyundaiBundle::hyundai.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{% if  app.request.get('token') %} {{ path('articul_hyundai_find_token', parameters) }} {% else %} {{ path('articul_hyundai_find') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{% if  app.request.get('token') %} {{ path('articul_hyundai_find_token', parameters) }} {% else %} {{ path('articul_hyundai_find') }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getRuname }},
    {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
-    <a href="{{ path('articul_hyundai_complectations', parameters) }}">Комплектация ({{ oContainer.getActiveComplectation.getRuname}})</a> /
-    <a href="{{ path('articul_hyundai_groups', parameters) }}">Группа запчастей ({{ oContainer.getActiveGroup.getRuname}})</a> /
-    Подгруппа запчастей
+    <a href="{{ path('articul_hyundai_complectations', parameters) }}">{{'Комплектация'|trans}} ({{ oContainer.getActiveComplectation.getCode}})</a> /
+    <a href="{{ path('articul_hyundai_groups', parameters) }}">{{'Группа запчастей'|trans}} ({{ oContainer.getActiveGroup.getRuname}})</a> /
+    {{'Подгруппа запчастей'|trans}}
 {% endblock breadcrumbs %}
 
-
-
-{% block subgroupImage %}
-        {% endblock subgroupImage %}
-{% block subgroupItem %}
-    <div id="subgroup{{ subgroup.getCode }}">
-        <a href="{{ path('articul_hyundai_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">{{ subgroup.getRuname }}</a>
-    </div>
-{% endblock subgroupItem %}
+{% block pathToSchemas %}{{ path('articul_hyundai_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }} {% endblock pathToSchemas %}

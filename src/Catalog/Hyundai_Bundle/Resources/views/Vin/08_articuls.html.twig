@@ -1,0 +1,2 @@
+{% extends 'CatalogHyundaiBundle:Catalog:08_articuls.html.twig' %}
+{% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': articul.getCode }) }}{% endblock commonArticulPath %}
