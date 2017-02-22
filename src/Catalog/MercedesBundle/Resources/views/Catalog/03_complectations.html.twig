@@ -4,21 +4,55 @@
     <a href="{% if  app.request.get('token') %} {{ path('catalog_mercedes_token', parameters) }} {% else %} {{ path('catalog_mercedes') }} {% endif %}">Выбрать регион, модель, модификацию</a> / Выбрать комплектацию
 {% endblock breadcrumbs %}
 {% set complectationsListLenght = oContainer.getActiveModification.getComplectations|length %}
-{% block complectations %}
-    <div class="complectations">
-            <table class="table table-responsive">
-                {% for complectation in oContainer.getActiveModification.getComplectations %}
-                    <tr>
-                        <td>
-                            <a href="{{ path('catalog_mercedes_groups', parameters|merge({ 'complectationCode': complectation.getCode })) }}">{{ complectation.getCode|slice(4) }}</a>
-                        </td>
-                        <td>
-                            <a href="{{ path('catalog_mercedes_groups', parameters|merge({ 'complectationCode': complectation.getCode })) }}">{{ complectation.getRuname }}</a>
-                        </td>
-                        <td>{{ complectation.getOption('REMARKS') }}</td>
-                    </tr>
 
-                {% endfor %}
-            </table>
+{% block head %}<h3>{{ 'Выбрать автомобиль'|trans }}:</h3>{% endblock head %}
+{% block complectations %}
+
+    {% set variants = models_array() %}
+
+    {% set chunk_variants = array_chunk(variants, 4) %}
+
+    <div class="complectations">
+    {% for key, variant in chunk_variants  %}
+        <div class="panel-group col-xs-6 col-sm-6 col-md-3 col-lg-3" id="accordion{{ key }}">
+        {% for keyt, var in variant  %}
+            <div class="panel">
+                <div class="panel-heading" onclick='$("#collapse_{{ keyt }}").collapse("toggle");'>
+                    <h4 class="panel-title">
+                            {{ var }}
+                    </h4>
+                </div>
+                <div id="collapse_{{ keyt }}" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <table class="table table-responsive">
+                            {% for complectation in oContainer.getActiveModification.getComplectations %}
+                                {% if var ==  complectation.getOption('opt') %}
+                                    <tr>
+                                        <td>
+                                            <small><a href="{{ path('catalog_mercedes_groups', parameters|merge({ 'complectationCode': complectation.getCode })) }}">{{ complectation.getRuname }}</a></small>
+                                        </td>
+                                        <td>
+                                            <small><a href="{{ path('catalog_mercedes_groups', parameters|merge({ 'complectationCode': complectation.getCode })) }}">{{ complectation.getCode|slice(4) }}</a></small>
+                                        </td>
+                                        <td><small>{{ complectation.getOption('REMARKS') }}</small></td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% endfor %}
     </div>
+    <script>
+        $(".panel").on("mouseover", function(){
+            $(this).css("cursor", "pointer");
+            $(this).addClass("panel-default");
+        });
+        $(".panel").on("mouseout", function(){
+            $(this).removeClass("panel-default");
+        });
+    </script>
 {% endblock complectations %}

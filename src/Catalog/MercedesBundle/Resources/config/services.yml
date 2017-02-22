@@ -13,3 +13,8 @@ services:
   mercedes.vin.model:
     class: Catalog\MercedesBundle\Models\MercedesVinModel
     arguments:  ['@doctrine.dbal.mercedes_connection']
+
+  mercedes_array_chunk.extension:
+    class: Catalog\MercedesBundle\Twig\Extension\ArrayChunkExtension
+    tags:
+      - { name: twig.extension}

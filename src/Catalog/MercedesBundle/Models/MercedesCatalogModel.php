@@ -2,6 +2,7 @@
 namespace Catalog\MercedesBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
+use Catalog\MercedesBundle\Components\MercedesConstants;
 use Catalog\CommonBundle\Models\CatalogModel;
 
 class MercedesCatalogModel extends CatalogModel{
@@ -121,10 +122,45 @@ class MercedesCatalogModel extends CatalogModel{
         $aData = $query->fetchAll();
 
         $complectations = array();
+        $opt = array();
+
+        $aVarianty = MercedesConstants::$ARRAY_OF_MODELS;
+
+        $aV = array();
+
+        foreach ($aVarianty as $index => $value){
+            if (strpos($value, '-klasse'))
+                $aV[$index] = substr($value, 0, strpos($value, '-klasse'));
+            else $aV[$index] = $value;
+        }
+
+        foreach ($aData as $index => $value) {
+            foreach ($aV as $ind => $val) {
+                $st = similar_text($value['TRADEMARK'], $val);
+                if (strpos(trim(trim($value['TRADEMARK'])), ' ') !== false)
+                {
+                    if ($st == strlen($val) && strpos(trim($value['TRADEMARK']), $val.' ') === 0){
+                        $opt[trim($value['CATNUM']) . "." . $value['COMPLECTATION']] = $aVarianty[$ind];
+                    }
+                }
+                else{
+                    if ($st == strlen($val) && strpos(trim($value['TRADEMARK']), $val) === 0){
+                        $opt[trim($value['CATNUM']) . "." . $value['COMPLECTATION']] = $aVarianty[$ind];
+                    }
+                }
+
+            }
+        }
 
         foreach ($aData as $item) {
-            $complectations[trim($item['CATNUM']) . "." . $item['COMPLECTATION']][Constants::NAME] = $item['TRADEMARK'];
-            $complectations[trim($item['CATNUM']) . "." . $item['COMPLECTATION']][Constants::OPTIONS]['REMARKS'] = $item['REMARKS'];
+            $complectations[trim($item['CATNUM']) . "." . $item['COMPLECTATION']] = array(
+                Constants::NAME     => $item['TRADEMARK'],
+                Constants::OPTIONS  => array(
+                    'REMARKS' => $item['REMARKS'],
+                    'opt' => empty($opt[trim($item['CATNUM']) . "." . $item['COMPLECTATION']])?'':($opt[trim($item['CATNUM']) . "." . $item['COMPLECTATION']]),
+                    'var' => $aVarianty
+                )
+            );
         }
         return $complectations;
     }

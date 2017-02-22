@@ -33,7 +33,7 @@ security:
 
     access_control:
         # require ROLE_ADMIN for */token/*
-        - { path: /token/, roles: ROLE_USER  }
+        #- { path: /token/, roles: ROLE_USER  }
         # the login page has to be accessible for everybody
         #demo_login:
             #pattern:  ^/demo/secured/login$
