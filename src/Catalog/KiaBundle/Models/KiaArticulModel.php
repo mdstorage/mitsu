@@ -153,7 +153,7 @@ class KiaArticulModel extends KiaCatalogModel{
         $modificationCode = substr($modificationCode, 0, strpos($modificationCode, '_'));
 
         $sql = "
-        SELECT cdp.minor_sect, cdp.compatibility
+        SELECT cdp.minor_sect, cdp.compatibility, cdp.ref
         FROM cats_dat_parts cdp
         WHERE cdp.cat_folder = :catCode AND cdp.number = :articulCode AND cdp.major_sect = :groupCode
         ";
@@ -163,12 +163,32 @@ class KiaArticulModel extends KiaCatalogModel{
         $query->bindValue('groupCode', $groupCode);
         $query->execute();
         $aData = $query->fetchAll();
-        $subgroups = array();
 
+        /*Убираем pnc, которых нет на картинке. Если нет координат - значит нет на картинке*/
+        foreach ($aData as &$aPnc){
+            $sqlSchemaLabels = "
+            SELECT x1, y1, x2, y2
+            FROM cats_dat_ref
+            WHERE cat_folder = :catCode
+            AND img_name = :schemaCode
+            AND ref = :ref
+            ";
+            $query = $this->conn->prepare($sqlSchemaLabels);
+            $query->bindValue('catCode', $catCode);
+            $query->bindValue('schemaCode', $aPnc['minor_sect']);
+            $query->bindValue('ref', $aPnc['ref']);
+            $query->execute();
+            $aPnc['clangjap'] = $query->fetchAll();
+        }
+        foreach ($aData as $index=>$value){
+            if (count($value['clangjap']) == 0){
+                unset($aData[$index]);
+            }
+        }
         /*применяем фильтр совместимости с выбранной комплектацией*/
         $aData = $this->filterComplectations($modificationCode, $complectationCode, $aData);
         /*-------------*/
-
+        $subgroups = array();
         foreach($aData as $item){
             $subgroups[] = $item['minor_sect'];
         }

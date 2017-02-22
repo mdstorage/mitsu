@@ -15,7 +15,11 @@
 
 {% block subgroupImage %}
     <div class="col-lg-8">
-        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalognissan/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/'~a~'/'~oContainer.getActiveGroup.getOption('picture')~'.gif') }}" alt="{{ oContainer.getActiveGroup.getRuname }}" width="900" usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
+        <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalognissan/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/'~a~'/'~oContainer.getActiveGroup.getOption('picture')~'.gif') }}"
+             style="width: auto;"
+             class="img-responsive"
+             alt="{{ oContainer.getActiveGroup.getRuname }}"
+             usemap="#{{ oContainer.getActiveGroup.getCode }}"/>
 
     </div>
 {% endblock subgroupImage %}

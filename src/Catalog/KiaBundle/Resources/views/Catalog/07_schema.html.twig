@@ -84,9 +84,11 @@
     <div class="row">
         <div class="row" style="height: 600px;">
             <div class="guayaquil_unit_icons">
-                <div class="guayaquil_zoom cboxElement" title="Схема: {{ oContainer.getActiveSchema.getCode }}" full="{{ (constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Imgs/Cats/'~oContainer.getActiveModification.getOption('option1')~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?
-                asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Imgs/Cats/'~oContainer.getActiveModification.getOption('option1')~'/'~oContainer.getActiveSchema.getCode~'.png') :
-                asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Imgs/Cats/'~oContainer.getActiveModification.getOption('option1')~'/'~oContainer.getActiveSchema.getCode~'1.png') }}">
+                <div class="guayaquil_zoom cboxElement"
+                     title="{{ oContainer.getActiveSchema.getCode }}: {{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname }}"
+                     full="{{ (constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Imgs/Cats/'~oContainer.getActiveModification.getOption('option1')~'/'~oContainer.getActiveSchema.getCode~'.png')|file_exists() ?
+                     asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Imgs/Cats/'~oContainer.getActiveModification.getOption('option1')~'/'~oContainer.getActiveSchema.getCode~'.png') :
+                     asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogkia/Imgs/Cats/'~oContainer.getActiveModification.getOption('option1')~'/'~oContainer.getActiveSchema.getCode~'1.png') }}">
                     <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/images/zoom.png') }}"/>
                 </div>
             </div>

@@ -568,7 +568,13 @@ class KiaCatalogModel extends CatalogModel{
             $query->execute();
             $aPnc['clangjap'] = $query->fetchAll();
 		}
-        $pncs = array();
+        /*Убираем pnc, которых нет на картинке. Если нет координат - значит нет на картинке*/
+        foreach ($aPncs as $index=>$value){
+            if (count($value['clangjap']) == 0){
+                unset($aPncs[$index]);
+            }
+        }
+
         foreach ($aPncs as $index=>$value) {
             {
             	foreach ($value['clangjap'] as $item1)

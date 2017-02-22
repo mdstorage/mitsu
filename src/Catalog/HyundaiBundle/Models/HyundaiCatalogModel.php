@@ -568,6 +568,12 @@ class HyundaiCatalogModel extends CatalogModel{
             $query->execute();
             $aPnc['clangjap'] = $query->fetchAll();
 		}
+        /*Убираем pnc, которых нет на картинке. Если нет координат - значит нет на картинке*/
+        foreach ($aPncs as $index=>$value){
+            if (count($value['clangjap']) == 0){
+                unset($aPncs[$index]);
+            }
+        }
         $pncs = array();
         foreach ($aPncs as $index=>$value) {
             {

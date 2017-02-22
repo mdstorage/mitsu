@@ -13,8 +13,24 @@
 
 {% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
 
-{% block image %}
-    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalognissan/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/SECIMG/'~oContainer.getActiveSchema.getCode|slice(0,6)~'.gif') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>{% endblock image %}
+{% block imageviewport %}
+    {% block image %}
+        <div class="row" style="overflow: auto; height:520px;">
+            <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalognissan/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveComplectation.getCode|slice(0,3)~'/SECIMG/'~oContainer.getActiveSchema.getCode|slice(0,6)~'.gif') }}"
+                 style="width: auto; display: inline-block; opacity: 0;  border: 0px none; position: absolute;"
+                 class="img-responsive"
+                 usemap="#{{ oContainer.getActiveSchema.getCode }}"
+                 alt="{{ oContainer.getActiveSchema.getCode }}"/>
+        </div>
+    {% endblock image %}
+<br>
+<div class="row">
+    <button type="button" class="btn btn-default" id="make-small">Small</button>
+    <button type="button" class="btn btn-default" id="make-big">Big</button>
+    <button type="button" class="btn btn-default" id="make-any">Заданный размер</button>
+    <input id="new-size" class="form-control" style="width:80px; display: inline-block;" value="1000" type="text">
+</div>
+{% endblock imageviewport %}
 
 {% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{{ path('articul_nissan_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
@@ -62,3 +78,45 @@
     {% endif %}
 {% endfor %}
 {% block activeLabel %}{{ a|join(',') }}{% endblock activeLabel %}
+
+    {% block mapsterScript %}
+        <script>
+            $('img').mapster({
+                stroke: true,
+                strokeColor: '70daf1',
+                strokeOpacity: 1,
+                strokeWidth: 1,
+                fill: true,
+                fillColor: '70daf1',
+                fillOpacity: 0.5,
+                mapKey: 'data-name',
+                render_highlight: {
+                    fillOpacity: 0.5
+                },
+                render_select: {
+                    fillOpacity: 0
+                },
+
+                onClick: function(e) {
+                    e.e.preventDefault();
+                    var target = $(this).attr('target');
+                    if (target=='_blank') {
+                        window.open($(this).attr('href'));
+                    }
+                    return false;
+                },
+                clickNavigate: true,
+                scaleMap: true
+            }).mapster('set', true, '{{ block('activeLabel') }}');
+
+            $('#make-small').bind('click',function() {
+                $('img').mapster('resize', 200, 0, 1000);
+            });
+            $('#make-big').bind('click',function() {
+                $('img').mapster('resize', 720, 0, 1000);
+            });
+            $('#make-any').bind('click',function() {
+                $('img').mapster('resize', $('#new-size').val(), 0, 1000);
+            });
+        </script>
+    {% endblock mapsterScript %}

@@ -163,6 +163,28 @@ class HyundaiArticulModel extends HyundaiCatalogModel{
         $query->bindValue('groupCode', $groupCode);
         $query->execute();
         $aData = $query->fetchAll();
+
+        /*Убираем pnc, которых нет на картинке. Если нет координат - значит нет на картинке*/
+        foreach ($aData as &$aPnc){
+            $sqlSchemaLabels = "
+            SELECT x1, y1, x2, y2
+            FROM cats_dat_ref
+            WHERE cat_folder = :catCode
+            AND img_name = :schemaCode
+            AND ref = :ref
+            ";
+            $query = $this->conn->prepare($sqlSchemaLabels);
+            $query->bindValue('catCode', $catCode);
+            $query->bindValue('schemaCode', $aPnc['minor_sect']);
+            $query->bindValue('ref', $aPnc['ref']);
+            $query->execute();
+            $aPnc['clangjap'] = $query->fetchAll();
+        }
+        foreach ($aData as $index=>$value){
+            if (count($value['clangjap']) == 0){
+                unset($aData[$index]);
+            }
+        }
         $subgroups = array();
 
         /*применяем фильтр совместимости с выбранной комплектацией*/
