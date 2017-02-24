@@ -9,7 +9,8 @@
 {% block head %}<h3>{{ 'Выбрать автомобиль'|trans }}:</h3>{% endblock head %}
 {% set complectationsListLenght = oContainer.getActiveModification.getComplectations|length %}
 {% block complectations %}
-    {% set variants = models_array() %}
+
+    {% set variants = oContainer.getActiveModification.getComplectations|first.getOption('var') %}
 
     {#Разбиваем исходный массив на 4 колонки#}
     {% set chunk_variants = array_chunk(variants, 4) %}

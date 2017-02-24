@@ -21,7 +21,7 @@
                     {% if articul.getOption('DESCRIPTION') %}<br>{{ articul.getOption('DESCRIPTION') }}{% endif %}
                     {% if articul.getOption('NEUTRAL') %}<br>{{ articul.getOption('NEUTRAL') }}{% endif %}
                     {% for footnote in articul.getOption('FOOTNOTES') %}
-                        {% if footnote['TEXT_FOR_TWIG'] %}
+                        {% if footnote['TEXT_FOR_TWIG'] is defined %}
                             <br>[{{ footnote['FTNTNUM'] }}] {{ footnote['TEXT_FOR_TWIG'] }}
                         {% endif %}
                     {% endfor %}

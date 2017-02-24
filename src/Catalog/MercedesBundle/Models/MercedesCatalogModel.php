@@ -123,8 +123,29 @@ class MercedesCatalogModel extends CatalogModel{
 
         $complectations = array();
         $opt = array();
+        $aNVarianty = array();
 
-        $aVarianty = MercedesConstants::$ARRAY_OF_MODELS;
+        foreach ($aData as $index => $value){
+            if (strpos(trim($value['TRADEMARK']), ' ') !== false)
+            {
+                /*if (preg_match("/\A\d/x", substr($value['TRADEMARK'], 0, strpos($value['TRADEMARK'], ' '))))*/
+                if (strpos(trim($value['TRADEMARK']), 'TYP') === false){
+                    $subst = substr($value['TRADEMARK'], 0, strpos($value['TRADEMARK'], ' '));
+                    $aNVarianty[$subst] = str_replace(';','',$subst);
+                }
+                else {
+                    $substr = substr($value['TRADEMARK'], 0, stripos($value['TRADEMARK'], ' ', stripos($value['TRADEMARK'], ' ') +1));
+                    $aNVarianty[$substr] = (strlen($substr)>7)?substr($substr,0,7):$substr;
+                }
+            }
+            else{
+            }
+        }
+        $aVarianty = array_unique($aNVarianty);
+        sort($aVarianty);
+        reset($aVarianty);
+
+        /*$aVarianty = MercedesConstants::$ARRAY_OF_MODELS;*/
 
         $aV = array();
 
@@ -137,7 +158,7 @@ class MercedesCatalogModel extends CatalogModel{
         foreach ($aData as $index => $value) {
             foreach ($aV as $ind => $val) {
                 $st = similar_text($value['TRADEMARK'], $val);
-                if (strpos(trim(trim($value['TRADEMARK'])), ' ') !== false)
+                if (strpos(trim($value['TRADEMARK']), ' ') !== false)
                 {
                     if ($st == strlen($val) && strpos(trim($value['TRADEMARK']), $val.' ') === 0){
                         $opt[trim($value['CATNUM']) . "." . $value['COMPLECTATION']] = $aVarianty[$ind];
@@ -271,7 +292,7 @@ class MercedesCatalogModel extends CatalogModel{
                         unset($aggregates[$key][Constants::OPTIONS]['COMPLECTATIONS'][$complKey]);
                         foreach ($aCatnum as $catnum) {
                             if ($catnum['CATNUM']) {
-                                $aggregates[$key][Constants::OPTIONS]['COMPLECTATIONS'][$catnum['CATNUM'] . "." . $code] =  $catnum['SALESDES'];
+                                $aggregates[$key][Constants::OPTIONS]['COMPLECTATIONS'][trim($catnum['CATNUM']) . "." . $code] =  $catnum['SALESDES'];
                             }
                         }
                         /*
@@ -799,8 +820,8 @@ class MercedesCatalogModel extends CatalogModel{
 
 
         $sqlArticuls = "
-        SELECT parts.`PARTTYPE`, parts.`PARTNUM`, parts.`CODEB`, parts.`SEQNUM`, parts.`SUBMODS`, parts.`QUANTBM`, UPPER(IFNULL(nouns_ru.NOUN, nouns_en.NOUN)) TEXT,
-        IFNULL(descs_ru.DESCRIPTION, descs_en.DESCRIPTION) DESCRIPTION,
+        SELECT parts.`PARTTYPE`, parts.`PARTNUM`, parts.`CODEB`, parts.`SEQNUM`, parts.`SUBMODS`, parts.`QUANTBM`, UPPER(IFNULL(nouns_ru.NOUN, nouns_en.NOUN)) AS TEXT,
+        IFNULL(descs_ru.DESCRIPTION, descs_en.DESCRIPTION) AS DESCRIPTION,
         IF (parts.`REPLFLG` = 'R', concat(parts.`REPTYPE`, parts.`REPPNO`), NULL) REPL, parts.`FOOTNOTES`, parts.`NEUTRAL`
         FROM `alltext_bm_parts2_v` parts
         LEFT OUTER JOIN `alltext_part_nouns_v` nouns_ru
@@ -808,9 +829,9 @@ class MercedesCatalogModel extends CatalogModel{
         LEFT OUTER JOIN `alltext_part_nouns_v` nouns_en
         ON nouns_en.NOUNIDX = parts.NOUNIDX AND nouns_en.LANG = 'E'
         LEFT OUTER JOIN `alltext_part_descs_v` descs_ru
-        ON descs_ru.DESCIDX LIKE CONCAT('%', parts.DESCIDX, '%') AND descs_ru.LANG = 'R'
+        ON (TRIM(descs_ru.DESCIDX) = parts.DESCIDX AND descs_ru.LANG = 'R')
         LEFT OUTER JOIN `alltext_part_descs_v` descs_en
-        ON descs_en.DESCIDX LIKE CONCAT('%', parts.DESCIDX, '%') AND descs_en.LANG = 'E'
+        ON (TRIM(descs_en.DESCIDX) = parts.DESCIDX AND descs_en.LANG = 'E')
         WHERE parts.`CATNUM` = :complectationCode
         AND parts.`GROUPNUM` = :groupCode
         AND `SUBGRP` = :subGroupCode
@@ -831,13 +852,19 @@ class MercedesCatalogModel extends CatalogModel{
         {
             if (trim($value['FOOTNOTES'])){
 
-            $sqlFOOTNOTES = "
+                /*$sqlFOOTNOTES = "
+            SELECT *
+            FROM alltext_bm_footnotes_v2 A
+            WHERE A.CATNUM = :complectationCode AND A.GROUPNUM = :groupCode
+            AND ((POSITION(A.ftntnum IN (:FOOTNOTES)) - 1) % 3) = 0
+            ";*/
+                $sqlFOOTNOTES = "
             SELECT a.GROUPNUM,  a.FTNTNUM,  a.REVVER,  a.LISTNUM, a.HAS_WISLINK,  (IFNULL(bb_ru.DESCIDX, bb_en.DESCIDX)) DESCIDX,  (IFNULL(bb_ru.ABBR, bb_en.ABBR)) ABBR,  (IFNULL(bb_ru.lang, bb_en.lang)) lang,   (IFNULL(bb_ru.seqnum, bb_en.seqnum)) seqnum, (IFNULL(bb_ru.TEXT, bb_en.TEXT)) TEXT
             FROM alltext_bm_footnotes_v2 A
-            INNER JOIN alltext_bm_footnotes_dictionary_v bb_ru ON (bb_ru.LANG = 'R' AND bb_ru.DESCIDX = A.DESCIDX)
-            INNER JOIN alltext_bm_footnotes_dictionary_v bb_en ON ((bb_en.LANG = 'E' OR bb_en.LANG = 'N') AND bb_en.DESCIDX = A.DESCIDX)
+            LEFT JOIN alltext_bm_footnotes_dictionary_v bb_ru ON (bb_ru.LANG = 'R' AND bb_ru.DESCIDX = A.DESCIDX)
+            LEFT JOIN alltext_bm_footnotes_dictionary_v bb_en ON ((bb_en.LANG = 'E' OR bb_en.LANG = 'N') AND bb_en.DESCIDX = A.DESCIDX)
             WHERE A.CATNUM = :complectationCode AND A.GROUPNUM = :groupCode
-            AND (POSITION(A.ftntnum IN :FOOTNOTES)-1) % 3 = 0
+            AND ((POSITION(A.ftntnum IN (:FOOTNOTES)) - 1) % 3) = 0
             ORDER BY a.FTNTNUM
             ";
                 $query = $this->conn->prepare($sqlFOOTNOTES);
@@ -847,9 +874,17 @@ class MercedesCatalogModel extends CatalogModel{
                 $query->execute();
 
                 $value['FOOTNOTES'] = $query->fetchAll();
+
+                foreach ($value['FOOTNOTES'] as $ind => &$val)
+                {
+                    $aTEXT_FOR_TWIG[$val['FTNTNUM']][]= $val['TEXT'];
+                    $aStr[$val['FTNTNUM']] = implode($aTEXT_FOR_TWIG[$val['FTNTNUM']]);
+
+                }
             }
             unset($value);
         }
+
 
         foreach ($aData as $index=>$value)
         {

@@ -15,7 +15,9 @@
 {% block ajaxData %}
     {{ parent() }}
     , groupCode: '{{ parameters.groupCode }}',
-    complectationCode: '{{ parameters.complectationCode }}',
+    complectationCode: '{{ parameters.complectationCode }}
+
+    ',
     articul: '{{ parameters.articul }}',
     token: '{{ parameters.token }}'
 {% endblock ajaxData %}

@@ -54,7 +54,6 @@ trait VinFilters {
 
             if (is_array($footnotes))
             {
-
                 foreach ($footnotes as $index => $value)
                 {
                     switch(substr($value['ABBR'], -2))

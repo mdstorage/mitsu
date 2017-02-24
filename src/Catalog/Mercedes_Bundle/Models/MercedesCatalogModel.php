@@ -72,7 +72,7 @@ class MercedesCatalogModel extends CatalogModel{
             AGGTYPE,
             descr.AGGTYPE_DESC
         FROM
-            mercedesbenz.alltext_models_v models
+            mercedesbenz_ewa.alltext_models_v models
         LEFT JOIN alltext_aggtype_code_map_v descr ON TRIM(models.AGGTYPE) = TRIM(descr.DAG_AGGTYPE_CODE)
         WHERE models.APPINF LIKE :regionCode AND models.CLASS = :modelCode;
         ";
@@ -123,8 +123,8 @@ class MercedesCatalogModel extends CatalogModel{
         $complectations = array();
 
         foreach ($aData as $item) {
-            $complectations[$item['CATNUM'] . "." . $item['COMPLECTATION']][Constants::NAME] = $item['TRADEMARK'];
-            $complectations[$item['CATNUM'] . "." . $item['COMPLECTATION']][Constants::OPTIONS]['REMARKS'] = $item['REMARKS'];
+            $complectations[trim($item['CATNUM']) . "." . $item['COMPLECTATION']][Constants::NAME] = $item['TRADEMARK'];
+            $complectations[trim($item['CATNUM']) . "." . $item['COMPLECTATION']][Constants::OPTIONS]['REMARKS'] = $item['REMARKS'];
         }
         return $complectations;
     }
