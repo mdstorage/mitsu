@@ -847,21 +847,16 @@ class MercedesCatalogModel extends CatalogModel{
 
         $aData = $query->fetchAll();
 
-
+        $B = array();
+        $prefix = array();
         foreach ($aData as $index=>&$value)
         {
             if (trim($value['FOOTNOTES'])){
 
-                /*$sqlFOOTNOTES = "
-            SELECT *
-            FROM alltext_bm_footnotes_v2 A
-            WHERE A.CATNUM = :complectationCode AND A.GROUPNUM = :groupCode
-            AND ((POSITION(A.ftntnum IN (:FOOTNOTES)) - 1) % 3) = 0
-            ";*/
                 $sqlFOOTNOTES = "
             SELECT a.GROUPNUM,  a.FTNTNUM,  a.REVVER,  a.LISTNUM, a.HAS_WISLINK,  (IFNULL(bb_ru.DESCIDX, bb_en.DESCIDX)) DESCIDX,  (IFNULL(bb_ru.ABBR, bb_en.ABBR)) ABBR,  (IFNULL(bb_ru.lang, bb_en.lang)) lang,   (IFNULL(bb_ru.seqnum, bb_en.seqnum)) seqnum, (IFNULL(bb_ru.TEXT, bb_en.TEXT)) TEXT
             FROM alltext_bm_footnotes_v2 A
-            LEFT JOIN alltext_bm_footnotes_dictionary_v bb_ru ON (bb_ru.LANG = 'R' AND bb_ru.DESCIDX = A.DESCIDX)
+            LEFT JOIN alltext_bm_footnotes_dictionary_v bb_ru ON (bb_ru.LANG = 'K' AND bb_ru.DESCIDX = A.DESCIDX)
             LEFT JOIN alltext_bm_footnotes_dictionary_v bb_en ON ((bb_en.LANG = 'E' OR bb_en.LANG = 'N') AND bb_en.DESCIDX = A.DESCIDX)
             WHERE A.CATNUM = :complectationCode AND A.GROUPNUM = :groupCode
             AND ((POSITION(A.ftntnum IN (:FOOTNOTES)) - 1) % 3) = 0
@@ -874,27 +869,52 @@ class MercedesCatalogModel extends CatalogModel{
                 $query->execute();
 
                 $value['FOOTNOTES'] = $query->fetchAll();
+                $footnotes = $value['FOOTNOTES'];
 
-                foreach ($value['FOOTNOTES'] as $ind => &$val)
+
+                if (is_array($footnotes))
                 {
-                    $aTEXT_FOR_TWIG[$val['FTNTNUM']][]= $val['TEXT'];
-                    $aStr[$val['FTNTNUM']] = implode($aTEXT_FOR_TWIG[$val['FTNTNUM']]);
-
+                    $str = array();
+                    foreach ($footnotes as $ind => &$val){
+                        switch(substr($val['ABBR'], -2)){
+                            case 'BF': $prefix[$val['FTNTNUM']] = 'to';break;
+                            case 'AF': $prefix[$val['FTNTNUM']] = 'from'; break;
+                            /*default: $prefix[$val['FTNTNUM']] = '';*/
+                        }
+                        if (trim($val['TEXT'] != '')){
+                            $str[$val['FTNTNUM']][] = $val['TEXT'].'<br>';
+                        }
+                        $val[$val['FTNTNUM']]['TEXT_FOR_TWIG'] = implode($str[$val['FTNTNUM']]);
+                        unset($val);
+                    }
+                    /*var_dump($footnotes); die;
+                    $footnotes[$ind] = array_merge($footnotes[$ind], array('TEXT_FOR_TWIG' => stripos($prefix, 'F')?($prefix.' Chassis '):iconv('Windows-1251', 'UTF-8', $val['TEXT'])));*/
                 }
+                foreach ($footnotes as $ind => &$val){
+                    $abbr = $val['ABBR'];
+                    if ($abbr == 'EAF' || $abbr == 'EBF'){
+                        $val[$val['FTNTNUM']]['TEXT_FOR_TWIG'] = str_replace('<br>', '', $val[$val['FTNTNUM']]['TEXT_FOR_TWIG']);
+                        $shassi = str_replace(' ', '', substr($val[$val['FTNTNUM']]['TEXT_FOR_TWIG'], 0, strlen($val[$val['FTNTNUM']]['TEXT_FOR_TWIG']) -8));
+                        $date = substr(trim($val[$val['FTNTNUM']]['TEXT_FOR_TWIG']), -8);
+
+                        $val[$val['FTNTNUM']] = array_merge($val[$val['FTNTNUM']], array('TEXT_FOR_TWIG' => 'Chassis '.$shassi.' Date '.$date));
+                    }
+
+                    $B[$value['PARTTYPE'] . $value['PARTNUM']][$val['FTNTNUM']]['PREFIX'] = empty($prefix[$val['FTNTNUM']])?'':$prefix[$val['FTNTNUM']];
+                    $B[$value['PARTTYPE'] . $value['PARTNUM']][$val['FTNTNUM']]['TEXT_FOR_TWIG'] = $val[$val['FTNTNUM']]['TEXT_FOR_TWIG'];
+                    $B[$value['PARTTYPE'] . $value['PARTNUM']][$val['FTNTNUM']]['ABBR'] = $val['ABBR'];
+                    unset($val);
+               }
             }
             unset($value);
         }
-
-
-        foreach ($aData as $index=>$value)
-        {
+        foreach ($aData as $index=>$value){
             $text = explode(' ', wordwrap($value['SUBMODS'],3,' ',true));
             if (!in_array($subMod, $text))
             {
                 unset ($aData[$index]);
             }
         }
-
         $articuls = array();
         foreach ($aData as $item) {
             $articuls[$item['PARTTYPE'] . $item['PARTNUM']  /*.$item['SEQNUM']*/]/*здесь происходит потеря запчастей из-за неверной группировки*/ = array(
@@ -906,12 +926,11 @@ class MercedesCatalogModel extends CatalogModel{
                     'DESCRIPTION' => iconv('Windows-1251', 'UTF-8', $item['DESCRIPTION']),
                     'CODEB' => $item['CODEB'],
                     'REPL' => $item['REPL'],
-                    'FOOTNOTES' => $item['FOOTNOTES'],
-                    'NEUTRAL' => $item['NEUTRAL']
+                    'FOOTNOTES' => empty($B[$item['PARTTYPE'] . $item['PARTNUM']])?'':($B[$item['PARTTYPE'] . $item['PARTNUM']]),
+                    'NEUTRAL' => empty(trim($item['NEUTRAL']))?'':(trim($item['NEUTRAL']))
                 )
             );
         }
-
         return $articuls;
     }
 } 

@@ -5,7 +5,7 @@
         <tr>
             <th>Артикул</th>
             <th>Кол-во</th>
-            <th>Период производства</th>
+            <th>Период</th>
             <th>Примеч.</th>
         </tr>
         </thead>
@@ -18,14 +18,18 @@
                 <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }}</td>
                 <td>{{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|date_convertor }} - {{ articul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|date_convertor }}</td>
                 <td class="small">{{ articul.getRuname }}
-                    {% if articul.getOption('DESCRIPTION') %}<br>{{ articul.getOption('DESCRIPTION') }}{% endif %}
-                    {% if articul.getOption('NEUTRAL') %}<br>{{ articul.getOption('NEUTRAL') }}{% endif %}
-                    {% for footnote in articul.getOption('FOOTNOTES') %}
+                    {% if articul.getOption('DESCRIPTION') is not null %}<br>{{ articul.getOption('DESCRIPTION') }}{% endif %}
+                    {% if articul.getOption('NEUTRAL') is not null %}<br>{{ articul.getOption('NEUTRAL') }}{% endif %}
+                    {% for keyt, footnote in articul.getOption('FOOTNOTES') %}
                         {% if footnote['TEXT_FOR_TWIG'] is defined %}
-                            <br>[{{ footnote['FTNTNUM'] }}] {{ footnote['TEXT_FOR_TWIG'] }}
+                            <br>
+                        <b>[{{ keyt }}] {{ footnote['PREFIX'] }}
+                            {% autoescape 'html' %}
+                                {{ footnote['TEXT_FOR_TWIG']|raw }}
+                            {% endautoescape %}
+                        </b>
                         {% endif %}
                     {% endfor %}
-
                 </td>
             </tr>
 
