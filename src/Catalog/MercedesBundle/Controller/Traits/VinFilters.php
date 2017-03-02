@@ -8,6 +8,7 @@ trait VinFilters {
 
     public function vinArticulFilter($oContainer, $parameters)
     {
+        $vin_date = $this->get('request')->cookies->get(Constants::PROD_DATE);
         $vin = $parameters[Constants::VIN];
         $vinArticulsCodes = $this->model()->getArticulsByVin($vin);
         foreach ($oContainer->getActivePnc()->getArticuls() as $articul) {
@@ -52,29 +53,27 @@ trait VinFilters {
                 $oContainer->getActivePnc()->removeArticul($articul->getCode());
             }
 
-            if (is_array($footnotes))
-            {
-
-                foreach ($footnotes as $index => $value)
-                {
-                    switch(substr($value['ABBR'], -2))
+            if (is_array($footnotes)){
+                foreach ($footnotes as $index => &$value){
+                    $abbr = $value['ABBR'];
+                    if ($abbr == 'EAF' || $abbr == 'EBF')
                     {
-                        case 'BF': $prefix = 'to';break;
-                        case 'AF': $prefix = 'from'; break;
-                        default: $prefix = '';
+                        $value['TEXT_FOR_TWIG'] = str_replace('<br>', '', $value['TEXT_FOR_TWIG']);
 
+                        $date = substr(trim($value['TEXT_FOR_TWIG']), -8);
+
+                        $sh = substr(trim($value['TEXT_FOR_TWIG']), 0, -8);
+                        $shassi = trim(str_replace(array('Chassis', 'Date'), '', $sh));
+
+                        if ((($abbr == 'EBF') && ($vin_date > $date)) || (($abbr == 'EAF') && ($vin_date < $date)))
+                        {
+                            unset ($footnotes[$index]);
+                        }
+                        if (count($footnotes) == 0){
+                            $oContainer->getActivePnc()->removeArticul($articul->getCode());
+                        }
                     }
-                    $shassi = str_replace(' ', '', substr($value['TEXT'], 0, strlen($value['TEXT']) -8));
-                    $date = substr($value['TEXT'], -8);
-                    $vin_shassi = substr($vin, -7);
-                    /*$value['TEXT_FOR_TWIG'] = $prefix.' Chassis '.$shassi.' '.$prefix.' Date '.$date;*/
-                    $footnotes[$index] = array_merge($footnotes[$index], array('TEXT_FOR_TWIG' => stripos($prefix, 'F')?($prefix.' Chassis '.$shassi.' '.$prefix.' Date '.$date):iconv('Windows-1251', 'UTF-8', $value['TEXT'])));
-
-                    if (($prefix == 'to' && $vin_shassi > $shassi) || ($prefix == 'from' && $vin_shassi < $shassi))
-                    {
-                        $oContainer->getActivePnc()->removeArticul($articul->getCode());
-                    }
-
+                    unset($value);
                 }
             }
             $articul->addOption('FOOTNOTES', $footnotes);

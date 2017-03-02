@@ -8,7 +8,9 @@
 {% block head %}<h3>{{ 'Выбрать автомобиль'|trans }}:</h3>{% endblock head %}
 {% block complectations %}
 
-    {% set variants = models_array() %}
+    {#{% set variants = models_array() %}#}
+    {% set variants = oContainer.getActiveModification.getComplectations|first.getOption('var') %}
+
 
     {% set chunk_variants = array_chunk(variants, 4) %}
 
@@ -53,6 +55,21 @@
         });
         $(".panel").on("mouseout", function(){
             $(this).removeClass("panel-default");
+        });
+        $(document).ready(function() {
+            pn = $(this).find('.panel');
+            var count = 0;
+            var krey;
+            $.each(pn, function(key, value) {
+                if (pn[key].style.display !== 'none'){
+                    count = count + 1;
+                    krey = key
+                }
+            });
+            if (count == 1){
+                $('#collapse_'+krey).collapse('toggle');
+                $(pn[krey]).attr('class', "panel panel-default");
+            }
         });
     </script>
 {% endblock complectations %}

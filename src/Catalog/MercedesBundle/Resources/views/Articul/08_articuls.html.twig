@@ -1,4 +1,4 @@
-{% extends 'CatalogCommonBundle:Catalog:08_articuls.html.twig' %}
+{% extends 'CatalogMercedesBundle:Catalog:08_articuls.html.twig' %}
 {% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': articul.getCode }) }}{% endblock commonArticulPath %}
 {% block articulItem %}
     {% if articul.getCode|replace({' ': ''}) == parameters.articul|replace({' ': ''}) %}

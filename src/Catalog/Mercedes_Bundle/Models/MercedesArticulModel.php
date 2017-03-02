@@ -145,7 +145,7 @@ class MercedesArticulModel extends MercedesCatalogModel{
         SELECT DISTINCT
             models.AGGTYPE
         FROM
-            mercedesbenz.alltext_models_v models
+            mercedesbenz_ewa.alltext_models_v models
         WHERE models.CATNUM IN (?)
         AND APPINF LIKE ?
         AND CLASS = ?
