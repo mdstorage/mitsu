@@ -820,7 +820,7 @@ class MercedesCatalogModel extends CatalogModel{
 
 
         $sqlArticuls = "
-        SELECT parts.`PARTTYPE`, parts.`PARTNUM`, parts.`CODEB`, parts.`SEQNUM`, parts.`SUBMODS`, parts.`QUANTBM`, UPPER(IFNULL(nouns_ru.NOUN, nouns_en.NOUN)) AS TEXT,
+        SELECT parts.`PARTTYPE`, parts.`PARTNUM`, parts.`DESCIDX`, parts.`CODEB`, parts.`SEQNUM`, parts.`SUBMODS`, parts.`QUANTBM`, UPPER(IFNULL(nouns_ru.NOUN, nouns_en.NOUN)) AS TEXT,
         IFNULL(descs_ru.DESCRIPTION, descs_en.DESCRIPTION) AS DESCRIPTION,
         IF (parts.`REPLFLG` = 'R', concat(parts.`REPTYPE`, parts.`REPPNO`), NULL) REPL, parts.`FOOTNOTES`, parts.`NEUTRAL`
         FROM `alltext_bm_parts2_v` parts
@@ -849,9 +849,30 @@ class MercedesCatalogModel extends CatalogModel{
 
         $B = array();
         $prefix = array();
-        foreach ($aData as $index=>&$value)
+        /*foreach ($aData as $index=>&$value)
         {
             if (trim($value['FOOTNOTES'])){
+
+                $sqlFOOTNOTES = "
+            SELECT a.GROUPNUM,  a.FTNTNUM,  a.REVVER,  a.LISTNUM, a.HAS_WISLINK,  bb_ru.DESCIDX DESCIDX,  bb_ru.ABBR ABBR,  bb_ru.lang lang,   bb_ru.seqnum seqnum, bb_ru.TEXT TEXT
+            FROM alltext_bm_footnotes_v2 A
+            JOIN alltext_bm_footnotes_dictionary_v bb_ru ON (bb_ru.LANG = 'K' AND bb_ru.DESCIDX = A.DESCIDX)
+            WHERE A.CATNUM = :complectationCode AND A.GROUPNUM = :groupCode
+            AND ((POSITION(A.ftntnum IN (:FOOTNOTES)) - 1) % 3) = 0
+            UNION
+            SELECT a.GROUPNUM,  a.FTNTNUM,  a.REVVER,  a.LISTNUM, a.HAS_WISLINK,  bb_ru.DESCIDX DESCIDX,  bb_ru.ABBR ABBR,  bb_ru.lang lang,   bb_ru.seqnum seqnum, bb_ru.TEXT TEXT
+            FROM alltext_bm_footnotes_v2 A
+            JOIN alltext_bm_footnotes_dictionary_v bb_ru ON (bb_ru.LANG = 'N' AND bb_ru.DESCIDX = A.DESCIDX)
+            WHERE A.CATNUM = :complectationCode AND A.GROUPNUM = :groupCode
+            AND ((POSITION(A.ftntnum IN (:FOOTNOTES)) - 1) % 3) = 0
+            UNION
+            SELECT a.GROUPNUM,  a.FTNTNUM,  a.REVVER,  a.LISTNUM, a.HAS_WISLINK,  bb_ru.DESCIDX DESCIDX,  bb_ru.ABBR ABBR,  bb_ru.lang lang,   bb_ru.seqnum seqnum, bb_ru.TEXT TEXT
+            FROM alltext_bm_footnotes_v2 A
+            JOIN alltext_bm_footnotes_dictionary_v bb_ru ON (bb_ru.LANG = 'E' AND bb_ru.DESCIDX = A.DESCIDX)
+            WHERE A.CATNUM = :complectationCode AND A.GROUPNUM = :groupCode
+            AND ((POSITION(A.ftntnum IN (:FOOTNOTES)) - 1) % 3)
+            ORDER BY (2)
+            ";
 
                 $sqlFOOTNOTES = "
             SELECT a.GROUPNUM,  a.FTNTNUM,  a.REVVER,  a.LISTNUM, a.HAS_WISLINK,  (IFNULL(bb_ru.DESCIDX, bb_en.DESCIDX)) DESCIDX,  (IFNULL(bb_ru.ABBR, bb_en.ABBR)) ABBR,  (IFNULL(bb_ru.lang, bb_en.lang)) lang,   (IFNULL(bb_ru.seqnum, bb_en.seqnum)) seqnum, (IFNULL(bb_ru.TEXT, bb_en.TEXT)) TEXT
@@ -879,7 +900,7 @@ class MercedesCatalogModel extends CatalogModel{
                         switch(substr($val['ABBR'], -2)){
                             case 'BF': $prefix[$val['FTNTNUM']] = 'to';break;
                             case 'AF': $prefix[$val['FTNTNUM']] = 'from'; break;
-                            /*default: $prefix[$val['FTNTNUM']] = '';*/
+                            default: $prefix[$val['FTNTNUM']] = '';
                         }
                         if (trim($val['TEXT'] != '')){
                             $str[$val['FTNTNUM']][] = $val['TEXT'].'<br>';
@@ -888,7 +909,7 @@ class MercedesCatalogModel extends CatalogModel{
                         unset($val);
                     }
                     /*var_dump($footnotes); die;
-                    $footnotes[$ind] = array_merge($footnotes[$ind], array('TEXT_FOR_TWIG' => stripos($prefix, 'F')?($prefix.' Chassis '):iconv('Windows-1251', 'UTF-8', $val['TEXT'])));*/
+                    $footnotes[$ind] = array_merge($footnotes[$ind], array('TEXT_FOR_TWIG' => stripos($prefix, 'F')?($prefix.' Chassis '):iconv('Windows-1251', 'UTF-8', $val['TEXT'])));
                 }
                 foreach ($footnotes as $ind => &$val){
                     $abbr = $val['ABBR'];
@@ -907,7 +928,7 @@ class MercedesCatalogModel extends CatalogModel{
                }
             }
             unset($value);
-        }
+        }*/
         foreach ($aData as $index=>$value){
             $text = explode(' ', wordwrap($value['SUBMODS'],3,' ',true));
             if (!in_array($subMod, $text))
@@ -917,7 +938,7 @@ class MercedesCatalogModel extends CatalogModel{
         }
         $articuls = array();
         foreach ($aData as $item) {
-            $articuls[$item['PARTTYPE'] . $item['PARTNUM']  /*.$item['SEQNUM']*/]/*здесь происходит потеря запчастей из-за неверной группировки*/ = array(
+            $articuls[$item['PARTTYPE'] . $item['PARTNUM'] /*.$item['SEQNUM']*/]/*здесь происходит потеря запчастей из-за неверной группировки*/ = array(
                 Constants::NAME => iconv('Windows-1251', 'UTF-8', $item['TEXT']),
                 Constants::OPTIONS => array(
                     Constants::QUANTITY => substr($item['QUANTBM'], 0, 3),
