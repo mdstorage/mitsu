@@ -42,3 +42,8 @@
     {% endif %}
 {% endfor %}
 {% block activeLabel %}{{ a|join(',') }}{% endblock activeLabel %}
+
+{% block commonArticuls %}
+    {{ include('CatalogMercedesBundle:Articul:_07_schema_commonArticuls.html.twig') }}
+{% endblock commonArticuls %}
+

@@ -770,12 +770,17 @@ class MercedesCatalogModel extends CatalogModel{
     public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
     {
         $sqlArticuls = "
-        SELECT `PARTTYPE`, `PARTNUM`, parts.`QUANTBM`, IFNULL(nouns_ru.NOUN, nouns_en.NOUN) TEXT
+        SELECT `PARTTYPE`, `PARTNUM`, parts.`QUANTBM`, IFNULL(nouns_ru.NOUN, nouns_en.NOUN) TEXT, IF (parts.`REPLFLG` = 'R', concat(parts.`REPTYPE`, parts.`REPPNO`), NULL) REPL,
+        IFNULL(descs_ru.DESCRIPTION, descs_en.DESCRIPTION) AS DESCRIPTION
         FROM `alltext_bm_parts2_v` parts
         LEFT OUTER JOIN `alltext_part_nouns_v` nouns_ru
         ON nouns_ru.NOUNIDX = parts.NOUNIDX AND nouns_ru.LANG = 'R'
         LEFT OUTER JOIN `alltext_part_nouns_v` nouns_en
         ON nouns_en.NOUNIDX = parts.NOUNIDX AND nouns_en.LANG = 'E'
+        LEFT OUTER JOIN `alltext_part_descs_v` descs_ru
+        ON ((descs_ru.DESCIDX) = parts.DESCIDX AND descs_ru.LANG = 'R')
+        LEFT OUTER JOIN `alltext_part_descs_v` descs_en
+        ON ((descs_en.DESCIDX) = parts.DESCIDX AND descs_en.LANG = 'E')
         WHERE `CATNUM` = :complectationCode
         AND `GROUPNUM` = :groupCode
         AND `SUBGRP` = :subGroupCode
@@ -800,9 +805,14 @@ class MercedesCatalogModel extends CatalogModel{
                     Constants::X2 => 0,
                     Constants::Y2 => 0
                 );
+                $articuls[$item['PARTTYPE'] . $item['PARTNUM']][Constants::NAME] = iconv('Windows-1251', 'UTF-8', $item['TEXT']);
+                $articuls[$item['PARTTYPE'] . $item['PARTNUM']][Constants::OPTIONS][Constants::QUANTITY] = substr($item['QUANTBM'], 0, 3);
+                $articuls[$item['PARTTYPE'] . $item['PARTNUM']][Constants::OPTIONS][Constants::START_DATE] = '00000000';
+                $articuls[$item['PARTTYPE'] . $item['PARTNUM']][Constants::OPTIONS][Constants::END_DATE] = '99999999';
+                $articuls[$item['PARTTYPE'] . $item['PARTNUM']][Constants::OPTIONS]['REPL'] = $item['REPL'];
+                $articuls[$item['PARTTYPE'] . $item['PARTNUM']][Constants::OPTIONS]['DESCRIPTION'] = iconv('Windows-1251', 'UTF-8', $item['DESCRIPTION']);
             }
         }
-
         return $articuls;
     }
 
@@ -829,9 +839,9 @@ class MercedesCatalogModel extends CatalogModel{
         LEFT OUTER JOIN `alltext_part_nouns_v` nouns_en
         ON nouns_en.NOUNIDX = parts.NOUNIDX AND nouns_en.LANG = 'E'
         LEFT OUTER JOIN `alltext_part_descs_v` descs_ru
-        ON (TRIM(descs_ru.DESCIDX) = parts.DESCIDX AND descs_ru.LANG = 'R')
+        ON ((descs_ru.DESCIDX) = parts.DESCIDX AND descs_ru.LANG = 'R')
         LEFT OUTER JOIN `alltext_part_descs_v` descs_en
-        ON (TRIM(descs_en.DESCIDX) = parts.DESCIDX AND descs_en.LANG = 'E')
+        ON ((descs_en.DESCIDX) = parts.DESCIDX AND descs_en.LANG = 'E')
         WHERE parts.`CATNUM` = :complectationCode
         AND parts.`GROUPNUM` = :groupCode
         AND `SUBGRP` = :subGroupCode

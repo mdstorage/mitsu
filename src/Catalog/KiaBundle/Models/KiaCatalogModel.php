@@ -548,11 +548,14 @@ class KiaCatalogModel extends CatalogModel{
         $query->bindValue('locale',  $locale);
         $query->execute();
         $aPncs = $query->fetchAll();
+
         $as = array();
         $count = array();
+
         foreach ($aPncs as $index=>$value){
             $as[$value['ref']] = ($this->getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $value['ref'], $options));
         }
+
     	foreach ($aPncs as &$aPnc){
             $sqlSchemaLabels = "
             SELECT x1, y1, x2, y2

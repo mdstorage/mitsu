@@ -1,0 +1,8 @@
+{% extends 'CatalogMercedesBundle:Catalog:_07_schema_commonArticuls.html.twig' %}
+{% block commonArticulItem %}
+    {% if commonArticul.getCode|replace({' ': ''}) == parameters.articul|replace({' ': ''}) %}
+        <b style=" color: red; ">{{ commonArticul.getCode }}</b>
+    {% else %}
+        {{ commonArticul.getCode }}
+    {% endif %}
+{% endblock commonArticulItem %}

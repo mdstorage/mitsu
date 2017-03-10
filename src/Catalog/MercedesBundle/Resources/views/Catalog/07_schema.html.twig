@@ -23,3 +23,7 @@
 {% endblock ajaxData %}
 {% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{% endblock subGroupPath %}
+
+{% block commonArticuls %}
+    {{ include('CatalogMercedesBundle:Catalog:_07_schema_commonArticuls.html.twig') }}
+{% endblock commonArticuls %}
