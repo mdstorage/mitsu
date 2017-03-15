@@ -35,44 +35,48 @@ class KiaVinModel extends KiaCatalogModel {
         $query->execute();
 
         $aData = $query->fetch();
-        $aNull = array('');
-        $apieces = array_diff(explode("|", $aData['data_regions']), $aNull);
 
-        if (count($apieces) == 1){
-            $aData['data_regions'] = $apieces[0];
-        }
-        else{
-            switch($aData['Country'])
-            {
-                case ('PUERTO RICO'): $reg = 'PUT';break;
-                case ('U.S.A'): $reg = 'USA';break;
-            }
+        if ($aData){
+            $aNull = array('');
+            $apieces = array_diff(explode("|", $aData['data_regions']), $aNull);
 
-            switch($aData['Region'])
-            {
-                case ('AUSTRALIA'): $reg = 'AUS';break;
-                case ('CANADA'): $reg = 'CAN';break;
-                case ('CENTRAL ASIA'): $reg = 'CIS';break;
-                case ('EUROPE'): $reg = 'EUR';break;
-                case ('GENERAL'): $reg = 'GEN';break;
-                case ('GENERAL(LHD)'): $reg = 'GEN';break;
-                case ('GENERAL(RHD)'): $reg = 'GEN';break;
-                case ('MIDDLE EAST'): $reg = 'MES';break;
-                case ('KOREA'): $reg = 'MES';break;
+            if (count($apieces) == 1){
+                $aData['data_regions'] = $apieces[0];
             }
-            if (in_array($reg, $apieces))
-            {
-                $aData['data_regions'] = $reg;
+            else{
+                switch($aData['Country'])
+                {
+                    case ('PUERTO RICO'): $reg = 'PUT';break;
+                    case ('U.S.A'): $reg = 'USA';break;
+                }
+
+                switch($aData['Region'])
+                {
+                    case ('AUSTRALIA'): $reg = 'AUS';break;
+                    case ('CANADA'): $reg = 'CAN';break;
+                    case ('CENTRAL ASIA'): $reg = 'CIS';break;
+                    case ('EUROPE'): $reg = 'EUR';break;
+                    case ('GENERAL'): $reg = 'GEN';break;
+                    case ('GENERAL(LHD)'): $reg = 'GEN';break;
+                    case ('GENERAL(RHD)'): $reg = 'GEN';break;
+                    case ('MIDDLE EAST'): $reg = 'MES';break;
+                    case ('KOREA'): $reg = 'MES';break;
+                }
+                if (in_array($reg, $apieces))
+                {
+                    $aData['data_regions'] = $reg;
+                }
             }
-        }
-        $complectations = $this->getComplectations($aData['data_regions'], $aData['family'], $aData['catalogue_code'].'_'.$aData['cat_folder'], $aData['model']);
-        $complectationRes = array();
+            $complectations = $this->getComplectations($aData['data_regions'], $aData['family'], $aData['catalogue_code'].'_'.$aData['cat_folder'], $aData['model']);
+            $complectationRes = array();
             for ($i = 1; $i < 11; $i++) {
                 $ten['f'.$i] = iconv("Windows-1251", "UTF-8", $complectations['ten' . $i]);
                 if ($complectations['ken' . $i]){
                     $complectationRes['f'.$i] = $ten['f'.$i].': (' . $complectations['f' . $i] . ') ' . $complectations['ken' . $i];
                 }
             }
+        }
+
         $result = array();
         if ($aData) {
             $result = array(
