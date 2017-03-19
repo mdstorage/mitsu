@@ -1,5 +1,5 @@
 {% trans_default_domain 'common' %}
-{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% extends 'CatalogCommonBundle:Catalog:07_schema_laximo.html.twig' %}
 {% use 'CatalogToyotaBundle::toyota.base.html.twig' %}
     {% set loc = app.request.get('_locale')~'_'~app.request.get('_locale')|upper %}
 {% block breadcrumbs %}
@@ -63,24 +63,24 @@
 
                                 </script>
                             {% endblock pncScript %}
-                            
-{% block image %}
 
-    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveSchema.getOption('disk')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="600px" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
-
-{% endblock image %}
+{% block imagePath %}
+    {{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogtoyota/Img/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveSchema.getOption('disk')~'/'~oContainer.getActiveSchema.getCode~'.png') }}
+{% endblock imagePath %}
 
 {% block groupRuname %}{{ oContainer.getActiveGroup.getRuname|trans({}, 'toyota') }}{% endblock groupRuname %}
+{% block countArticulsInPnc %}1{% endblock countArticulsInPnc %}
 {% block subGroupRuname %}
     {{ oContainer.getActiveGroup.getSubGroup(parameters.subGroupCode).getRuname(app.request.get('_locale')) }}
 {% endblock subGroupRuname %}
 
+{% block subGroupPath %}{{ path('catalog_toyota_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
 
 
 {% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 
 
-{% block refGroup %}
+{#{% block refGroup %}
     <div>
         <a href="{{ path('catalog_toyota_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}">({{ refGroup.getCode }}) {{ refGroup.getRuname }}</a>
     </div>
@@ -92,4 +92,4 @@
                                         {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}
                                     " href="{{ path('catalog_toyota_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}" id="{{ refGroup.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" data-name="{% block dataNamerefGroup %}{{ refGroup.getCode }}{% endblock dataNamerefGroup %}"/>
     {% endfor %}
-{% endblock refGroup %}
+{% endblock refGroup %}#}

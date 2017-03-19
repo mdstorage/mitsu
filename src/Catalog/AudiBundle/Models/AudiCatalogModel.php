@@ -439,10 +439,10 @@ class AudiCatalogModel extends CatalogModel{
                    foreach ($value['clangjap'] as $item1)
                    {
                    $pncs[str_replace(array('(', ')'),'',$value['btpos'])][Constants::OPTIONS][Constants::COORDS][$item1['cLeft']] = array(
-                       Constants::X2 => floor(($item1['cLeft'])),
-                       Constants::Y2 => $item1['cTop'],
-                       Constants::X1 => $item1['cWidth'] + $item1['cLeft'],
-                       Constants::Y1 => $item1['cHeight'] + $item1['cTop']);
+                       Constants::X1 => floor(($item1['cLeft'])),
+                       Constants::Y1 => $item1['cTop'],
+                       Constants::X2 => $item1['cWidth'] + $item1['cLeft'],
+                       Constants::Y2 => $item1['cHeight'] + $item1['cTop']);
 
                    }
 

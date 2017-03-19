@@ -1,4 +1,4 @@
-{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% extends 'CatalogCommonBundle:Catalog:07_schema_laximo.html.twig' %}
 {% use 'CatalogMiniBundle::mini.base.html.twig' %}
 {% block breadcrumbs %}
     <a href="{% if  app.request.get('token') %} {{ path('catalog_mini_token', parameters) }} {% else %} {{ path('catalog_mini') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
@@ -61,11 +61,11 @@
                                 </script>
                             {% endblock pncScript %}
                             
-{% block image %}
-    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogbmw/grafik/w_grafik/'~oContainer.getActiveSchema.getCode) }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+{% block imagePath %}
+    {{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogbmw/grafik/w_grafik/'~oContainer.getActiveSchema.getCode) }}
+{% endblock imagePath %}
 
-{% endblock image %}
-
+{% block countArticulsInPnc %}1{% endblock countArticulsInPnc %}
 
 {% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 

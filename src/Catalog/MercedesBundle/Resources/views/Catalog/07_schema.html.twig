@@ -1,4 +1,4 @@
-{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% extends 'CatalogCommonBundle:Catalog:07_schema_laximo.html.twig' %}
 {% use 'CatalogMercedesBundle::mercedes.base.html.twig' %}
 {% block breadcrumbs %}
     <a href="{% if  app.request.get('token') %} {{ path('catalog_mercedes_token', parameters) }} {% else %} {{ path('catalog_mercedes') }} {% endif %}">Выбрать регион, модель, модификацию</a> /
@@ -9,20 +9,62 @@
 {% endblock breadcrumbs %}
 {% set schema = oContainer.getActiveSchema %}
 
-{% block image %}
-    <img src="{{ ('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png')|file_exists() ? asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png') : asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmercedes/images/BM_IMAGES_ARC/'~schema.getCode~'.png') }}" class="img-responsive" usemap="#{{ schema.getCode }}" alt="{{ schema.getCode }}"/>
-{% endblock image %}
+{% block imagePath %}
+    {{ ('bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png')|file_exists() ? asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmercedes/images/BM_IMAGES/'~schema.getCode~'.png') : asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmercedes/images/BM_IMAGES_ARC/'~schema.getCode~'.png') }}
+{% endblock imagePath %}
 
-{% block ajaxUrl %}{{ path('catalog_mercedes_articuls') }}{% endblock ajaxUrl %}
-{% block ajaxData %}
-    {{ parent() }}
-    , groupCode: '{{ parameters.groupCode }}',
-    complectationCode: '{{ parameters.complectationCode }}',
-    articul: '{{ parameters.articul }}',
-    token: '{{ parameters.token }}'
-{% endblock ajaxData %}
+							{% block pncScript %}
+                                <script>
+                                    $("#pnc_{{ pnc.getCode }}").on("click", function(){
+
+                                        {% block pncClick %}
+
+                                        $("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
+
+                                        $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogcommon/images/loading.gif") }} height="15px" />');
+                                        $.ajax({
+                                            type:   'POST',
+                                            async:  false,
+                                            url:    "{{ path('catalog_mercedes_articuls') }}",
+                                            data:   {
+                                                regionCode: '{{ oContainer.getActiveRegion.getCode }}',
+                                                modelCode: '{{ oContainer.getActiveModel.getCode }}',
+                                                modificationCode: '{{ oContainer.getActiveModification.getCode }}',
+                                                complectationCode: '{{ oContainer.getActiveComplectation.getCode }}',
+                                                groupCode: '{{ oContainer.getActiveGroup.getCode }}',
+                                                subGroupCode: '{{ parameters.subGroupCode }}',
+                                                pncCode: '{{ pnc.getCode }}',
+                                                articul: '{{ parameters.articul }}',
+                                                options: '{{ oContainer.getActiveSchema.getOptions|json_encode()|raw }}',
+                                                token: '{{ parameters.token }}'
+                                            },
+                                            success: function(data) {
+                                                $("#articul_for_pnc{{ pnc.getCode }}").html(data);
+                                            }
+                                        });
+
+                                        $.scrollTo("#pnc_{{ pnc.getCode }}", {duration:1500});
+
+
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
+                                        $("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
+
+                                        {% endblock pncClick %}
+                                    });
+                                    $("#pnc_{{ pnc.getCode }}").on("mouseover", function(){
+                                        $(this).css("cursor", "pointer");
+                                        $(this).addClass("btn-info");
+                                    });
+                                    $("#pnc_{{ pnc.getCode }}").on("mouseout", function(){
+                                        $(this).removeClass("btn-info");
+                                    });
+
+                                </script>
+                            {% endblock pncScript %}
 {% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{% endblock subGroupPath %}
+{% block countArticulsInPnc %}1{% endblock countArticulsInPnc %}
 
 {% block commonArticuls %}
     {{ include('CatalogMercedesBundle:Catalog:_07_schema_commonArticuls.html.twig') }}

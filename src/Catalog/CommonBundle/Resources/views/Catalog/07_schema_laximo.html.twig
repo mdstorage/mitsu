@@ -143,7 +143,7 @@
                         {% for refGroup in oContainer.getActiveSchema.getRefGroups %}
                             {% block refGroup %}
                                 <div>
-                                    <a href="{{ path('catalog_kia_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}">{% block refGroupName %}({{ refGroup.getCode }}) {{ refGroup.getRuname }}{% endblock refGroupName %}</a>
+                                    <a href="{% block subGroupPath %}{% endblock subGroupPath %}">{% block refGroupName %}({{ refGroup.getCode }}) {{ refGroup.getRuname }}{% endblock refGroupName %}</a>
                                 </div>
                             {% endblock refGroup %}
                         {% endfor %}

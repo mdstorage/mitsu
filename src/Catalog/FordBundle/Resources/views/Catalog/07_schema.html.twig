@@ -1,5 +1,5 @@
 {% trans_default_domain 'common' %}
-{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% extends 'CatalogCommonBundle:Catalog:07_schema_laximo.html.twig' %}
 {% use 'CatalogFordBundle::ford.base.html.twig' %}
 {% block breadcrumbs %}
     <a href="{% if  app.request.get('token') %} {{ path('catalog_ford_token', parameters) }} {% else %} {{ path('catalog_ford') }} {% endif %}">{{ 'Регион, модель, модификация'|trans }} ({{ oContainer.getActiveRegion.getRuname }},
@@ -77,43 +77,8 @@
     {% endfor %}
 {% endblock refGroups %}
 
-{% block imageviewport %}
-    <div class="row">
-        <div class="row" style="height: 600px;">
-            <div class="guayaquil_unit_icons">
-                <div class="guayaquil_zoom cboxElement" title="{{ 'Схема'|trans }}: {{ oContainer.getActiveSchema.getCode }}"
-                     full="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogford/Images/'~oContainer.getActiveModification.getOption('folder')~'/'~oContainer.getActiveSchema.getCode~'.png') }}">
-                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/images/zoom.png') }}"/>
-                </div>
-            </div>
-            <div id="viewport" class="inline_block" style="position: absolute; border: 1px solid rgb(119, 119, 119); background: white none repeat scroll 0% 0%; height:600px; overflow: auto;">
-                {{ block('image1') }}
-            </div>
-        </div>
-        <br>
-        <div class="row">
-            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/images/mouse_wheel.png') }}"/>
-                </div>
-                <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
-                    - {{ 'масштабирование изображения'|trans }}
-                </div>
-            </div>
-            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/images/lmb.png') }}">
-                    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/images/move.png') }}"/>
-                </div>
-                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                    - {{ 'прокрутка'|trans }}
-                </div>
-            </div>
-        </div>
-    </div>
-{% endblock imageviewport %}
 
-{% block image1 %}
+{% block imagecbox %}
     {% for pnc in oContainer.getActiveSchema.getPncs %}
         {% for coords in pnc.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
             <div class="dragger g_highlight" id="{{ pnc.getCode|md5 ~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" name="{{ pnc.getCode|md5 }}" style="position: absolute;
@@ -145,10 +110,15 @@
             </a>
         {% endfor %}
     {% endfor %}
-    <img class="dragger" onload="rescaleImage(-100);" src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogford/Images/'~oContainer.getActiveModification.getOption('folder')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
-{% endblock image1 %}
+    <img class="dragger" onload="rescaleImage(-100);" src="{{ block('imagePath') }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+{% endblock imagecbox %}
 
 {% block subGroupPath %}{{ path('catalog_ford_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
+
+
+{% block imagePath %}
+    {{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogford/Images/'~oContainer.getActiveModification.getOption('folder')~'/'~oContainer.getActiveSchema.getCode~'.png') }}
+{% endblock imagePath %}
 
 {% block summary %}
     <div class="col-lg-4">
