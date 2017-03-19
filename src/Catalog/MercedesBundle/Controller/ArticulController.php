@@ -142,17 +142,17 @@ class ArticulController extends BaseController{
 
         $articulSchemas = $this->model()->getArticulSchemas($articul, $complectationCode, $groupCode, $subGroupCode);
         if (!$articulSchemas && $this->model()->getArticulCatnums($articul)) {
-            return $this->render($this->bundle() . ':09_common_articuls.html.twig', array(
+            /*return $this->render($this->bundle() . ':09_common_articuls.html.twig', array(
                 'oContainer' => Factory::createContainer()->setActiveArticul(
                         Factory::createArticul($articul)
                     ),
                 'parameters' => $parameters
 
-            ));
+            ));*/
         }
-        $this->addFilter('articulSchemasFilter', array(
+        /*$this->addFilter('articulSchemasFilter', array(
             'articulSchemas' => $articulSchemas
-        ));
+        ));*/
 
         return parent::schemasAction($request, $regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $articul, $token);
     }

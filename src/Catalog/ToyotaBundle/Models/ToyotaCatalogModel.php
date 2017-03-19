@@ -800,9 +800,9 @@ class ToyotaCatalogModel extends CatalogModel{
                    {
                        $pncs[$value['number']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
                            Constants::X2 => floor((($item1['x2']))),
-                           Constants::Y2 => $item1['y1'],
+                           Constants::Y1 => $item1['y1'],
                            Constants::X1 => floor($item1['x1']),
-                           Constants::Y1 => $item1['y2']);
+                           Constants::Y2 => $item1['y2']);
 
                    }
 

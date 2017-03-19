@@ -1,4 +1,4 @@
-{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% extends 'CatalogCommonBundle:Catalog:07_schema_laximo.html.twig' %}
 {% use 'CatalogCadillacBundle::cadillac.base.html.twig' %}
 {% block breadcrumbs %}
     <a href="{% if  app.request.get('token') %} {{ path('catalog_cadillac_token', parameters) }} {% else %} {{ path('catalog_cadillac') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
@@ -10,7 +10,7 @@
 {% endblock breadcrumbs %}
 
 
-{% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
+{% block refGroupsHead %}<h4>{{ 'Связанные изображения'|trans }}</h4>{% endblock refGroupsHead %}
 
 							{% block pncScript %}
                                 <script>
@@ -62,14 +62,11 @@
                                 </script>
                             {% endblock pncScript %}
                             
-{% block image %}
- 
-    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloggm/Images/B/'~oContainer.getActiveSchema.getOption('IMAGE_NAME')~'.png') }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+{% block imagePath %}
+    {{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloggm/Images/B/'~oContainer.getActiveSchema.getOption('IMAGE_NAME')~'.png') }}
+{% endblock imagePath %}
 
-{% endblock image %}
-
-
-
+{% block countArticulsInPnc %}1{% endblock countArticulsInPnc %}
 
 {% block subGroupPath %}{{ path('catalog_cadillac_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
 

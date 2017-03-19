@@ -1,4 +1,5 @@
-{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% trans_default_domain 'common' %}
+{% extends 'CatalogCommonBundle:Catalog:07_schema_laximo.html.twig' %}
 {% use 'CatalogAudiBundle::audi.base.html.twig' %}
 {% block breadcrumbs %}
     <a href="{% if  app.request.get('token') %} {{ path('catalog_audi_token', parameters) }} {% else %} {{ path('catalog_audi') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
@@ -10,18 +11,13 @@
 
 {% block complectation %}
 {% endblock complectation %}
-
-{% block refGroupsHead %}<h4>Связанные изображения</h4>{% endblock refGroupsHead %}
-
+{% block refGroupsHead %}<h4>{{ 'Связанные изображения'|trans }}</h4>{% endblock refGroupsHead %}
 							{% block pncScript %}
                                 <script>
                                     $("#pnc_{{ pnc.getCode }}").on("click", function(){
-                                    	
                                     	{% block pncClick %}
-                                    	
                                     	$("#articul_for_pnc{{ pnc.getCode }}").toggleClass("hidden");
                                         $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-plus");
-                                        
                                         $("#articul_for_pnc{{ pnc.getCode }}").html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogcommon/images/loading.gif") }} height="15px" />');
                                         $.ajax({
                                             type:   'POST',
@@ -41,13 +37,9 @@
                                                 $("#articul_for_pnc{{ pnc.getCode }}").html(data);
                                             }
                                         });
-                                        
                                         $.scrollTo("#pnc_{{ pnc.getCode }}", {duration:1500});
-                                        
-                                        
                                         $("#pnc_{{ pnc.getCode }}").toggleClass("glyphicon-minus");
                                         $("#pnc_{{ pnc.getCode }}").toggleClass("small btn-default");
-                                        
                                         {% endblock pncClick %}
                                     });
                                     $("#pnc_{{ pnc.getCode }}").on("mouseover", function(){
@@ -57,15 +49,10 @@
                                     $("#pnc_{{ pnc.getCode }}").on("mouseout", function(){
                                         $(this).removeClass("btn-info");
                                     });
-   
                                 </script>
                             {% endblock pncScript %}
-                            
-{% block image %}
- 
-    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogaudi/Images/Bilder/'~oContainer.getActiveSchema.getOption('cd')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" height="600" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
-
-{% endblock image %}
-
-
+{% block imagePath %}
+    {{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogaudi/Images/Bilder/'~oContainer.getActiveSchema.getOption('cd')~'/'~oContainer.getActiveSchema.getCode~'.png') }}
+{% endblock imagePath %}
 {% block subGroupPath %}{{ path('catalog_audi_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
+{% block countArticulsInPnc %}1{% endblock countArticulsInPnc %}

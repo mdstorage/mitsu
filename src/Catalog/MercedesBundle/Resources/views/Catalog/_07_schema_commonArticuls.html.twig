@@ -1,0 +1,34 @@
+                            <div class="table-responsive">
+                                <table class="table small">
+                                    <thead>
+                                    <tr>
+                                        <th>Артикул</th>
+                                        <th>Кол-во</th>
+                                        <th>Период</th>
+                                        <th>Примеч.</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for commonArticul in oContainer.getActiveSchema.getCommonArticuls %}
+                                        <tr>
+                                            <td><a href="{% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}" target="_blank">{% block commonArticulItem %}{{ commonArticul.getCode }}{% endblock commonArticulItem %}</a>
+                                                {% if commonArticul.getOption('REPL') %}<br>Замена: {{ commonArticul.getOption('REPL')}} {% endif %}
+                                            </td>
+                                            <td>{{ commonArticul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::QUANTITY')) }}</td>
+                                            <td>{{ commonArticul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::START_DATE'))|date_convertor }} - {{ commonArticul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::END_DATE'))|date_convertor }}</td>
+                                            <td class="small">{{ commonArticul.getRuname }}
+                                                {% if commonArticul.getOption('DESCRIPTION') is not null %}<br>{{ commonArticul.getOption('DESCRIPTION') }}{% endif %}
+                                            </td>
+                                        </tr>
+                                        {% for coords in commonArticul.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::COORDS')) %}
+                                            <area shape="rect" coords="
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y1')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::X2')] }},
+                                        {{ coords[constant('Catalog\\CommonBundle\\Components\\Constants::Y2')] }}
+                                    " target="_blank" href="{{ block('commonArticulPath') }}" id="{{ commonArticul.getCode~coords[constant('Catalog\\CommonBundle\\Components\\Constants::X1')] }}" data-name="{% block dataNameCommonArticul %}{{ commonArticul.getCode }}{% endblock dataNameCommonArticul %}"/>
+                                        {% endfor %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>

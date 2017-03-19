@@ -1,4 +1,4 @@
-{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% extends 'CatalogCommonBundle:Catalog:07_schema_laximo.html.twig' %}
 {% use 'CatalogMazdaBundle::mazda.base.html.twig' %}
 {% block breadcrumbs %}
     <a href="{% if  app.request.get('token') %} {{ path('catalog_mazda_token', parameters) }} {% else %} {{ path('catalog_mazda') }} {% endif %}">Выбрать регион, модель, модификацию</a> /
@@ -9,9 +9,9 @@
 
 {% block complectation %}{% endblock complectation %}
 
-{% block image %}
-    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmazda/images/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/image/'~oContainer.getActiveSchema.getCode|slice(0,3)~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="inherit" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getRuname }}"/>
-{% endblock image %}
+{% block imagePath %}
+    {{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogmazda/images/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveSchema.getOption(constant('Catalog\\CommonBundle\\Components\\Constants::CD'))~'/image/'~oContainer.getActiveSchema.getCode|slice(0,3)~'/'~oContainer.getActiveSchema.getCode~'.png') }}
+{% endblock imagePath %}
 
 {% block pncScript %}
     <script>
@@ -60,5 +60,6 @@
 
     </script>
 {% endblock pncScript %}
+{% block countArticulsInPnc %}1{% endblock countArticulsInPnc %}
 {% block commonArticulPath %}{{ parameters.redirectAdress|replace({ '{article}': commonArticul.getCode }) }}{% endblock commonArticulPath %}
 {% block subGroupPath %}{{ path('catalog_mazda_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}

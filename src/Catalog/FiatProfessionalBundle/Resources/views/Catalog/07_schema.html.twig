@@ -1,4 +1,4 @@
-{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% extends 'CatalogCommonBundle:Catalog:07_schema_laximo.html.twig' %}
 {% use 'CatalogFiatProfessionalBundle::fiatprofessional.base.html.twig' %}
 {% block breadcrumbs %}
     <a href="{% if  app.request.get('token') %} {{ path('catalog_fiatprofessional_token', parameters) }} {% else %} {{ path('catalog_fiatprofessional') }} {% endif %}">Регион, модель, модификация ({{ oContainer.getActiveRegion.getRuname }},
@@ -62,11 +62,10 @@
                                 </script>
                             {% endblock pncScript %}
                             
-{% block image %}
- 
-    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogfiat/Imgs/images/'~oContainer.getActiveSchema.getOption('catalog')~'/'~oContainer.getActiveSchema.getOption('picture')) }}" width="100%" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
+{% block imagePath %}
+    {{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogfiat/Imgs/images/'~oContainer.getActiveSchema.getOption('catalog')~'/'~oContainer.getActiveSchema.getOption('picture')) }}
+{% endblock imagePath %}
 
-{% endblock image %}
-
+{% block countArticulsInPnc %}1{% endblock countArticulsInPnc %}
 
 {% block subGroupPath %}{{ path('catalog_fiatprofessional_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}

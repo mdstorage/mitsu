@@ -1,0 +1,14 @@
+{% extends 'CatalogMercedesBundle:Catalog:_07_schema_commonArticuls.html.twig' %}
+{% block commonArticulItem %}
+    {% if commonArticul.getCode|replace({' ': ''}) == parameters.articul|replace({' ': ''}) %}
+        <b style=" color: red; " id="commonArticul_{{ commonArticul.getCode|replace({ ' ': '' }) }}">{{ commonArticul.getCode }}</b>
+        <script>
+            $(document).ready(function() {
+                $.scrollTo("#commonArticul_{{ commonArticul.getCode|replace({ ' ': '' }) }}", {duration:1500});
+            });
+        </script>
+    {% else %}
+        {{ commonArticul.getCode }}
+    {% endif %}
+
+{% endblock commonArticulItem %}

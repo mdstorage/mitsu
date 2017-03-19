@@ -1,4 +1,4 @@
-{% extends 'CatalogCommonBundle:Catalog:07_schema.html.twig' %}
+{% extends 'CatalogCommonBundle:Catalog:07_schema_laximo.html.twig' %}
 {% use 'CatalogLandRoverBundle::landrover.base.html.twig' %}
 {% block breadcrumbs %}
     <a href="{% if  app.request.get('token') %} {{ path('catalog_landrover_token', parameters) }} {% else %} {{ path('catalog_landrover') }} {% endif %}">Модель ({{ oContainer.getActiveModel.getRuname }})</a> /
@@ -90,12 +90,11 @@
 
 
                             
-{% block image %}
+{% block imagePath %}
+    {{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloglandrover/Images/'~oContainer.getActiveSchema.getOption('pictureFolder')~'/'~oContainer.getActiveSchema.getCode~'.png') }}
+{% endblock imagePath %}
 
-
-    <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloglandrover/Images/'~oContainer.getActiveSchema.getOption('pictureFolder')~'/'~oContainer.getActiveSchema.getCode~'.png') }}" width="500" usemap="#{{ oContainer.getActiveSchema.getCode }}" alt="{{ oContainer.getActiveSchema.getCode }}"/>
-
-{% endblock image %}
+{% block countArticulsInPnc %}1{% endblock countArticulsInPnc %}
 
 
 {% block subGroupPath %}{{ path('catalog_landrover_group', parameters|merge({'subGroupCode': refGroup.getCode})) }}{% endblock subGroupPath %}
