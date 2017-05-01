@@ -958,7 +958,7 @@ class MercedesCatalogModel extends CatalogModel{
                     'CODEB' => $item['CODEB'],
                     'REPL' => $item['REPL'],
                     'FOOTNOTES' => empty($B[$item['PARTTYPE'] . $item['PARTNUM']])?'':($B[$item['PARTTYPE'] . $item['PARTNUM']]),
-                    'NEUTRAL' => empty(trim($item['NEUTRAL']))?'':(trim($item['NEUTRAL']))
+//                    'NEUTRAL' => empty(trim($item['NEUTRAL']))?'':(trim($item['NEUTRAL']))
                 )
             );
         }
