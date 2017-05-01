@@ -10,15 +10,13 @@ namespace Catalog\BmwMotoBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
 
-use Catalog\BmwMotoBundle\Components\BmwMotoConstants;
-
-class BmwMotoVinModel extends BmwMotoCatalogModel {
+class BmwMotoVinModel extends BmwMotoCatalogModel
+{
 
     public function getVinFinderResult($vin)
     {
-        $vin = substr($vin, strlen($vin)-7, 7);
+        $vin = substr($vin, strlen($vin) - 7, 7);
 
-        
         $sql = "
        select distinct
 fgstnr_mospid Modellspalte,
@@ -53,34 +51,28 @@ where fgstnr_von <= :vin and fgstnr_bis >= :vin and fgstnr_anf  = :subVin
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('vin', $vin);
-        $query->bindValue('subVin', substr($vin,0,2));
+        $query->bindValue('subVin', substr($vin, 0, 2));
         $query->execute();
 
         $aData = $query->fetch();
 
         if ($aData) {
-            $result = array(
-                'region' => $aData['Region'],
-                'model' => $aData['ExtBaureihe'],
-                'modif' => $aData['Modell'],
+            $result = [
+                'region'             => $aData['Region'],
+                'model'              => $aData['ExtBaureihe'],
+                'modif'              => $aData['Modell'],
                 Constants::PROD_DATE => $aData['Produktionsdatum'],
-                'wheel' => $aData['Lenkung'],
-                'modelforGroups' => $aData['Baureihe'].'_'.$aData['Karosserie'],
-                'modifforGroups' => $aData['Modellspalte'],
-                'complectationCode' => $aData['Lenkung'].$aData['Getriebe'].$aData['Produktionsdatum'],
-                'engine' => $aData['Motor'],
-                'korobka' => $aData['Getriebe'],
-            );
+                'wheel'              => $aData['Lenkung'],
+                'modelforGroups'     => $aData['Baureihe'] . '_' . $aData['Karosserie'],
+                'modifforGroups'     => $aData['Modellspalte'],
+                'complectationCode'  => $aData['Lenkung'] . $aData['Getriebe'] . $aData['Produktionsdatum'],
+                'engine'             => $aData['Motor'],
+                'korobka'            => $aData['Getriebe'],
+            ];
         }
-        else {print_r('Ничего не найдено'); die;}
-
-
 
         return $result;
     }
-    
 
-   
-   
-        
+
 } 

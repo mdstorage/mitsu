@@ -10,17 +10,13 @@ namespace Catalog\MitsubishiBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
 
-use Catalog\MitsubishiBundle\Components\MitsubishiConstants;
-
-class MitsubishiVinModel extends MitsubishiCatalogModel {
-
+class MitsubishiVinModel extends MitsubishiCatalogModel
+{
     public function getVinFinderResult($vin)
     {
-
-
-        $chassis = substr($vin, 0, 10);
+        $chassis  = substr($vin, 0, 10);
         $serialNo = substr($vin, 10);
-        $sql = "
+        $sql      = "
         SELECT
           v.Catalog as catalog, vv.Catalog as catalog,
           v.Model as model, vv.Model as model,
@@ -59,29 +55,24 @@ class MitsubishiVinModel extends MitsubishiCatalogModel {
 
         $aData = $query->fetch();
 
-
-
-        $result = array();
+        $result = [];
 
         if ($aData) {
-            $result = array(
-                'model' => $aData['descEnModel'],
+            $result = [
+                'model'           => $aData['descEnModel'],
                 'model_for_group' => $aData['Catalog_Num'],
-                'modif' => '('.$aData['model'].') '.$aData['descEnModif'],
+                'modif'           => '(' . $aData['model'] . ') ' . $aData['descEnModif'],
                 'modif_for_group' => $aData['model'],
-                'compl' => '('.$aData['classification'].') '.$aData['descEnCompl'],
+                'compl'           => '(' . $aData['classification'] . ') ' . $aData['descEnCompl'],
                 'compl_for_group' => $aData['classification'],
 
                 Constants::PROD_DATE => $aData['prodDate'],
-                'region' => $aData['catalog'],
-                'exterior' => $aData['exterior'],
-                'interior' => $aData['interior']
-                );
+                'region'             => $aData['catalog'],
+                'exterior'           => $aData['exterior'],
+                'interior'           => $aData['interior'],
+            ];
         }
-
 
         return $result;
     }
-
-
 } 

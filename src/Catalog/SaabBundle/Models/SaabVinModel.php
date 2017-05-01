@@ -10,14 +10,10 @@ namespace Catalog\SaabBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
 
-use Catalog\SaabBundle\Components\SaabConstants;
-
-class SaabVinModel extends SaabCatalogModel {
-
+class SaabVinModel extends SaabCatalogModel
+{
     public function getVinFinderResult($vin)
     {
-
-
         $sql = "
        select distinct
 vin_carline.CarLine carline,
@@ -38,35 +34,24 @@ and vin_engine.ID = SUBSTRING(:vin,8,1) and vin_year.nYear BETWEEN vin_engine.Fr
 and vin_assemblyplant.ID = SUBSTRING(:vin,11,1) and vin_year.nYear BETWEEN vin_assemblyplant.From_Year AND vin_assemblyplant.To_Year
 and REPLACE (vin_carline.CarLine , 'Saab ' , '') = model.TYPE_OF_CAR and vin_year.nYear BETWEEN model.FROM_MODEL_YEAR AND model.TO_MODEL_YEAR
         ";
-
         $query = $this->conn->prepare($sql);
         $query->bindValue('vin', $vin);
         $query->execute();
 
         $aData = $query->fetch();
-
         if ($aData) {
-            $result = array(
-                'model' => $aData['carline'],
-                'market' => iconv('cp1251', 'utf8', $aData['market']),
+            $result = [
+                'model'              => $aData['carline'],
+                'market'             => iconv('cp1251', 'utf8', $aData['market']),
                 Constants::PROD_DATE => $aData['nYear'],
-                'bodytype' => iconv('cp1251', 'utf8', $aData['bodytype']),
-                'gearbox' => iconv('cp1251', 'utf8', $aData['gearbox']),
-                'engine' => iconv('cp1251', 'utf8', $aData['engine']),
-                'assemblyplant' => iconv('cp1251', 'utf8', $aData['assemblyplant']),
-                'model_no' => $aData['model_no'],
-                'serial' => substr($vin, strlen($vin)-6, strlen($vin))
-            );
+                'bodytype'           => iconv('cp1251', 'utf8', $aData['bodytype']),
+                'gearbox'            => iconv('cp1251', 'utf8', $aData['gearbox']),
+                'engine'             => iconv('cp1251', 'utf8', $aData['engine']),
+                'assemblyplant'      => iconv('cp1251', 'utf8', $aData['assemblyplant']),
+                'model_no'           => $aData['model_no'],
+                'serial'             => substr($vin, strlen($vin) - 6, strlen($vin)),
+            ];
         }
-        else {print_r('Ничего не найдено'); die;}
-
-
-
         return $result;
     }
-    
-
-   
-   
-        
 } 
