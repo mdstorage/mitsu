@@ -1,22 +1,23 @@
 <?php
+
 namespace Catalog\CommonBundle\Components;
 
+class Constants
+{
 
-class Constants {
-
-    const CODE = 'code';
-    const NAME = 'name';
-    const OPTIONS = 'options';
-    const CD = 'cd';
-    const PICTURE = 'picture';
-    const COORDS = 'coords';
-    const QUANTITY = 'quantity';
-    const START_DATE = 'start_date';
-    const END_DATE = 'end_date';
-    const PROD_DATE = 'PROD_DATE';
-    const ARTICUL = 'ARTICUL';
+    const CODE          = 'code';
+    const NAME          = 'name';
+    const OPTIONS       = 'options';
+    const CD            = 'cd';
+    const PICTURE       = 'picture';
+    const COORDS        = 'coords';
+    const QUANTITY      = 'quantity';
+    const START_DATE    = 'start_date';
+    const END_DATE      = 'end_date';
+    const PROD_DATE     = 'PROD_DATE';
+    const ARTICUL       = 'ARTICUL';
     const ARTICUL_TOKEN = 'ARTICUL_TOKEN';
-    const COOKIEHOST = 'COOKIEHOST';
+    const COOKIEHOST    = 'COOKIEHOST';
 
 
     const X1 = 'x1';
@@ -26,10 +27,10 @@ class Constants {
 
     const VIN = 'VIN';
 
-    const FIND_PATH = 'http://ruli.by/search/number/?article={article}';
+    const FIND_PATH     = 'http://ruli.by/search/number/?article={article}';
     const PREFIX_STATIC = 'https://static.vincat.ru';
     /*const PREFIX_STATIC = '';*/
 
-    const TOKEN = 'TOKEN';
+    const TOKEN   = 'TOKEN';
     const REFERER = 'https://icar.by';
 } 

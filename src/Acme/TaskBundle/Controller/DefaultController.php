@@ -3,90 +3,135 @@
 namespace Acme\TaskBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
-use Catalog\CommonBundle\Components\Constants;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Catalog\CommonBundle\Components\Factory;
 
 class DefaultController extends Controller
 {
     public function indexAction()
     {
-        $marks = array('Hyundai', 'KIA', 'Honda', 'Suzuki', 'Subaru', 'Mazda', 'Mercedes', 'Smart', 'BMW', 'BMWMoto', 'Mini', 'RollsRoyce', 'Saab', 'Audi', 'Volkswagen',
-            'Seat', 'Skoda', 'HondaEurope', 'Fiat', 'FiatProfessional', 'Lancia', 'AlfaRomeo', 'Abarth', 'Nissan', 'Infiniti', 'LandRover', 'ChevroletUsa', 'Cadillac', 'Pontiac',
-            'Buick', 'Hummer', 'Saturn', 'GMC', 'Oldsmobile', 'Toyota', 'Lexus', 'Ford');
+        $marks = [
+            'Hyundai',
+            'KIA',
+            'Honda',
+            'Suzuki',
+            'Subaru',
+            'Mazda',
+            'Mercedes',
+            'Smart',
+            'BMW',
+            'Mini',
+            'RollsRoyce',
+            'Saab',
+            'Audi',
+            'Volkswagen',
+            'Seat',
+            'Skoda',
+            'HondaEurope',
+            'Fiat',
+            'FiatProfessional',
+            'Lancia',
+            'AlfaRomeo',
+            'Abarth',
+            'Nissan',
+            'Infiniti',
+            'LandRover',
+            'ChevroletUsa',
+            'Cadillac',
+            'Pontiac',
+            'Buick',
+            'Hummer',
+            'Saturn',
+            'GMC',
+            'Oldsmobile',
+            'Toyota',
+            'Lexus',
+            'Ford',
+            'Mitsubishi',
+        ];
         sort($marks);
         reset($marks);
-        return $this->render('AcmeTaskBundle:Default:index.html.twig', array('marks' => $marks));
+        return $this->render('AcmeTaskBundle:Default:index.html.twig', ['marks' => $marks]);
     }
 
     public function resultAction(Request $request)
     {
-
         if ($request->isXmlHttpRequest()) {
+            $vin      = $request->get('vin');
+            $marksVAG = ['Audi', 'Seat', 'Skoda', 'Volkswagen'];
 
-            $vin = $request->get('vin');
+            $result          = [];
+            $marks = [
+                'Hyundai',
+                'KIA',
+                'Honda',
+                'Subaru',
+                'Mazda',
+                'Mercedes',
+                'Smart',
+                'BMW',
+                'Mini',
+                'RollsRoyce',
+                'Saab',
+                'Audi',
+                'Volkswagen',
+                'Seat',
+                'Skoda',
+                'HondaEurope',
+                'Fiat',
+                'FiatProfessional',
+                'Lancia',
+                'AlfaRomeo',
+                'Abarth',
+                'Nissan',
+                'Infiniti',
+                'LandRover',
+                'ChevroletUsa',
+                'Cadillac',
+                'Pontiac',
+                'Buick',
+                'Hummer',
+                'Saturn',
+                'GMC',
+                'Oldsmobile',
+                'Toyota',
+                'Lexus',
+                'Mitsubishi',
+            ];
 
-            $marks = array('Pontiac','Abarth', 'AlfaRomeo', 'Fiat', 'FiatProfessional', 'Lancia', 'Bmw', 'Hyundai', 'Kia', 'RollsRoyce', 'Saab', 'Audi', 'Seat', 'Skoda', 'Volkswagen',
-                            'ChevroletUsa', 'Cadillac', 'Pontiac', 'Buick', 'Hummer', 'Saturn', 'GMC', 'Oldsmobile', 'Mercedes', 'Smart', 'Honda', 'Hondaeurope', 'Mercedes',
-                            'Nissan', 'Infiniti', 'Toyota', 'Lexus', 'Subaru', 'Suzuki', 'Mazda');
-            $marksVAG = array('Audi', 'Seat', 'Skoda', 'Volkswagen');
-
-            $result = array();
-
-            foreach ($marks as $mark)
-            {
-                if (!in_array($mark, $marksVAG))
-                {
-                    $result[$mark] = $this->get(strtolower($mark).'.vin.model')->getVinFinderResult($vin);
-
-                    if ($result[$mark] == null)
-                    {
-                        unset ($result[$mark]);
-                    }
-
-                }
-                else {
-
-                    $result[$mark] = $this->get(strtolower($mark).'.vin.model')->getVinRegions($vin);
-
-                    if ($result[$mark] == null)
-                    {
-                        unset ($result[$mark]);
+            foreach ($marks as $mark) {
+                if ($this->get(strtolower($mark) . '.vin.model')) {
+                    if (method_exists($this->get(strtolower($mark) . '.vin.model'), 'getVinRegions')) {
+                        $vinFinderResult = $this->get(strtolower($mark) . '.vin.model')->getVinRegions($vin);
+                        if (!empty($vinFinderResult)) {
+                            $result[$mark] = $vinFinderResult;
+                        }
+                    } else {
+                        $vinFinderResult = $this->get(strtolower($mark) . '.vin.model')->getVinFinderResult($vin);
+                        if (!empty($vinFinderResult)) {
+                            $result[$mark] = $vinFinderResult;
+                        }
                     }
                 }
             }
-
-
             if (!$result) {
-                return $this->render('CatalogBmwBundle:Vin'.':empty.html.twig');
+                return $this->render('CatalogBmwBundle:Vin' . ':empty.html.twig');
             }
 
-            if (count($result) > 1)
-            {
+            if (count($result) > 1) {
                 unset ($result['Bmw']);
             }
 
-            foreach ($result as $index=>$value)
-            {
-                    $markForRender = $index;
+            foreach ($result as $index => $value) {
+                $markForRender = $index;
             }
 
-            if (!in_array($markForRender, $marksVAG)) {
-
+            if (!empty($markForRender) && !in_array($markForRender, $marksVAG)) {
                 return $this->redirect(
-                    $this->generateUrl('vin_'.strtolower($markForRender).'_result', array('request' => $request)), 307);
-
-            }
-
-            else {
+                    $this->generateUrl('vin_' . strtolower($markForRender) . '_result', ['request' => $request]), 307);
+            } else {
                 return $this->redirect(
-                    $this->generateUrl('vin_'.strtolower($markForRender).'_region', array('request' => $request)), 307);
-
+                    $this->generateUrl('vin_' . strtolower($markForRender) . '_region', ['request' => $request]), 307);
             }
         }
     }
-
-
 }
