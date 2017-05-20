@@ -8,15 +8,15 @@
 
 namespace Catalog\ToyotaBundle\Models;
 
-
 use Catalog\CommonBundle\Components\Constants;
 use Catalog\CommonBundle\Models\CatalogModel;
-use Catalog\ToyotaBundle\Components\ToyotaConstants;
 
-class ToyotaCatalogModel extends CatalogModel{
+class ToyotaCatalogModel extends CatalogModel
+{
 
 
-    public function getRegions(){
+    public function getRegions()
+    {
         $locale = $this->requestStack->getCurrentRequest()->getLocale();
 
         $sql = "
@@ -32,15 +32,13 @@ class ToyotaCatalogModel extends CatalogModel{
 
         $aData = $query->fetchAll();
 
+        $name    = [];
+        $regions = [];
 
-
-        $name = array();
-        $regions = array();
-
-        foreach($aData as $item) {
+        foreach ($aData as $item) {
 
             $name[$item['catalog']] = $item['catalog'];
-            if ($locale == 'ru'){
+            if ($locale == 'ru') {
                 switch ($item['catalog']) {
                     case 'EU':
                         $name[$item['catalog']] = 'ЕВРОПА';
@@ -54,28 +52,21 @@ class ToyotaCatalogModel extends CatalogModel{
                     case 'GR':
                         $name[$item['catalog']] = 'БЛИЖНИЙ ВОСТОК';
                         break;
-
                 }
-
             }
-
         }
 
-
-        foreach($aData as $item)
-        {
-            $regions[$item['catalog']] = array(Constants::NAME=>$name[$item['catalog']], Constants::OPTIONS=>array());
+        foreach ($aData as $item) {
+            $regions[$item['catalog']] = [Constants::NAME => $name[$item['catalog']], Constants::OPTIONS => []];
         }
 
         return $regions;
-
     }
 
     public function getModels($regionCode)
     {
 
-
-            $sql = "
+        $sql = "
         SELECT model_name
         FROM shamei
         WHERE shamei.catalog = :regionCode
@@ -83,20 +74,19 @@ class ToyotaCatalogModel extends CatalogModel{
         ORDER by model_name
         ";
 
-
         $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode',  $regionCode);
+        $query->bindValue('regionCode', $regionCode);
         $query->execute();
 
         $aData = $query->fetchAll();
-              
 
-        $models = array();
-        foreach($aData as $item){ 
-        	 
-            $models[urlencode($item['model_name'])] = array(Constants::NAME=>strtoupper($item['model_name']),
-            Constants::OPTIONS=>array());
-      
+        $models = [];
+        foreach ($aData as $item) {
+
+            $models[urlencode($item['model_name'])] = [
+                Constants::NAME    => strtoupper($item['model_name']),
+                Constants::OPTIONS => [],
+            ];
         }
 
         return $models;
@@ -106,8 +96,6 @@ class ToyotaCatalogModel extends CatalogModel{
     {
         $modelCode = urldecode($modelCode);
 
-
-
         $sql = "
         SELECT catalog_code, models_codes, prod_start, prod_end
         FROM shamei
@@ -115,32 +103,30 @@ class ToyotaCatalogModel extends CatalogModel{
         ORDER by prod_start
         ";
 
-
         $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('modelCode',  $modelCode);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modelCode', $modelCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
-        $modifications = array();
-        foreach($aData as $item){
-            $modifications[$item['catalog_code']] = array(
-                Constants::NAME     => $item['models_codes'],
-                Constants::OPTIONS  => array(
-                    'models_codes' => $item['models_codes'],
+        $modifications = [];
+        foreach ($aData as $item) {
+            $modifications[$item['catalog_code']] = [
+                Constants::NAME    => $item['models_codes'],
+                Constants::OPTIONS => [
+                    'models_codes'        => $item['models_codes'],
                     Constants::START_DATE => $item['prod_start'],
-                    Constants::END_DATE => $item['prod_end'],
+                    Constants::END_DATE   => $item['prod_end'],
 
-                ));
-
+                ],
+            ];
         }
 
         return $modifications;
     }
 
     public function getComplectations1($regionCode, $modelCode, $modificationCode)
-   
     {
         $sql = "
         SELECT johokt.engine1 as f1, johokt.engine2 as f2, johokt.body as f3, johokt.grade as f4, johokt.atm_mtm as f5, johokt.trans as f6,
@@ -201,61 +187,50 @@ class ToyotaCatalogModel extends CatalogModel{
         ORDER BY compl_code
         ";
 
-
         $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
+        $complectations = [];
+        $com            = [];
 
-        $complectations = array();
-        $com = array();
+        $result = [];
+        $psevd  = [];
 
+        $af = [];
 
-        $result = array();
-        $psevd = array();
-
-        $af = array();
-
-        foreach($aData as $item) {
+        foreach ($aData as $item) {
             for ($i = 1; $i < 12; $i++) {
                 if ($item['f' . $i]) {
                     $af[$i][$item['f' . $i]] = '(' . $item['f' . $i] . ') ' . $item['ken' . $i];
-                    $result['f'.$i] = $af[$i];
-                    $psevd['f'.$i] = str_replace('ENGINE 1', 'ENGINE', $item['ten' . $i]);
-
+                    $result['f' . $i]        = $af[$i];
+                    $psevd['f' . $i]         = str_replace('ENGINE 1', 'ENGINE', $item['ten' . $i]);
                 }
             }
 
-
-            $com[$item['compl_code']] = array(
-                Constants::NAME => $result,
-                Constants::OPTIONS => array('option1'=>$psevd)
-            );
+            $com[$item['compl_code']] = [
+                Constants::NAME    => $result,
+                Constants::OPTIONS => ['option1' => $psevd],
+            ];
         }
 
+        /*       foreach ($result as $index => $value) {
 
-
- /*       foreach ($result as $index => $value) {
-
-            $complectations[$index] = array(
-                Constants::NAME => $value,
-                Constants::OPTIONS => array('option1'=>$psevd)
-            );
-        }*/
-
-
+                   $complectations[$index] = array(
+                       Constants::NAME => $value,
+                       Constants::OPTIONS => array('option1'=>$psevd)
+                   );
+               }*/
 
         return $com;
-     
     }
 
     public function getComplectationsForForm($complectations)
     {
-        $result = array();
-
+        $result = [];
 
         foreach ($complectations as $index => $value) {
 
@@ -267,42 +242,55 @@ class ToyotaCatalogModel extends CatalogModel{
                     }
                 }
 
-
                 if (!empty($value['options']['option1']['f' . $i])) {
                     foreach ($value['options']['option1'] as $ind => $val) {
                         $result['f' . $i]['options']['option1'][urlencode($ind)] = $val;
                     }
                 }
-
-
             }
-
         }
 
         return ($result);
-
-
     }
-
 
 
     public function getComplectationsKorobka($regionCode, $modelCode, $modificationCode, $priznak, $engine)
     {
 
-        switch($priznak)
-
-        {
-            case ('f1'): $pole = 'johokt.engine1';break;
-            case ('f2'): $pole = 'johokt.engine2';break;
-            case ('f3'): $pole = 'johokt.body';break;
-            case ('f4'): $pole = 'johokt.grade';break;
-            case ('f5'): $pole = 'johokt.atm_mtm';break;
-            case ('f6'): $pole = 'johokt.trans';break;
-            case ('f7'): $pole = 'johokt.f1';break;
-            case ('f8'): $pole = 'johokt.f2';break;
-            case ('f9'): $pole = 'johokt.f3';break;
-            case ('f10'): $pole = 'johokt.f4';break;
-            case ('f11'): $pole = 'SUBSTRING_INDEX(johokt.f5, " ", 1)';break;
+        switch ($priznak) {
+            case ('f1'):
+                $pole = 'johokt.engine1';
+                break;
+            case ('f2'):
+                $pole = 'johokt.engine2';
+                break;
+            case ('f3'):
+                $pole = 'johokt.body';
+                break;
+            case ('f4'):
+                $pole = 'johokt.grade';
+                break;
+            case ('f5'):
+                $pole = 'johokt.atm_mtm';
+                break;
+            case ('f6'):
+                $pole = 'johokt.trans';
+                break;
+            case ('f7'):
+                $pole = 'johokt.f1';
+                break;
+            case ('f8'):
+                $pole = 'johokt.f2';
+                break;
+            case ('f9'):
+                $pole = 'johokt.f3';
+                break;
+            case ('f10'):
+                $pole = 'johokt.f4';
+                break;
+            case ('f11'):
+                $pole = 'SUBSTRING_INDEX(johokt.f5, " ", 1)';
+                break;
         }
 
         $sql = "
@@ -365,27 +353,26 @@ class ToyotaCatalogModel extends CatalogModel{
 
         $query = $this->conn->prepare($sql);
 
-        $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
         $query->bindValue('engine', $engine);
         $query->execute();
 
         $aData = $query->fetchAll();
 
-        $complectations = array();
-        $result = array();
+        $complectations = [];
+        $result         = [];
 
-        $af = array();
+        $af = [];
 
-        foreach($aData as $item) {
+        foreach ($aData as $item) {
             for ($i = 1; $i < 12; $i++) {
                 if ($item['f' . $i]) {
                     $af[$i][$item['f' . $i]] = '(' . $item['f' . $i] . ') ' . $item['ken' . $i];
-                    $result['f'.$i] = $af[$i];
+                    $result['f' . $i]        = $af[$i];
                 }
             }
         }
-
 
         foreach ($result as $index => $value) {
 
@@ -396,7 +383,6 @@ class ToyotaCatalogModel extends CatalogModel{
     }
 
     public function getComplectations($regionCode, $modelCode, $modificationCode)
-
     {
 
         $sql = "
@@ -406,66 +392,81 @@ class ToyotaCatalogModel extends CatalogModel{
         AND johokt.catalog_code = :modificationCode
         ";
 
-
         $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
         $query->execute();
 
         $aData = $query->fetchAll();
 
-        $complectations = array();
+        $complectations = [];
 
-        foreach($aData as $item){
+        foreach ($aData as $item) {
 
-
-            $complectations[$item['compl_code']] = array(
-                Constants::NAME => $item['model_code'],
-                Constants::OPTIONS => array());
-
+            $complectations[$item['compl_code']] = [
+                Constants::NAME    => $item['model_code'],
+                Constants::OPTIONS => [],
+            ];
         }
 
         return $complectations;
-
     }
 
     public function getComplectationCodeFromFormaData($aDataFromForm, $regionCode, $modificationCode)
-
     {
 
-        $pole = array();
-                $pole['engine1'] = '';
-                $pole['engine2'] = '';
-                $pole['body'] = '';
-                $pole['grade'] = '';
-                $pole['atm_mtm'] = '';
-                $pole['trans'] = '';
-                $pole['f1'] = '';
-                $pole['f2'] = '';
-                $pole['f3'] = '';
-                $pole['f4'] = '';
-                $pole['f5'] = '';
+        $pole            = [];
+        $pole['engine1'] = '';
+        $pole['engine2'] = '';
+        $pole['body']    = '';
+        $pole['grade']   = '';
+        $pole['atm_mtm'] = '';
+        $pole['trans']   = '';
+        $pole['f1']      = '';
+        $pole['f2']      = '';
+        $pole['f3']      = '';
+        $pole['f4']      = '';
+        $pole['f5']      = '';
 
-        foreach ($aDataFromForm as $index => $value)
-        {
-            switch($index)
-
-            {
-                case ('f1'): $pole['engine1'] = $value;break;
-                case ('f2'): $pole['engine2'] = $value;break;
-                case ('f3'): $pole['body'] = $value;break;
-                case ('f4'): $pole['grade'] = $value;break;
-                case ('f5'): $pole['atm_mtm'] = $value;break;
-                case ('f6'): $pole['trans'] = $value;break;
-                case ('f7'): $pole['f1'] = $value;break;
-                case ('f8'): $pole['f2'] = $value;break;
-                case ('f9'): $pole['f3'] = $value;break;
-                case ('f10'): $pole['f4'] = $value;break;
-                case ('f11'): $pole['f5'] = $value;break;
+        foreach ($aDataFromForm as $index => $value) {
+            switch ($index) {
+                case ('f1'):
+                    $pole['engine1'] = $value;
+                    break;
+                case ('f2'):
+                    $pole['engine2'] = $value;
+                    break;
+                case ('f3'):
+                    $pole['body'] = $value;
+                    break;
+                case ('f4'):
+                    $pole['grade'] = $value;
+                    break;
+                case ('f5'):
+                    $pole['atm_mtm'] = $value;
+                    break;
+                case ('f6'):
+                    $pole['trans'] = $value;
+                    break;
+                case ('f7'):
+                    $pole['f1'] = $value;
+                    break;
+                case ('f8'):
+                    $pole['f2'] = $value;
+                    break;
+                case ('f9'):
+                    $pole['f3'] = $value;
+                    break;
+                case ('f10'):
+                    $pole['f4'] = $value;
+                    break;
+                case ('f11'):
+                    $pole['f5'] = $value;
+                    break;
             }
         }
 
-            $sql = "
+        $sql = "
         SELECT johokt.compl_code
         FROM johokt
         WHERE johokt.catalog = :regionCode
@@ -484,37 +485,32 @@ class ToyotaCatalogModel extends CatalogModel{
 
         ";
 
-            $query = $this->conn->prepare($sql);
-            $query->bindValue('regionCode',  $regionCode);
-            $query->bindValue('modificationCode',  $modificationCode);
-            $query->bindValue('engine1',  $pole['engine1']);
-            $query->bindValue('engine2',  $pole['engine2']);
-            $query->bindValue('body',  $pole['body']);
-            $query->bindValue('grade',  $pole['grade']);
-            $query->bindValue('atm_mtm',  $pole['atm_mtm']);
-            $query->bindValue('trans',  $pole['trans']);
-            $query->bindValue('f1',  $pole['f1']);
-            $query->bindValue('f2',  $pole['f2']);
-            $query->bindValue('f3',  $pole['f3']);
-            $query->bindValue('f4',  $pole['f4']);
-            $query->bindValue('f5',  $pole['f5']);
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('engine1', $pole['engine1']);
+        $query->bindValue('engine2', $pole['engine2']);
+        $query->bindValue('body', $pole['body']);
+        $query->bindValue('grade', $pole['grade']);
+        $query->bindValue('atm_mtm', $pole['atm_mtm']);
+        $query->bindValue('trans', $pole['trans']);
+        $query->bindValue('f1', $pole['f1']);
+        $query->bindValue('f2', $pole['f2']);
+        $query->bindValue('f3', $pole['f3']);
+        $query->bindValue('f4', $pole['f4']);
+        $query->bindValue('f5', $pole['f5']);
 
+        $query->execute();
 
+        $aData = $query->fetch();
 
-            $query->execute();
+        $complectation = $aData['compl_code'];
 
-            $aData = $query->fetch();
-
-            $complectation = $aData['compl_code'];
-
-
-            return $complectation;
-
+        return $complectation;
     }
 
     public function getGroups($regionCode, $modelCode, $modificationCode, $complectationCode)
     {
-
 
         $sql = "
         SELECT SUBSTRING(emi.part_group, 1, 1) groupCodes
@@ -524,27 +520,30 @@ class ToyotaCatalogModel extends CatalogModel{
         GROUP BY SUBSTRING(part_group, 1, 1)
         ";
 
-            $query = $this->conn->prepare($sql);
-            $query->bindValue('regionCode',  $regionCode);
-            $query->bindValue('modificationCode',  $modificationCode);
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
 
-            $query->execute();
-            $aData = $query->fetchAll();
+        $query->execute();
+        $aData = $query->fetchAll();
 
+        $aDataGroups = [
+            'ИНСТРУМЕНТЫ',
+            'ДВИГАТЕЛЬ',
+            'ТОПЛИВНАЯ СИСТЕМА',
+            'ТРАНСМИССИЯ, ПОДВЕСКА, ТОРМОЗНАЯ СИСТЕМА',
+            'КУЗОВНЫЕ ДЕТАЛИ, ЭКСТЕРЬЕР, ИНТЕРЬЕР',
+            'ЭЛЕКТРИКА, КЛИМАТ-КОНТРОЛЬ',
+        ];
 
+        $groups = [];
 
-        $aDataGroups = array('ИНСТРУМЕНТЫ', 'ДВИГАТЕЛЬ', 'ТОПЛИВНАЯ СИСТЕМА', 'ТРАНСМИССИЯ, ПОДВЕСКА, ТОРМОЗНАЯ СИСТЕМА', 'КУЗОВНЫЕ ДЕТАЛИ, ЭКСТЕРЬЕР, ИНТЕРЬЕР', 'ЭЛЕКТРИКА, КЛИМАТ-КОНТРОЛЬ');
+        foreach ($aDataGroups as $index => $value) {
 
-
-        $groups = array();
-
-
-        foreach($aDataGroups as $index => $value){
-
-            $groups[$index+1] = array(
-                Constants::NAME     =>$value,
-                Constants::OPTIONS => array()
-            );
+            $groups[$index + 1] = [
+                Constants::NAME    => $value,
+                Constants::OPTIONS => [],
+            ];
         }
 
         return $groups;
@@ -552,51 +551,51 @@ class ToyotaCatalogModel extends CatalogModel{
 
     public function getGroupSchemas($regionCode, $modelCode, $modificationCode, $groupCode)
     {
-  /*      $sqlNumPrigroup = "
-        SELECT *
-        FROM pri_groups_full
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-            AND pri_group = :groupCode
-        ";
-    	$query = $this->conn->prepare($sqlNumPrigroup);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('model_code', $modelCode);
-        $query->bindValue('groupCode', $groupCode);
-        $query->execute();
+        /*      $sqlNumPrigroup = "
+              SELECT *
+              FROM pri_groups_full
+              WHERE catalog = :regionCode
+                  AND model_code =:model_code
+                  AND pri_group = :groupCode
+              ";
+              $query = $this->conn->prepare($sqlNumPrigroup);
+              $query->bindValue('regionCode', $regionCode);
+              $query->bindValue('model_code', $modelCode);
+              $query->bindValue('groupCode', $groupCode);
+              $query->execute();
 
-        $aData = $query->fetch();  
-       
-        $sqlNumModel = "
-        SELECT num_model
-        FROM part_images
-        WHERE catalog = :regionCode
-            AND model_code =:model_code
-        GROUP BY num_model
-        ";
-    	$query = $this->conn->prepare($sqlNumModel);
-        $query->bindValue('regionCode', $regionCode);
-        $query->bindValue('model_code', $modelCode);
-        $query->execute();
+              $aData = $query->fetch();
 
-        $aNumModel = $query->fetch();
+              $sqlNumModel = "
+              SELECT num_model
+              FROM part_images
+              WHERE catalog = :regionCode
+                  AND model_code =:model_code
+              GROUP BY num_model
+              ";
+              $query = $this->conn->prepare($sqlNumModel);
+              $query->bindValue('regionCode', $regionCode);
+              $query->bindValue('model_code', $modelCode);
+              $query->execute();
 
-        $groupSchemas = array();
-    /*    foreach ($aData as $item)*//* {
+              $aNumModel = $query->fetch();
+
+              $groupSchemas = array();
+          /*    foreach ($aData as $item)*//* {
             $groupSchemas[$aData['num_image']] = array(Constants::NAME => $aData['num_image'], Constants::OPTIONS => array(
               Constants::CD => $aData['catalog'].$aData['sub_dir'].$aData['sub_wheel'],
                     	'num_model' => $aNumModel['num_model'],
                         'num_image' => $aData['num_image']
                 ));
         }*/
-		$groupSchemas = array();
+        $groupSchemas = [];
         return $groupSchemas;
     }
 
     public function getSubgroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode)
     {
 
-        switch ($groupCode){
+        switch ($groupCode) {
             case 1:
                 $min = 0;
                 $max = 0;
@@ -623,8 +622,6 @@ class ToyotaCatalogModel extends CatalogModel{
                 break;
         }
 
-
-
         $sql = "
         SELECT bzi.part_group, emi.pic_code, figmei.desc_en
         FROM kpt
@@ -639,43 +636,43 @@ class ToyotaCatalogModel extends CatalogModel{
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('modificationCode',  $modificationCode);
-        $query->bindValue('complectationCode',  $complectationCode);
-        $query->bindValue('min1',  $min);
-        $query->bindValue('max1',  $max);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('complectationCode', $complectationCode);
+        $query->bindValue('min1', $min);
+        $query->bindValue('max1', $max);
         $query->execute();
 
         $aData = $query->fetchAll();
 
+        $subgroups = [];
 
+        foreach ($aData as $item) {
 
+            $subgroups[$item['part_group']] = [
 
-           $subgroups = array();
+                Constants::NAME    => $item['desc_en'],
+                Constants::OPTIONS => [
+                    'picture'     => $item['pic_code'],
+                    'locale_name' => $item['desc_en'],
+                ],
 
+            ];
+        }
 
-           foreach($aData as $item)
-           {
+        return $subgroups;
+    }
 
-               $subgroups[$item['part_group']] = array(
+    public function getSchemas(
+        $regionCode,
+        $modelCode,
+        $modificationCode,
+        $complectationCode,
+        $groupCode,
+        $subGroupCode
+    ) {
 
-               Constants::NAME => $item['desc_en'],
-                   Constants::OPTIONS => array(
-                       'picture' => $item['pic_code'],
-                       'locale_name' => $item['desc_en']
-                   )
-
-               );
-
-           }
-
-           return $subgroups;
-       }
-
-       public function getSchemas($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode)
-       {
-
-           $sql = "
+        $sql = "
            SELECT bzi.illust_no, bzi.pic_code, images.disk, inm.desc_en, bzi.ipic_code
            FROM kpt
            INNER JOIN bzi ON (bzi.catalog = kpt.catalog AND bzi.catalog_code = kpt.catalog_code AND bzi.ipic_code = kpt.ipic_code AND bzi.part_group = :subGroupCode)
@@ -688,55 +685,65 @@ class ToyotaCatalogModel extends CatalogModel{
 
            ";
 
-           $query = $this->conn->prepare($sql);
-           $query->bindValue('regionCode',  $regionCode);
-           $query->bindValue('modificationCode',  $modificationCode);
-           $query->bindValue('complectationCode',  $complectationCode);
-           $query->bindValue('subGroupCode',  $subGroupCode);
-           $query->execute();
+        $query = $this->conn->prepare($sql);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('complectationCode', $complectationCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->execute();
 
-           $aData = $query->fetchAll();
+        $aData = $query->fetchAll();
 
+        $schemas = [];
+        foreach ($aData as $index => $item) {
 
-           $schemas = array();
-           foreach($aData as $index => $item)
-           {
+            $schemas[$item['pic_code']] = [
+                Constants::NAME    => 'Схема' . ($index + 1) . ' из' . count($aData),
+                Constants::OPTIONS => [
+                    'figure' => $item['pic_code'],
+                    'disk'   => $item['disk'],
+                    'desc'   => $item['desc_en'],
+                ],
+            ];
+        }
 
-                       $schemas[$item['pic_code']] = array(
-                       Constants::NAME => 'Схема'.($index+1).' из'. count($aData),
-                       Constants::OPTIONS => array('figure' => $item['pic_code'],
-                           'disk' => $item['disk'],
-                           'desc' => $item['desc_en'])
-                   );
-           }
+        return $schemas;
+    }
 
+    public function getSchema(
+        $regionCode,
+        $modelCode,
+        $modificationCode,
+        $complectationCode,
+        $groupCode,
+        $subGroupCode,
+        $schemaCode
+    ) {
 
-           return $schemas;
-       }
+        $schema = [];
 
-       public function getSchema($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode)
-       {
+        $schema[$schemaCode] = [
+            Constants::NAME    => $schemaCode,
+            Constants::OPTIONS => [
+                Constants::CD => $schemaCode,
+            ],
+        ];
 
-           $schema = array();
+        return $schema;
+    }
 
+    public function getPncs(
+        $regionCode,
+        $modelCode,
+        $modificationCode,
+        $complectationCode,
+        $groupCode,
+        $subGroupCode,
+        $schemaCode,
+        $options
+    ) {
 
-                       $schema[$schemaCode] = array(
-                       Constants::NAME => $schemaCode,
-                           Constants::OPTIONS => array(
-                               Constants::CD => $schemaCode
-                           )
-                   );
-
-
-
-           return $schema;
-       }
-
-       public function getPncs($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
-       {
-
-
-            $sqlPnc = "
+        $sqlPnc = "
             SELECT img_nums.number, hinmei.desc_en
             FROM img_nums
             INNER JOIN hinmei ON (hinmei.catalog = img_nums.catalog and hinmei.pnc = img_nums.number)
@@ -746,22 +753,18 @@ class ToyotaCatalogModel extends CatalogModel{
             and img_nums.number_type = '3'
             ";
 
+        $query = $this->conn->prepare($sqlPnc);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('schemaCode', $schemaCode);
+        $query->bindValue('disc', $options['disk']);
 
-           $query = $this->conn->prepare($sqlPnc);
-           $query->bindValue('regionCode',  $regionCode);
-           $query->bindValue('schemaCode',  $schemaCode);
-           $query->bindValue('disc',  $options['disk']);
+        $query->execute();
 
-           $query->execute();
+        $aPncs = $query->fetchAll();
 
-           $aPncs = $query->fetchAll();
+        foreach ($aPncs as &$aPnc) {
 
-
-
-           foreach ($aPncs as &$aPnc)
-           {
-
-               $sqlSchemaLabels = "
+            $sqlSchemaLabels = "
            SELECT x1, x2, y1, y2
            FROM img_nums
            where img_nums.catalog = :regionCode
@@ -771,65 +774,57 @@ class ToyotaCatalogModel extends CatalogModel{
             and img_nums.number = :pnc
            ";
 
-               $query = $this->conn->prepare($sqlSchemaLabels);
-               $query->bindValue('regionCode',  $regionCode);
-               $query->bindValue('schemaCode',  $schemaCode);
-               $query->bindValue('disc',  $options['disk']);
-               $query->bindValue('pnc',  $aPnc['number']);
+            $query = $this->conn->prepare($sqlSchemaLabels);
+            $query->bindValue('regionCode', $regionCode);
+            $query->bindValue('schemaCode', $schemaCode);
+            $query->bindValue('disc', $options['disk']);
+            $query->bindValue('pnc', $aPnc['number']);
 
+            $query->execute();
 
-               $query->execute();
+            $aPnc['clangjap'] = $query->fetchAll();
+            unset($aPnc);
+        }
 
-               $aPnc['clangjap'] = $query->fetchAll();
-               unset($aPnc);
+        $pncs = [];
 
-           }
+        foreach ($aPncs as $index => $value) {
+            {
+                if (!$value['clangjap']) {
+                    unset ($aPncs[$index]);
+                }
 
+                foreach ($value['clangjap'] as $item1) {
+                    $pncs[$value['number']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = [
+                        Constants::X2 => floor((($item1['x2']))),
+                        Constants::Y1 => $item1['y1'],
+                        Constants::X1 => floor($item1['x1']),
+                        Constants::Y2 => $item1['y2'],
+                    ];
+                }
+            }
+        }
 
+        foreach ($aPncs as $item) {
 
-           $pncs = array();
+            $pncs[$item['number']][Constants::NAME] = $item['desc_en'];
+        }
 
-           foreach ($aPncs as $index=>$value) {
-               {
-                   if (!$value['clangjap'])
-                   {
-                       unset ($aPncs[$index]);
-                   }
+        return $pncs;
+    }
 
-                   foreach ($value['clangjap'] as $item1)
-                   {
-                       $pncs[$value['number']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
-                           Constants::X2 => floor((($item1['x2']))),
-                           Constants::Y1 => $item1['y1'],
-                           Constants::X1 => floor($item1['x1']),
-                           Constants::Y2 => $item1['y2']);
+    public function getCommonArticuls(
+        $regionCode,
+        $modelCode,
+        $modificationCode,
+        $complectationCode,
+        $groupCode,
+        $subGroupCode,
+        $schemaCode,
+        $options
+    ) {
 
-                   }
-
-
-
-               }
-           }
-
-
-           foreach ($aPncs as $item) {
-
-
-
-               $pncs[$item['number']][Constants::NAME] = $item['desc_en'];
-
-
-
-           }
-
-
-            return $pncs;
-       }
-
-       public function getCommonArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
-       {
-
-           $sqlPnc = "
+        $sqlPnc = "
             SELECT img_nums.number
             FROM img_nums
             where img_nums.catalog = :regionCode
@@ -838,22 +833,18 @@ class ToyotaCatalogModel extends CatalogModel{
             and img_nums.number_type = '4'
             ";
 
+        $query = $this->conn->prepare($sqlPnc);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('schemaCode', $schemaCode);
+        $query->bindValue('disc', $options['disk']);
 
-           $query = $this->conn->prepare($sqlPnc);
-           $query->bindValue('regionCode',  $regionCode);
-           $query->bindValue('schemaCode',  $schemaCode);
-           $query->bindValue('disc',  $options['disk']);
+        $query->execute();
 
-           $query->execute();
+        $aPncs = $query->fetchAll();
 
-           $aPncs = $query->fetchAll();
+        foreach ($aPncs as &$aPnc) {
 
-
-
-           foreach ($aPncs as &$aPnc)
-           {
-
-               $sqlSchemaLabels = "
+            $sqlSchemaLabels = "
             SELECT x1, x2, y1, y2
             FROM img_nums
             where img_nums.catalog = :regionCode
@@ -863,63 +854,55 @@ class ToyotaCatalogModel extends CatalogModel{
             and img_nums.number = :pnc
            ";
 
-               $query = $this->conn->prepare($sqlSchemaLabels);
-               $query->bindValue('regionCode',  $regionCode);
-               $query->bindValue('schemaCode',  $schemaCode);
-               $query->bindValue('disc',  $options['disk']);
-               $query->bindValue('pnc',  $aPnc['number']);
+            $query = $this->conn->prepare($sqlSchemaLabels);
+            $query->bindValue('regionCode', $regionCode);
+            $query->bindValue('schemaCode', $schemaCode);
+            $query->bindValue('disc', $options['disk']);
+            $query->bindValue('pnc', $aPnc['number']);
 
+            $query->execute();
 
-               $query->execute();
+            $aPnc['clangjap'] = $query->fetchAll();
+            unset($aPnc);
+        }
 
-               $aPnc['clangjap'] = $query->fetchAll();
-               unset($aPnc);
+        $pncs = [];
 
-           }
+        foreach ($aPncs as $index => $value) {
+            {
+                if (!$value['clangjap']) {
+                    unset ($aPncs[$index]);
+                }
 
+                foreach ($value['clangjap'] as $item1) {
+                    $pncs[$value['number']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = [
+                        Constants::X2 => floor((($item1['x2']))),
+                        Constants::Y2 => $item1['y2'],
+                        Constants::X1 => floor($item1['x1']),
+                        Constants::Y1 => $item1['y1'],
+                    ];
+                }
+            }
+        }
 
+        foreach ($aPncs as $index => $value) {
 
-           $pncs = array();
+            $pncs[$value['number']][Constants::NAME] = $index;
+        }
 
-           foreach ($aPncs as $index=>$value) {
-               {
-                   if (!$value['clangjap'])
-                   {
-                       unset ($aPncs[$index]);
-                   }
-
-                   foreach ($value['clangjap'] as $item1)
-                   {
-                       $pncs[$value['number']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
-                           Constants::X2 => floor((($item1['x2']))),
-                           Constants::Y2 => $item1['y2'],
-                           Constants::X1 => floor($item1['x1']),
-                           Constants::Y1 => $item1['y1']);
-
-                   }
-
-
-
-               }
-           }
-
-
-           foreach ($aPncs as $index=>$value) {
-
-
-
-               $pncs[$value['number']][Constants::NAME] = $index;
-
-
-
-           }
-
-           return $pncs;
-
+        return $pncs;
     }
 
-    public function getReferGroups($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $schemaCode, $options)
-    {
+    public function getReferGroups(
+        $regionCode,
+        $modelCode,
+        $modificationCode,
+        $complectationCode,
+        $groupCode,
+        $subGroupCode,
+        $schemaCode,
+        $options
+    ) {
 
         $sqlPnc = "
             SELECT img_nums.number, figmei.desc_en
@@ -931,20 +914,16 @@ class ToyotaCatalogModel extends CatalogModel{
             and img_nums.number_type = '1'
             ";
 
-
         $query = $this->conn->prepare($sqlPnc);
-        $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('schemaCode',  $schemaCode);
-        $query->bindValue('disc',  $options['disk']);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('schemaCode', $schemaCode);
+        $query->bindValue('disc', $options['disk']);
 
         $query->execute();
 
         $aPncs = $query->fetchAll();
 
-
-
-        foreach ($aPncs as &$aPnc)
-        {
+        foreach ($aPncs as &$aPnc) {
 
             $sqlSchemaLabels = "
            SELECT x1, x2, y1, y2
@@ -957,66 +936,55 @@ class ToyotaCatalogModel extends CatalogModel{
            ";
 
             $query = $this->conn->prepare($sqlSchemaLabels);
-            $query->bindValue('regionCode',  $regionCode);
-            $query->bindValue('schemaCode',  $schemaCode);
-            $query->bindValue('disc',  $options['disk']);
-            $query->bindValue('pnc',  $aPnc['number']);
-
+            $query->bindValue('regionCode', $regionCode);
+            $query->bindValue('schemaCode', $schemaCode);
+            $query->bindValue('disc', $options['disk']);
+            $query->bindValue('pnc', $aPnc['number']);
 
             $query->execute();
 
             $aPnc['clangjap'] = $query->fetchAll();
             unset($aPnc);
-
         }
 
+        $pncs = [];
 
-
-        $pncs = array();
-
-        foreach ($aPncs as $index=>$value) {
+        foreach ($aPncs as $index => $value) {
             {
-                if (!$value['clangjap'])
-                {
+                if (!$value['clangjap']) {
                     unset ($aPncs[$index]);
                 }
 
-                foreach ($value['clangjap'] as $item1)
-                {
-                    $pncs[$value['number']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = array(
+                foreach ($value['clangjap'] as $item1) {
+                    $pncs[$value['number']][Constants::OPTIONS][Constants::COORDS][$item1['x1']] = [
                         Constants::X2 => $item1['x2'],
                         Constants::Y2 => $item1['y2'],
                         Constants::X1 => $item1['x1'],
-                        Constants::Y1 => $item1['y1']
-                    );
-
+                        Constants::Y1 => $item1['y1'],
+                    ];
                 }
-
-
-
             }
         }
 
-
-        foreach ($aPncs as $index=>$value) {
-
-
+        foreach ($aPncs as $index => $value) {
 
             $pncs[$value['number']][Constants::NAME] = $value['desc_en'];
-
-
-
         }
-
 
         return $pncs;
     }
 
 
-
-    public function getArticuls($regionCode, $modelCode, $modificationCode, $complectationCode, $groupCode, $subGroupCode, $pncCode, $options)
-    {
-
+    public function getArticuls(
+        $regionCode,
+        $modelCode,
+        $modificationCode,
+        $complectationCode,
+        $groupCode,
+        $subGroupCode,
+        $pncCode,
+        $options
+    ) {
 
         $sqlArticuls = "
             SELECT hnb_desc.quantity, hnb_desc.start_date, hnb_desc.end_date, hnb_desc.add_desc, hnb_desc.part_code, hnb_desc.hnb_id
@@ -1028,38 +996,30 @@ class ToyotaCatalogModel extends CatalogModel{
             AND kpt.compl_code = :complectationCode
             ";
 
-
         $query = $this->conn->prepare($sqlArticuls);
-        $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('modificationCode',  $modificationCode);
-        $query->bindValue('complectationCode',  $complectationCode);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('complectationCode', $complectationCode);
         $query->bindValue('pnc', $pncCode);
 
         $query->execute();
 
-         $aArticuls = $query->fetchAll();
+        $aArticuls = $query->fetchAll();
 
-
-
-
-$articuls = array();
+        $articuls = [];
 
         foreach ($aArticuls as $item) {
-        	 
-            
-            
-				$articuls[$item['hnb_id']] = array(
-                Constants::NAME => $item['part_code'],
-                Constants::OPTIONS => array(
-                    Constants::QUANTITY => $item['quantity'],
-                    Constants::START_DATE => $item['start_date'],
-                    Constants::END_DATE => $item['end_date'],
-                    'DESC' => $item['add_desc']
-                )
-            );
-            
-        }
 
+            $articuls[$item['hnb_id']] = [
+                Constants::NAME    => $item['part_code'],
+                Constants::OPTIONS => [
+                    Constants::QUANTITY   => $item['quantity'],
+                    Constants::START_DATE => $item['start_date'],
+                    Constants::END_DATE   => $item['end_date'],
+                    'DESC'                => $item['add_desc'],
+                ],
+            ];
+        }
 
         return $articuls;
     }
@@ -1067,8 +1027,7 @@ $articuls = array();
     public function getGroupBySubgroup($regionCode, $modelCode, $modificationCode, $complectationCode, $subGroupCode)
     {
 
-
-        switch (substr($subGroupCode, 0, 1)){
+        switch (substr($subGroupCode, 0, 1)) {
             case 0:
                 $groupCode = 1;
                 break;
@@ -1102,11 +1061,9 @@ $articuls = array();
         }
 
         return $groupCode;
-
     }
 
     public function getComplForSchemas($catalog, $mdldir, $nno, $data1)
-
     {
         $sql = "
         SELECT VARIATION1, VARIATION2, VARIATION3, VARIATION4, VARIATION5, VARIATION6, VARIATION7, VARIATION8
@@ -1130,15 +1087,13 @@ $articuls = array();
         return $complectation;
     }
 
-    public function multiexplode ($delimiters,$string) {
+    public function multiexplode($delimiters, $string)
+    {
 
-        $ready = str_replace($delimiters, $delimiters[0], $string);
+        $ready  = str_replace($delimiters, $delimiters[0], $string);
         $launch = explode($delimiters[0], $ready);
-        return  $launch;
+        return $launch;
     }
 
 
-
-
-    
-} 
+}
