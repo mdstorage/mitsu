@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8" />
     <title>{% block title %}{% block brand %}Оригинальные каталоги автозапчастей{% endblock brand %}{% endblock title%}</title>
@@ -7,6 +9,60 @@
         <link rel="stylesheet" href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogaudi/css/common.css') }}" media="all">
     {% endblock %}
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function (d, w, c) {
+            (w[c] = w[c] || []).push(function() {
+                try {
+                    w.yaCounter44474110 = new Ya.Metrika({
+                        id:44474110,
+                        clickmap:true,
+                        trackLinks:true,
+                        accurateTrackBounce:true,
+                        webvisor:true,
+                        trackHash:true
+                    });
+                } catch(e) { }
+            });
+
+            var n = d.getElementsByTagName("script")[0],
+                s = d.createElement("script"),
+                f = function () { n.parentNode.insertBefore(s, n); };
+            s.type = "text/javascript";
+            s.async = true;
+            s.src = "https://mc.yandex.ru/metrika/watch.js";
+
+            if (w.opera == "[object Opera]") {
+                d.addEventListener("DOMContentLoaded", f, false);
+            } else { f(); }
+        })(document, window, "yandex_metrika_callbacks");
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/44474110" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
+    <style>
+        .main-mark {
+            display: block;
+            float: left;
+            padding: 5px;
+            margin: 5px;
+            width: 22%;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .bs-callout-danger {
+            border-left-color: #ce4844;
+        }
+        .bs-callout {
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #eee;
+            border-left-width: 5px;
+            border-radius: 3px;
+        }
+    </style>
+
 </head>
 {% block javascripts %}
     <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/js/jquery-2.1.1.min.js') }}"></script>
@@ -17,66 +73,89 @@
 {% block summary_set %}{% endblock summary_set %}
 {% block body %}
     <div class="main">
-    {% block vin %}
-        <div class="alert alert-dismissable" id="vin-frame-group">
-            <div class="row">
-                <div class="col-xs-6 col-lg-6 col-md-6 col-sm-6">
-                    {% block head %}<h3>Поиск по VIN</h3>{% endblock head %}
-                    <div class="form-horizontal">
-                        <div class="form-group">
-                            <div class="col-xs-10 col-lg-10 col-md-10 col-sm-10">
-                                <input type="text" class="form-control" id="vin" placeholder="Введите VIN"/>
+
+        <div class="row">
+            <div class="bs-callout bs-callout-danger">
+                <h1>Оригинальные каталоги в аренду</h1>  <p>У нас есть все виды автокаталогов автозапчастей, на все модели автомобилей.  Мы предоставляем их в аренду. Все типы и виды автозапчастей доступны для Вас в нашем каталоге.</p>   <p>Ни для кого не секрет, что наиболее трудоемкая задача в бизнесе по продаже  автозапчастей - поиск необходимого номера (артикула) запчасти.  В большинстве случаев все работы по поиску нужной запчасти ложатся на плечи  продавцов или менеджеров Вашего магазина. У каждого из которых, к сожалению,  всего одна голова и всего две руки, т.е. одновременно он может обслуживать только одного клиента.</p>   <p>Мы предлагаем Вам значительно снизить нагрузку на менеджеров и одновременно  существенно увеличить функционал и удобство Вашего сайта - наш уникальный  сервис "автокаталог в аренду".</p>
+
+                <p><b><a href="https://icar.by/" target="_blank">Подключить каталоги на свой сайт! Тест-драйв 30 дней бесплатно!</a></b></p>
+
+                <!-- Yandex.Metrika informer -->
+                <a href="https://metrika.yandex.by/stat/?id=44474110&amp;from=informer"
+                   target="_blank" rel="nofollow"><img src="https://informer.yandex.ru/informer/44474110/1_1_53B9FFFF_3399FFFF_1_pageviews"
+                                                       style="width:80px; height:15px; border:0;" alt="яндекс.ћетрика" title="яндекс.ћетрика: данные за сегодн€ (просмотры)" class="ym-advanced-informer" data-cid="44474110" data-lang="ru" /></a>
+                <!-- /Yandex.Metrika informer -->
+
+            </div>
+        </div>
+
+        {% block vin %}
+            <div class="bs-callout bs-callout-danger">
+                <div id="vin-frame-group">
+                    <div class="row">
+                        <div class="col-xs-6 col-lg-6 col-md-6 col-sm-6">
+                            {% block head %}<div class="h3">Поиск по VIN</div>{% endblock head %}
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-xs-10 col-lg-10 col-md-10 col-sm-10">
+                                        <input type="text" class="form-control" id="vin" placeholder="Введите VIN"/>
+                                    </div>
+                                    <div class="col-xs-2 col-lg-2 col-md-2 col-sm-2">
+                                        <input type="button" class="btn btn-info" value="Искать" id="vin-button"/>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-xs-2 col-lg-2 col-md-2 col-sm-2">
-                                <input type="button" class="btn btn-info" value="Искать" id="vin-button"/>
-                            </div>
+                            <div id="vin-result"></div>
                         </div>
                     </div>
-                    <div id="vin-result"></div>
+                </div>
+            </div>
+        {% endblock vin %}
+
+        {% block frame %}{% endblock frame %}
+
+        {% block vinScript %}
+            <script>
+                $("#vin").keyup(function(event){
+                    if(event.keyCode == 13){
+                        $("#vin-button").click();
+                    }
+                });
+                $("#vin-button").on('click', function(){
+                    if($("#vin").val(). replace(/\s+/g, '').length !== 17){
+                        alert("VIN должен состоять из 17 знаков!");
+                        return;
+                    }
+                    $("#vin-result").html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogcommon/images/loading.gif") }} height="20px" />');
+                    $.ajax({
+                        type:   'POST',
+                        async:  false,
+                        url:    "{% block vinAjaxPath %}{{ path('vin_common_result') }}{% endblock vinAjaxPath %}",
+                        data:   { vin: $("#vin").val(). replace(/\s+/g, '') },
+                        success: function(data) {
+                            $("#vin-result").html(data);
+                        }
+                    });
+                });
+            </script>
+        {% endblock vinScript %}
+
+        {% block frameScript %}{% endblock frameScript %}
+
+        <div class="bs-callout bs-callout-danger">
+            <div class="row">
+                <div class="">
+                    {% for mark in marks %}
+                        <a class="main-mark" href="https://vincat.ru/{{ mark|lower }}" target="_blank">{{ mark }}</a>
+                    {% endfor %}
+                    {#<a href="https://nissan.by.suraman.newsolution.by" target="_blank">Nissan_old</a><br>
+                    <a href="https://cats-toyota.by.suraman.newsolution.by" target="_blank">Toyota_old</a><br>#}
+                    {#<a href="https://vincat.ru/mitsubishi" target="_blank">Mitsubishi</a><br>#}
                 </div>
             </div>
         </div>
-    {% endblock vin %}
-    {% block frame %}{% endblock frame %}
-        {% block vinScript %}
-                       <script>
-                           $("#vin").keyup(function(event){
-                               if(event.keyCode == 13){
-                                   $("#vin-button").click();
-                               }
-                           });
-                           $("#vin-button").on('click', function(){
-                               if($("#vin").val(). replace(/\s+/g, '').length !== 17){
-                                   alert("VIN должен состоять из 17 знаков!");
-                                   return;
-                               }
-                               $("#vin-result").html('<img src={{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~"/bundles/catalogcommon/images/loading.gif") }} height="20px" />');
-                               $.ajax({
-                                   type:   'POST',
-                                   async:  false,
-                                   url:    "{% block vinAjaxPath %}{{ path('vin_common_result') }}{% endblock vinAjaxPath %}",
-                                   data:   { vin: $("#vin").val(). replace(/\s+/g, '') },
-                                   success: function(data) {
-                                           $("#vin-result").html(data);
-                                   }
-                               });
-                           });
-                       </script>
-        {% endblock vinScript %}
-    {% block frameScript %}{% endblock frameScript %}
-        <div class="row">
-            <div class="col-lg-6">
-                {% for mark in marks %}
-                    <a href="https://vincat.ru/{{ mark|lower }}" target="_blank">{{ mark }}</a><br>
-                {% endfor %}
-                {#<a href="https://nissan.by.suraman.newsolution.by" target="_blank">Nissan_old</a><br>
 
-                <a href="https://cats-toyota.by.suraman.newsolution.by" target="_blank">Toyota_old</a><br>#}
-                {#<a href="https://vincat.ru/mitsubishi" target="_blank">Mitsubishi</a><br>#}
-            </div>
-        </div>
     </div>
+
 {% endblock body %}
-
-
-
+</html>
