@@ -2,25 +2,48 @@
 {% extends 'CatalogCommonBundle:Catalog:05_subgroups.html.twig' %}
 {% use 'CatalogToyotaBundle::toyota.base.html.twig' %}
 {% block breadcrumbs %}
-    <a href="{% if  app.request.get('token') %} {{ path('catalog_toyota_token', parameters) }} {% else %} {{ path('catalog_toyota') }} {% endif %}">{{'Регион, модель, модификация'|trans}} ({{ oContainer.getActiveRegion.getRuname }},
+    <a href="{% if  app.request.get('token') %} {{ path('catalog_toyota_token', parameters) }} {% else %} {{ path('catalog_toyota') }} {% endif %}">{{ 'Регион, модель, модификация'|trans }}
+        ({{ oContainer.getActiveRegion.getRuname }},
         {{ oContainer.getActiveModel.getRuname }}, {{ oContainer.getActiveModification.getRuname }})</a> /
-    <a href="{{ path('catalog_toyota_complectations', parameters) }}">{{'Комплектация'|trans}} ({{ oContainer.getActiveComplectation.getRuname}})</a> /
-    <a href="{{ path('catalog_toyota_groups', parameters) }}">{{'Группа запчастей'|trans}} ({{ oContainer.getActiveGroup.getRuname|trans({}, 'toyota') }})</a> /
-    {{'Подгруппа запчастей'|trans}}
+    <a href="{{ path('catalog_toyota_complectations', parameters) }}">{{ 'Комплектация'|trans }}
+        ({{ oContainer.getActiveComplectation.getRuname }})</a> /
+    <a href="{{ path('catalog_toyota_groups', parameters) }}">{{ 'Группа запчастей'|trans }}
+        ({{ oContainer.getActiveGroup.getRuname|trans({}, 'toyota') }})</a> /
+    {{ 'Подгруппа запчастей'|trans }}
 {% endblock breadcrumbs %}
 
 {% block groupRuname %}{{ oContainer.getActiveGroup.getRuname|trans({}, 'toyota') }}{% endblock groupRuname %}
 
 
-{% block subgroupImage %}{% endblock subgroupImage %}
-{% block subgroupItem %}
-    {% set loc = app.request.get('_locale')~'_'~app.request.get('_locale')|upper %}
-    <div id="subgroup{{ subgroup.getCode }}">
-        <a href="{{ path('catalog_toyota_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}) {{ subgroup.getRuname(app.request.get('_locale')) }}</a>
-    </div>
-{% endblock subgroupItem %}
- {% block area %}
- {% endblock area %}
-{% block cycleScript %}
-{% endblock cycleScript %}
+{#{% block subgroupImage %}{% endblock subgroupImage %}#}
+{#{% block subgroupItem %}#}
+    {#{% set loc = app.request.get('_locale')~'_'~app.request.get('_locale')|upper %}#}
+    {#<div id="subgroup{{ subgroup.getCode }}">#}
+        {#<a href="{{ path('catalog_toyota_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}">({{ subgroup.getCode }}#}
+            {#) {{ subgroup.getRuname(app.request.get('_locale')) }}</a>#}
+    {#</div>#}
+{#{% endblock subgroupItem %}#}
+ {#{% block area %}#}
+ {#{% endblock area %}#}
+{#{% block cycleScript %}#}
+{#{% endblock cycleScript %}#}
 
+
+{% block body %}
+    {% block head %}<h3>{{ 'Выбрать подгруппу запчастей'|trans }}:</h3>{% endblock head %}
+
+    {% for subgroup in oContainer.getActiveGroup.getSubgroups %}
+        <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12">
+            <a href="{% block pathToSchemas %}{{ path('catalog_toyota_schemas', parameters|merge({'subGroupCode': subgroup.getCode})) }}{% endblock pathToSchemas %}"
+               class="thumbnail">
+                <div class="row" style="height: 50px;">
+                    ({{ subgroup.getCode }}) {{ subgroup.getRuname(app.request.get('_locale')) }}
+                </div>
+                {#<div class="row">#}
+                <img src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogtoyota/ImgIllIndex/'~oContainer.getActiveRegion.getCode~'/'~oContainer.getActiveModification.getCode~'/'~subgroup.getOption('picture')~'.png') }}"
+                     width="inherit" alt="{{ subgroup.getRuname(app.request.get('_locale')) }}"/>
+                {#</div>#}
+            </a>
+        </div>
+    {% endfor %}
+{% endblock body %}

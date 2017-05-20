@@ -72,7 +72,7 @@ class SmartCatalogModel extends CatalogModel{
             AGGTYPE,
             descr.AGGTYPE_DESC
         FROM
-            mercedesbenz.alltext_models_v models
+            mercedesbenz_ewa.alltext_models_v models
         LEFT JOIN alltext_aggtype_code_map_v descr ON TRIM(models.AGGTYPE) = TRIM(descr.DAG_AGGTYPE_CODE)
         WHERE models.APPINF LIKE :regionCode AND models.CLASS = :modelCode;
         ";
