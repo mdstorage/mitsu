@@ -10,11 +10,10 @@ namespace Catalog\HondaBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
 
-use Catalog\HondaBundle\Components\HondaConstants;
+class HondaVinModel extends HondaCatalogModel
+{
 
-class HondaVinModel extends HondaCatalogModel {
-
-    public function getVinFinderResult($vin)
+    public function getVinFinderResult($vin, $commonVinFind = false)
     {
         $sql = "
         SELECT *
@@ -23,28 +22,37 @@ class HondaVinModel extends HondaCatalogModel {
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('vin', substr($vin,0,11));
-        $query->bindValue('subvin', substr($vin,9,8));
+        $query->bindValue('vin', substr($vin, 0, 11));
+        $query->bindValue('subvin', substr($vin, 9, 8));
         $query->execute();
 
         $aData = $query->fetchAll();
 
-        $result = array();
+        if (!$aData) {
+            return null;
+        }
 
-        if ($aData) {
-            $result = array(
-                'marka' => 'Honda',
-                'region' => $aData['Region'],
-                'model' => $aData['ExtBaureihe'],
-                'modif' => $aData['Modell'],
-                Constants::PROD_DATE => $aData['Produktionsdatum'],
-                'wheel' => $aData['Lenkung'],
-                'modelforGroups' => $aData['Baureihe'].'_'.$aData['Karosserie'],
-                'modifforGroups' => $aData['Modellspalte'],
-                'complectationCode' => $aData['Lenkung'].$aData['Getriebe'].$aData['Produktionsdatum'],
-                'engine' => $aData['Motor'],
-                'korobka' => $aData['Getriebe'],
-            );
+        $region    = $aData['carea'];
+        $modelCode = $aData['cmodnamepc'];
+
+        $result = [
+            'marka'              => 'HondaEurope',
+            'region'             => $region,
+            'model'              => $modelCode,
+            Constants::PROD_DATE => $aData['dmodyr'],
+        ];
+
+        if ($commonVinFind) {
+            $urlParams        = [
+                'path'   => 'vin_hondaeurope_complectations',
+                'params' => [
+                    'regionCode'       => $region,
+                    'modelCode'        => $modelCode,
+                    'modificationCode' => $aData['dmodyr'],
+                ],
+            ];
+            $removeFromResult = [];
+            return ['result' => array_diff_key($result, array_flip($removeFromResult)), 'urlParams' => $urlParams];
         }
         return $result;
     }
@@ -58,23 +66,21 @@ class HondaVinModel extends HondaCatalogModel {
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('vin', substr($vin,0,11));
+        $query->bindValue('vin', substr($vin, 0, 11));
         $query->execute();
 
         $aData = $query->fetchAll();
-               
-        $complectations = array();
 
-        foreach($aData as $item1)
+        $complectations = [];
 
-        {
-            $complectations[]=$item1['hmodtyp'];
+        foreach ($aData as $item1) {
+            $complectations[] = $item1['hmodtyp'];
         }
-		
+
         return $aData;
     }
-    
-    
+
+
     public function getVinSchemas($regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
         $sqlSchemas = "
@@ -93,18 +99,19 @@ class HondaVinModel extends HondaCatalogModel {
 
         $aData = $query->fetchAll();
 
-        $schemas = array();
-        
-        foreach($aData as $item){
-		
-		 if ((substr_count($item['desc_en'],'MY')>0)&&(substr_count($item['desc_en'], $modificationCode)!=0)||(substr_count($item['desc_en'],'MY')==0))
-		           
+        $schemas = [];
+
+        foreach ($aData as $item) {
+
+            if ((substr_count($item['desc_en'], 'MY') > 0) && (substr_count($item['desc_en'],
+                        $modificationCode) != 0) || (substr_count($item['desc_en'], 'MY') == 0)
+            ) {
                 $schemas[] = $item['image_file'];
+            }
         }
 
         return $schemas;
     }
-   
-   
-        
-} 
+
+
+}

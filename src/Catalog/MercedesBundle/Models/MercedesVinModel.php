@@ -1,55 +1,28 @@
 <?php
+
 namespace Catalog\MercedesBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
-use Catalog\MercedesBundle\Components\MercedesConstants;
 
 class MercedesVinModel extends MercedesCatalogModel
 {
-    private function getIdentDataByVin($vin)
-    {
-        $sqlVin = "
-        SELECT
-          IF (SUBSTRING(map.LOCATION, 1, 1) = 'E', '1',
-            CASE RIGHT (map.LOCATION, 2)
-              WHEN 'NA' THEN 'F'
-              WHEN 'JA' THEN 'S'
-              WHEN 'LA' THEN 'W'
-              WHEN 'SA' THEN 'K'
-              WHEN 'SM' THEN 'M'
-            END
-            ) MARKET,
-          map.LOCATION, map.WHC, map.CHASSBM, map.CHASS_IDENT,
-          db.DB_NAME, db.TABLES
-        FROM comm_dc_map_v map
-        LEFT JOIN special_dcdbinfo_v db ON map.LOCATION = db.LOCATION
-        WHERE ((map.VINWHC = :vinwhc AND map.VIN = :vin) OR (map.WHC = :vinwhc AND
-          map.CHASSBM = :chassbm AND map.CHASS_IDENT = :chassident)) AND RIGHT (map.LOCATION, 2) NOT LIKE 'SM'
-        ";
-
-        $query = $this->conn->prepare($sqlVin);
-        $query->bindValue('vinwhc', substr($vin, 0, 3));
-        $query->bindValue('vin', substr($vin, 3));
-        $query->bindValue('chassbm', substr($vin, 3, 6));
-        $query->bindValue('chassident', substr($vin, 9));
-        $query->execute();
-
-        $aVin = $query->fetchAll();
-
-        return $aVin;
-    }
     /**
      * Поиск конкретной модели по vin-коду
      *
      * @param $vin
+     *
      * @return array
      */
-    public function getVinFinderResult($vin)
+    public function getVinFinderResult($vin, $commonVinFind = false)
     {
-        $result = array();
-        $aModel = array();
+        $result = [];
+        $aModel = [];
 
         $aVin = $this->getIdentDataByVin($vin);
+
+        if(!$aVin){
+            return null;
+        }
 
         foreach ($aVin as $index => &$item) {
             $sqlModels = "
@@ -69,14 +42,13 @@ class MercedesVinModel extends MercedesCatalogModel
             $query->execute();
 
             $aModel = $query->fetchAll();
-            foreach ($aModel as &$value){
+            foreach ($aModel as &$value) {
                 $value = $value + $item;
                 unset($value);
             }/*оказывается, что автомобиль может быть не один, и поэтому добавление нулевого элемента $aModel[0] ошибочно. Исправлено 17.01.17*/
 
             unset($item);
         }
-
 
         if ($aModel) {
             foreach ($aModel as $index => $aData) {
@@ -129,31 +101,84 @@ class MercedesVinModel extends MercedesCatalogModel
                     case 'P':
                         $region_RU = 'Агрегаты';
                         break;
-
                 }
 
-
-                if ($aData) {
-                    $result[Constants::PROD_DATE] = substr($aInfo['RDATE'], 0, 1) > 6 ? '19' . $aInfo['RDATE'] : '20' . $aInfo['RDATE'];
-                    $result[$index] = array(
-                        'marka' => 'MERCEDES',
-                        'region' => trim($aData['MARKET']),
-                        'region_RU' => $region_RU,
-                        'model' => trim($aData['CLASS']),
-                        'saledes' => trim($aData['SALESDES']),
-                        'prod_year' => substr($aInfo['DDATE'], 0, 1) > 6 ? '19' . $aInfo['DDATE'] : '20' . $aInfo['DDATE'],
-                        'modification' => $aData['AGGTYPE'],
-                        //                'country' => $aData['XC26EDST'],
-                        'complectation' => trim($aData['CATNUM']) . '.' . $aData['TYPE'] . '.' . $aData['SUBBM1'],
-                        //                'ext_color' => $aData['ext_color'],
-                        //                'int_color' => $aData['int_color'],
-                        Constants::PROD_DATE => substr($aInfo['RDATE'], 0, 1) > 6 ? '19' . $aInfo['RDATE'] : '20' . $aInfo['RDATE']
-                    );
-                }
+                $result[Constants::PROD_DATE] = substr($aInfo['RDATE'], 0,
+                    1) > 6 ? '19' . $aInfo['RDATE'] : '20' . $aInfo['RDATE'];
+                $result[$index]               = [
+                    'marka'              => 'MERCEDESBENZ',
+                    'region'             => trim($aData['MARKET']),
+                    'region_RU'          => $region_RU,
+                    'model'              => trim($aData['CLASS']),
+                    'saledes'            => trim($aData['SALESDES']),
+                    'prod_year'          => substr($aInfo['DDATE'], 0,
+                        1) > 6 ? '19' . $aInfo['DDATE'] : '20' . $aInfo['DDATE'],
+                    'modification'       => $aData['AGGTYPE'],
+                    //                'country' => $aData['XC26EDST'],
+                    'complectation'      => trim($aData['CATNUM']) . '.' . $aData['TYPE'] . '.' . $aData['SUBBM1'],
+                    //                'ext_color' => $aData['ext_color'],
+                    //                'int_color' => $aData['int_color'],
+                    Constants::PROD_DATE => substr($aInfo['RDATE'], 0,
+                        1) > 6 ? '19' . $aInfo['RDATE'] : '20' . $aInfo['RDATE'],
+                ];
+            }
+            if ($commonVinFind) {
+                $urlParams        = [
+                    'path'   => 'vin_mercedes_groups',
+                    'params' => [
+                        'regionCode'       => $result[0]['region'],
+                        'modelCode'        => $result[0]['model'],
+                        'modificationCode' => $result[0]['modification'],
+                        'complectationCode'    => $result[0]['complectation'],
+                    ],
+                ];
+                $removeFromResult = ['saledes', 'region'];
+                return ['result'    => array_diff_key($result[0], array_flip($removeFromResult)),
+                        'urlParams' => $urlParams,
+                ];
             }
         }
 
         return $result;
+    }
+
+    public function getArticulsByVin($vin)
+    {
+        $sacodes = $this->getRtype3ByVin($vin);
+        return $sacodes;
+    }
+
+    private function getIdentDataByVin($vin)
+    {
+        $sqlVin = "
+        SELECT
+          IF (SUBSTRING(map.LOCATION, 1, 1) = 'E', '1',
+            CASE RIGHT (map.LOCATION, 2)
+              WHEN 'NA' THEN 'F'
+              WHEN 'JA' THEN 'S'
+              WHEN 'LA' THEN 'W'
+              WHEN 'SA' THEN 'K'
+              WHEN 'SM' THEN 'M'
+            END
+            ) MARKET,
+          map.LOCATION, map.WHC, map.CHASSBM, map.CHASS_IDENT,
+          db.DB_NAME, db.TABLES
+        FROM comm_dc_map_v map
+        LEFT JOIN special_dcdbinfo_v db ON map.LOCATION = db.LOCATION
+        WHERE ((map.VINWHC = :vinwhc AND map.VIN = :vin) OR (map.WHC = :vinwhc AND
+          map.CHASSBM = :chassbm AND map.CHASS_IDENT = :chassident)) AND RIGHT (map.LOCATION, 2) NOT LIKE 'SM'
+        ";
+
+        $query = $this->conn->prepare($sqlVin);
+        $query->bindValue('vinwhc', substr($vin, 0, 3));
+        $query->bindValue('vin', substr($vin, 3));
+        $query->bindValue('chassbm', substr($vin, 3, 6));
+        $query->bindValue('chassident', substr($vin, 9));
+        $query->execute();
+
+        $aVin = $query->fetchAll();
+
+        return $aVin;
     }
 
     private function getRtype3ByVin($vin)
@@ -186,11 +211,5 @@ class MercedesVinModel extends MercedesCatalogModel
 
         $aSacodes = explode(" ", $sSaCode);
         return $aSacodes;
-    }
-
-    public function getArticulsByVin($vin)
-    {
-        $sacodes = $this->getRtype3ByVin($vin);
-        return $sacodes;
     }
 }

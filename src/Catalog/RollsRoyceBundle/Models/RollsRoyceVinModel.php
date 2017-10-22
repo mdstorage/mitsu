@@ -10,15 +10,13 @@ namespace Catalog\RollsRoyceBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
 
-use Catalog\RollsRoyceBundle\Components\RollsRoyceConstants;
+class RollsRoyceVinModel extends RollsRoyceCatalogModel
+{
 
-class RollsRoyceVinModel extends RollsRoyceCatalogModel {
-
-    public function getVinFinderResult($vin)
+    public function getVinFinderResult($vin, $commonVinFind = false)
     {
-        $vin = substr($vin, strlen($vin)-7, 7);
+        $vin = substr($vin, strlen($vin) - 7, 7);
 
-        
         $sql = "
        select distinct
 fgstnr_mospid Modellspalte,
@@ -53,33 +51,50 @@ where fgstnr_von <= :vin and fgstnr_bis >= :vin and fgstnr_anf  = :subVin
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('vin', $vin);
-        $query->bindValue('subVin', substr($vin,0,2));
+        $query->bindValue('subVin', substr($vin, 0, 2));
         $query->execute();
 
         $aData = $query->fetch();
 
-        $result = array();
+        if (!$aData) {
+            return null;
+        }
 
-        if ($aData) {
-            $result = array(
-                'marka' => $aData['Marke'],
-                'region' => $aData['Region'],
-                'model' => $aData['ExtBaureihe'],
-                'modif' => $aData['Modell'],
-                Constants::PROD_DATE => $aData['Produktionsdatum'],
-                'wheel' => $aData['Lenkung'],
-                'modelforGroups' => $aData['Baureihe'].'_'.$aData['Karosserie'],
-                'modifforGroups' => $aData['Modellspalte'],
-                'complectationCode' => $aData['Lenkung'].$aData['Getriebe'].$aData['Produktionsdatum'],
-                'engine' => $aData['Motor'],
-                'korobka' => $aData['Getriebe'],
-            );
+        $region            = $aData['Region'];
+        $modelforGroups    = $aData['Baureihe'] . '_' . $aData['Karosserie'];
+        $modifforGroups    = $aData['Modellspalte'];
+        $complectationCode = $aData['Lenkung'] . $aData['Getriebe'] . $aData['Produktionsdatum'];
+
+        $result = [
+            'marka'              => 'RollsRoyce',
+            'region'             => $region,
+            'model'              => $aData['ExtBaureihe'],
+            'modif'              => $aData['Modell'],
+            Constants::PROD_DATE => $aData['Produktionsdatum'],
+            'wheel'              => $aData['Lenkung'],
+            'modelforGroups'     => $modelforGroups,
+            'modifforGroups'     => $modifforGroups,
+            'complectationCode'  => $complectationCode,
+            'engine'             => $aData['Motor'],
+            'korobka'            => $aData['Getriebe'],
+        ];
+
+        if ($commonVinFind) {
+            $urlParams        = [
+                'path'   => 'vin_rollsroyce_groups',
+                'params' => [
+                    'regionCode'        => $region,
+                    'modelCode'         => $modelforGroups,
+                    'modificationCode'  => $modifforGroups,
+                    'complectationCode' => $complectationCode,
+                ],
+            ];
+            $removeFromResult = ['modelforGroups', 'modifforGroups'];
+
+            return ['result' => array_diff_key($result, array_flip($removeFromResult)), 'urlParams' => $urlParams];
         }
         return $result;
     }
-    
 
-   
-   
-        
+
 } 

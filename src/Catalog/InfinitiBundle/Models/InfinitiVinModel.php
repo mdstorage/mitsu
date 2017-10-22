@@ -9,15 +9,13 @@
 namespace Catalog\InfinitiBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
-
 use Catalog\InfinitiBundle\Components\InfinitiConstants;
 
-class InfinitiVinModel extends InfinitiCatalogModel {
+class InfinitiVinModel extends InfinitiCatalogModel
+{
 
-    public function getVinFinderResult($vin)
+    public function getVinFinderResult($vin, $commonVinFind = false)
     {
-
-
         $sqlMinSerial = "
         SELECT MIN(ABS(vindat.SERIAL - SUBSTRING(:vin,12,6))) as minimum
         from vindat
@@ -28,16 +26,14 @@ class InfinitiVinModel extends InfinitiCatalogModel {
         $query = $this->conn->prepare($sqlMinSerial);
         $query->bindValue('vin', $vin);
         $query->execute();
-
         $sMinimumSerial = $query->fetchColumn(0);
-
 
         $sqlMin = "
         SELECT MIN(ABS(vindat.MDLPOS - mdlcode.POSDATA)) as minimum
         from vindat, mdlcode
         where vindat.vin = SUBSTRING(:vin,1,11)
         AND vindat.SERIAL = SUBSTRING(:vin,12,6)
-        AND ABS(vindat.SERIAL - SUBSTRING(:vin,12,6)) = :MinimumSerial
+        AND ABS(vindat.SERIAL - SUBSTRING(:vin,12,6)) = :minimumSerial
         AND vindat.CDNAME = mdlcode.CDNAME
         AND vindat.CATALOG = mdlcode.CATALOG
 
@@ -45,9 +41,8 @@ class InfinitiVinModel extends InfinitiCatalogModel {
 
         $query = $this->conn->prepare($sqlMin);
         $query->bindValue('vin', $vin);
-        $query->bindValue('MinimumSerial', $sMinimumSerial);
+        $query->bindValue('minimumSerial', $sMinimumSerial);
         $query->execute();
-
         $sMinimum = $query->fetchColumn(0);
 
         $sql = "
@@ -64,47 +59,64 @@ class InfinitiVinModel extends InfinitiCatalogModel {
 
         where vindat.vin = SUBSTRING(:vin,1,11)
         AND vindat.SERIAL = SUBSTRING(:vin,12,6)
+        AND vindat.CATALOG LIKE '%INF'
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('vin', $vin);
         $query->bindValue('minimum', $sMinimum);
-
         $query->execute();
-
         $aData = $query->fetchAll();
-        $OnlyCompl = array();
 
+        if (!$aData) {
+            return null;
+        }
+        $OnlyCompl = [];
 
-        if ($aData){
+        $complectations = $this->getComplectations($aData[0]['CATALOG'], $aData[0]['SHASHUKO'],
+            $aData[0]['MODSERIES']);
+        $complectation  = $complectations[str_pad($aData[0]['MDLDIR'], 3, "0",
+            STR_PAD_LEFT) . '_' . $aData[0]['POSNUM'] . '_' . $aData[0]['DATA1']];
 
-            $complectations = $this->getComplectations($aData[0]['CATALOG'], $aData[0]['SHASHUKO'], $aData[0]['MODSERIES']);
-            $complectation = $complectations[str_pad($aData[0]['MDLDIR'], 3, "0", STR_PAD_LEFT).'_'.$aData[0]['POSNUM'].'_'.$aData[0]['DATA1']];
-
-
-            for ($i = 1; $i < 9; $i++)
-            {
-                $OnlyCompl[] = $complectation['options']['OPTION'.$i];
+        for ($i = 1; $i < 9; $i++) {
+            if ($complectation['options']['OPTION' . $i]) {
+                $OnlyCompl[] = $complectation['options']['OPTION' . $i];
             }
-
         }
 
-        $result = array();
+        $region            = $aData[0]['CATALOG'];
+        $modelCode         = urlencode($aData[0]['SHASHUKO']);
+        $modificationCode  = $aData[0]['MODSERIES'];
+        $complectationCode = str_pad($aData[0]['MDLDIR'], 3, "0",
+                STR_PAD_LEFT) . '_' . $aData[0]['POSNUM'] . '_' . $aData[0]['DATA1'];
 
-        if ($aData) {
-            $result = array(
-                'marka' => 'INFINITI',
-                'model' => urlencode($aData[0]['SHASHUKO']),
-                'modif' => $aData[0]['MODSERIES'],
-                'complectation' => $OnlyCompl,
-                Constants::PROD_DATE => $aData[0]['PRODYM'],
+        $result = [
+            'marka'              => 'INFINITI',
+            'model'              => $modelCode,
+            'modif'              => $modificationCode,
+            'complectation'      => $OnlyCompl,
+            Constants::PROD_DATE => $aData[0]['PRODYM'],
 
-                'region' => $aData[0]['CATALOG'],
-                InfinitiConstants::INTCOLOR => $aData[0]['COLOR1'],
-                'cvet_salona' => $aData[0]['COL1'],
-                'cvet_kuzova' => $aData[0]['COL2'],
-                'kod_complektacii' => str_pad($aData[0]['MDLDIR'], 3, "0", STR_PAD_LEFT).'_'.$aData[0]['POSNUM'].'_'.$aData[0]['DATA1'],
-                );
+            'region'                    => $region,
+            InfinitiConstants::INTCOLOR => $aData[0]['COLOR1'],
+            'cvet_salona'               => $aData[0]['COL1'],
+            'cvet_kuzova'               => $aData[0]['COL2'],
+            'kod_complektacii'          => $complectationCode,
+        ];
+
+        if ($commonVinFind) {
+            $urlParams = [
+                'path'   => 'vin_infiniti_groups',
+                'params' => [
+                    'regionCode'        => $region,
+                    'modelCode'         => $modelCode,
+                    'modificationCode'  => $modificationCode,
+                    'complectationCode' => $complectationCode,
+                ],
+            ];
+            $removeFromResult = ['kod_complektacii'];
+
+            return ['result' => array_diff_key($result, array_flip($removeFromResult)), 'urlParams' => $urlParams];
         }
 
         return $result;

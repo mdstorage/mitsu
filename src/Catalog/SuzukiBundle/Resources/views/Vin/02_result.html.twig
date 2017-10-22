@@ -1,7 +1,7 @@
 {% extends 'CatalogCommonBundle:Vin:02_result.html.twig' %}
 {% block specification %}
     <div class="row">
-    <div class="col-lg-8">
+        <div class="col-lg-8">
             <table class="table table-bordered">
                 <tr>
                     <td>Марка:</td>
@@ -19,38 +19,43 @@
                     <td>Двигатель:</td>
                     <td>{{ result.engine }}</td>
                 </tr>
-           {% if result.trans %}    
-                <tr>
-                
-        		<td>Трансмиссия:</td>
-                    <td>{{ result.trans }}</td>
-                </tr>
-           {% endif %}
+                {% if result.trans %}
+                    <tr>
+
+                        <td>Трансмиссия:</td>
+                        <td>{{ result.trans }}</td>
+                    </tr>
+                {% endif %}
                 <tr>
                     <td>Цвет:</td>
                     <td>{{ result.color }}</td>
                 </tr>
-           {% if result.color2 %} 
-                <tr>
-                    <td>Цвет 2:</td>
-                    <td>{{ result.color2 }}</td>
-                </tr>
-           {% endif %}
+                {% if result.color2 %}
+                    <tr>
+                        <td>Цвет 2:</td>
+                        <td>{{ result.color2 }}</td>
+                    </tr>
+                {% endif %}
                 <tr>
                     <td>Код модели:</td>
                     <td>{{ result.model_code }}</td>
                 </tr>
                 <tr>
                     <td>Расшифровка кода модели:</td>
-                   <td>{% for region in result.desc_model_code %}
-                   {{ region }}<br/>
-                    {% endfor %}
-                   {{ result.country }} </td>
+                    <td>{% for region in result.complectation %}
+                            {{ region }}<br/>
+                        {% endfor %}
+                        {{ result.country }} </td>
                 </tr>
             </table>
         </div>
     </div>
 {% endblock specification %}
 {% block catalogPath %}
-    {{ path('vin_suzuki_groups',({'regionCode': result.region, 'modelCode': result.model|url_encode, 'modificationCode': result.modification, 'complectationCode': result.complectation, 'token': app.request.get('token')})) }}
+    {{ path('vin_suzuki_groups',({
+        'regionCode': result.region,
+        'modelCode': result.model|url_encode,
+        'modificationCode': result.modification,
+        'complectationCode': result.complectationCode,
+        'token': app.request.get('token')})) }}
 {% endblock catalogPath %}

@@ -1,0 +1,4 @@
+acme_vin_homepage:
+    path:     /vin/{vin}/{domain}
+    defaults: { _controller: AcmeVinBundle:Vin:main }
+    requirements: {_method: GET}

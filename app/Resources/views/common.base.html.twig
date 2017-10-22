@@ -2,16 +2,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8" />
-    <title>{% block title %}{{ 'Каталог'|trans }} {% block brand %}{% endblock brand %}{% endblock title%}</title>
+    <meta charset="UTF-8"/>
+    <title>{% block title %}{{ 'Каталог'|trans }} {% block brand %}{% endblock brand %}{% endblock title %}</title>
     {% block stylesheets %}
 
         <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap.min.css') }}" media="all">
         <link rel="stylesheet" href="{{ asset('bundles/catalogcommon/css/bootstrap-theme.min.css') }}" media="all">
-        <link rel="stylesheet" href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/css/jquery.zoomscroll-2.0.1.css') }}" media="all">
-        <link rel="stylesheet" href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/css/guayaquil.css') }}" media="all">
-        <link rel="stylesheet" href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/css/colorbox.css') }}" media="all">
-        <link rel="stylesheet" href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/css/unit.css') }}" media="all">
+        <link rel="stylesheet"
+              href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/css/jquery.zoomscroll-2.0.1.css') }}"
+              media="all">
+        <link rel="stylesheet"
+              href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/css/guayaquil.css') }}"
+              media="all">
+        <link rel="stylesheet"
+              href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/css/colorbox.css') }}"
+              media="all">
+        <link rel="stylesheet"
+              href="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/css/unit.css') }}"
+              media="all">
 
 
     {% endblock %}
@@ -21,9 +29,12 @@
 {% block javascripts %}
 
     <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/jquery.js') }}"></script>
-    <script type="text/javascript" src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/jquery.mousewheel.js') }}"></script>
-    <script type="text/javascript" src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/jquery-ui-1.8.16.custom.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/js/jquery.zoomscroll-2.0.1.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/jquery.mousewheel.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/jquery-ui-1.8.16.custom.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/js/jquery.zoomscroll-2.0.1.js') }}"></script>
     <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/js/jquery.imagemapster.min.js') }}"></script>
     <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/jquery-scrolling.js') }}"></script>
     <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/catalogcommon/js/bootstrap.min.js') }}"></script>
@@ -36,7 +47,7 @@
     <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/jquery.tooltip.js') }}"></script>
     <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/mootools-core.js') }}"></script>
     <script src="{{ asset(constant('Catalog\\CommonBundle\\Components\\Constants::PREFIX_STATIC')~'/bundles/cataloghonda/js/mootools-more.js') }}"></script>
-    
+
 {% endblock %}
 
 {% block source %}{% endblock source %}
@@ -45,20 +56,29 @@
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <button type="button" class="navbar-toggle" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{% block catalogPathLogo %}{% endblock catalogPathLogo %}"> {{ 'Каталог'|trans }} <span id="span1">{{ block('brand') }}</span></a>
+                <a class="navbar-brand"
+                   href="{% block catalogPathLogo %}{% endblock catalogPathLogo %}"> {{ 'Каталог'|trans }} <span
+                            id="span1">{{ block('brand') }}</span></a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="{{ 'catalog' in app.request.getPathInfo ? 'active'}}"><a href="{% block catalogPath %}{% endblock catalogPath %}">{% block catalogMenuItem %}{{ 'Каталог'|trans }}{% endblock catalogMenuItem %}</a></li>
-                    <li class="{{ 'vin' in app.request.getPathInfo ? 'active'}}"><a href="{% block vinPath %}{% endblock vinPath %}">{% block vinMenuItem %}{{ 'Поиск по VIN'|trans }}{% endblock vinMenuItem %}</a></li>
-                    <li class="{{ 'articul' in app.request.getPathInfo ? 'active'}}"><a href="{% block articulPath %}{% endblock articulPath %}">{% block articulMenuItem %}{{ 'Поиск запчасти по артикулу'|trans }}{% endblock articulMenuItem %}</a></li>
+                    <li class="{{ 'catalog' in app.request.getPathInfo ? 'active' }}"><a
+                                href="{% block catalogPath %}{% endblock catalogPath %}">{% block catalogMenuItem %}{{ 'Каталог'|trans }}{% endblock catalogMenuItem %}</a>
+                    </li>
+                    <li class="{{ 'vin' in app.request.getPathInfo ? 'active' }}"><a
+                                href="{% block vinPath %}{% endblock vinPath %}">{% block vinMenuItem %}{{ 'Поиск по VIN'|trans }}{% endblock vinMenuItem %}</a>
+                    </li>
+                    <li class="{{ 'articul' in app.request.getPathInfo ? 'active' }}"><a
+                                href="{% block articulPath %}{% endblock articulPath %}">{% block articulMenuItem %}{{ 'Поиск запчасти по артикулу'|trans }}{% endblock articulMenuItem %}</a>
+                    </li>
                 </ul>
 
                 {% if not app.request.get('token') %} {% set langes = {'en':'En', 'ru':'Рус'} %}
@@ -66,18 +86,17 @@
                 {% endif %}
 
                 {% if langes|length > 1 %}
-                <ul class="nav navbar-nav navbar-right">
-                    {% for key, lang in langes %}
-                        <li class="{{ key in app.request.get('_locale') ? 'active'}}">
-                            <a href="{% block langPath %}{% endblock langPath %}">{{ lang }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        {% for key, lang in langes %}
+                            <li class="{{ key in app.request.get('_locale') ? 'active' }}">
+                                <a href="{% block langPath %}{% endblock langPath %}">{{ lang }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 {% endif %}
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
-
 
 
     <div class="container-fluid">
@@ -87,7 +106,7 @@
                 {% endblock breadcrumbs %}
             </div>
         {% endblock breadcrumbs_set %}
-        {% block summary_set%}
+        {% block summary_set %}
             <div class="alert alert-info">
 
                 {% if 'vin' in app.request.getPathInfo %}
@@ -95,7 +114,18 @@
                         <div class="col-lg-4 col-xs-4 col-md-8 col-sm-8">
                             <div style="font-family: Helvetica, Arial;font-size: 15px; color: #000088">
                                 {% block vinCode %}
-                                    <b>{{ 'РЕЗУЛЬТАТЫ ПОИСКА ДЛЯ VIN'|trans }}:</b> {% block vinNumber %}{{ app.request.cookies.get('VIN')|upper }}{% endblock vinNumber %}
+                                    {% if app.request.get('vin') %}
+                                    {% set vinCoder =  app.request.get('vin') %}
+                                        <script>
+                                            var cookie_string = '{{ constant('Catalog\\CommonBundle\\Components\\Constants::VIN') }}' + "=" + escape('{{ vinCoder }}') +
+                                                "; expires=0" + "; path=/;";
+                                            document.cookie = cookie_string;
+                                        </script>
+                                    {% else %}
+                                        {% set vinCoder =  app.request.cookies.get(constant('Catalog\\CommonBundle\\Components\\Constants::VIN')) %}
+                                    {% endif %}
+                                    <b>{{ 'РЕЗУЛЬТАТЫ ПОИСКА ДЛЯ VIN'|trans }}
+                                        :</b> {% block vinNumber %}{{ vinCoder|upper }}{% endblock vinNumber %}
                                 {% endblock vinCode %}
                             </div>
                         </div>
@@ -122,105 +152,107 @@
                             </div>
                             <div>
                                 {% block complectation %}
-                                    <b>{{ 'Комплектация'|trans }}:</b> {% block complectationRuname %}{% endblock complectationRuname %}
+                                    <b>{{ 'Комплектация'|trans }}
+                                        :</b> {% block complectationRuname %}{% endblock complectationRuname %}
                                 {% endblock complectation %}
                             </div>
                         </div>
                         <div class="col-lg-4 col-xs-4 col-md-8 col-sm-8">
                             <div>
                                 {% block group %}
-                                    <b>{{ 'Группа запчастей'|trans }}:</b> {% block groupRuname %}{% endblock groupRuname %}
+                                    <b>{{ 'Группа запчастей'|trans }}
+                                        :</b> {% block groupRuname %}{% endblock groupRuname %}
                                 {% endblock group %}
                             </div>
                             <div>
                                 {% block subGroup %}
-                                    <b>{{ 'Подгруппа запчастей'|trans }}:</b> {% block subGroupRuname %}{% endblock subGroupRuname %}
+                                    <b>{{ 'Подгруппа запчастей'|trans }}
+                                        :</b> {% block subGroupRuname %}{% endblock subGroupRuname %}
                                 {% endblock subGroup %}
                             </div>
                         </div>
 
                         <!-- Button trigger modal -->
                         <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#myModal">
-                        {{ 'Сообщить об ошибке'|trans }}
+                            {{ 'Сообщить об ошибке'|trans }}
                         </button>
                         {{ include('feedbackform/_form.common.base.html.twig') }}
 
                         <!-- Modal -->
-                    {% endblock summary%}
+                    {% endblock summary %}
                 </div>
             </div>
-        {% endblock summary_set%}
-        {% block body %}{% endblock body%}
+        {% endblock summary_set %}
+        {% block body %}{% endblock body %}
     </div>
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function () {
         {
             setInterval(publishHeight, 300);
         }
     });
 </script>
 <script>
-      var host = '{{ app.request.get('callbackhost') }}';
-      var ddomain = get_cookie('DOMAIN');
-      if (!host){
-          host = get_cookie('COOKIEHOST'.concat($("#span1").text().trim().toLowerCase(), ddomain));
-      }
- function publishHeight() {
+    var host = '{{ app.request.get('callbackhost') }}';
+    var ddomain = get_cookie('DOMAIN');
+    if (!host) {
+        host = get_cookie('COOKIEHOST'.concat($("#span1").text().trim().toLowerCase(), ddomain));
+    }
+    function publishHeight() {
 
-  var actualHeight = $('#dynamic-content').height();
-  var currentHeight = $(window).height();
+        var actualHeight = $('#dynamic-content').height();
+        var currentHeight = $(window).height();
 
-  if (host == '') {
-      var pairs = window.location.href.split('?');
-      if (pairs[1]) {
-          pairs = pairs[1].split('&');
-          if ((pairs != null) && (pairs.length > 0)) {
-              for(var i = 0; i < pairs.length; i++) {
-                  var pair = pairs[i].split('=');
-                  if ((pair != null) && (pair.length > 0)) {
-                      if (pair[0] == 'host') {
-                          host = unescape(pair[1]);
-                          host = host.split('#');
-                          host = host[0];
-                      }
-                  }
-              }
-          }
-      }
-  }
-  if (Math.abs(actualHeight - currentHeight) > 5) {
-      if (host){
-          var hostUrl = host;
-          hostUrl += '#height=' + actualHeight.toString();
-          window.top.location = hostUrl;
-      }
-  }
-}
-function get_cookie (cookie_name){
-  var results = document.cookie.match ( '(^|;) ?' + cookie_name + '=([^;]*)(;|$)' );
+        if (host == '') {
+            var pairs = window.location.href.split('?');
+            if (pairs[1]) {
+                pairs = pairs[1].split('&');
+                if ((pairs != null) && (pairs.length > 0)) {
+                    for (var i = 0; i < pairs.length; i++) {
+                        var pair = pairs[i].split('=');
+                        if ((pair != null) && (pair.length > 0)) {
+                            if (pair[0] == 'host') {
+                                host = unescape(pair[1]);
+                                host = host.split('#');
+                                host = host[0];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (Math.abs(actualHeight - currentHeight) > 5) {
+            if (host) {
+                var hostUrl = host;
+                hostUrl += '#height=' + actualHeight.toString();
+                window.top.location = hostUrl;
+            }
+        }
+    }
+    function get_cookie(cookie_name) {
+        var results = document.cookie.match('(^|;) ?' + cookie_name + '=([^;]*)(;|$)');
 
-  if ( results )
-      return ( unescape ( results[2] ) );
-  else
-      return null;
-}
-function set_cookie ( name, value, exp_y, exp_m, exp_d, path, domain, secure )
-{
-  var cookie_string = name + "=" + escape ( value );
-  if ( exp_y ){
-      var expires = new Date ( exp_y, exp_m, exp_d );
-      cookie_string += "; expires=" + expires.toGMTString();
-  }
-  if ( path )
-      cookie_string += "; path=" + escape ( path );
-  if ( domain )
-      cookie_string += "; domain=" + escape ( domain );
-  if ( secure )
-      cookie_string += "; secure";
-  document.cookie = cookie_string;
-}
+        if (results)
+            return ( unescape(results[2]) );
+        else
+            return null;
+    }
+    function set_cookie(name, value, exp_y, exp_m, exp_d, path, domain, secure) {
+        var cookie_string = name + "=" + escape(value);
+        if (exp_y) {
+            var expires = new Date(exp_y, exp_m, exp_d);
+            cookie_string += "; expires=" + expires.toGMTString();
+        }
+        if (path)
+            cookie_string += "; path=" + escape(path);
+        if (domain)
+            cookie_string += "; domain=" + escape(domain);
+        if (secure)
+            cookie_string += "; secure";
+        document.cookie = cookie_string;
+    }
 </script>
 </body>
 </html>

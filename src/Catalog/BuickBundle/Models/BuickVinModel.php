@@ -10,13 +10,11 @@ namespace Catalog\BuickBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
 
-use Catalog\BuickBundle\Components\BuickConstants;
+class BuickVinModel extends BuickCatalogModel
+{
 
-class BuickVinModel extends BuickCatalogModel {
-
-    public function getVinFinderResult($vin)
+    public function getVinFinderResult($vin, $commonVinFind = false)
     {
-
 
         $sql = "
         SELECT model.MAKE_DESC, vin_archive2.MODEL_YEAR, catalog_model_string.CATALOG_CODE, model.MODEL_DESC, country.COUNTRY_CODE
@@ -38,22 +36,35 @@ class BuickVinModel extends BuickCatalogModel {
 
         $aData = $query->fetch();
 
-
-
-        $result = array();
-
-        if ($aData) {
-            $result = array(
-                'brand' => $aData['MAKE_DESC'],
-                'model' => strtoupper((stripos($aData['MODEL_DESC'],' '))?urlencode(substr($aData['MODEL_DESC'], 0, stripos($aData['MODEL_DESC'],' '))).'_'.$aData['MAKE_DESC']:urlencode($aData['MODEL_DESC']).'_'.$aData['MAKE_DESC']),
-                'modif_for_group' => $aData['MODEL_YEAR'],
-                'complectation' => $aData['CATALOG_CODE'].'_'.$aData['MODEL_DESC'],
-                Constants::PROD_DATE => $aData['MODEL_YEAR'],
-                'region' => $aData['COUNTRY_CODE'],
-                );
+        if (!$aData) {
+            return null;
         }
+        $model         = strtoupper((stripos($aData['MODEL_DESC'], ' ')) ? substr($aData['MODEL_DESC'],
+                0, stripos($aData['MODEL_DESC'], ' ')) : $aData['MODEL_DESC']) . '_' . $aData['MAKE_DESC'];
+        $modifForGroup = $aData['MODEL_YEAR'];
 
-
+        $result = [
+            'marka'              => 'Buick',
+            'brand'              => $aData['MAKE_DESC'],
+            'model'              => $model,
+            'modif_for_group'    => $modifForGroup,
+            'complectation'      => $aData['CATALOG_CODE'] . '_' . $aData['MODEL_DESC'],
+            Constants::PROD_DATE => $aData['MODEL_YEAR'],
+            'region'             => $aData['COUNTRY_CODE'],
+        ];
+        if ($commonVinFind) {
+            $urlParams        = [
+                'path'   => 'vin_buick_groups',
+                'params' => [
+                    'regionCode'        => $aData['COUNTRY_CODE'],
+                    'modelCode'         => urlencode($model),
+                    'modificationCode'  => $modifForGroup,
+                    'complectationCode' => urlencode($aData['CATALOG_CODE'] . '_' . $aData['MODEL_DESC']),
+                ],
+            ];
+            $removeFromResult = ['modif_for_group', 'brand'];
+            return ['result' => array_diff_key($result, array_flip($removeFromResult)), 'urlParams' => $urlParams];
+        }
         return $result;
     }
 

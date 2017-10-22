@@ -14,7 +14,7 @@ use Catalog\LanciaBundle\Components\LanciaConstants;
 
 class LanciaVinModel extends LanciaCatalogModel {
 
-    public function getVinFinderResult($vin)
+    public function getVinFinderResult($vin, $commonVinFind = false)
     {
 
         $sql = "
@@ -37,25 +37,33 @@ class LanciaVinModel extends LanciaCatalogModel {
 
         $aData = $query->fetch();
 
-
-
-        $result = array();
-
-        if ($aData) {
-            $result = array(
-                'brand' => $aData['title'],
-                'model' => $aData['cmg_dsc'],
-                'modif' => $aData['cat_dsc'],
-                'modif_for_group' => $aData['cat_cod'],
-                'model_for_group' => $aData['cmg_cod'],
-                Constants::PROD_DATE => $aData['date'],
-                'region' => 'EU',
-                'motor' => $aData['motor'],
-                'mvs_dsc' => $aData['mvs_dsc']
-                );
+        if (!$aData) {
+            return null;
         }
 
-
+        $result = [
+            'marka'              => "LANCIA",
+            'model'              => $aData['cmg_dsc'],
+            'modif'              => $aData['cat_dsc'],
+            'modif_for_group'    => $aData['cat_cod'],
+            'model_for_group'    => $aData['cmg_cod'],
+            Constants::PROD_DATE => $aData['date'],
+            'region'             => 'EU',
+            'motor'              => $aData['motor'],
+            'mvs_dsc'            => $aData['mvs_dsc'],
+        ];
+        if ($commonVinFind) {
+            $urlParams        = [
+                'path'   => 'vin_lancia_groups',
+                'params' => [
+                    'regionCode'       => 'EU',
+                    'modelCode'        => $aData['cmg_cod'],
+                    'modificationCode' => $aData['cat_cod'],
+                ],
+            ];
+            $removeFromResult = ['modif_for_group', 'model_for_group'];
+            return ['result' => array_diff_key($result, array_flip($removeFromResult)), 'urlParams' => $urlParams];
+        }
         return $result;
     }
 

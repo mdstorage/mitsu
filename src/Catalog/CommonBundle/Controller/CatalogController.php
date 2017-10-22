@@ -10,11 +10,11 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class CatalogController extends BaseController{
 
     /**
-     * Получение данных для страницы регионов и моделей
+     * @param Request $request
+     * @param null    $regionCode
+     * @param null    $token
      *
-     * @param Request $request Объект запроса (предоставляется Symfony2)
-     * @param string $regionCode Код региона (нужен для поиска модели)
-     *
+     * @return Response
      */
 
     public function regionsModelsAction(Request $request, $regionCode = null, $token = null)
@@ -70,7 +70,7 @@ abstract class CatalogController extends BaseController{
                  */
                 $oActiveRegion = reset($regionsList);
             }
-            
+
             /**
              * Выборка моделей из базы для данного артикула и региона
              */
@@ -208,7 +208,7 @@ abstract class CatalogController extends BaseController{
                 ->setComplectations(Factory::createCollection($complectations, Factory::createComplectation())));
         unset($complectations);
         $this->filter($oContainer);
-        
+
         $complectationsKeys = array_keys($oContainer->getActiveModification()->getComplectations());
         if (1 == count($complectationsKeys)) {
             return $this->redirect(
@@ -232,7 +232,7 @@ abstract class CatalogController extends BaseController{
     {
         $locale = $this->get('request')->getLocale();
         $data = $this->get('my_token_info')->getStatus($token);
-
+        
         if(empty($data) & !empty($token)){
             return $this->errorBilling('Сервис не оплачен');
         }
@@ -542,4 +542,4 @@ abstract class CatalogController extends BaseController{
             }
         }
     }
-} 
+}

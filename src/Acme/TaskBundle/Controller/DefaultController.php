@@ -2,6 +2,7 @@
 
 namespace Acme\TaskBundle\Controller;
 
+use Acme\VinBundle\Controller\VinController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -9,96 +10,18 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        $marks = [
-            'Hyundai',
-            'KIA',
-            'Honda',
-            'Suzuki',
-            'Subaru',
-            'Mazda',
-            'Mercedes',
-            'Smart',
-            'BMW',
-            'Mini',
-            'RollsRoyce',
-            'Saab',
-            'Audi',
-            'Volkswagen',
-            'Seat',
-            'Skoda',
-            'HondaEurope',
-            'Fiat',
-            'FiatProfessional',
-            'Lancia',
-            'AlfaRomeo',
-            'Abarth',
-            'Nissan',
-            'Infiniti',
-            'LandRover',
-            'ChevroletUsa',
-            'Cadillac',
-            'Pontiac',
-            'Buick',
-            'Hummer',
-            'Saturn',
-            'GMC',
-            'Oldsmobile',
-            'Toyota',
-            'Lexus',
-            'Ford',
-            'Mitsubishi',
-        ];
+        $marks = VinController::MARKS;
         sort($marks);
-        reset($marks);
         return $this->render('AcmeTaskBundle:Default:index.html.twig', ['marks' => $marks]);
     }
 
     public function resultAction(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
-            $vin      = $request->get('vin');
-            $marksVAG = ['Audi', 'Seat', 'Skoda', 'Volkswagen'];
+            $vin = $request->get('vin');
 
-            $result          = [];
-            $marks = [
-                'Hyundai',
-                'KIA',
-                'Honda',
-                'Subaru',
-                'Mazda',
-                'Mercedes',
-                'Smart',
-                'BMW',
-                'Mini',
-                'RollsRoyce',
-                'Saab',
-                'Audi',
-                'Volkswagen',
-                'Seat',
-                'Skoda',
-                'HondaEurope',
-                'Fiat',
-                'FiatProfessional',
-                'Lancia',
-                'AlfaRomeo',
-                'Abarth',
-                'Nissan',
-                'Infiniti',
-                'LandRover',
-                'ChevroletUsa',
-                'Cadillac',
-                'Pontiac',
-                'Buick',
-                'Hummer',
-                'Saturn',
-                'GMC',
-                'Oldsmobile',
-                'Toyota',
-                'Lexus',
-                'Mitsubishi',
-            ];
-
-            foreach ($marks as $mark) {
+            $result = [];
+            foreach (VinController::MARKS as $mark) {
                 if ($this->get(strtolower($mark) . '.vin.model')) {
                     if (method_exists($this->get(strtolower($mark) . '.vin.model'), 'getVinRegions')) {
                         $vinFinderResult = $this->get(strtolower($mark) . '.vin.model')->getVinRegions($vin);
@@ -112,20 +35,17 @@ class DefaultController extends Controller
                         }
                     }
                 }
+                if (!empty($result)) {
+                    break;
+                }
             }
             if (!$result) {
                 return $this->render('CatalogBmwBundle:Vin' . ':empty.html.twig');
             }
 
-            if (count($result) > 1) {
-                unset ($result['Bmw']);
-            }
+            $markForRender = key($result);
 
-            foreach ($result as $index => $value) {
-                $markForRender = $index;
-            }
-
-            if (!empty($markForRender) && !in_array($markForRender, $marksVAG)) {
+            if ($markForRender && !in_array($markForRender, VinController::VAG)) {
                 return $this->redirect(
                     $this->generateUrl('vin_' . strtolower($markForRender) . '_result', ['request' => $request]), 307);
             } else {

@@ -51,6 +51,8 @@ class VinController extends BaseController{
 
     public function subgroupsAction(Request $request, $regionCode = null, $modelCode = null, $modificationCode = null, $complectationCode = null, $groupCode = null, $articul = null, $token = null)
     {
+        var_dump($_COOKIE);
+
         $data = $this->get('my_token_info')->getStatus($token);
 
         if(empty($data) & !empty($token)){

@@ -10,6 +10,10 @@ acme_billing:
     resource: "@AcmeBillingBundle/Resources/config/routing.yml"
     prefix:   /
 
+acme_vin:
+    resource: "@AcmeVinBundle/Resources/config/routing.yml"
+    prefix:   /
+
 catalog_lexus:
     resource: "@CatalogLexusBundle/Resources/config/routing.yml"
     prefix:   /
