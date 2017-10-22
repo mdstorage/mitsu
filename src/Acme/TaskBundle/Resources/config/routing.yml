@@ -1,8 +1,7 @@
 acme_task_homepage:
   path:         /
   defaults:     {_controller: AcmeTaskBundle:Default:index}
-  requirements:
-      _scheme: https
+  schemes:      [https]
 
 vin_common_result:
   path:         /common/vin/1
