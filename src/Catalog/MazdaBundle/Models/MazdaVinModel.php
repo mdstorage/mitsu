@@ -3,11 +3,11 @@
 namespace Catalog\MazdaBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
-use Catalog\MazdaBundle\Components\MazdaConstants;
 
-class MazdaVinModel extends MazdaCatalogModel {
+class MazdaVinModel extends MazdaCatalogModel
+{
 
-    public function getVinFinderResult($vin)
+    public function getVinFinderResult($vin, $commonVinFind = false)
     {
         $sql = "
         SELECT v.catalog, v.catalog_number, v.XC26EDST, v.MDLCD, v.MSCSPCCD, v.ext_color, v.int_color, v.prod_date
@@ -21,6 +21,10 @@ class MazdaVinModel extends MazdaCatalogModel {
         $query->execute();
 
         $aData = $query->fetch();
+
+        if (!$aData) {
+            return null;
+        }
 
         $sql = "
         SELECT c.model_name, c.prod_year
@@ -36,21 +40,37 @@ class MazdaVinModel extends MazdaCatalogModel {
 
         $aModel = $query->fetch();
 
-        $result = array();
+        $region        = $aData['catalog'];
+        $model         = $aModel['model_name'];
+        $modification  = $aData['catalog_number'];
+        $complectation = $aData['MDLCD'] . $aData['MSCSPCCD'];
 
-        if ($aData) {
-            $result = array(
-                'marka' => 'MAZDA',
-                'region' => $aData['catalog'],
-                'model' => $aModel['model_name'],
-                'prod_year' => $aModel['prod_year'],
-                'modification' => $aData['catalog_number'],
-                'country' => $aData['XC26EDST'],
-                'complectation' => $aData['MDLCD'] . $aData['MSCSPCCD'],
-                'ext_color' => $aData['ext_color'],
-                'int_color' => $aData['int_color'],
-                Constants::PROD_DATE => $aData['prod_date']
-            );
+        $result = [
+            'marka'              => 'MAZDA',
+            'region'             => $region,
+            'model'              => $model,
+            'prod_year'          => $aModel['prod_year'],
+            'modification'       => $modification,
+            'country'            => $aData['XC26EDST'],
+            'complectation'      => $complectation,
+            'ext_color'          => $aData['ext_color'],
+            'int_color'          => $aData['int_color'],
+            Constants::PROD_DATE => $aData['prod_date'],
+        ];
+
+        if ($commonVinFind) {
+            $urlParams        = [
+                'path'   => 'vin_mazda_groups',
+                'params' => [
+                    'regionCode'        => $region,
+                    'modelCode'         => $model,
+                    'modificationCode'  => $modification,
+                    'complectationCode' => $complectation,
+                ],
+            ];
+            $removeFromResult = ['compl_for_group', 'modif_for_group', 'model_for_group'];
+
+            return ['result' => array_diff_key($result, array_flip($removeFromResult)), 'urlParams' => $urlParams];
         }
 
         return $result;
@@ -116,17 +136,17 @@ class MazdaVinModel extends MazdaCatalogModel {
           AND (p2.adds IN (?) OR p2.adds2 IN (?) OR p2.adds IS NULL)
         ";
 
-        $query = $this->conn->executeQuery($sqlVinGroups, array(
+        $query = $this->conn->executeQuery($sqlVinGroups, [
             $regionCode,
             $modificationCode,
             explode(" ", $additionalParameters),
-            explode(" ", $additionalParameters)
-        ), array(
+            explode(" ", $additionalParameters),
+        ], [
             \PDO::PARAM_STR,
             \PDO::PARAM_STR,
             \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
-            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
-        ));
+            \Doctrine\DBAL\Connection::PARAM_STR_ARRAY,
+        ]);
 
         $aDataDescr = $query->fetchAll();
 
@@ -136,7 +156,8 @@ class MazdaVinModel extends MazdaCatalogModel {
     public function getVinSubGroups($regionCode, $modificationCode, $complectationCode, $subComplectationCode)
     {
         $additionalParameters = $this->getVinAdditionalParameters($regionCode, $modificationCode, $complectationCode);
-        $optionsSet = $this->getVinOptionsSet($regionCode, $modificationCode, $complectationCode, $subComplectationCode);
+        $optionsSet           = $this->getVinOptionsSet($regionCode, $modificationCode, $complectationCode,
+            $subComplectationCode);
 
         $sqlSubGroups = "
         SELECT DISTINCT
@@ -156,9 +177,13 @@ class MazdaVinModel extends MazdaCatalogModel {
 
         $aData = $query->fetchAll();
 
-        $subgroups = array();
+        $subgroups = [];
         foreach ($aData as $item) {
-            if ((!$item['sgOptions'] && !$item['sgParameters']) || ($item['sgOptions'] && substr_count($optionsSet, $item['sgOptions'])) || ($item['sgParameters'] && array_intersect(explode(" ", $item['sgParameters']), explode(" ", $additionalParameters)) == explode(" ", $item['sgParameters']))) {
+            if ((!$item['sgOptions'] && !$item['sgParameters']) || ($item['sgOptions'] && substr_count($optionsSet,
+                        $item['sgOptions'])) || ($item['sgParameters'] && array_intersect(explode(" ",
+                        $item['sgParameters']), explode(" ", $additionalParameters)) == explode(" ",
+                        $item['sgParameters']))
+            ) {
                 $subgroups[] = $item['subGroupCode'];
             }
         }
@@ -166,10 +191,16 @@ class MazdaVinModel extends MazdaCatalogModel {
         return $subgroups;
     }
 
-    public function getVinSchemas($regionCode, $modificationCode, $complectationCode, $subComplectationCode, $subGroupCode)
-    {
+    public function getVinSchemas(
+        $regionCode,
+        $modificationCode,
+        $complectationCode,
+        $subComplectationCode,
+        $subGroupCode
+    ) {
         $additionalParameters = $this->getVinAdditionalParameters($regionCode, $modificationCode, $complectationCode);
-        $optionsSet = $this->getVinOptionsSet($regionCode, $modificationCode, $complectationCode, $subComplectationCode);
+        $optionsSet           = $this->getVinOptionsSet($regionCode, $modificationCode, $complectationCode,
+            $subComplectationCode);
 
         $sqlSchemas = "
         SELECT DISTINCT
@@ -202,10 +233,14 @@ class MazdaVinModel extends MazdaCatalogModel {
 
         $aData = $query->fetchAll();
 
-        $schemas = array();
+        $schemas = [];
 
         foreach ($aData as $item) {
-            if ((!$item['sgOptions'] && !$item['sgParameters']) || ($item['sgOptions'] && substr_count($optionsSet, $item['sgOptions'])) || ($item['sgParameters'] && array_intersect(explode(" ", $item['sgParameters']), explode(" ", $additionalParameters)) == explode(" ", $item['sgParameters']))) {
+            if ((!$item['sgOptions'] && !$item['sgParameters']) || ($item['sgOptions'] && substr_count($optionsSet,
+                        $item['sgOptions'])) || ($item['sgParameters'] && array_intersect(explode(" ",
+                        $item['sgParameters']), explode(" ", $additionalParameters)) == explode(" ",
+                        $item['sgParameters']))
+            ) {
                 $schemas[] = $item['pic_name'];
             }
         }

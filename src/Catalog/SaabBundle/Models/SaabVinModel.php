@@ -12,9 +12,9 @@ use Catalog\CommonBundle\Components\Constants;
 
 class SaabVinModel extends SaabCatalogModel
 {
-    public function getVinFinderResult($vin)
+    public function getVinFinderResult($vin, $commonVinFind = false)
     {
-        $sql = "
+        $sql   = "
        select distinct
 vin_carline.CarLine carline,
 vin_market.RUS market,
@@ -39,18 +39,34 @@ and REPLACE (vin_carline.CarLine , 'Saab ' , '') = model.TYPE_OF_CAR and vin_yea
         $query->execute();
 
         $aData = $query->fetch();
-        if ($aData) {
-            $result = [
-                'model'              => $aData['carline'],
-                'market'             => iconv('cp1251', 'utf8', $aData['market']),
-                Constants::PROD_DATE => $aData['nYear'],
-                'bodytype'           => iconv('cp1251', 'utf8', $aData['bodytype']),
-                'gearbox'            => iconv('cp1251', 'utf8', $aData['gearbox']),
-                'engine'             => iconv('cp1251', 'utf8', $aData['engine']),
-                'assemblyplant'      => iconv('cp1251', 'utf8', $aData['assemblyplant']),
-                'model_no'           => $aData['model_no'],
-                'serial'             => substr($vin, strlen($vin) - 6, strlen($vin)),
+
+        if (!$aData) {
+            return null;
+        }
+        $modelCode = $aData['model_no'];
+        $result    = [
+            'marka'              => 'SAAB',
+            'model'              => $aData['carline'],
+            'market'             => iconv('cp1251', 'utf8', $aData['market']),
+            Constants::PROD_DATE => $aData['nYear'],
+            'bodytype'           => iconv('cp1251', 'utf8', $aData['bodytype']),
+            'gearbox'            => iconv('cp1251', 'utf8', $aData['gearbox']),
+            'engine'             => iconv('cp1251', 'utf8', $aData['engine']),
+            'assemblyplant'      => iconv('cp1251', 'utf8', $aData['assemblyplant']),
+            'model_no'           => $modelCode,
+            'serial'             => substr($vin, strlen($vin) - 6, strlen($vin)),
+        ];
+        if ($commonVinFind) {
+            $urlParams        = [
+                'path'   => 'vin_saab_groups',
+                'params' => [
+                    'regionCode'       => 'EU',
+                    'modelCode'        => $modelCode,
+                    'modificationCode' => $aData['nYear'],
+                ],
             ];
+            $removeFromResult = ['assemblyplant', 'model_no'];
+            return ['result' => array_diff_key($result, array_flip($removeFromResult)), 'urlParams' => $urlParams];
         }
         return $result;
     }

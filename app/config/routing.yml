@@ -1,3 +1,7 @@
+acme_vin:
+    resource: "@AcmeVinBundle/Resources/config/routing.yml"
+    prefix:   /
+
 acme_billing:
     resource: "@AcmeBillingBundle/Resources/config/routing.yml"
     prefix:   /

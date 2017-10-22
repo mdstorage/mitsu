@@ -9,14 +9,13 @@
 namespace Catalog\LexusBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
-
 use Catalog\LexusBundle\Components\LexusConstants;
 
-class LexusVinModel extends LexusCatalogModel {
+class LexusVinModel extends LexusCatalogModel
+{
 
-    public function getVinFinderResult($vin)
+    public function getVinFinderResult($vin, $commonVinFind = false)
     {
-
 
         $sqlVin = "
         SELECT JAT.compl_code, JAT.catalog, JAT.catalog_code, JAT.model_code, shamei.model_name, shamei.models_codes, frames.vdate, frames.color_trim_code
@@ -33,52 +32,62 @@ class LexusVinModel extends LexusCatalogModel {
 
         $aData = $query->fetchAll();
 
-        if ($aData){
-            $complectations = $this->getVinComplectation($aData[0]['catalog'], $aData[0]['model_name'], $aData[0]['catalog_code']);
-
-            $complectation = $complectations[$aData[0]['compl_code']];
-
-
-        for ($i = 1; $i < 11; $i++)
-        {
-            $OnlyCompl[] = $complectation['options']['OPTION'.$i];
+        if (!$aData) {
+            return null;
         }
 
+        $complectations = $this->getVinComplectation($aData[0]['catalog'], $aData[0]['model_name'],
+            $aData[0]['catalog_code']);
+
+        $complectation = $complectations[$aData[0]['compl_code']];
+
+        for ($i = 1; $i < 11; $i++) {
+            if ($complectation['options']['OPTION' . $i]) {
+                $OnlyCompl[] = $complectation['options']['OPTION' . $i];
+            }
         }
 
+        $region            = $aData[0]['catalog'];
+        $model             = urlencode($aData[0]['model_name']);
+        $modificationCode  = $aData[0]['catalog_code'];
+        $complectationCode = $aData[0]['compl_code'];
+        $result            = [
+            'marka'              => 'LEXUS',
+            'model'              => urlencode($aData[0]['model_name']),
+            'modelf'             => ($aData[0]['model_name']),
+            'modif'              => $aData[0]['models_codes'],
+            'complectation'      => $OnlyCompl,
+            Constants::PROD_DATE => $aData[0]['vdate'],
 
+            'region'                  => $region,
+            LexusConstants::INTCOLOR => substr($aData[0]['color_trim_code'], 0, 3),
+            'cvet_salona'             => substr($aData[0]['color_trim_code'], 0, 3),
+            'cvet_kuzova'             => substr($aData[0]['color_trim_code'], -4),
+            'kod_complektacii'        => $complectationCode,
+            'kod_modifikacii'         => $modificationCode,
+        ];
 
+        if ($commonVinFind) {
+            $urlParams        = [
+                'path'   => 'vin_lexus_groups',
+                'params' => [
+                    'regionCode'        => $region,
+                    'modelCode'         => $model,
+                    'modificationCode'  => $modificationCode,
+                    'complectationCode' => $complectationCode,
+                ],
+            ];
+            $removeFromResult = ['kod_complektacii', 'kod_modifikacii', 'modelf'];
 
-        $result = array();
-
-        if ($aData) {
-            $result = array(
-                'marka' => 'LEXUS',
-                'model' => urlencode($aData[0]['model_name']),
-                'modelf' => ($aData[0]['model_name']),
-                'modif' => $aData[0]['models_codes'],
-                'complectation' => $OnlyCompl,
-                Constants::PROD_DATE => $aData[0]['vdate'],
-
-                'region' => $aData[0]['catalog'],
-                LexusConstants::INTCOLOR => substr($aData[0]['color_trim_code'], 0, 3),
-                'cvet_salona' => substr($aData[0]['color_trim_code'], 0, 3),
-                'cvet_kuzova' => substr($aData[0]['color_trim_code'], -4),
-                'kod_complektacii' => $aData[0]['compl_code'],
-                'kod_modifikacii' => $aData[0]['catalog_code']
-                );
+            return ['result' => array_diff_key($result, array_flip($removeFromResult)), 'urlParams' => $urlParams];
         }
-
-
-
         return $result;
     }
 
 
     public function getVinComplectation($regionCode, $modelCode, $modificationCode)
-
     {
-        $sql = "
+        $sql   = "
         SELECT johokt.engine1 as f1, johokt.engine2 as f2, johokt.body as f3, johokt.grade as f4, johokt.atm_mtm as f5, johokt.trans as f6,
         johokt.f1 as f7, johokt.f2 as f8, johokt.f3 as f9, johokt.f4 as f10, compl_code, model_code, prod_start, prod_end,
         kig1.desc_en ken1,
@@ -131,36 +140,36 @@ class LexusVinModel extends LexusCatalogModel {
         AND johokt.catalog_code = :modificationCode
         ";
         $query = $this->conn->prepare($sql);
-        $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('modificationCode',  $modificationCode);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('modificationCode', $modificationCode);
         $query->execute();
         $aData = $query->fetchAll();
 
-        $complectations = array();
+        $complectations = [];
 
-        foreach($aData as $item){
-            $complectations[$item['compl_code']] = array(
-                Constants::NAME => $item['model_code'],
-                Constants::OPTIONS => array(
+        foreach ($aData as $item) {
+            $complectations[$item['compl_code']] = [
+                Constants::NAME    => $item['model_code'],
+                Constants::OPTIONS => [
                     'FROMDATE' => $item['prod_start'],
                     'UPTODATE' => $item['prod_end'],
-                    'OPTION1' => $item['f1']?str_replace(' 1', '', $item['ten1']).': ('.$item['f1'].') '.$item['ken1']:'',
-                    'OPTION2' => $item['f2']?$item['ten2'].': ('.$item['f2'].') '.$item['ken2']:'',
-                    'OPTION3' => $item['f3']?$item['ten3'].': ('.$item['f3'].') '.$item['ken3']:'',
-                    'OPTION4' => $item['f4']?$item['ten4'].': ('.$item['f4'].') '.$item['ken4']:'',
-                    'OPTION5' => $item['f5']?$item['ten5'].': ('.$item['f5'].') '.$item['ken5']:'',
-                    'OPTION6' => $item['f6']?$item['ten6'].': ('.$item['f6'].') '.$item['ken6']:'',
-                    'OPTION7' => $item['f7']?$item['ten7'].': ('.$item['f7'].') '.$item['ken7']:'',
-                    'OPTION8' => $item['f8']?$item['ten8'].': ('.$item['f8'].') '.$item['ken8']:'',
-                    'OPTION9' => $item['f9']?$item['ten9'].': ('.$item['f9'].') '.$item['ken9']:'',
-                    'OPTION10' => $item['f10']?$item['ten10'].': ('.$item['f10'].') '.$item['ken10']:'',
-                    'trans' => ''
-                ));
+                    'OPTION1'  => $item['f1'] ? str_replace(' 1', '',
+                            $item['ten1']) . ': (' . $item['f1'] . ') ' . $item['ken1'] : '',
+                    'OPTION2'  => $item['f2'] ? $item['ten2'] . ': (' . $item['f2'] . ') ' . $item['ken2'] : '',
+                    'OPTION3'  => $item['f3'] ? $item['ten3'] . ': (' . $item['f3'] . ') ' . $item['ken3'] : '',
+                    'OPTION4'  => $item['f4'] ? $item['ten4'] . ': (' . $item['f4'] . ') ' . $item['ken4'] : '',
+                    'OPTION5'  => $item['f5'] ? $item['ten5'] . ': (' . $item['f5'] . ') ' . $item['ken5'] : '',
+                    'OPTION6'  => $item['f6'] ? $item['ten6'] . ': (' . $item['f6'] . ') ' . $item['ken6'] : '',
+                    'OPTION7'  => $item['f7'] ? $item['ten7'] . ': (' . $item['f7'] . ') ' . $item['ken7'] : '',
+                    'OPTION8'  => $item['f8'] ? $item['ten8'] . ': (' . $item['f8'] . ') ' . $item['ken8'] : '',
+                    'OPTION9'  => $item['f9'] ? $item['ten9'] . ': (' . $item['f9'] . ') ' . $item['ken9'] : '',
+                    'OPTION10' => $item['f10'] ? $item['ten10'] . ': (' . $item['f10'] . ') ' . $item['ken10'] : '',
+                    'trans'    => '',
+                ],
+            ];
         }
         return $complectations;
     }
 
 
-
-
-} 
+}

@@ -58,6 +58,7 @@ class AppKernel extends Kernel
             new Catalog\ToyotaBundle\CatalogToyotaBundle(),
             new Catalog\LexusBundle\CatalogLexusBundle(),
             new Acme\BillingBundle\AcmeBillingBundle(),
+            new Acme\VinBundle\AcmeVinBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

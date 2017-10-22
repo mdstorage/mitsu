@@ -10,11 +10,10 @@ namespace Catalog\HondaEuropeBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
 
-use Catalog\HondaEuropeBundle\Components\HondaEuropeConstants;
+class HondaEuropeVinModel extends HondaEuropeCatalogModel
+{
 
-class HondaEuropeVinModel extends HondaEuropeCatalogModel {
-
-    public function getVinFinderResult($vin)
+    public function getVinFinderResult($vin, $commonVinFind = false)
     {
         $sql = "
         SELECT *
@@ -23,28 +22,44 @@ class HondaEuropeVinModel extends HondaEuropeCatalogModel {
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('vin', substr($vin,0,11));
-        $query->bindValue('subvin', substr($vin,9,8));
+        $query->bindValue('vin', substr($vin, 0, 11));
+        $query->bindValue('subvin', substr($vin, 9, 8));
         $query->execute();
 
         $aData = $query->fetch();
 
-        $result = array();
+        if (!$aData) {
+            return null;
+        }
 
-        if ($aData) {
-            $result = array(
-                'marka' => 'HondaEurope',
-                'region' => $aData['carea'],
-                'model' => $aData['cmodnamepc'],
-                Constants::PROD_DATE => $aData['dmodyr']
-            );
+        $region    = $aData['carea'];
+        $modelCode = $aData['cmodnamepc'];
+
+        $result = [
+            'marka'              => 'HondaEurope',
+            'region'             => $region,
+            'model'              => $modelCode,
+            Constants::PROD_DATE => $aData['dmodyr'],
+        ];
+
+        if ($commonVinFind) {
+            $urlParams        = [
+                'path'   => 'vin_hondaeurope_complectations',
+                'params' => [
+                    'regionCode'       => $region,
+                    'modelCode'        => $modelCode,
+                    'modificationCode' => $aData['dmodyr'],
+                ],
+            ];
+            $removeFromResult = [];
+            return ['result' => array_diff_key($result, array_flip($removeFromResult)), 'urlParams' => $urlParams];
         }
         return $result;
     }
 
     public function getVinComplectations($vin)
     {
-        
+
         $sql = "
         SELECT *
         FROM pmotyt
@@ -52,16 +67,15 @@ class HondaEuropeVinModel extends HondaEuropeCatalogModel {
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('vin', substr($vin,0,11));
+        $query->bindValue('vin', substr($vin, 0, 11));
         $query->execute();
 
         $aData = $query->fetchAll();
 
-		
         return $aData;
     }
-    
-    
+
+
     public function getVinSchemas($regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
         $sqlSchemas = "
@@ -80,18 +94,19 @@ class HondaEuropeVinModel extends HondaEuropeCatalogModel {
 
         $aData = $query->fetchAll();
 
-        $schemas = array();
-        
-        foreach($aData as $item){
-		
-		 if ((substr_count($item['desc_en'],'MY')>0)&&(substr_count($item['desc_en'], $modificationCode)!=0)||(substr_count($item['desc_en'],'MY')==0))
-		           
+        $schemas = [];
+
+        foreach ($aData as $item) {
+
+            if ((substr_count($item['desc_en'], 'MY') > 0) && (substr_count($item['desc_en'],
+                        $modificationCode) != 0) || (substr_count($item['desc_en'], 'MY') == 0)
+            ) {
                 $schemas[] = $item['image_file'];
+            }
         }
 
         return $schemas;
     }
-   
-   
-        
+
+
 } 

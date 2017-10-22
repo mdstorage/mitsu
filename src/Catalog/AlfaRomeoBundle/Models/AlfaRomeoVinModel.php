@@ -10,11 +10,10 @@ namespace Catalog\AlfaRomeoBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
 
-use Catalog\AlfaRomeoBundle\Components\AlfaRomeoConstants;
+class AlfaRomeoVinModel extends AlfaRomeoCatalogModel
+{
 
-class AlfaRomeoVinModel extends AlfaRomeoCatalogModel {
-
-    public function getVinFinderResult($vin)
+    public function getVinFinderResult($vin, $commonVinFind = false)
     {
 
         $sql = "
@@ -38,28 +37,34 @@ class AlfaRomeoVinModel extends AlfaRomeoCatalogModel {
         $query->bindValue('vin', $vin);
         $query->execute();
 
-        $aData = $query->fetchAll();
+        $aData = $query->fetch();
 
+        if (!$aData) {
+            return null;
+        }
 
-        $result = array();
-
-        if ($aData) {
-            foreach ($aData as $index => $value)
-            {
-                $result[Constants::PROD_DATE]=$value['date'];
-                $result[$index] = array(
-                    'brand' => $value['title'],
-                    'model' => $value['cmg_dsc'],
-                    'modif' => $value['cat_dsc'],
-                    'modif_for_group' => $value['cat_cod'],
-                    'model_for_group' => $value['cmg_cod'],
-                    Constants::PROD_DATE => $value['date'],
-                    'region' => 'EU',
-                    'motor' => $value['motor'],
-                    'mvs_dsc' => $value['mvs_dsc']
-                );
-            }
-
+        $result = [
+            'marka'              => "ALFA",
+            'model'              => $aData['cmg_dsc'],
+            'modif'              => $aData['cat_dsc'],
+            'modif_for_group'    => $aData['cat_cod'],
+            'model_for_group'    => $aData['cmg_cod'],
+            Constants::PROD_DATE => $aData['date'],
+            'region'             => 'EU',
+            'motor'              => $aData['motor'],
+            'mvs_dsc'            => $aData['mvs_dsc'],
+        ];
+        if ($commonVinFind) {
+            $urlParams        = [
+                'path'   => 'vin_alfaromeo_groups',
+                'params' => [
+                    'regionCode'       => 'EU',
+                    'modelCode'        => $aData['cmg_cod'],
+                    'modificationCode' => $aData['cat_cod'],
+                ],
+            ];
+            $removeFromResult = ['modif_for_group', 'model_for_group'];
+            return ['result' => array_diff_key($result, array_flip($removeFromResult)), 'urlParams' => $urlParams];
         }
 
         return $result;

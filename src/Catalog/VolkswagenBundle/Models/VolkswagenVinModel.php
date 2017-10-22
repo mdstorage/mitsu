@@ -10,14 +10,10 @@ namespace Catalog\VolkswagenBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
 
-use Catalog\VolkswagenBundle\Components\VolkswagenConstants;
-
-class VolkswagenVinModel extends VolkswagenCatalogModel {
-
-
-    public function getVinRegions($vin)
+class VolkswagenVinModel extends VolkswagenCatalogModel
+{
+    public function getVinRegions($vin, $commonVinFind = false)
     {
-
 
         $sql = "
         SELECT markt
@@ -31,24 +27,26 @@ class VolkswagenVinModel extends VolkswagenCatalogModel {
         $query->execute();
 
         $aData = $query->fetchAll();
-
-
-        $result = array();
-        $Reg = array('RDW' => 'ЕВРОПА', 'BR' => 'БРАЗИЛИЯ', 'MEX' => 'МЕКСИКА', 'RA' => 'КИТАЙ', 'ZA' => 'ЮЖНАЯ АФРИКА', 'CA' => 'КАНАДА', 'USA' => 'США');
-
-        foreach($aData as $item)
-        {
-            $result[$item['markt']] = array(Constants::NAME=>$item['markt'], Constants::OPTIONS=>array());
+        if (!$aData) {
+            return null;
         }
-
-
+        if ($commonVinFind) {
+            $regionCodes = array_unique(array_map('current', $aData));
+            foreach ($regionCodes as $regionCode) {
+                $regionResult[$regionCode] = $this->getVinFinderResult($vin, $regionCode, $commonVinFind);
+            }
+            return $regionResult;
+        }
+        $result = [];
+        foreach ($aData as $item) {
+            $result[$item['markt']] = [Constants::NAME => $item['markt'], Constants::OPTIONS => []];
+        }
         return $result;
-
     }
 
-    public function getVinFinderResult($vin, $region)
+    public function getVinFinderResult($vin, $region, $commonVinFind)
     {
-        
+
         $sql = "
         SELECT *
         FROM all_vincode
@@ -64,63 +62,109 @@ class VolkswagenVinModel extends VolkswagenCatalogModel {
 
         $aDatas = $query->fetchAll();
 
-        foreach($aDatas as $aData){
-            switch ($aData['catalog'])
-            {
+        foreach ($aDatas as $aData) {
+            switch ($aData['catalog']) {
                 case 'au':
-                    $marka = 'AUDI'; break;
-
+                    $marka = 'AUDI';
+                    break;
                 case 'se':
-                    $marka = 'SEAT'; break;
-
+                    $marka = 'SEAT';
+                    break;
                 case 'vw':
-                    $marka = 'VOLKSWAGEN'; break;
-
+                    $marka = 'VOLKSWAGEN';
+                    break;
                 case 'sk':
-                    $marka = 'SKODA'; break;
+                    $marka = 'SKODA';
+                    break;
+                default:
+                    $marka = null;
             }
-
+        }
+        switch ($region) {
+            case 'RDW':
+                $regionDesc = 'Europe';
+                break;
+            case 'BR':
+                $regionDesc = 'Brazil';
+                break;
+            case 'MEX':
+                $regionDesc = 'Mexico';
+                break;
+            case 'RA':
+                $regionDesc = 'China';
+                break;
+            case 'ZA':
+                $regionDesc = 'South Africa';
+                break;
+            case 'CA':
+                $regionDesc = 'Canada';
+                break;
+            case 'USA':
+                $regionDesc = 'USA';
+                break;
+            default:
+                $regionDesc = $region;
         }
 
+        $result = [];
 
-        $result = array();
+        foreach ($aDatas as $aData) {
+            $modif            = $aData['einsatz'] . '_' . $aData['epis_typ'];
+            $model_for_groups = $aData['modell'];
+            $model            = $this->getDesc($aData['vkb_ts_text'], 'R');
+            $prodDate         = $aData['prod_date'];
+            $engineCode       = $aData['motorkennbuchstable'];
+            $transCode        = $aData['getriebekkenbuchstable'];
+            $color            = substr($aData['int_roof_ext'], 0, 2);
 
-        foreach($aDatas as $aData) {
-
-            $result = array(
-                /*   'model_for_groups' => urlencode($aDataModif['family']),*/
-                'marka' => $marka,
-                'model' => $this->getDesc($aData['vkb_ts_text'], 'R'),
-                Constants::PROD_DATE => $aData['prod_date'],
-                'mod_god' => $aData['model_year'],
-                'mod_kod' => $aData['verkaufstyp'],
-                'dvig_kod' => $aData['motorkennbuchstable'],
-                'kpp_kod' => $aData['getriebekkenbuchstable'],
-                'osn' => substr($aData['int_roof_ext'], strlen($aData['int_roof_ext']) - 2, 2),
-                'kuzovcolor' => substr($aData['int_roof_ext'], 0, 2),
-                'kry6acolor' => substr($aData['int_roof_ext'], 2, 2),
-                'modif' => $aData['einsatz'] . '_' . $aData['epis_typ'],
-                'model_for_groups' => $aData['modell'],
-                'region' => $region
-            );
-
+            $result = [
+                'marka'              => $marka,
+                'model'              => $model,
+                Constants::PROD_DATE => $prodDate,
+                'mod_god'            => $aData['model_year'],
+                'mod_kod'            => $aData['verkaufstyp'],
+                'dvig_kod'           => $engineCode,
+                'kpp_kod'            => $transCode,
+                'osn'                => substr($aData['int_roof_ext'], strlen($aData['int_roof_ext']) - 2, 2),
+                'kuzovcolor'         => $color,
+                'kry6acolor'         => substr($aData['int_roof_ext'], 2, 2),
+                'modif'              => $modif,
+                'model_for_groups'   => $model_for_groups,
+                'region'             => $regionDesc,
+            ];
         }
+        if ($commonVinFind) {
+            $commonVinResult = [
+                'marka'              => $marka,
+                'model'              => $model,
+                'region'             => $regionDesc,
+                Constants::PROD_DATE => $prodDate,
+                'engine_code'        => $engineCode,
+                'transmission_code'  => $transCode,
+                'color'              => $color,
 
+            ];
+            $urlParams       = [
+                'path'   => 'vin_audi_groups',
+                'params' => [
+                    'regionCode'       => $region,
+                    'modelCode'        => $result['model_for_groups'],
+                    'modificationCode' => $result['modif'],
+                ],
+            ];
+            return ['result' => $commonVinResult, 'urlParams' => $urlParams];
+        }
 
         return $result;
     }
 
 
-
-
-
     public function getVinSubgroups($regionCode, $modelCode, $modificationCode, $groupCode, $vin)
     {
 
+        $modificationCode = substr($modificationCode, strpos($modificationCode, '_') + 1, strlen($modificationCode));
 
-        $modificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
-
-        $groupCode = (($groupCode == '10')?'0':$groupCode);
+        $groupCode = (($groupCode == '10') ? '0' : $groupCode);
 
         $sql = "
         SELECT ltr,mkb
@@ -133,13 +177,10 @@ class VolkswagenVinModel extends VolkswagenCatalogModel {
         $query->execute();
 
         $sData = $query->fetchAll();
-        foreach ($sData as $item)
-        {
-            $filtrDvig = substr($item['ltr'],0,1).','.substr($item['ltr'],1,1);
+        foreach ($sData as $item) {
+            $filtrDvig     = substr($item['ltr'], 0, 1) . ',' . substr($item['ltr'], 1, 1);
             $filtrNameDvig = $item['mkb'];
         }
-
-
 
         $sql = "
         SELECT all_katalog.id, all_katalog.bildtafel, all_katalog.grafik, all_katalog.bildtafel2
@@ -151,7 +192,6 @@ class VolkswagenVinModel extends VolkswagenCatalogModel {
         and dir_name = 'R'
         ";
 
-
         /*
                 $sql = "
                 SELECT all_katalog.hg_ug, all_katalog.tsben, all_katalog.bildtafel2, all_katalog.modellangabe, ou
@@ -162,17 +202,14 @@ class VolkswagenVinModel extends VolkswagenCatalogModel {
                 ";*/
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('modificationCode',  $modificationCode);
-        $query->bindValue('groupCode',  $groupCode);
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('groupCode', $groupCode);
         $query->execute();
 
-        $aData = $query->fetchAll();
-        $ObDvig = array();
+        $aData  = $query->fetchAll();
+        $ObDvig = [];
 
-
-        foreach($aData as $item)
-
-        {
+        foreach ($aData as $item) {
             $sqlSub = "
         SELECT all_katalog.hg_ug, all_katalog.tsben, all_katalog.bildtafel2, all_katalog.modellangabe, ou, all_katalog.tsbem
         FROM all_katalog
@@ -180,54 +217,48 @@ class VolkswagenVinModel extends VolkswagenCatalogModel {
         ";
 
             $query = $this->conn->prepare($sqlSub);
-            $query->bindValue('item',  $item['id']);
+            $query->bindValue('item', $item['id']);
             $query->execute();
 
-            $aDataSub[$item['bildtafel2']] = $query->fetch();
+            $aDataSub[$item['bildtafel2']]           = $query->fetch();
             $aDataSub[$item['bildtafel2']]['grafik'] = $item['grafik'];
 
-            $ObDvig[]=$this->getDesc($aDataSub[$item['bildtafel2']]['tsbem'], 'R');
-
+            $ObDvig[] = $this->getDesc($aDataSub[$item['bildtafel2']]['tsbem'], 'R');
             /*    $ObDvig[] = $aDataSub[$item['bildtafel2']]['tsbem'];*/
         }
-        $sDataLitr = array();
-        $sDataLitr0 = array();
+        $sDataLitr  = [];
+        $sDataLitr0 = [];
 
-        foreach($ObDvig as $index=>&$value)
-        {
+        foreach ($ObDvig as $index => &$value) {
             preg_match_all("/\d{1}\,\d{1}/x",
                 $value, $sDataLitr);
 
-            foreach($sDataLitr as $item)
-            {
-                foreach($item as $item1)
-                {
+            foreach ($sDataLitr as $item) {
+                foreach ($item as $item1) {
                     $sDataLitr0[] = $item1;
                 }
-
             }
-
-
         }
 
+        $subgroups        = [];
+        $subgroupsIndexes = [];
 
-        $subgroups = array();
-        $subgroupsIndexes = array();
+        foreach ($aDataSub as $item) {
 
-        foreach($aDataSub as $item)
-        {
+            $subgroups[$item['bildtafel2']] = [
 
-            $subgroups[$item['bildtafel2']] = array(
+                Constants::NAME    => $this->getDesc($item['tsben'], 'R'),
+                Constants::OPTIONS => [
+                    'dannye' => $item['modellangabe'],
+                    'podgr'  => $item['hg_ug'],
+                    'prime4' => $this->getDesc($item['tsbem'], 'R'),
+                    'grafik' => substr($item['grafik'], strlen($item['grafik']) - 3, 3) . '/' . substr($item['grafik'],
+                            strlen($item['grafik']) - 3, 3) . substr($item['grafik'], 1, 5) . substr($item['grafik'], 0,
+                            1),
+                    'ObDvig' => (count(array_unique($sDataLitr0)) > 1) ? array_unique($sDataLitr0) : '',
+                ],
 
-                Constants::NAME => $this->getDesc($item['tsben'], 'R'),
-                Constants::OPTIONS => array('dannye'=>$item['modellangabe'],
-                    'podgr'=>$item['hg_ug'],
-                    'prime4'=>$this->getDesc($item['tsbem'], 'R'),
-                    'grafik'=>substr($item['grafik'],strlen($item['grafik'])-3,3).'/'.substr($item['grafik'],strlen($item['grafik'])-3,3).substr($item['grafik'],1,5).substr($item['grafik'],0,1),
-                    'ObDvig'=>(count(array_unique($sDataLitr0))>1)?array_unique($sDataLitr0):'')
-
-            );
-
+            ];
         }
 
         /*foreach($subgroups as $index => $value)
@@ -239,21 +270,26 @@ class VolkswagenVinModel extends VolkswagenCatalogModel {
             }
         }*/
 
-        foreach($subgroups as $index => $value)
-        {
+        foreach ($subgroups as $index => $value) {
             $subgroupsIndexes[] = $index;
         }
 
         return $subgroupsIndexes;
     }
 
-    public function getVinArticuls($regionCode, $modelCode, $modificationCode, $groupCode, $subGroupCode, $pncCode, $vin)
-    {
+    public function getVinArticuls(
+        $regionCode,
+        $modelCode,
+        $modificationCode,
+        $groupCode,
+        $subGroupCode,
+        $pncCode,
+        $vin
+    ) {
 
-        $modificationCode = substr($modificationCode, strpos($modificationCode, '_')+1, strlen($modificationCode));
+        $modificationCode = substr($modificationCode, strpos($modificationCode, '_') + 1, strlen($modificationCode));
 
-        $groupCode = (($groupCode == '10')?'0':$groupCode);
-
+        $groupCode = (($groupCode == '10') ? '0' : $groupCode);
 
         $sql = "
         SELECT ltr,mkb
@@ -266,9 +302,8 @@ class VolkswagenVinModel extends VolkswagenCatalogModel {
         $query->execute();
 
         $sData = $query->fetchAll();
-        foreach ($sData as $item)
-        {
-            $filtrDvig = substr($item['ltr'],0,1).','.substr($item['ltr'],1,1);
+        foreach ($sData as $item) {
+            $filtrDvig     = substr($item['ltr'], 0, 1) . ',' . substr($item['ltr'], 1, 1);
             $filtrNameDvig = $item['mkb'];
         }
 
@@ -288,66 +323,62 @@ class VolkswagenVinModel extends VolkswagenCatalogModel {
         ";
 
         $query = $this->conn->prepare($sqlPnc);
-        $query->bindValue('modificationCode',  $modificationCode);
-        $query->bindValue('regionCode',  $regionCode);
-        $query->bindValue('groupCode',  $groupCode);
-        $query->bindValue('subGroupCode',  $subGroupCode);
-        $query->bindValue('pncCode', '('.$pncCode.')');
+        $query->bindValue('modificationCode', $modificationCode);
+        $query->bindValue('regionCode', $regionCode);
+        $query->bindValue('groupCode', $groupCode);
+        $query->bindValue('subGroupCode', $subGroupCode);
+        $query->bindValue('pncCode', '(' . $pncCode . ')');
         $query->bindValue('pncCodemod', $pncCode);
         $query->execute();
 
-
         $aArticuls = $query->fetchAll();
 
-
-        $articuls = array();
-        $articulsIndexes = array(); $k=0;
+        $articuls        = [];
+        $articulsIndexes = [];
+        $k               = 0;
 
         foreach ($aArticuls as $item) {
 
-
-            if(($this->getDesc($item['tsbem'], 'R')))
-            {$k = 1;}
-
-            $articuls[$item['teilenummer']] = array(
-                Constants::NAME => $this->getDesc($item['tsben'], 'R'),
-                Constants::OPTIONS => array(
-                    Constants::QUANTITY => $item['stuck'],
-                    Constants::START_DATE => $item['einsatz'],
-                    Constants::END_DATE => $item['auslauf'],
-                    'prime4' => ($this->getDesc($item['tsbem'], 'R'))?$this->getDesc($item['tsbem'], 'R'):$item['bemerkung'],
-                    'dannye' => $item['modellangabe'],
-                    'with' => $item['mv_data'],
-                    'zamena' => substr($item['newArt'], 0, strpos($item['newArt'], '~')),
-                    'zamenakoli4' => substr($item['newArt'], strpos($item['newArt'], '~'), strlen($item['newArt'])),
-                    'dataOtmeny' => $item['dataOtmeny']
-
-
-                )
-            );
-
-        }
-        foreach($articuls as $index => $value)
-        {
-
-            if(($value['options']['prime4'] != '') & (strpos($value['options']['prime4'],$filtrDvig) === false) || ($value['options']['dannye'] != '') & (strpos($value['options']['dannye'],$filtrNameDvig) === false))
-            {
-                if($k==1){
-                    unset ($articuls[$index]);
-
-                }
+            if (($this->getDesc($item['tsbem'], 'R'))) {
+                $k = 1;
             }
 
+            $articuls[$item['teilenummer']] = [
+                Constants::NAME    => $this->getDesc($item['tsben'], 'R'),
+                Constants::OPTIONS => [
+                    Constants::QUANTITY   => $item['stuck'],
+                    Constants::START_DATE => $item['einsatz'],
+                    Constants::END_DATE   => $item['auslauf'],
+                    'prime4'              => ($this->getDesc($item['tsbem'], 'R')) ? $this->getDesc($item['tsbem'],
+                        'R') : $item['bemerkung'],
+                    'dannye'              => $item['modellangabe'],
+                    'with'                => $item['mv_data'],
+                    'zamena'              => substr($item['newArt'], 0, strpos($item['newArt'], '~')),
+                    'zamenakoli4'         => substr($item['newArt'], strpos($item['newArt'], '~'),
+                        strlen($item['newArt'])),
+                    'dataOtmeny'          => $item['dataOtmeny'],
+
+                ],
+            ];
+        }
+        foreach ($articuls as $index => $value) {
+
+            if (($value['options']['prime4'] != '') & (strpos($value['options']['prime4'],
+                        $filtrDvig) === false) || ($value['options']['dannye'] != '') & (strpos($value['options']['dannye'],
+                        $filtrNameDvig) === false)
+            ) {
+                if ($k == 1) {
+                    unset ($articuls[$index]);
+                }
+            }
         }
 
-        foreach($articuls as $index => $value)
-        {
+        foreach ($articuls as $index => $value) {
             $articulsIndexes[] = $index;
         }
 
         return $articulsIndexes;
     }
-   
-   
-        
+
+
 } 

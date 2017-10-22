@@ -1,0 +1,3 @@
+services:
+     domain_info:
+         class: Acme\VinBundle\Services\DomainData

@@ -9,14 +9,13 @@
 namespace Catalog\NissanBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
-
 use Catalog\NissanBundle\Components\NissanConstants;
 
-class NissanVinModel extends NissanCatalogModel {
+class NissanVinModel extends NissanCatalogModel
+{
 
-    public function getVinFinderResult($vin)
+    public function getVinFinderResult($vin, $commonVinFind = false)
     {
-
 
         $sqlMinSerial = "
         SELECT MIN(ABS(vindat.SERIAL - SUBSTRING(:vin,12,6))) as minimum
@@ -31,21 +30,19 @@ class NissanVinModel extends NissanCatalogModel {
 
         $sMinimumSerial = $query->fetchColumn(0);
 
-
         $sqlMin = "
         SELECT MIN(ABS(vindat.MDLPOS - mdlcode.POSDATA)) as minimum
         from vindat, mdlcode
         where vindat.vin = SUBSTRING(:vin,1,11)
         AND vindat.SERIAL = SUBSTRING(:vin,12,6)
-        AND ABS(vindat.SERIAL - SUBSTRING(:vin,12,6)) = :MinimumSerial
+        AND ABS(vindat.SERIAL - SUBSTRING(:vin,12,6)) = :minimumSerial
         AND vindat.CDNAME = mdlcode.CDNAME
         AND vindat.CATALOG = mdlcode.CATALOG
-
         ";
 
         $query = $this->conn->prepare($sqlMin);
         $query->bindValue('vin', $vin);
-        $query->bindValue('MinimumSerial', $sMinimumSerial);
+        $query->bindValue('minimumSerial', $sMinimumSerial);
         $query->execute();
 
         $sMinimum = $query->fetchColumn(0);
@@ -64,52 +61,67 @@ class NissanVinModel extends NissanCatalogModel {
 
         where vindat.vin = SUBSTRING(:vin,1,11)
         AND vindat.SERIAL = SUBSTRING(:vin,12,6)
+        AND vindat.CATALOG NOT LIKE '%INF'
         ";
 
         $query = $this->conn->prepare($sql);
         $query->bindValue('vin', $vin);
         $query->bindValue('minimum', $sMinimum);
-
         $query->execute();
 
         $aData = $query->fetchAll();
 
-        $OnlyCompl = array();
+        if (!$aData) {
+            return null;
+        }
 
-        if ($aData) {
+        $OnlyCompl = [];
 
-            $complectations = $this->getComplectations($aData[0]['CATALOG'], $aData[0]['SHASHUKO'], $aData[0]['MODSERIES']);
-            $complectation = $complectations[str_pad($aData[0]['MDLDIR'], 3, "0", STR_PAD_LEFT) . '_' . $aData[0]['POSNUM'] . '_' . $aData[0]['DATA1']];
+        $complectations = $this->getComplectations($aData[0]['CATALOG'], $aData[0]['SHASHUKO'],
+            $aData[0]['MODSERIES']);
+        $complectation  = $complectations[str_pad($aData[0]['MDLDIR'], 3, "0",
+            STR_PAD_LEFT) . '_' . $aData[0]['POSNUM'] . '_' . $aData[0]['DATA1']];
 
-
-            for ($i = 1; $i < 9; $i++) {
+        for ($i = 1; $i < 9; $i++) {
+            if ($complectation['options']['OPTION' . $i]) {
                 $OnlyCompl[] = $complectation['options']['OPTION' . $i];
             }
         }
 
+        $region            = $aData[0]['CATALOG'];
+        $modelCode         = urlencode($aData[0]['SHASHUKO']);
+        $modificationCode  = $aData[0]['MODSERIES'];
+        $complectationCode = str_pad($aData[0]['MDLDIR'], 3, "0",
+                STR_PAD_LEFT) . '_' . $aData[0]['POSNUM'] . '_' . $aData[0]['DATA1'];
 
+        $result = [
+            'marka'              => 'NISSAN',
+            'model'              => $modelCode,
+            'modif'              => $modificationCode,
+            'complectation'      => $OnlyCompl,
+            Constants::PROD_DATE => $aData[0]['PRODYM'],
 
+            'region'                  => $region,
+            NissanConstants::INTCOLOR => $aData[0]['COLOR1'],
+            'cvet_salona'             => $aData[0]['COL1'],
+            'cvet_kuzova'             => $aData[0]['COL2'],
+            'kod_complektacii'        => $complectationCode,
+        ];
 
-        $result = array();
+        if ($commonVinFind) {
+            $urlParams = [
+                'path'   => 'vin_nissan_groups',
+                'params' => [
+                    'regionCode'        => $region,
+                    'modelCode'         => $modelCode,
+                    'modificationCode'  => $modificationCode,
+                    'complectationCode' => $complectationCode,
+                ],
+            ];
+            $removeFromResult = ['kod_complektacii'];
 
-        if ($aData) {
-            $result = array(
-                'marka' => 'NISSAN',
-                'model' => urlencode($aData[0]['SHASHUKO']),
-                'modif' => $aData[0]['MODSERIES'],
-                'complectation' => $OnlyCompl,
-                Constants::PROD_DATE => $aData[0]['PRODYM'],
-
-                'region' => $aData[0]['CATALOG'],
-                NissanConstants::INTCOLOR => $aData[0]['COLOR1'],
-                'cvet_salona' => $aData[0]['COL1'],
-                'cvet_kuzova' => $aData[0]['COL2'],
-                'kod_complektacii' => str_pad($aData[0]['MDLDIR'], 3, "0", STR_PAD_LEFT).'_'.$aData[0]['POSNUM'].'_'.$aData[0]['DATA1'],
-                );
+            return ['result' => array_diff_key($result, array_flip($removeFromResult)), 'urlParams' => $urlParams];
         }
-
-
-
         return $result;
     }
 

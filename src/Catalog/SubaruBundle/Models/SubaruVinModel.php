@@ -10,11 +10,10 @@ namespace Catalog\SubaruBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
 
-use Catalog\SubaruBundle\Components\SubaruConstants;
+class SubaruVinModel extends SubaruCatalogModel
+{
 
-class SubaruVinModel extends SubaruCatalogModel {
-
-    public function getVinFinderResult($vin)
+    public function getVinFinderResult($vin, $commonVinFind = false)
     {
 
         $sqlRegion = "
@@ -30,20 +29,17 @@ class SubaruVinModel extends SubaruCatalogModel {
 
         $sRegion = $query->fetchColumn(0);
 
-        if ($sRegion == 'JP'){
-            $table = 'model_desc_jp';
-            $models = 'models_jp';
+        if ($sRegion == 'JP') {
+            $table         = 'model_desc_jp';
+            $models        = 'models_jp';
             $model_changes = 'model_changes_jp';
-            $lang = 'jp';
-        }
-        else
-        {
-            $table = 'model_desc';
-            $models = 'models';
+            $lang          = 'jp';
+        } else {
+            $table         = 'model_desc';
+            $models        = 'models';
             $model_changes = 'model_changes';
-            $lang = 'en';
+            $lang          = 'en';
         }
-
 
         $sqlVin = "
         SELECT vin.catalog, vin.sub_wheel, vin.Model_code, vin.date1, vin.color_code, vin.Trim_code, $models.desc_$lang m_desc,
@@ -95,6 +91,10 @@ class SubaruVinModel extends SubaruCatalogModel {
 
         $aData = $query->fetch();
 
+        if (!$aData) {
+            return null;
+        }
+
         $sql = "
         SELECT dif_code, dif_fields
         FROM $models
@@ -111,110 +111,112 @@ class SubaruVinModel extends SubaruCatalogModel {
 
         $aAgregateNames = $query->fetchAll();
 
-        $aAgregateData = array();
+        $aAgregateData = [];
 
-        $aVozmozhnyeZna4s = array('STEERING', 'DESTINAT', 'TRAIN', 'ENGINE', 'GRADE', 'ROOF', 'VEHICLE', 'SPECIFIC', 'MISSION', 'DOOR', 'SUS', 'BODY');
+        $aVozmozhnyeZna4s = [
+            'STEERING',
+            'DESTINAT',
+            'TRAIN',
+            'ENGINE',
+            'GRADE',
+            'ROOF',
+            'VEHICLE',
+            'SPECIFIC',
+            'MISSION',
+            'DOOR',
+            'SUS',
+            'BODY',
+        ];
 
+        $aAgregate = [];
+        $adif_code = [];
 
-
-
-        $aAgregate = array();
-        $adif_code = array();
-
-        if ($sRegion != 'JP')
-        {
-            foreach ($aAgregateNames as $aAgregateName){
+        if ($sRegion != 'JP') {
+            foreach ($aAgregateNames as $aAgregateName) {
                 $sdif_fields = $aAgregateName['dif_fields'];
-                foreach(str_split($aAgregateName['dif_code']) as $index => $value){
+                foreach (str_split($aAgregateName['dif_code']) as $index => $value) {
                     $adif_code[$index] = $value;
                 }
             }
 
-            foreach ($aVozmozhnyeZna4s as $aVozmozhnyeZna4)
-            {
-                foreach($adif_code as $index => $value)
-                {
-                        if (strpos(trim($sdif_fields), $aVozmozhnyeZna4) !== false)
-                        {
-                            $aAgregate[strpos(trim($sdif_fields), $aVozmozhnyeZna4)] =  $aVozmozhnyeZna4;
-
-                        }
-
+            foreach ($aVozmozhnyeZna4s as $aVozmozhnyeZna4) {
+                foreach ($adif_code as $index => $value) {
+                    if (strpos(trim($sdif_fields), $aVozmozhnyeZna4) !== false) {
+                        $aAgregate[strpos(trim($sdif_fields), $aVozmozhnyeZna4)] = $aVozmozhnyeZna4;
+                    }
                 }
-
             }
             ksort($aAgregate);
             reset($aAgregate);
+        } else {
+            foreach ($aAgregateNames as $aAgregateName) {
 
-        }
-
-        else
-        {
-            foreach ($aAgregateNames as $aAgregateName)
-            {
-
-                $aAgregate = explode(' ',  $aAgregateName['dif_fields']);
-
+                $aAgregate = explode(' ', $aAgregateName['dif_fields']);
             }
         }
 
-
-
-        foreach ($aAgregateNames as $aAgregateName)
-        {
-            $aAgregateData = array_combine(str_split($aAgregateName['dif_code']) , ($sRegion == 'JP')?array_values(array_diff($aAgregate, array(''))) : array_values(array_diff(array_unique($aAgregate), array(''))));
+        foreach ($aAgregateNames as $aAgregateName) {
+            $aAgregateData = array_combine(str_split($aAgregateName['dif_code']),
+                ($sRegion == 'JP') ? array_values(array_diff($aAgregate,
+                    [''])) : array_values(array_diff(array_unique($aAgregate), [''])));
         }
 
+        $aComplectation = [];
 
-        $aComplectation = array();
+        $result = [];
+        $psevd  = [];
 
+        $af = [];
 
-        $result = array();
-        $psevd = array();
+        for ($i = 1; $i < 9; $i++) {
+            if ($aData['p' . $i]) {
+                $af[$i][$aData['p' . $i]] = '(' . $aData['p' . $i] . ') ' . $aData['ken' . $i];
+                $result['p' . $i]         = $af[$i];
+                $psevd['p' . $i]          = str_replace('ENGINE 1', 'ENGINE', $aAgregateData[$i]);
 
-        $af = array();
-
-
-            for ($i = 1; $i < 9; $i++) {
-                if ($aData['p' . $i]) {
-                    $af[$i][$aData['p' . $i]] = '(' . $aData['p' . $i] . ') ' . $aData['ken' . $i];
-                    $result['p'.$i] = $af[$i];
-                    $psevd['p'.$i] = str_replace('ENGINE 1', 'ENGINE', $aAgregateData[$i]);
-
-                    foreach ($result['p'.$i] as $index => $value)
-                    {
-                        $aComplectation[$i] = $psevd['p'.$i].": ".$value;
-
-                    }
-
+                foreach ($result['p' . $i] as $index => $value) {
+                    $aComplectation[$i] = $psevd['p' . $i] . ": " . $value;
                 }
             }
+        }
+        $region            = $aData['catalog'] . '_' . $aData['sub_wheel'];
+        $modelCode         = substr($aData['Model_code'], 0, 3);
+        $modificationCode  = $aData['change_abb'] . $aData['mc_desc'];
+        $complectationCode = $aData['compl_code'];
 
+        $result = [
+            'marka'              => 'SUBARU',
+            'region'             => $region,
+            'model'              => '(' . $aData['Model_code'] . ') ' . $aData['m_desc'],
+            'prod_year'          => $aData['date1'],
+            'modification'       => $modificationCode,
+            'complectationCode'  => $complectationCode,
+            'complectation'      => $aComplectation,
+            'ext_color'          => $aData['color_code'],
+            'Trim_code'          => $aData['Trim_code'],
+            Constants::PROD_DATE => $aData['date1'],
+        ];
+        if ($commonVinFind) {
+            $urlParams        = [
+                'path'   => 'vin_subaru_groups',
+                'params' => [
+                    'regionCode'        => $region,
+                    'modelCode'         => $modelCode,
+                    'modificationCode'  => $modificationCode,
+                    'complectationCode' => $complectationCode,
+                ],
+            ];
+            $removeFromResult = ['complectationCode', 'Trim_code'];
 
-            $result = array();
-
-            if ($aData){
-                $result = array(
-                    'marka' => 'SUBARU',
-                    'region' => $aData['catalog'].'_'.$aData['sub_wheel'],
-                    'model' => '('.$aData['Model_code'].') '.$aData['m_desc'],
-                    'prod_year' => $aData['date1'],
-                    'modification' => $aData['change_abb'].$aData['mc_desc'],
-                    'complectation' => $aData['compl_code'],
-                    'com' => $aComplectation,
-                    'ext_color' => $aData['color_code'],
-                    'Trim_code'=>$aData['Trim_code'],
-                    Constants::PROD_DATE => $aData['date1']
-            );
-            }
+            return ['result' => array_diff_key($result, array_flip($removeFromResult)), 'urlParams' => $urlParams];
+        }
 
         return $result;
-
     }
-    
-     public function getVinCompl($regionCode, $modelCode, $complectationCode)
-     {
-	 	 $sql = "
+
+    public function getVinCompl($regionCode, $modelCode, $complectationCode)
+    {
+        $sql = "
         SELECT *
         FROM body_desc
         WHERE catalog = :regionCode 
@@ -230,14 +232,14 @@ class SubaruVinModel extends SubaruCatalogModel {
 
         $aCompl = $query->fetch();
         return $aCompl;
-	 }
-    
+    }
+
     public function getVinSchemas($regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
 
-        $wheel = substr($regionCode, strpos($regionCode, '_')+1, strlen($regionCode));
+        $wheel      = substr($regionCode, strpos($regionCode, '_') + 1, strlen($regionCode));
         $regionCode = substr($regionCode, 0, strpos($regionCode, '_'));
-        
+
         $sqlSchemas = "
         SELECT *
         FROM part_images
@@ -254,16 +256,18 @@ class SubaruVinModel extends SubaruCatalogModel {
 
         $aData = $query->fetchAll();
 
-        $schemas = array();
-        
-        foreach($aData as $item){
-		
-		 if ((substr_count($item['desc_en'],'MY')>0)&&(substr_count($item['desc_en'], $modificationCode)!=0)||(substr_count($item['desc_en'],'MY')==0))
-		           
+        $schemas = [];
+
+        foreach ($aData as $item) {
+
+            if ((substr_count($item['desc_en'], 'MY') > 0) && (substr_count($item['desc_en'],
+                        $modificationCode) != 0) || (substr_count($item['desc_en'], 'MY') == 0)
+            ) {
                 $schemas[] = $item['image_file'];
+            }
         }
 
         return $schemas;
     }
-        
+
 } 

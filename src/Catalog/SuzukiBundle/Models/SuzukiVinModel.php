@@ -10,14 +10,12 @@ namespace Catalog\SuzukiBundle\Models;
 
 use Catalog\CommonBundle\Components\Constants;
 
-use Catalog\SuzukiBundle\Components\SuzukiConstants;
-use Symfony\Component\Validator\Constraints\Null;
+class SuzukiVinModel extends SuzukiCatalogModel
+{
 
-class SuzukiVinModel extends SuzukiCatalogModel {
-
-    public function getVinFinderResult($vin)
+    public function getVinFinderResult($vin, $commonVinFind = false)
     {
-    	
+
         $sql = "
         SELECT *
         FROM vin
@@ -27,12 +25,14 @@ class SuzukiVinModel extends SuzukiCatalogModel {
         ";
 
         $query = $this->conn->prepare($sql);
-        $query->bindValue('VDS', substr($vin,0,9));
-        $query->bindValue('SNUMBER', substr($vin,9,8));
+        $query->bindValue('VDS', substr($vin, 0, 9));
+        $query->bindValue('SNUMBER', substr($vin, 9, 8));
         $query->execute();
 
         $aData = $query->fetch();
-        if ($aData) {
+        if (!$aData) {
+            return null;
+        }
 
             $sqlColor = "
         SELECT COLORDESC
@@ -49,7 +49,6 @@ class SuzukiVinModel extends SuzukiCatalogModel {
 
             $aColor = $query->fetch();
 
-
             $sqlMMCode = "
         SELECT *
         FROM mmcode
@@ -61,13 +60,14 @@ class SuzukiVinModel extends SuzukiCatalogModel {
             $query->execute();
             $aMMCode = $query->fetchAll();
 
-            $aModelDesc = array();
-            $expr = substr($aData['model_code'], 0, 7);
+            $aModelDesc = [];
+            $expr       = substr($aData['model_code'], 0, 7);
             foreach ($aMMCode as $item) {
-                if (($item['VALUE']) && (substr_count(substr($expr, $item['POS'] - 1, strlen($item['VALUE'])), $item['VALUE']))) {
+                if (($item['VALUE']) && (substr_count(substr($expr, $item['POS'] - 1, strlen($item['VALUE'])),
+                        $item['VALUE']))
+                ) {
                     $aModelDesc[] = $item['VALUE'] . ' - ' . $item['MMCODEDESC'] . ';';
                 }
-
             }
 
             $sqlModelType = "
@@ -91,13 +91,14 @@ class SuzukiVinModel extends SuzukiCatalogModel {
                 } else {
                     $a = $index;
                 }
-                if ((substr($vin, 9, 8) > $aDataModelAndType[$index]['SNUMBER']) && (substr($vin, 9, 8) < $aDataModelAndType[$a]['SNUMBER'])) {
+                if ((substr($vin, 9, 8) > $aDataModelAndType[$index]['SNUMBER']) && (substr($vin, 9,
+                            8) < $aDataModelAndType[$a]['SNUMBER'])
+                ) {
                     $a = $index;
                 }
-
             }
 
-            if ($aDataModelAndType[$a]['MODEL'] != Null) {
+            if ($aDataModelAndType[$a]['MODEL'] != null) {
                 $sqlModel = "
         SELECT MODEL
         FROM model_cat_name mcn
@@ -127,7 +128,7 @@ class SuzukiVinModel extends SuzukiCatalogModel {
                 $query->bindValue('E_CODES', '%' . substr($aData['model_code'], -2) . '%');
                 $query->execute();
                 $aModif = $query->fetch();
-                $modif = $aDataModelAndType[$a]['MODEL'] . ' ' . $aDataModelAndType[$a]['TYPE'] . ', E ' . $aModif['E_CODES'];
+                $modif  = $aDataModelAndType[$a]['MODEL'] . ' ' . $aDataModelAndType[$a]['TYPE'] . ', E ' . $aModif['E_CODES'];
 
                 $sqlCatalog = "
         SELECT *
@@ -142,8 +143,6 @@ class SuzukiVinModel extends SuzukiCatalogModel {
                 $query->execute();
 
                 $aDataCatalog = $query->fetch();
-
-
             } else {
                 $sqlModelType = "
         SELECT CATKEYS, CATNAME
@@ -156,10 +155,10 @@ class SuzukiVinModel extends SuzukiCatalogModel {
                 $query->execute();
 
                 $aDataModelAndType = $query->fetchAll();
-                $CATKEY = NULL;
+                $CATKEY            = null;
                 if (count($aDataModelAndType) > 1) {
 
-                    $aSort = array();
+                    $aSort = [];
                     foreach ($aDataModelAndType as $index => $value) {
                         $aSort[] = $value['CATKEYS'];
                     }
@@ -173,7 +172,6 @@ class SuzukiVinModel extends SuzukiCatalogModel {
                         return (strlen($a) > strlen($b)) ? -1 : 1;
                     }
 
-
                     foreach ($aSort as $index => $value) {
                         foreach (explode(',', $value) as $index2 => $value2) {
 
@@ -183,9 +181,7 @@ class SuzukiVinModel extends SuzukiCatalogModel {
                                 }
                             }
                         }
-
                     }
-
 
                     $sqlCatalog = "
         SELECT *
@@ -214,7 +210,6 @@ class SuzukiVinModel extends SuzukiCatalogModel {
                     $aDataCatalog = $query->fetch();
                 }
 
-
                 $sqlModif = "
         SELECT *
         FROM model_series
@@ -230,8 +225,7 @@ class SuzukiVinModel extends SuzukiCatalogModel {
                 /* $query->bindValue('E_CODES', '%'.substr($aData['model_code'], -2).'%');*/
                 $query->execute();
                 $aModif = $query->fetch();
-                $modif = $CATKEY . ' E ' . $aModif['E_CODES'];
-
+                $modif  = $CATKEY . ' E ' . $aModif['E_CODES'];
 
                 $sqlModel = "
         SELECT MODEL
@@ -246,10 +240,8 @@ class SuzukiVinModel extends SuzukiCatalogModel {
                 $query->execute();
 
                 $aModel = $query->fetch();
-                $model = $aModel['MODEL'];
-
+                $model  = $aModel['MODEL'];
             }
-
 
             $sqlCountry = "
         SELECT DEFINITION
@@ -272,38 +264,49 @@ class SuzukiVinModel extends SuzukiCatalogModel {
             $query->bindValue('CATCODE', $aData['CATALOG']);
             $query->execute();
             $aCompl = $query->fetch();
-        }
-        
-        
-		       
-        
-        $result = array();
 
-        if ($aData) {
-            $result = array(
-                'marka' => 'SUZUKI',
-                'model' => $model,
-                'modif' => $modif,
-                'engine' => $aData['ENGINE'],
-                'trans' => $aData['TRANS'],
-                'color' => '('.$aData['COLOR'].') '.$aColor['COLORDESC'],                
-                'color2' => $aData['SUBCOLR'],
-                'model_code' => $aData['model_code'],
-                'desc_model_code' => $aModelDesc,
-                'country' => substr($aData['model_code'], -2).' - '.'E'.substr($aData['model_code'], -2).' '.$aCountry['DEFINITION'],
-                'complectation' => $aData['CATALOG'].'.'.$aDataCatalog['CATSER'],
-                'modification' => $aDataCatalog['CATNAME'],
-                'region' =>$aModif['ABBREV'],
+        $region = $aModif['ABBREV'];
+        $modification = $aDataCatalog['CATNAME'];
+        $complectationCode = $aData['CATALOG'] . '.' . $aDataCatalog['CATSER'];
+
+            $result = [
+                'marka'              => 'SUZUKI',
+                'model'              => $model,
+                'modif'              => $modif,
+                'engine'             => $aData['ENGINE'],
+                'trans'              => $aData['TRANS'],
+                'color'              => '(' . $aData['COLOR'] . ') ' . $aColor['COLORDESC'],
+                'color2'             => $aData['SUBCOLR'],
+                'model_code'         => $aData['model_code'],
+                'complectation'    => $aModelDesc,
+                'country'            => substr($aData['model_code'], -2) . ' - ' . 'E' . substr($aData['model_code'],
+                        -2) . ' ' . $aCountry['DEFINITION'],
+                'complectationCode'      => $complectationCode,
+                'modification'       => $modification,
+                'region'             => $region,
                 Constants::PROD_DATE => '01.01.2001',
-            );
+            ];
+        if ($commonVinFind) {
+            $urlParams        = [
+                'path'   => 'vin_suzuki_groups',
+                'params' => [
+                    'regionCode'        => $region,
+                    'modelCode'         => rawurlencode($model),
+                    'modificationCode'  => $modification,
+                    'complectationCode' => $complectationCode,
+                ],
+            ];
+            $removeFromResult = ['model_code', 'modif', 'complectationCode'];
+
+            return ['result' => array_diff_key($result, array_flip($removeFromResult)), 'urlParams' => $urlParams];
         }
 
         return $result;
     }
-    
-     public function getVinCompl($regionCode, $modelCode, $complectationCode)
-     {
-	 	 $sql = "
+
+    public function getVinCompl($regionCode, $modelCode, $complectationCode)
+    {
+        $sql = "
         SELECT *
         FROM body_desc
         WHERE catalog = :regionCode 
@@ -319,8 +322,8 @@ class SuzukiVinModel extends SuzukiCatalogModel {
 
         $aCompl = $query->fetch();
         return $aCompl;
-	 }
-    
+    }
+
     public function getVinSchemas($regionCode, $modelCode, $modificationCode, $subGroupCode)
     {
         $sqlSchemas = "
@@ -339,18 +342,19 @@ class SuzukiVinModel extends SuzukiCatalogModel {
 
         $aData = $query->fetchAll();
 
-        $schemas = array();
-        
-        foreach($aData as $item){
-		
-		 if ((substr_count($item['desc_en'],'MY')>0)&&(substr_count($item['desc_en'], $modificationCode)!=0)||(substr_count($item['desc_en'],'MY')==0))
-		           
+        $schemas = [];
+
+        foreach ($aData as $item) {
+
+            if ((substr_count($item['desc_en'], 'MY') > 0) && (substr_count($item['desc_en'],
+                        $modificationCode) != 0) || (substr_count($item['desc_en'], 'MY') == 0)
+            ) {
                 $schemas[] = $item['image_file'];
+            }
         }
 
         return $schemas;
     }
-   
-   
-        
+
+
 } 

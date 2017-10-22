@@ -12,7 +12,7 @@ use Catalog\CommonBundle\Components\Constants;
 
 class MitsubishiVinModel extends MitsubishiCatalogModel
 {
-    public function getVinFinderResult($vin)
+    public function getVinFinderResult($vin, $commonVinFind = false)
     {
         $chassis  = substr($vin, 0, 10);
         $serialNo = substr($vin, 10);
@@ -55,22 +55,42 @@ class MitsubishiVinModel extends MitsubishiCatalogModel
 
         $aData = $query->fetch();
 
-        $result = [];
+        if (!$aData) {
+            return null;
+        }
 
-        if ($aData) {
-            $result = [
-                'model'           => $aData['descEnModel'],
-                'model_for_group' => $aData['Catalog_Num'],
-                'modif'           => '(' . $aData['model'] . ') ' . $aData['descEnModif'],
-                'modif_for_group' => $aData['model'],
-                'compl'           => '(' . $aData['classification'] . ') ' . $aData['descEnCompl'],
-                'compl_for_group' => $aData['classification'],
+        $region          = $aData['catalog'];
+        $model_for_group = $aData['Catalog_Num'];
+        $modif_for_group = $aData['model'];
+        $compl_for_group = $aData['classification'];
 
-                Constants::PROD_DATE => $aData['prodDate'],
-                'region'             => $aData['catalog'],
-                'exterior'           => $aData['exterior'],
-                'interior'           => $aData['interior'],
+        $result = [
+            'marka'           => 'MITSUBISHI',
+            'model'           => $aData['descEnModel'],
+            'model_for_group' => $model_for_group,
+            'modif'           => '(' . $aData['model'] . ') ' . $aData['descEnModif'],
+            'modif_for_group' => $modif_for_group,
+            'compl'           => '(' . $aData['classification'] . ') ' . $aData['descEnCompl'],
+            'compl_for_group' => $compl_for_group,
+            Constants::PROD_DATE => $aData['prodDate'],
+            'region'             => $region,
+            'exterior'           => $aData['exterior'],
+            'interior'           => $aData['interior'],
+        ];
+
+        if ($commonVinFind) {
+            $urlParams        = [
+                'path'   => 'vin_mitsubishi_groups',
+                'params' => [
+                    'regionCode'        => $region,
+                    'modelCode'         => $model_for_group,
+                    'modificationCode'  => $modif_for_group,
+                    'complectationCode' => $compl_for_group,
+                ],
             ];
+            $removeFromResult = ['compl_for_group', 'modif_for_group', 'model_for_group'];
+
+            return ['result' => array_diff_key($result, array_flip($removeFromResult)), 'urlParams' => $urlParams];
         }
 
         return $result;
