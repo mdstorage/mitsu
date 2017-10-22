@@ -1,265 +1,213 @@
 acme_vin:
     resource: "@AcmeVinBundle/Resources/config/routing.yml"
     prefix:   /
-
-acme_billing:
-    resource: "@AcmeBillingBundle/Resources/config/routing.yml"
-    prefix:   /
-
+    
 catalog_lexus:
     resource: "@CatalogLexusBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_toyota:
     resource: "@CatalogToyotaBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_volvo:
     resource: "@CatalogVolvoBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_landrover:
     resource: "@CatalogLandRoverBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
-
-catalog_ford:
-    resource: "@CatalogFordBundle/Resources/config/routing.yml"
-    prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_infiniti:
     resource: "@CatalogInfinitiBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_nissan:
     resource: "@CatalogNissanBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_chevroletusa:
     resource: "@CatalogChevroletUsaBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_pontiac:
     resource: "@CatalogPontiacBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_cadillac:
     resource: "@CatalogCadillacBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_buick:
     resource: "@CatalogBuickBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_hummer:
     resource: "@CatalogHummerBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_saturn:
     resource: "@CatalogSaturnBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_gmc:
     resource: "@CatalogGmcBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_oldsmobile:
     resource: "@CatalogOldsmobileBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_abarth:
     resource: "@CatalogAbarthBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_fiatprofessional:
     resource: "@CatalogFiatProfessionalBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_alfaromeo:
     resource: "@CatalogAlfaRomeoBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_lancia:
     resource: "@CatalogLanciaBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_fiat:
     resource: "@CatalogFiatBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_seat:
     resource: "@CatalogSeatBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_skoda:
     resource: "@CatalogSkodaBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_volkswagen:
     resource: "@CatalogVolkswagenBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_audi:
     resource: "@CatalogAudiBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_ford:
     resource: "@CatalogFordBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_saab:
     resource: "@CatalogSaabBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 acme_task:
     resource: "@AcmeTaskBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 acme_billing:
     resource: "@AcmeBillingBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_subaru:
     resource: "@CatalogSubaruBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_mercedes:
     resource: "@CatalogMercedesBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_smart:
     resource: "@CatalogSmartBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_common:
     resource: "@CatalogCommonBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_mazda:
     resource: "@CatalogMazdaBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_mitsubishi:
     resource: "@CatalogMitsubishiBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
-    
+    schemes:  [https]
+
 catalog_suzuki:
     resource: "@CatalogSuzukiBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
-    
+    schemes:  [https]
+
 catalog_honda:
     resource: "@CatalogHondaBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_hondaeurope:
     resource: "@CatalogHondaEuropeBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_hyundai:
     resource: "@CatalogHyundaiBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_kia:
     resource: "@CatalogKiaBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_bmw:
     resource: "@CatalogBmwBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_bmwmoto:
     resource: "@CatalogBmwMotoBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_mini:
     resource: "@CatalogMiniBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
 
 catalog_rollsroyce:
     resource: "@CatalogRollsRoyceBundle/Resources/config/routing.yml"
     prefix:   /
-    requirements:
-       _scheme: https
+    schemes:  [https]
